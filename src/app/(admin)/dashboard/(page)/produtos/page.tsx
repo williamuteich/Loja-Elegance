@@ -1,7 +1,7 @@
 export default function Produtos() {
     return(
         <div>
-            teste
+            Página de Produtos
         </div>
     )
 }

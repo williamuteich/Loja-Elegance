@@ -1,4 +1,4 @@
-import { FaHome, FaUserCircle, FaBoxOpen, FaSignOutAlt } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaBoxOpen, FaSignOutAlt, FaCog } from 'react-icons/fa';
 import Link from 'next/link';
 
 export default function Sidebar() {
@@ -35,6 +35,11 @@ export default function Sidebar() {
                 </div>
 
                 <div className="mb-6 p-4">
+                    <Link href="/dashboard/setup" className='text-white'>
+                        <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-700">
+                            <FaCog size={24} /> Configurações
+                        </div>
+                    </Link>
                     <button
                         className="flex items-center gap-2 p-2 rounded-md text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition duration-200">
                         <FaSignOutAlt size={24} />

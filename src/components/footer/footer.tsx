@@ -1,9 +1,15 @@
-import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn } from "react-icons/fa";
+import Link from "next/link";
+import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
 
 export default function Footer() {
 
   return (
-    <footer className="bg-gray-800 text-white py-10">
+    <footer className="bg-gray-800 relative text-white py-10">
+      <Link className="fixed bottom-32 right-32" href="https://wa.me/51998682733" target="_blank" rel="noopener noreferrer">
+        <FaWhatsapp
+          className="w-16 h-16 text-green-500 hover:text-green-700 animate-pulse opacity-80 hover:opacity-100 transition-all"
+        />
+      </Link>
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Seção de Links úteis */}
@@ -35,8 +41,6 @@ export default function Footer() {
               </a>
             </div>
           </div>
-
-          {/* Seção de Contato */}
           <div>
             <h3 className="text-xl font-semibold mb-4">Contato</h3>
             <ul>

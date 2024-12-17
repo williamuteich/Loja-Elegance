@@ -21,7 +21,7 @@ export default function Header() {
             </Link>
           </div>
           <div>
-            <span>Seja bem-vindo ao nosso Ecommerce!</span>
+            <span>Seja bem-vindo(a)</span>
           </div>
         </div>
       </div>
@@ -38,9 +38,6 @@ export default function Header() {
             <div className="flex items-center space-x-6 ml-auto">
               <Link href="/sobre" className="hover:text-blue-400">
                 Sobre
-              </Link>
-              <Link href="/produtos" className="hover:text-blue-400">
-                Produtos
               </Link>
               <Link href="/contato" className="hover:text-blue-400">
                 Contato
