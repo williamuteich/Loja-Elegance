@@ -13,21 +13,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   name     String
   email    String
   password String
+  role      String @default("colaborador")
 }
 
 model Product {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
   price       Float
   imageUrl    String?
-  active      Boolean @default(true) // Define se o produto está ativo (visível no site)
+  active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
