@@ -97,9 +97,7 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ error: 'ID is required' }, { status: 400 });
         }
 
-        // Verifica se contatos específicos foram enviados para exclusão
         if (body.contacts && Array.isArray(body.contacts)) {
-            // Exclui os contatos passados no array
             for (const contact of body.contacts) {
                 if (contact.id) {
                     await prisma.contact.delete({
@@ -109,8 +107,6 @@ export async function DELETE(request: Request) {
             }
         }
 
-        // Caso queira excluir socialMedia também, pode seguir o mesmo padrão
-        // Excluir socialMedia caso tenha sido passado
         if (body.socialMedia && Array.isArray(body.socialMedia)) {
             for (const social of body.socialMedia) {
                 if (social.id) {

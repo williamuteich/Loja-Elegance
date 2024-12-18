@@ -34,12 +34,11 @@ model Product {
 
 model Config {
   id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  socialMedia SocialMedia[] 
-  contacts    Contact[]     
+  socialMedia SocialMedia[]
+  contacts    Contact[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
-
 
 model SocialMedia {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -59,4 +58,12 @@ model Contact {
   updatedAt DateTime @updatedAt
   Config    Config   @relation(fields: [configId], references: [id])
   configId  String   @db.ObjectId
+}
+
+model Faq {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  question  String
+  response  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
