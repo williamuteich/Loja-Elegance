@@ -1,7 +1,7 @@
-export default function Produtos() {
+export default function Faq() {
     return(
         <div className="w-full px-4 py-4">
-            Página de Produtos
+            página de FAQ
         </div>
     )
 }

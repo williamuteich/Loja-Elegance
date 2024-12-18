@@ -12,7 +12,6 @@ export default function Footer() {
       </Link>
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          {/* Seção de Links úteis */}
           <div>
             <h3 className="text-xl font-semibold mb-4">Links úteis</h3>
             <ul>
@@ -22,8 +21,6 @@ export default function Footer() {
               <li><a href="/privacy" className="hover:text-blue-400">Política de privacidade</a></li>
             </ul>
           </div>
-
-          {/* Seção de Redes sociais */}
           <div>
             <h3 className="text-xl font-semibold mb-4">Siga-nos</h3>
             <div className="flex gap-4">
@@ -48,8 +45,6 @@ export default function Footer() {
               <li>Telefone: <a href="tel:+1234567890" className="hover:text-blue-400">+12 345 678 90</a></li>
             </ul>
           </div>
-
-          {/* Seção de Newsletter */}
           <div>
             <h3 className="text-xl font-semibold mb-4">Receba novidades</h3>
             <p className="text-gray-400 mb-4">Cadastre-se para receber nossas promoções e novidades diretamente no seu e-mail.</p>
