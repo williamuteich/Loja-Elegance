@@ -1,5 +1,129 @@
 import { NextResponse } from "next/server";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export async function GET(request: Request) {
+    try {
+        const config = await prisma.config.findFirst({
+            include: {
+                socialMedia: true,
+                contacts: true,
+            },
+        });
+
+        return NextResponse.json(config, { status: 200 });
+    } catch (err) {
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+} 
 
 export async function POST(request: Request) {
-    return NextResponse.json({ message: "retorno" }, { status: 201 });
+    try {
+        const body = await request.json();
+
+        const configData: any = {
+            socialMedia: body.socialMedia ? { create: body.socialMedia } : undefined,
+            contacts: body.contacts ? { create: body.contacts } : undefined,
+        };
+
+        await prisma.config.create({
+            data: configData,
+        });
+
+        return NextResponse.json(configData, { status: 201 });
+    } catch (err) {
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
+export async function PUT(request: Request) {
+    try {
+        const body = await request.json();
+
+        if (!body.id) {
+            return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+        }
+
+        const config = await prisma.config.findUnique({
+            where: { id: body.id },
+        });
+
+        if (!config) {
+            return NextResponse.json({ error: 'Config record not found' }, { status: 404 });
+        }
+
+        if (body.socialMedia && Array.isArray(body.socialMedia)) {
+            for (const social of body.socialMedia) {
+                if (social.id) {
+                    await prisma.socialMedia.update({
+                        where: { id: social.id },  
+                        data: {
+                            name: social.name,
+                            url: social.url,
+                        },
+                    });
+                }
+            }
+        }
+
+        if (body.contacts && Array.isArray(body.contacts)) {
+            for (const contact of body.contacts) {
+                if (contact.id) {
+                    await prisma.contact.update({
+                        where: { id: contact.id },  
+                        data: {
+                            type: contact.type,
+                            value: contact.value,
+                        },
+                    });
+                }
+            }
+        }
+
+        return NextResponse.json({ message: 'Records updated successfully' }, { status: 200 });
+
+    } catch (err) {
+        const error = err as Error;
+        return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 });
+    }
+}
+
+export async function DELETE(request: Request) {
+    try {
+        const body = await request.json();
+
+        if (!body.id) {
+            return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+        }
+
+        // Verifica se contatos específicos foram enviados para exclusão
+        if (body.contacts && Array.isArray(body.contacts)) {
+            // Exclui os contatos passados no array
+            for (const contact of body.contacts) {
+                if (contact.id) {
+                    await prisma.contact.delete({
+                        where: { id: contact.id },
+                    });
+                }
+            }
+        }
+
+        // Caso queira excluir socialMedia também, pode seguir o mesmo padrão
+        // Excluir socialMedia caso tenha sido passado
+        if (body.socialMedia && Array.isArray(body.socialMedia)) {
+            for (const social of body.socialMedia) {
+                if (social.id) {
+                    await prisma.socialMedia.delete({
+                        where: { id: social.id },
+                    });
+                }
+            }
+        }
+
+        return NextResponse.json({ message: 'Records deleted successfully' }, { status: 200 });
+    } catch (err) {
+        const error = err as Error;
+        return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 });
+    }
 }
