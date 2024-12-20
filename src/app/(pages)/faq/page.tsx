@@ -13,10 +13,14 @@ const FaqPage = async () => {
     const response: FaqItem[] = await data.json();
 
     return (
-        <div className="container mx-auto py-24">
-            <h1 className="text-3xl font-semibold mb-8 text-center text-gray-700">Perguntas Frequentes</h1>
-            <div className="space-y-1">
-                <ExibirFaq response={response} />
+        <div className="bg-gray-50  py-16 px-6">
+            <div className="container mx-auto bg-white p-8 rounded-lg shadow-lg max-w-4xl">
+                <h1 className="text-4xl font-semibold text-blue-700 mb-10 text-center">
+                    Perguntas Frequentes
+                </h1>
+                <div className="space-y-6">
+                    <ExibirFaq response={response} />
+                </div>
             </div>
         </div>
     );
