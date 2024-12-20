@@ -13,12 +13,12 @@ const FaqPage = async () => {
     const response: FaqItem[] = await data.json();
 
     return (
-        <div className="bg-gray-50  py-16 px-6">
-            <div className="container mx-auto bg-white p-8 rounded-lg shadow-lg max-w-4xl">
-                <h1 className="text-4xl font-semibold text-blue-700 mb-10 text-center">
+        <div className="py-16 my-10">
+            <div className="container mx-auto">
+                <h1 className="text-2xl text-gray-800 font-bold mb-6 text-start">
                     Perguntas Frequentes
                 </h1>
-                <div className="space-y-6">
+                <div className="px-4 rounded-sm border-gray-200">
                     <ExibirFaq response={response} />
                 </div>
             </div>
