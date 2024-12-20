@@ -36,7 +36,7 @@ export default async function Faq() {
                                     <ButtonDelete id={faq.id}/>
                                 </div>
                             </div>
-                            <p className="text-gray-700">{faq.response}</p>
+                            <p className="text-gray-800 bg-gray-100 p-2">{faq.response}</p>
                         </div>
                     ))
                 )}
