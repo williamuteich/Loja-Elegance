@@ -17,7 +17,7 @@ export const auth: NextAuthOptions = {
       async authorize(credentials) {
 
         try {
-          const response = await fetch(`${process.env.NEXT_API}/login`, {
+          const response = await fetch(`${process.env.NEXT_API}/api/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -31,7 +31,6 @@ export const auth: NextAuthOptions = {
 
           if (response.ok) {
             const data = await response.json();
-
             const user = data.user;
 
             if (user) {

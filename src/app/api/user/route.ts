@@ -23,11 +23,6 @@ export async function POST(request: Request) {
         return NextResponse.json(newUser, { status: 201 });
 
     } catch (err) {
-        if (err instanceof Error) {
-            console.log("Mensagem de erro: ", err.message);
-        } else {
-            console.log("Erro desconhecido: ", err);
-        }
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

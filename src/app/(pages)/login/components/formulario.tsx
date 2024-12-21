@@ -24,7 +24,13 @@ export default function Formulario() {
       });
 
       if (res?.ok) {
-        const sessionResponse = await fetch("/api/auth/session");
+        const sessionResponse = await fetch("http://localhost:3000/api/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
   
         const session = await sessionResponse.json();
   

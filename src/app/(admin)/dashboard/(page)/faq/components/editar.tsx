@@ -34,7 +34,6 @@ export default function ButtonEditar({ id, question, response }: ButtonEditProps
     }
 
     const handleSave = async () => {
-        console.log("Salvando FAQ:", id, editedQuestion, editedResponse);
         const response = await fetch('/api/faq', {
             method: 'PUT',
             headers: {

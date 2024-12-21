@@ -8,8 +8,6 @@ export async function POST(request: Request) {
     try {
         const body = await request.json(); 
 
-        console.log(body)
-
         const email = body.email;
         const password = body.password;
 
@@ -17,33 +15,40 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
         }
 
-        const userVerify = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: {
                 email: email
             },
             select: {
                 id: true,
+                name: true,
                 email: true,
                 role: true,
                 password: true
             }
         });
 
-        if (!userVerify) {
+        if (!user) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }
 
-        const matchPassword = await bcrypt.compare(password, userVerify.password);
+        const matchPassword = await bcrypt.compare(password, user.password);
 
         if (!matchPassword) {
             return NextResponse.json({ message: 'Invalid password' }, { status: 401 });
         }
 
-        return NextResponse.json({ message: 'User authenticated successfully' }, { status: 200 });
+        return NextResponse.json({ 
+            message: 'User authenticated successfully',
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        }, { status: 200 });
+        
     } catch (err) {
-        console.log(err);
         return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
     }
 }
-
-

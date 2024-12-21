@@ -18,8 +18,6 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'name, description and price are required' }, { status: 400 });
         }
 
-        console.log("recebendo string banco", process.env.DATABASE_URL);
-
         const newProduct = await prisma.product.create({
             data: {
                 name: body.name,
@@ -33,11 +31,6 @@ export async function POST(request: Request) {
         return NextResponse.json(newProduct, { status: 201 });
         
     } catch (err) {
-        if (err instanceof Error) {
-            console.log("Mensagem de erro: ", err.message);
-        } else {
-            console.log("Erro desconhecido: ", err);
-        }
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

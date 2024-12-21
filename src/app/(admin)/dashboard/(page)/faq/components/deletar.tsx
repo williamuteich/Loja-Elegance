@@ -2,7 +2,7 @@
 
 export default function ButtonDelete({ id }: { id: string }) {
     const handleDelete =  async () => {
-        console.log("está recebendo o valor ID", id)
+
         const response = await fetch(`/api/faq`,{
             method: "DELETE",
             headers: {
