@@ -19,7 +19,7 @@ export default function ExibirFaq({ response }: { response: FaqItem[] }) {
         <Accordion type="single" collapsible className="w-full">
         {response.map((item) => (
           <AccordionItem key={item.id} value={item.question}>
-            <AccordionTrigger>{item.question}</AccordionTrigger>
+            <AccordionTrigger className="text-md">{item.question}</AccordionTrigger>
             <AccordionContent>
               {item.response}
             </AccordionContent>
