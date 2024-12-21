@@ -1,9 +1,22 @@
 "use client"
 
-export default function ButtonDelete({ id }: { id: string }) {
-    const handleDelete =  async () => {
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 
-        const response = await fetch(`/api/faq`,{
+export default function ButtonDelete({ id }: { id: string }) {
+    const handleDelete = async () => {
+
+        const response = await fetch(`/api/faq`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -17,12 +30,25 @@ export default function ButtonDelete({ id }: { id: string }) {
 
         alert("FAQ deletada com sucesso!");
         window.location.reload();
+
     }
     return (
-        <div>
-            <button onClick={handleDelete} className="bg-red-500 text-white hover:bg-red-600 font-semibold py-[6px] px-3 rounded-md transition duration-300 ease-in-out">
-                Excluir
-            </button>
-        </div>
+        <AlertDialog>
+            <AlertDialogTrigger asChild>
+                <Button variant="outline" className="bg-red-500 text-white hover:bg-red-600 font-semibold py-[6px] px-3 rounded-md transition duration-300 ease-in-out">Excluir</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Tem certeza de que deseja excluir esta pergunta?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Esta ação não pode ser desfeita. A pergunta e sua resposta serão removidas permanentemente do FAQ.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>Excluir Pergunta</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     )
 }

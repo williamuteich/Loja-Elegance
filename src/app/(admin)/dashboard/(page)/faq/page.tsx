@@ -5,7 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 export default async function Faq() {
 
-    const response = await fetch("http://localhost:3000/api/faq");
+    const response = await fetch(`${process.env.NEXT_API}/api/faq`);
     
     if (!response.ok) {
         console.error("Erro ao buscar FAQs:", response.statusText);

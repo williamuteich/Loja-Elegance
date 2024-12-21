@@ -9,7 +9,7 @@ interface FaqItem {
 
 const FaqPage = async () => {
 
-    const data = await fetch("http://localhost:3000/api/faq");
+    const data = await fetch(`/api/faq`);
     const response: FaqItem[] = await data.json();
 
     return (
