@@ -3,6 +3,19 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+interface dadosDataProps {
+    id: number;
+    name: string;
+    value: string;
+    url: string;
+    type: string;
+}
+
+interface configDataProps {
+    socialMedia: dadosDataProps[];  
+    contacts: dadosDataProps[];      
+}
+
 export async function GET(request: Request) {
     try {
         const config = await prisma.config.findFirst({
@@ -22,9 +35,19 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
 
-        const configData: any = {
-            socialMedia: body.socialMedia ? { create: body.socialMedia } : undefined,
-            contacts: body.contacts ? { create: body.contacts } : undefined,
+        const configData = {
+            socialMedia: {
+                create: body.socialMedia ? body.socialMedia.map((social: dadosDataProps) => ({
+                    name: social.name,
+                    url: social.url, // Corrigido para 'url' no mapeamento
+                })) : [],
+            },
+            contacts: {
+                create: body.contacts ? body.contacts.map((contact: dadosDataProps) => ({
+                    type: contact.type, // Corrigido para 'type' no mapeamento
+                    value: contact.value,
+                })) : [],
+            },
         };
 
         await prisma.config.create({
