@@ -32,32 +32,14 @@ model Product {
   updatedAt   DateTime @updatedAt
 }
 
-model Config {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  socialMedia SocialMedia[]
-  contacts    Contact[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-}
-
-model SocialMedia {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  url       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Config    Config   @relation(fields: [configId], references: [id])
-  configId  String   @db.ObjectId
-}
-
-model Contact {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  type      String
-  value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Config    Config   @relation(fields: [configId], references: [id])
-  configId  String   @db.ObjectId
+model config {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    value     String
+    url       String?
+    type      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model Faq {

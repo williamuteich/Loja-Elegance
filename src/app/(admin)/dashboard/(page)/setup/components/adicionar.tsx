@@ -13,43 +13,19 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-export default function ButtonAdicionar() {
+export default function ButtonAdicionar({data}: any) {
 
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
 
-        const question = document.getElementById("question") as HTMLInputElement;
-        const response = document.getElementById("response") as HTMLInputElement;
-
-        if (!question.value || !response.value) {
-            alert("Preencha todos os campos!");
-            return;
-        }
-
-        const data = await fetch(`/api/setup`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                question: question.value,
-                response: response.value
-            })
-        });
-
-        if(data.status === 201) {
-            alert("Pergunta frequente adicionada com sucesso!");
-            window.location.reload();
-        } else {
-            alert("Erro ao adicionar pergunta frequente.");
-        }
+        console.log(data);
     }
 
     return (
-        <div className="mb-6 px-6 w-full text-end">
+        <div className="mb-6 w-full text-end">
             <Dialog>
                 <DialogTrigger asChild>
-                    <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700 font-semibold py-2 px-6 rounded-md transition duration-300 ease-in-out">Adicionar</Button>
+                    <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">+</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[600px]">
                     <DialogHeader>
@@ -73,7 +49,7 @@ export default function ButtonAdicionar() {
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button type="button" onClick={handleSubmit}>Adicionar Dado</Button>
+                        <Button type="button" onClick={handleSubmit}>Adicionar</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

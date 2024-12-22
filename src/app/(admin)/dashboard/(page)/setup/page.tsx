@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import ButtonAdicionar from "./components/adicionar";
 
 export default async function Settings() {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/setup`);
@@ -48,9 +49,8 @@ export default async function Settings() {
                         ))}
                     </tbody>
                 </table>
-                <div className="mt-6 flex justify-between">
-                    <div></div>
-                    <button className="bg-green-600 text-white hover:bg-green-700 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">+</button>
+                <div className="mt-3 flex justify-between">
+                <ButtonAdicionar data={socialMedia}/>
                 </div>
             </div>
 
@@ -86,9 +86,8 @@ export default async function Settings() {
                     </tbody>
                 </table>
 
-                <div className="mt-6 flex justify-between">
-                    <div></div>
-                    <button className="bg-green-600 text-white hover:bg-green-700 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">+</button>
+                <div className="mt-3 flex justify-between">
+                <ButtonAdicionar data={contacts}/>
                 </div>
             </div>
 
