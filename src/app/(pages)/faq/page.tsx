@@ -9,7 +9,7 @@ interface FaqItem {
 
 const FaqPage = async () => {
 
-    const data = await fetch(`/api/faq`);
+    const data = await fetch(`${process.env.NEXTAUTH_URL}/api/faq`);
     const response: FaqItem[] = await data.json();
 
     return (
