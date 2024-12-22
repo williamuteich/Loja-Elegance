@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import ButtonAdicionar from "./components/adicionar";
 import Link from "next/link";
+import ButtonDelete from "./components/deletar";
 
 export default async function Settings() {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/setup`);
@@ -75,9 +76,7 @@ export default async function Settings() {
                                         <Button className="bg-blue-500 text-white hover:bg-blue-600 font-semibold py-1 px-3 rounded-md transition duration-300 ease-in-out">
                                             Editar
                                         </Button>
-                                        <Button variant="outline" className="bg-red-500 text-white hover:bg-red-600 font-semibold py-[6px] px-3 rounded-md transition duration-300 ease-in-out">
-                                            Excluir
-                                        </Button>
+                                        <ButtonDelete id={config.id} />
                                     </div>
                                 </td>
                             </tr>
