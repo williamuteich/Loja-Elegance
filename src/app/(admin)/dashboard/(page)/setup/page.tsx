@@ -17,9 +17,14 @@ export default async function Settings() {
             <div className="w-full px-8 py-10 min-h-screen bg-gray-50">
                 <div className="mx-auto bg-white p-8 rounded-lg shadow-lg text-center">
                     <h2 className="text-3xl font-semibold mb-4 text-gray-800">Nenhuma Configuração Encontrada</h2>
-                    <p className="text-gray-600 mb-6 text-sm leading-[1.6]">
-                        Ainda não há configurações para o seu site. Você pode adicionar novas variáveis para personalizar o site de acordo com suas necessidades.
-                    </p>
+                    <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
+    Gerencie as variáveis do seu site, como URLs e nomes. As alterações feitas aqui são aplicadas globalmente, sem necessidade de alterar o código.
+    <br />
+    <br />
+    No campo "Variável", para criar variáveis de redes sociais, o padrão deve ser "redeSocial", e para variáveis de contatos, o padrão deve ser "contato". 
+    Isso garante consistência e facilita a organização.
+</p>
+
                     <ButtonAdicionar data={setup} />
                 </div>
             </div>
@@ -31,8 +36,12 @@ export default async function Settings() {
             <div className="mx-auto bg-white p-8 rounded-lg shadow-lg">
                 <h2 className="text-3xl font-semibold mb-3 text-gray-800">Configurações Gerais</h2>
                 <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
-                    Gerencie as variáveis do seu site, como URLs e nomes. As alterações feitas aqui são aplicadas globalmente, sem necessidade de alterar o código.
-                </p>
+    Gerencie as variáveis do seu site, como URLs e nomes. As alterações feitas aqui são aplicadas globalmente, sem necessidade de alterar o código.
+    <br />
+    <br />
+    No campo "Variável", para criar variáveis de redes sociais, o padrão deve ser "redeSocial", e para variáveis de contatos, o padrão deve ser "contato". 
+    Isso garante consistência e facilita a organização.
+</p>
                 <table className="min-w-full table-auto border-collapse rounded-md border border-gray-300">
                     <thead className="bg-gray-200">
                         <tr>

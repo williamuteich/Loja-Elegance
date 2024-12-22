@@ -77,7 +77,7 @@ export default function ButtonAdicionar({ data }: any) {
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="url" className="text-right">
-                                valor
+                                URL
                             </Label>
                             <Input id="url" placeholder="Digite a url" className="col-span-3" />
                         </div>
