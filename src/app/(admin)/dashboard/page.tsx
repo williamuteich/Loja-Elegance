@@ -1,6 +1,4 @@
-
 export default async function Dashboard() {
-  
   return (
     <div className="w-full px-4 py-4">
       <h1 className="text-2xl font-bold">Bem-vindo ao Dashboard!</h1>

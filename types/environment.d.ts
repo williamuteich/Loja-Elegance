@@ -2,7 +2,7 @@ namespace NodeJS {
     export interface ProcessEnv {
         DATABASE_URL: string
         NEXTAUTH_SECRET: string
-        NEXT_API: string
+        NEXTAUTH_URL: string
         JWT_SECRET: string
     }
 }

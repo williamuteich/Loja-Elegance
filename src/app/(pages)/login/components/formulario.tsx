@@ -24,7 +24,7 @@ export default function Formulario() {
       });
 
       if (res?.ok) {
-        const sessionResponse = await fetch(`${process.env.NEXT_API}/api/login`, {
+        const sessionResponse = await fetch(`http://localhost:3000/api/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
