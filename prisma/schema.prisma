@@ -35,7 +35,7 @@ model Product {
 model config {
     id        String   @id @default(auto()) @map("_id") @db.ObjectId
     name      String
-    value     String
+    value     String?
     url       String?
     type      String
     createdAt DateTime @default(now())
