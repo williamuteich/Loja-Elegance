@@ -12,19 +12,19 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useState } from "react"
 
-export default function ButtonAdicionar({ data }: any) {
+export default function ButtonAdicionar() {
+    const [type, setType] = useState<string>("");
+    const [name, setName] = useState<string>("");
+    const [url, setUrl] = useState<string>("");
+    const [value, setValue] = useState<string>("");
 
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
 
-        const type = document.getElementById("type") as HTMLInputElement;
-        const name = document.getElementById("name") as HTMLInputElement;
-        const url = document.getElementById("url") as HTMLInputElement;
-        const value = document.getElementById("value") as HTMLInputElement;
-
-        if(!type.value || !name.value ) {
-            alert("Preencha os campos váriavel e nome!");
+        if (!type || !name) {
+            alert("Preencha os campos Variável e Nome!");
             return;
         }
 
@@ -34,14 +34,14 @@ export default function ButtonAdicionar({ data }: any) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                type: type.value,
-                name: name.value,
-                url: url.value,
-                value: value.value
+                type,
+                name,
+                url,
+                value,
             })
         });
 
-        if(response.status === 201) {
+        if (response.status === 201) {
             alert("Configuração adicionada com sucesso!");
             window.location.reload();
         } else {
@@ -67,25 +67,49 @@ export default function ButtonAdicionar({ data }: any) {
                             <Label htmlFor="type" className="text-right">
                                 Variável
                             </Label>
-                            <Input id="type" placeholder="Digite o nome da variável" className="col-span-3" />
+                            <Input 
+                                id="type" 
+                                placeholder="Digite o nome da variável" 
+                                className="col-span-3" 
+                                value={type}
+                                onChange={(e) => setType(e.target.value)} 
+                            />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="name" className="text-right">
-                                nome
+                                Nome
                             </Label>
-                            <Input id="name" placeholder="Digite o nome" className="col-span-3" />
+                            <Input 
+                                id="name" 
+                                placeholder="Digite o nome" 
+                                className="col-span-3" 
+                                value={name}
+                                onChange={(e) => setName(e.target.value)} 
+                            />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="url" className="text-right">
                                 URL
                             </Label>
-                            <Input id="url" placeholder="Digite a url" className="col-span-3" />
+                            <Input 
+                                id="url" 
+                                placeholder="Digite a URL" 
+                                className="col-span-3" 
+                                value={url}
+                                onChange={(e) => setUrl(e.target.value)} 
+                            />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="value" className="text-right">
-                                valor
+                                Valor
                             </Label>
-                            <Input id="value" placeholder="Digite o valor" className="col-span-3" />
+                            <Input 
+                                id="value" 
+                                placeholder="Digite o valor" 
+                                className="col-span-3" 
+                                value={value}
+                                onChange={(e) => setValue(e.target.value)} 
+                            />
                         </div>
                     </div>
                     <DialogFooter>
