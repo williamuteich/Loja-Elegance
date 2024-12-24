@@ -21,7 +21,7 @@ export default async function AdminLayout({ children }: LayoutProps) {
   return (
     <div className="flex min-h-screen">
       <Sidebar />
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-2">
         {children}
       </div>
     </div>

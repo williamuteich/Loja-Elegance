@@ -59,22 +59,55 @@ export async function POST(request: Request) {
         })
 
         return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
+    } catch (err) {
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
+export async function PUT(request: Request) {
+    try {
+        const { id, name, email, role, password } = await request.json();
+        const saltRounds = 10;
+
+        if (!id || !name || !email || !role || !password) {
+            return NextResponse.json({ message: 'ID, name, email, role and password are required' }, { status: 400 });
+        }
+
+        const hashPassword = await bcrypt.hash(password, saltRounds);
+
+        const user = await prisma.user.update({
+            where: { id },
+            data: {
+                name,
+                email,
+                role,
+                password: hashPassword
+            }
+        });
+
+        return NextResponse.json({ message: 'User updated successfully', user }, { status: 200 });
 
     } catch (err) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
 
-//export async function PUT(request: Request) {
-//    try {
-//
-//        const body = await request.json();
-//
-//        if (!body.id || !body.name || !body.email || !body.role || !body.password) {
-//            return NextResponse.json({ message: 'User ID is required' }, { status: 400 });
-//        }
-//
-//    } catch (err) {
-//        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-//    }
-//}
+export async function DELETE(request: Request) {
+    try {
+        const body = await request.json();
+        
+        const { id } = body;
+
+        if (!id) {
+            return NextResponse.json({ message: 'Id not provided' }, { status: 400 });
+        }
+
+        await prisma.user.delete({
+            where: { id }
+        });
+
+        return NextResponse.json({ message: 'User deleted successfully' }, { status: 200 });
+    } catch (err) {
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}

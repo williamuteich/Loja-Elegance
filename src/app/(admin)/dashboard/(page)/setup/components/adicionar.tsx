@@ -41,7 +41,7 @@ export default function ButtonAdicionar() {
             })
         });
 
-        if (response.status === 201) {
+        if (response.ok) {
             alert("Configuração adicionada com sucesso!");
             window.location.reload();
         } else {

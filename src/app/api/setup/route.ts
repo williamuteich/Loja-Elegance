@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 interface dadosDataProps {
     id: string;
     name: string;
-    value: string;
+    value: string | null;
     url: string | null;
     type: string;
 }
@@ -18,7 +18,6 @@ export async function GET(request: Request) {
 
         return NextResponse.json(config, { status: 200 });
     } catch (err) {
-        console.log(err)
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -38,7 +37,6 @@ export async function POST(request: Request) {
 
         return NextResponse.json({ message: 'Created', createdConfig }, { status: 201 });
     } catch (err) {
-        console.log(err)
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -63,7 +61,6 @@ export async function PUT(request: Request) {
 
         return NextResponse.json({ message: 'Updated', updatedConfig }, { status: 200 });
     } catch (err) {
-        console.log(err)
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

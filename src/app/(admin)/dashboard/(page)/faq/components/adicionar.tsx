@@ -37,7 +37,7 @@ export default function ButtonAdicionar() {
             })
         });
 
-        if(data.status === 201) {
+        if(data.ok) {
             alert("Pergunta frequente adicionada com sucesso!");
             window.location.reload();
         } else {

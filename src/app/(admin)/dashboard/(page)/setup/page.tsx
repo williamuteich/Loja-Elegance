@@ -35,7 +35,7 @@ export default async function Settings() {
     }
 
     return (
-        <div className="w-full px-8 py-10 min-h-screen bg-gray-50">
+        <div className="w-full px-4 py-10 min-h-screen bg-gray-50">
             <div className="mx-auto bg-white p-8 rounded-lg shadow-lg">
                 <h2 className="text-3xl font-semibold mb-3 text-gray-800">Configurações Gerais</h2>
                 <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
