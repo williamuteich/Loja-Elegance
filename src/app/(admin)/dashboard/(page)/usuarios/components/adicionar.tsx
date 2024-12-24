@@ -70,7 +70,7 @@ export default function ButtonAdicionar() {
                     <DialogHeader>
                         <DialogTitle>Adicionar novo usuaário</DialogTitle>
                         <DialogDescription>
-                            Preencha os campos abaixo para adicionar uma nova variável com seu respectivo nome e valor. Esses dados serão utilizados para personalizar a configuração do seu site.
+                            Preencha os campos abaixo para adicionar um novo usuário. Esse poderá personalizar e configurar seu site.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
@@ -80,7 +80,7 @@ export default function ButtonAdicionar() {
                             </Label>
                             <Input
                                 id="name"
-                                placeholder="Digite o nome da variável"
+                                placeholder="Digite o nome do usuário"
                                 className="col-span-3"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
@@ -92,7 +92,7 @@ export default function ButtonAdicionar() {
                             </Label>
                             <Input
                                 id="email"
-                                placeholder="Digite o nome"
+                                placeholder="Digite o email"
                                 className="col-span-3"
                                 value={email}
                                 onChange={(e) => setEamil(e.target.value)}
@@ -121,7 +121,7 @@ export default function ButtonAdicionar() {
                             </Label>
                             <Input
                                 id="password"
-                                placeholder="Digite o valor"
+                                placeholder="Digite uma senha"
                                 className="col-span-3"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
