@@ -86,7 +86,6 @@ export async function PUT(request: Request) {
         });
 
         return NextResponse.json({ message: 'User updated successfully', user }, { status: 200 });
-
     } catch (err) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }

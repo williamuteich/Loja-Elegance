@@ -1,8 +1,26 @@
+"use client"
 import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 
-export default function Footer() {
+interface dadosContatoProps{
+  id: string;
+  name: string;
+  type: string;
+  url: string;
+  value: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
+export default function Footer({data}: { data: dadosContatoProps[] }) {
+  const rotaUrl = usePathname();
+  const resUrl = rotaUrl.includes("/dashboard");
+
+  if (resUrl) {
+    return null;
+  }
+  
   return (
     <footer className="bg-gray-800 relative text-white py-10">
       <Link className="fixed bottom-32 right-32" href="https://wa.me/51998682733" target="_blank" rel="noopener noreferrer">

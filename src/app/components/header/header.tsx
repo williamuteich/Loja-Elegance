@@ -1,7 +1,26 @@
+"use client";
 import Link from "next/link";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { usePathname } from "next/navigation"; 
 
-export default function Header() {
+interface dadosContatoProps{
+  id: string;
+  name: string;
+  type: string;
+  url: string;
+  value: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export default function Header({data}: { data: dadosContatoProps[] }) {
+  const rotaUrl = usePathname();
+  const resUrl = rotaUrl.includes("/dashboard");
+
+  if (resUrl) {
+    return null;
+  }
+
   return (
     <header className="w-full z-50">
       <div className="bg-gray-800 text-white py-2">
