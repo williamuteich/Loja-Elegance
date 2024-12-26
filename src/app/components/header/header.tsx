@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
-import { usePathname } from "next/navigation"; 
+import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaWhatsapp, FaTelegram } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 
-interface dadosContatoProps{
+interface dadosContatoProps {
   id: string;
   name: string;
   type: string;
@@ -13,7 +13,7 @@ interface dadosContatoProps{
   updatedAt: string;
 }
 
-export default function Header({data}: { data: dadosContatoProps[] }) {
+export default function Header({ data }: { data: dadosContatoProps[] }) {
   const rotaUrl = usePathname();
   const resUrl = rotaUrl.includes("/dashboard");
 
@@ -21,23 +21,25 @@ export default function Header({data}: { data: dadosContatoProps[] }) {
     return null;
   }
 
+  const redesSociais = data.filter(item => item.type === 'redeSocial' && (item.url || item.value));
+
   return (
     <header className="w-full z-50">
       <div className="bg-gray-800 text-white py-2">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div className="flex space-x-6">
-            <Link href="https://facebook.com" target="_blank" className="hover:text-blue-400">
-              <FaFacebook className="h-6 w-6" />
-            </Link>
-            <Link href="https://twitter.com" target="_blank" className="hover:text-blue-400">
-              <FaTwitter className="h-6 w-6" />
-            </Link>
-            <Link href="https://instagram.com" target="_blank" className="hover:text-blue-400">
-              <FaInstagram className="h-6 w-6" />
-            </Link>
-            <Link href="https://linkedin.com" target="_blank" className="hover:text-blue-400">
-              <FaLinkedin className="h-6 w-6" />
-            </Link>
+            {redesSociais.map(social => (
+              (social.url || social.value) && (
+                <Link href={social.url || social.value} key={social.id} target="_blank">
+                  {social.name.toLowerCase() === 'facebook' && <FaFacebookF className="h-6 w-6" />}
+                  {social.name.toLowerCase() === 'instagram' && <FaInstagram className="h-6 w-6" />}
+                  {social.name.toLowerCase() === 'twitter' && <FaTwitter className="h-6 w-6" />}
+                  {social.name.toLowerCase() === 'linkedin' && <FaLinkedinIn className="h-6 w-6" />}
+                  {social.name.toLowerCase() === 'whatsapp' && <FaWhatsapp className="h-6 w-6" />}
+                  {social.name.toLowerCase() === 'telegram' && <FaTelegram className="h-6 w-6" />}
+                </Link>
+              )
+            ))}
           </div>
           <div>
             <span>Seja bem-vindo(a)</span>
