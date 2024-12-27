@@ -30,6 +30,42 @@ model Product {
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  categoryId  String?  @db.ObjectId
+  brandId     String?  @db.ObjectId
+  stock       Stock[]  @relation("ProductStock") 
+  
+  category    Category? @relation(fields: [categoryId], references: [id])
+
+  brand       Brand?    @relation(fields: [brandId], references: [id])
+}
+
+model Category {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  products  Product[]
+}
+
+model Brand {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  description String?
+  logo      String?  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  products  Product[]
+}
+
+model Stock {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String   @db.ObjectId
+  quantity  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  product   Product  @relation("ProductStock", fields: [productId], references: [id])
 }
 
 model config {
