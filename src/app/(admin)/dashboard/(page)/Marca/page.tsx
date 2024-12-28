@@ -1,9 +1,9 @@
 import Container from "../components/Container";
 
-export default function Produtos() {
+export default function Marca() {
     return (
         <Container>
-            Página de Produtos
+            <h1>Marca</h1>
         </Container>
     )
 }

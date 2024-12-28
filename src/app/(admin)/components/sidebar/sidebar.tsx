@@ -1,4 +1,4 @@
-import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaSignOutAlt, FaCog } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaSignOutAlt, FaCog, FaTag, FaIndustry } from 'react-icons/fa';
 import Link from 'next/link';
 
 export default function Sidebar() {
@@ -34,7 +34,21 @@ export default function Sidebar() {
                         <li>
                             <Link href="/dashboard/faq">
                                 <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-700">
-                                    <FaQuestionCircle  size={24} /> FAQ
+                                    <FaQuestionCircle size={24} /> FAQ
+                                </div>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="/dashboard/Marca">
+                                <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-700">
+                                    <FaIndustry size={24} /> Marca
+                                </div>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="/dashboard/Categoria">
+                                <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-700">
+                                    <FaTag size={24} /> Categoria
                                 </div>
                             </Link>
                         </li>

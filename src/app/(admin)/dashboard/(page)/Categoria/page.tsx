@@ -1,9 +1,9 @@
 import Container from "../components/Container";
 
-export default function Produtos() {
+export default function Categoria() {
     return (
         <Container>
-            Página de Produtos
+            <h1>Categoria</h1>
         </Container>
     )
 }
