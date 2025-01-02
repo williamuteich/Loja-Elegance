@@ -58,12 +58,11 @@ export default function AdicionarProduto() {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
   
-    // Obter os valores dos campos
     const name = event.target.name.value;
     const description = event.target.description.value;
     const price = parseFloat(event.target.price.value.replace("R$", "").replace(".", "").replace(",", "."));
-    const brandId = event.target.brand.value;  // Agora estamos pegando o 'id' da marca
-    const quantity = parseInt(event.target.stock.value, 10); // Converte para inteiro
+    const brandId = event.target.brand.value; 
+    const quantity = parseInt(event.target.stock.value, 10); 
     const active = event.target.status.value === true;  
     const categoryIds = selectedCategories ? selectedCategories.map((category) => category.value) : [];
 
@@ -77,11 +76,11 @@ export default function AdicionarProduto() {
         name,
         description,
         price,
-        brandId,  // Usando 'brandId' ao invés de 'brand'
-        categoryIds,  // Usando 'categoryIds' ao invés de 'categories'
-        quantity,  // Usando 'quantity' ao invés de 'stock'
-        active,  // Usando 'active' ao invés de 'status'
-        imageUrl: "",  // Adicionando a imagem (se necessário)
+        brandId,  
+        categoryIds, 
+        quantity,  
+        active,  
+        imageUrl: "",  
       }),
     });
   
