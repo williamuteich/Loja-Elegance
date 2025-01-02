@@ -4,8 +4,13 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function GET() {
-    const faqs = await prisma.faq.findMany();
-    return NextResponse.json(faqs);
+    try {
+        const faqs = await prisma.faq.findMany();
+
+        return NextResponse.json(faqs, { status: 200 });
+    } catch (err) {
+        return NextResponse.json({ message: "An error occurred." }, { status: 500 });
+    }
 }
 
 export async function POST(request: Request) {

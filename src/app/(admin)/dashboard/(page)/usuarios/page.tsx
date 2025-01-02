@@ -1,11 +1,11 @@
 import { FaUser } from "react-icons/fa";
-import ButtonAdicionar from "./components/adicionar";
 import ButtonDelete from "./components/deletar";
 import ButtonEditar from "./components/editar";
 import Container from "../components/Container";
+import ButtonAdicionar from "../components/ModalAdicionar";
 
 export default async function Usuarios() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user`);
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user`, { cache: 'force-cache' });
 
   if (!response.ok) {
     return <p>Ocorreu um erro ao carregar os usuários.</p>;
@@ -52,7 +52,28 @@ export default async function Usuarios() {
         </tbody>
       </table>
       <div className="mt-5 flex justify-between">
-        <ButtonAdicionar />
+        <ButtonAdicionar
+          config={{
+            title: "Adicionar Produto",
+            description: "Preencha os campos para adicionar um novo produto.",
+            fields: [
+              { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
+              { name: "email", label: "Email", type: "text", placeholder: "Digite o e-mail" },
+              {
+                name: "role",
+                label: "Permissão",
+                type: "select",
+                options: [
+                  { value: "admin", label: "Admin" },
+                  { value: "colaborador", label: "Colaborador" },
+                ],
+              },
+              { name: "password", label: "Senha", type: "password", placeholder: "Digite uma Senha" },
+            ],
+            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
+            urlRevalidate: "/dashboard/usuarios",
+          }}
+        />
       </div>
     </Container>
   );

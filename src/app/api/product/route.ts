@@ -3,6 +3,23 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export async function GET(request: Request) {
+    try{
+
+        const products = await prisma.product.findMany({
+            include: {
+                brand: true,
+                categories: true,
+                stock: true,
+            },
+        });
+
+        return NextResponse.json(products, { status: 200 });
+    } catch (err) {
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
+}
+
 export async function POST(request: Request) {
     try {
         const body = await request.json();
@@ -12,26 +29,31 @@ export async function POST(request: Request) {
             !body.description || 
             !body.price || 
             !body.brandId || 
-            !body.categoryId || 
+            !body.categoryIds || 
             typeof body.quantity !== "number"
         ) {
             return NextResponse.json(
-                { error: "name, description, price, brandId, categoryId, and quantity are required" }, 
+                { error: "name, description, price, brandId, categoryIds, and quantity are required" }, 
                 { status: 400 }
             );
         }
-
 
         const brandExists = await prisma.brand.findUnique({
             where: { id: body.brandId },
         });
 
-        const categoryExists = await prisma.category.findUnique({
-            where: { id: body.categoryId },
+        if (!brandExists) {
+            return NextResponse.json({ error: "Invalid brandId" }, { status: 400 });
+        }
+
+        const categoriesExist = await prisma.category.findMany({
+            where: {
+                id: { in: body.categoryIds },
+            },
         });
 
-        if (!brandExists || !categoryExists) {
-            return NextResponse.json({ error: "Invalid brandId or categoryId" }, { status: 400 });
+        if (categoriesExist.length !== body.categoryIds.length) {
+            return NextResponse.json({ error: "One or more categoryIds are invalid" }, { status: 400 });
         }
 
         const newProduct = await prisma.product.create({
@@ -42,7 +64,6 @@ export async function POST(request: Request) {
                 imageUrl: body.imageUrl || null,
                 active: body.active !== undefined ? body.active : true,
                 brand: { connect: { id: body.brandId } },
-                category: { connect: { id: body.categoryId } },
                 stock: {
                     create: {
                         quantity: body.quantity,
@@ -54,10 +75,17 @@ export async function POST(request: Request) {
             },
         });
 
-        return NextResponse.json(newProduct, { status: 201 });
+        await prisma.productCategory.createMany({
+            data: body.categoryIds.map((categoryId: string) => ({
+                productId: newProduct.id,
+                categoryId: categoryId,
+            })),
+        });
+
+        return NextResponse.json({ message: "Product created", data: newProduct }, { status: 201 });
 
     } catch (err) {
-        console.error("Erro ao criar produto:", err);
+        console.error(err);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }

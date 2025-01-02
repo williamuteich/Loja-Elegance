@@ -1,5 +1,5 @@
 import Container from "../components/Container";
-import ButtonAdicionar from "./components/adicionar";
+import ButtonAdicionar from "../components/ModalAdicionar";
 import ButtonDelete from "./components/deletar";
 import ButtonEditar from "./components/editar";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -26,7 +26,7 @@ export default async function Faq() {
             <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
                 Aqui você pode encontrar as respostas para as perguntas mais frequentes.
             </p>
-            <div className="w-full px-6 py-4 space-y-3">
+            <div className="w-full py-4 space-y-3">
                 {faqs.length === 0 ? (
                     <p className="text-gray-500 text-xl font-normal">Nenhuma pergunta frequente encontrada.</p>
                 ) : (
@@ -51,7 +51,18 @@ export default async function Faq() {
                 )}
             </div>
             <div className="mt-5 flex justify-between">
-                <ButtonAdicionar />
+                <ButtonAdicionar
+                    config={{
+                        title: "Adicionar Pergunta Frequente",
+                        description: "Preencha os campos abaixo para adicionar uma nova pergunta frequente à plataforma.",
+                        fields: [
+                            { name: "question", label: "Pergunta", type: "text", placeholder: "Sua pergunta" },
+                            { name: "response", label: "Resposta", type: "text", placeholder: "Sua resposta" },
+                        ],
+                        apiEndpoint: `${process.env.NEXTAUTH_URL}/api/faq`,
+                        urlRevalidate: "/dashboard/faq",
+                    }}
+                />
             </div>
         </Container>
     );

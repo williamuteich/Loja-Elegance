@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
-import ButtonAdicionar from "./components/adicionar"; // Remova a prop 'data'
+
 import Link from "next/link";
 import ButtonDelete from "./components/deletar";
 import ButtonEditar from "./components/editar";
 import Container from "../components/Container";
+import ButtonAdicionar from "../components/ModalAdicionar";
 
 export default async function Settings() {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/setup`);
@@ -27,8 +27,18 @@ export default async function Settings() {
                         No campo "Variável", para criar variáveis de redes sociais, o padrão deve ser "redeSocial", e para variáveis de contatos, o padrão deve ser "contato".
                         Isso garante consistência e facilita a organização.
                     </p>
-
-                    <ButtonAdicionar />
+                    <ButtonAdicionar
+                        config={{
+                            title: "Adicionar Pergunta Frequente",
+                            description: "Preencha os campos abaixo para adicionar uma nova pergunta frequente à plataforma.",
+                            fields: [
+                                { name: "question", label: "Pergunta", type: "text", placeholder: "Sua pergunta" },
+                                { name: "response", label: "Resposta", type: "text", placeholder: "Sua resposta" },
+                            ],
+                            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/faq`,
+                            urlRevalidate: "/dashboard/faq",
+                        }}
+                    />
                 </div>
             </div>
         );
@@ -83,7 +93,20 @@ export default async function Settings() {
                 </tbody>
             </table>
             <div className="mt-5 flex justify-between">
-                <ButtonAdicionar />
+                    <ButtonAdicionar
+                        config={{
+                            title: "Adicionar novo conteúdo",
+                            description: "Preencha os campos abaixo para adicionar uma nova variável com seu respectivo nome e valor. Esses dados serão utilizados para personalizar a configuração do seu site.",
+                            fields: [
+                                { name: "type", label: "Variável", type: "text", placeholder: "Digite o nome da variável" },
+                                { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
+                                { name: "url", label: "URL", type: "text", placeholder: "Digite a URL" },
+                                { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
+                            ],
+                            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/setup`,
+                            urlRevalidate: "/dashboard/setup",
+                        }}
+                    />
             </div>
         </Container>
     );
