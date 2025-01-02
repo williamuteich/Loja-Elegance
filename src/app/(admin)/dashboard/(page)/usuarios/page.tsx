@@ -2,7 +2,7 @@ import { FaUser } from "react-icons/fa";
 import ButtonDelete from "./components/deletar";
 import ButtonEditar from "./components/editar";
 import Container from "../components/Container";
-import ButtonAdicionar from "../components/ModalAdicionar";
+import ButtonAdicionar from "../components/ModalGeneric";
 
 export default async function Usuarios() {
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user`, { cache: 'force-cache' });
@@ -43,7 +43,37 @@ export default async function Usuarios() {
               <td className="py-3 px-4 font-medium text-sm text-red-700">{usuario.role}</td>
               <td className="py-3 px-0 font-medium text-sm text-gray-700">
                 <div className="flex justify-end items-center space-x-3">
-                  <ButtonEditar config={usuario} />
+                  <ButtonAdicionar
+                    config={{
+                      id: usuario.id,
+                      title: "Editar Usuário",
+                      description: "Preencha os campos para adicionar um novo produto.",
+                      action: "Editar",
+                      fields: [
+                        { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
+                        { name: "email", label: "Email", type: "text", placeholder: "Digite o e-mail" },
+                        {
+                          name: "role",
+                          label: "Permissão",
+                          type: "select",
+                          options: [
+                            { value: "admin", label: "Admin" },
+                            { value: "colaborador", label: "Colaborador" },
+                          ],
+                        },
+                        { name: "password", label: "Senha", type: "password", placeholder: "Digite uma Senha" },
+                      ],
+                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
+                      urlRevalidate: "/dashboard/usuarios",
+                      method: "PUT",
+                      initialValues: {
+                        name: usuario.name,
+                        email: usuario.email,
+                        role: usuario.role,
+                        passowrd: usuario.password,
+                      }
+                    }}
+                  />
                   <ButtonDelete id={usuario.id} />
                 </div>
               </td>
@@ -54,8 +84,10 @@ export default async function Usuarios() {
       <div className="mt-5 flex justify-between">
         <ButtonAdicionar
           config={{
-            title: "Adicionar Produto",
-            description: "Preencha os campos para adicionar um novo produto.",
+            id: "",
+            title: "Adicionar Usuário",
+            description: "Preencha os campos para adicionar um novo Usuário.",
+            action: "Adicionar",
             fields: [
               { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
               { name: "email", label: "Email", type: "text", placeholder: "Digite o e-mail" },
@@ -72,6 +104,7 @@ export default async function Usuarios() {
             ],
             apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
             urlRevalidate: "/dashboard/usuarios",
+            method: "POST",
           }}
         />
       </div>

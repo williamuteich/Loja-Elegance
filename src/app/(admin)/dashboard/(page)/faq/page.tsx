@@ -1,7 +1,6 @@
 import Container from "../components/Container";
-import ButtonAdicionar from "../components/ModalAdicionar";
+import ModalGeneric from "../components/ModalGeneric";
 import ButtonDelete from "./components/deletar";
-import ButtonEditar from "./components/editar";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export default async function Faq() {
@@ -38,7 +37,25 @@ export default async function Faq() {
                                         <span>{faq.question}</span>
                                     </AccordionTrigger>
                                     <div className="flex space-x-4">
-                                        <ButtonEditar id={faq.id} question={faq.question} response={faq.response} />
+                                        <ModalGeneric
+                                            config={{
+                                                id: faq.id,
+                                                title: "Editar Pergunta Frequente",
+                                                description: "Faça alterações na pergunta e resposta abaixo.",
+                                                action: "editar",
+                                                fields: [
+                                                    { name: "question", label: "Pergunta", type: "text", placeholder: "Sua pergunta" },
+                                                    { name: "response", label: "Resposta", type: "text", placeholder: "Sua resposta" },
+                                                ],
+                                                apiEndpoint: `${process.env.NEXTAUTH_URL}/api/faq`,
+                                                urlRevalidate: "/dashboard/faq",
+                                                method: "PUT",
+                                                initialValues: {
+                                                    question: faq.question,
+                                                    response: faq.response,
+                                                },
+                                            }}
+                                        />
                                         <ButtonDelete id={faq.id} />
                                     </div>
                                 </div>
@@ -51,16 +68,18 @@ export default async function Faq() {
                 )}
             </div>
             <div className="mt-5 flex justify-between">
-                <ButtonAdicionar
+                <ModalGeneric
                     config={{
                         title: "Adicionar Pergunta Frequente",
                         description: "Preencha os campos abaixo para adicionar uma nova pergunta frequente à plataforma.",
+                        action: "Adicionar",
                         fields: [
                             { name: "question", label: "Pergunta", type: "text", placeholder: "Sua pergunta" },
                             { name: "response", label: "Resposta", type: "text", placeholder: "Sua resposta" },
                         ],
                         apiEndpoint: `${process.env.NEXTAUTH_URL}/api/faq`,
                         urlRevalidate: "/dashboard/faq",
+                        method: "POST",
                     }}
                 />
             </div>

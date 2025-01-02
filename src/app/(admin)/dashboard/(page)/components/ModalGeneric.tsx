@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -34,43 +33,57 @@ interface FieldConfig {
 
 interface ButtonAdicionarProps {
     config: {
+        id?: string;
         title: string;
         description: string;
         fields: FieldConfig[];
         apiEndpoint: string;
         urlRevalidate: string;
+        method: string;
+        action: string;
+        initialValues?: { [key: string]: string }; 
     };
 }
 
 export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
+
     async function newUser(formData: FormData) {
         "use server"
-    
+
         const data = Object.fromEntries(formData.entries());
-    
+
+        if (config.id) {
+            data.id = config.id;
+        }
+
         const response = await fetch(config.apiEndpoint, {
-            method: "POST",
+            method: `${config.method}`,
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(data), 
+            body: JSON.stringify(data),
         });
-    
+
         if (!response.ok) {
-            console.log("Erro ao adicionar usuário.");
+            console.log("Erro ao adicionar Conteúdo.");
         }
-    
+
         revalidatePath(config.urlRevalidate);
     }
-    
 
     return (
-        <div className="mb-6 w-full text-end">
+        <div className="w-full text-end">
             <Dialog>
                 <DialogTrigger asChild>
-                    <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">
-                        Adicionar
-                    </Button>
+                    {config.action === "Adicionar" ? (
+                        <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">
+                            {config.action}
+                        </Button>
+                    ) : (
+                        <Button className="bg-blue-500 text-white hover:bg-blue-600 font-semibold py-1 px-3 rounded-md transition duration-300 ease-in-out">
+                            {config.action}
+                        </Button>
+                    )}
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[600px]">
                     <DialogHeader>
@@ -84,7 +97,7 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
                                     {field.label}
                                 </Label>
                                 {field.type === "select" && field.options ? (
-                                    <Select name={field.name}>
+                                    <Select name={field.name} defaultValue={config.initialValues?.[field.name]}>
                                         <SelectTrigger className="w-auto">
                                             <SelectValue placeholder={field.placeholder} />
                                         </SelectTrigger>
@@ -105,13 +118,14 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
                                         name={field.name}
                                         type={field.type}
                                         placeholder={field.placeholder}
+                                        defaultValue={config.initialValues?.[field.name]} 
                                         className="col-span-3"
                                     />
                                 )}
                             </div>
                         ))}
                         <DialogFooter>
-                            <Button type="submit">Adicionar</Button>
+                            <Button type="submit">Salvar</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>

@@ -1,6 +1,6 @@
 import { FaTag } from "react-icons/fa";
 import Container from "../components/Container";
-import ButtonAdicionar from "../components/ModalAdicionar";
+import ButtonAdicionar from "../components/ModalGeneric";
 import ButtonDelete from "../faq/components/deletar";
 import ButtonEditar from "../faq/components/editar";
 
@@ -24,7 +24,8 @@ export default async function Marca() {
           <tr>
             <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[315px]">ID</th>
             <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[210px]">Nome</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[calc(100%-275px)]">Descrição</th>
+            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[calc(100%-255px)]">Descrição</th>
+            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[calc(210px)]"></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-300">
@@ -38,6 +39,30 @@ export default async function Marca() {
                 </div>
               </td>
               <td className="py-3 px-4 font-medium text-sm text-gray-700">{marca.description}</td>
+              <td className="py-3 px-0 font-medium text-sm text-gray-700">
+                <div className="flex justify-end items-center space-x-3">
+                  <ButtonAdicionar
+                    config={{
+                      id: marca.id,
+                      title: "Adicionar Marca",
+                      description: "Preencha os campos para adicionar uma nova marca.",
+                      action: "Editar",
+                      fields: [
+                        { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da Marca" },
+                        { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da marca" },
+                      ],
+                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/brand`,
+                      urlRevalidate: "/dashboard/marca",
+                      method: "PUT",
+                      initialValues: {
+                        name: marca.name,
+                        description: marca.description,
+                      }
+                    }}
+                  />
+                  <ButtonDelete id={marca.id} />
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -47,12 +72,14 @@ export default async function Marca() {
           config={{
             title: "Adicionar Marca",
             description: "Preencha os campos para adicionar uma nova marca.",
+            action: "Adicionar",
             fields: [
               { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da Marca" },
               { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da marca" },
             ],
             apiEndpoint: `${process.env.NEXTAUTH_URL}/api/brand`,
             urlRevalidate: "/dashboard/marca",
+            method: "POST",
           }}
         />
       </div>

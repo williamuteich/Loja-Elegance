@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FaBox } from "react-icons/fa";
 
 import Container from "../components/Container";
-import ButtonAdicionar from "../components/ModalAdicionar";
+import ButtonAdicionar from "../components/ModalGeneric";
 import { Button } from "@/components/ui/button";
 
 interface ProductProps {

@@ -1,9 +1,8 @@
 
 import Link from "next/link";
 import ButtonDelete from "./components/deletar";
-import ButtonEditar from "./components/editar";
 import Container from "../components/Container";
-import ButtonAdicionar from "../components/ModalAdicionar";
+import ModalGeneric from "../components/ModalGeneric";
 
 export default async function Settings() {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/setup`);
@@ -27,16 +26,20 @@ export default async function Settings() {
                         No campo "Variável", para criar variáveis de redes sociais, o padrão deve ser "redeSocial", e para variáveis de contatos, o padrão deve ser "contato".
                         Isso garante consistência e facilita a organização.
                     </p>
-                    <ButtonAdicionar
+                    <ModalGeneric
                         config={{
                             title: "Adicionar Pergunta Frequente",
                             description: "Preencha os campos abaixo para adicionar uma nova pergunta frequente à plataforma.",
+                            action: "Adicionar",
                             fields: [
-                                { name: "question", label: "Pergunta", type: "text", placeholder: "Sua pergunta" },
-                                { name: "response", label: "Resposta", type: "text", placeholder: "Sua resposta" },
+                                { name: "type", label: "Variável", type: "text", placeholder: "Digite o nome da variável" },
+                                { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
+                                { name: "url", label: "URL", type: "text", placeholder: "Digite a URL" },
+                                { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
                             ],
                             apiEndpoint: `${process.env.NEXTAUTH_URL}/api/faq`,
                             urlRevalidate: "/dashboard/faq",
+                            method: "POST",
                         }}
                     />
                 </div>
@@ -84,7 +87,29 @@ export default async function Settings() {
                                     <span className="w-full p-2 border border-gray-300 rounded-md text-gray-700 truncate">
                                         {config.value ? config.value : <span className="text-gray-400">Valor não disponível</span>}
                                     </span>
-                                    <ButtonEditar config={config} />
+                                    <ModalGeneric
+                                        config={{
+                                            id: config.id,
+                                            title: "Editar Configuração",
+                                            description: "Faça alterações na variável, nome, URL e valor abaixo.",
+                                            action: "Editar",
+                                            fields: [
+                                                { name: "type", label: "Variável", type: "text", placeholder: "Digite o nome da variável" },
+                                                { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
+                                                { name: "url", label: "URL", type: "text", placeholder: "Digite a URL" },
+                                                { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
+                                            ],
+                                            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/setup`,
+                                            urlRevalidate: "/dashboard/setup",
+                                            method: "PUT",
+                                            initialValues: {
+                                                type: config.type,
+                                                name: config.name,
+                                                url: config.url,
+                                                value: config.value,
+                                            }
+                                        }}
+                                    />
                                     <ButtonDelete id={config.id} />
                                 </div>
                             </td>
@@ -93,20 +118,22 @@ export default async function Settings() {
                 </tbody>
             </table>
             <div className="mt-5 flex justify-between">
-                    <ButtonAdicionar
-                        config={{
-                            title: "Adicionar novo conteúdo",
-                            description: "Preencha os campos abaixo para adicionar uma nova variável com seu respectivo nome e valor. Esses dados serão utilizados para personalizar a configuração do seu site.",
-                            fields: [
-                                { name: "type", label: "Variável", type: "text", placeholder: "Digite o nome da variável" },
-                                { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
-                                { name: "url", label: "URL", type: "text", placeholder: "Digite a URL" },
-                                { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
-                            ],
-                            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/setup`,
-                            urlRevalidate: "/dashboard/setup",
-                        }}
-                    />
+                <ModalGeneric
+                    config={{
+                        title: "Adicionar novo conteúdo",
+                        description: "Preencha os campos abaixo para adicionar uma nova variável com seu respectivo nome e valor. Esses dados serão utilizados para personalizar a configuração do seu site.",
+                        action: "Adicionar",
+                        fields: [
+                            { name: "type", label: "Variável", type: "text", placeholder: "Digite o nome da variável" },
+                            { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
+                            { name: "url", label: "URL", type: "text", placeholder: "Digite a URL" },
+                            { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
+                        ],
+                        apiEndpoint: `${process.env.NEXTAUTH_URL}/api/setup`,
+                        urlRevalidate: "/dashboard/setup",
+                        method: "POST",
+                    }}
+                />
             </div>
         </Container>
     );
