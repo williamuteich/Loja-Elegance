@@ -1,14 +1,15 @@
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
     Select,
     SelectContent,
@@ -16,9 +17,8 @@ import {
     SelectItem,
     SelectLabel,
     SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-
+    SelectValue, // Corrigido: importação do SelectValue
+} from "@/components/ui/select"; 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { revalidatePath } from "next/cache";
@@ -41,7 +41,7 @@ interface ButtonAdicionarProps {
         urlRevalidate: string;
         method: string;
         action: string;
-        initialValues?: { [key: string]: string }; 
+        initialValues?: { [key: string]: string };
     };
 }
 
@@ -73,8 +73,8 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
 
     return (
         <div className="w-full text-end">
-            <Dialog>
-                <DialogTrigger asChild>
+            <AlertDialog>
+                <AlertDialogTrigger asChild>
                     {config.action === "Adicionar" ? (
                         <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">
                             {config.action}
@@ -84,12 +84,12 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
                             {config.action}
                         </Button>
                     )}
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[600px]">
-                    <DialogHeader>
-                        <DialogTitle>{config.title}</DialogTitle>
-                        <DialogDescription>{config.description}</DialogDescription>
-                    </DialogHeader>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{config.title}</AlertDialogTitle>
+                        <AlertDialogDescription>{config.description}</AlertDialogDescription>
+                    </AlertDialogHeader>
                     <form action={newUser} className="grid gap-4 py-4">
                         {config.fields.map((field) => (
                             <div key={field.name} className="grid grid-cols-4 items-center gap-4">
@@ -118,18 +118,19 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
                                         name={field.name}
                                         type={field.type}
                                         placeholder={field.placeholder}
-                                        defaultValue={config.initialValues?.[field.name]} 
+                                        defaultValue={config.initialValues?.[field.name]}
                                         className="col-span-3"
                                     />
                                 )}
                             </div>
                         ))}
-                        <DialogFooter>
-                            <Button type="submit">Salvar</Button>
-                        </DialogFooter>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction type="submit">Salvar</AlertDialogAction>
+                        </AlertDialogFooter>
                     </form>
-                </DialogContent>
-            </Dialog>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

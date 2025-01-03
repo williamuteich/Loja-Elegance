@@ -1,4 +1,3 @@
-"use client"
 
 import {
     AlertDialog,
@@ -12,11 +11,13 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import { revalidatePath } from "next/cache"
 
 export default function ButtonDelete({ id }: { id: string }) {
     const handleDelete = async () => {
+        "use server"
 
-        const response = await fetch(`/api/setup`, {
+        const response = await fetch(`${process.env.NEXTAUTH_URL}/api/setup`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -28,8 +29,7 @@ export default function ButtonDelete({ id }: { id: string }) {
             alert("Erro ao deletar a variável")
         }
 
-        alert("Variável deletada com sucesso!");
-        window.location.reload();
+        revalidatePath("/dashboard/setup")
     }
 
     return (
