@@ -1,6 +1,6 @@
 import Container from "../components/Container";
+import ModalDeletar from "../components/ModalDeletar";
 import ModalGeneric from "../components/ModalGeneric";
-import ButtonDelete from "./components/deletar";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export default async function Faq() {
@@ -17,6 +17,35 @@ export default async function Faq() {
         id: string;
         question: string;
         response: string;
+    }
+
+    if (faqs.length === 0 || !faqs) {
+        return (
+            <div className="w-full px-8 py-10 min-h-screen bg-gray-50">
+                <div className="mx-auto bg-white p-8 rounded-lg shadow-lg text-center">
+                    <h2 className="text-3xl font-semibold mb-4 text-gray-800">Nenhuma FAQ encontrada.</h2>
+                    <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
+                        Não há perguntas frequentes cadastradas no momento. Você pode adicionar novas perguntas clicando no botão abaixo.
+                    </p>
+                    <div className="mt-5 flex justify-center">
+                        <ModalGeneric
+                            config={{
+                                title: "Adicionar Pergunta Frequente",
+                                description: "Preencha os campos abaixo para adicionar uma nova pergunta frequente à plataforma.",
+                                action: "Adicionar",
+                                fields: [
+                                    { name: "question", label: "Pergunta", type: "text", placeholder: "Sua pergunta" },
+                                    { name: "response", label: "Resposta", type: "text", placeholder: "Sua resposta" },
+                                ],
+                                apiEndpoint: `${process.env.NEXTAUTH_URL}/api/faq`,
+                                urlRevalidate: "/dashboard/faq",
+                                method: "POST",
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -56,7 +85,15 @@ export default async function Faq() {
                                                 },
                                             }}
                                         />
-                                        <ButtonDelete id={faq.id} />
+                                        <ModalDeletar
+                                            config={{
+                                                id: faq.id,
+                                                title: "Tem certeza que deseja excluir esta pergunta?",
+                                                description: "Esta ação não pode ser desfeita. A pergunta será removida permanentemente. Deseja continuar?",
+                                                apiEndpoint: `${process.env.NEXTAUTH_URL}/api/faq`,
+                                                urlRevalidate: "/dashboard/faq",
+                                            }}
+                                        />
                                     </div>
                                 </div>
                                 <AccordionContent className=" px-16 text-md text-blue-600 font-normal">

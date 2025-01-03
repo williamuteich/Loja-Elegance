@@ -4,12 +4,15 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
-    try{
-
+    try {
         const products = await prisma.product.findMany({
             include: {
                 brand: true,
-                categories: true,
+                categories: {
+                    include: {
+                        category: true, 
+                    },
+                },
                 stock: true,
             },
         });
@@ -19,6 +22,7 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
+
 
 export async function POST(request: Request) {
     try {

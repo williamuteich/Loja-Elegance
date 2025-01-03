@@ -1,15 +1,15 @@
 
 import Link from "next/link";
-import ButtonDelete from "./components/deletar";
 import Container from "../components/Container";
 import ModalGeneric from "../components/ModalGeneric";
+import ModalDeletar from "../components/ModalDeletar";
 
 export default async function Settings() {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/setup`);
 
     if (!response.ok) {
-        console.error("Erro ao buscar FAQs:", response.statusText);
-        return <p>Ocorreu um erro ao carregar as informações das Configurações.</p>;
+        console.log(response)
+        return <p>Ocorreu um erro ao carregar os produtos.</p>;
     }
 
     const setup = await response.json();
@@ -110,7 +110,16 @@ export default async function Settings() {
                                             }
                                         }}
                                     />
-                                    <ButtonDelete id={config.id} />
+                                    <ModalDeletar
+                                        config={{
+                                            id: config.id,
+                                            title: "Tem certeza de que deseja excluir essa variável?",
+                                            description: "Esta ação irá remover permanentemente a variável do seu site. Isso pode afetar a configuração do seu site, como URLs ou nomes, e pode causar erros em partes do sistema que dependem dessa variável. Certifique-se de que não há dependências antes de prosseguir com a exclusão.",
+                                            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/setup`,
+                                            urlRevalidate: "/dashboard/setup",
+                                        }}
+                                    />
+
                                 </div>
                             </td>
                         </tr>

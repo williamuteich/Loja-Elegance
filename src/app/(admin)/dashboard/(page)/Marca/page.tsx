@@ -1,17 +1,47 @@
 import { FaTag } from "react-icons/fa";
 import Container from "../components/Container";
 import ButtonAdicionar from "../components/ModalGeneric";
-import ButtonDelete from "../faq/components/deletar";
-import ButtonEditar from "../faq/components/editar";
+import ModalDeletar from "../components/ModalDeletar";
 
 export default async function Marca() {
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/brand`);
 
   if (!response.ok) {
-    return <p>Ocorreu um erro ao carregar as marcas.</p>;
+    console.log(response)
+    return <p>Ocorreu um erro ao carregar os produtos.</p>;
   }
 
   const marcas = await response.json();
+
+  if (marcas.length === 0 || !marcas) {
+    return (
+      <div className="w-full px-8 py-10 min-h-screen bg-gray-50">
+        <div className="mx-auto bg-white p-8 rounded-lg shadow-lg text-center">
+          <h2 className="text-3xl font-semibold mb-4 text-gray-800">Nenhuma Marca encontrada</h2>
+          <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
+            No momento, não há marcas cadastradas. Você pode adicionar novas marcas clicando no botão abaixo.
+            <br />
+            <br />
+            As marcas são importantes para categorizar e organizar os produtos ou serviços. Ao adicionar uma nova marca, informe um nome relevante e uma breve descrição para facilitar a identificação.
+          </p>
+          <ButtonAdicionar
+            config={{
+              title: "Adicionar Marca",
+              description: "Preencha os campos para adicionar uma nova marca.",
+              action: "Adicionar",
+              fields: [
+                { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da Marca" },
+                { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da marca" },
+              ],
+              apiEndpoint: `${process.env.NEXTAUTH_URL}/api/brand`,
+              urlRevalidate: "/dashboard/marca",
+              method: "POST",
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Container>
@@ -60,7 +90,15 @@ export default async function Marca() {
                       }
                     }}
                   />
-                  <ButtonDelete id={marca.id} />
+                  <ModalDeletar
+                    config={{
+                      id: marca.id,
+                      title: "Tem certeza que deseja excluir esta marca?",
+                      description: "Esta ação não pode ser desfeita. A marca será removida permanentemente. Deseja continuar?",
+                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/brand`,
+                      urlRevalidate: "/dashboard/marca",
+                    }}
+                  />
                 </div>
               </td>
             </tr>

@@ -1,16 +1,56 @@
 import { FaList } from "react-icons/fa";
 import Container from "../components/Container";
 import ButtonAdicionar from "../components/ModalGeneric";
-import ButtonDelete from "../faq/components/deletar";
+import ModalDeletar from "../components/ModalDeletar";
+
 
 export default async function Categoria() {
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/category`);
 
   if (!response.ok) {
-    return <p>Ocorreu um erro ao carregar as marcas.</p>;
+    console.log(response)
+    return <p>Ocorreu um erro ao carregar os produtos.</p>;
   }
 
   const categorias = await response.json();
+
+  if (categorias.length === 0 || !categorias) {
+    return (
+      <div className="w-full px-8 py-10 min-h-screen bg-gray-50">
+        <div className="mx-auto bg-white p-8 rounded-lg shadow-lg text-center">
+          <h2 className="text-3xl font-semibold mb-4 text-gray-800">Nenhuma Categoria encontrada.</h2>
+          <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
+            Não há categorias cadastradas no momento. Você pode adicionar novas categorias preenchendo os campos abaixo.
+            <br />
+            <br />
+            A categoria pode ser qualquer grupo que você gostaria de organizar em seu site. Para que o sistema funcione corretamente, sugere-se escolher um nome que seja claro e representativo do que a categoria irá englobar.
+            <br />
+            <br />
+            No campo "Nome", digite o nome da categoria, por exemplo: "Tecnologia", "Saúde", "Moda", entre outros.
+            <br />
+            No campo "Descrição", descreva brevemente o objetivo ou o conteúdo da categoria. A descrição ajudará os usuários a entender melhor o que cada categoria representa.
+            <br />
+            <br />
+            Quando estiver pronto para adicionar, basta preencher os campos e clicar em "Adicionar".
+          </p>
+          <ButtonAdicionar
+            config={{
+              title: "Adicionar categoria",
+              description: "Preencha os campos para adicionar uma nova categoria.",
+              action: "Adicionar",
+              fields: [
+                { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da categoria" },
+                { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da categoria" },
+              ],
+              apiEndpoint: `${process.env.NEXTAUTH_URL}/api/category`,
+              urlRevalidate: "/dashboard/categoria",
+              method: "POST",
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Container>
@@ -59,7 +99,15 @@ export default async function Categoria() {
                       }
                     }}
                   />
-                  <ButtonDelete id={categoria.id} />
+                  <ModalDeletar
+                    config={{
+                      id: categoria.id,
+                      title: "Tem certeza que deseja excluir esta categoria?",
+                      description: "Esta ação não pode ser desfeita. A categoria será removida permanentemente. Deseja continuar?",
+                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/category`,
+                      urlRevalidate: "/dashboard/categoria",
+                    }}
+                  />
                 </div>
               </td>
             </tr>

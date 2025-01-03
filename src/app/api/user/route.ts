@@ -16,7 +16,7 @@ export async function GET(request: Request) {
             }
         });
 
-        return NextResponse.json({ message: 'Users fetched successfully', data: users }, { status: 201 });
+        return NextResponse.json(users , { status: 201 });
     } catch (err) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }

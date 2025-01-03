@@ -5,20 +5,20 @@ import Container from "../components/Container";
 import ButtonAdicionar from "../components/ModalGeneric";
 import { Button } from "@/components/ui/button";
 
-interface ProductProps {
+interface ProductCategoryProps {
     id: string;
-    name: string;
-    description: string;
-    price: number;
-    active: boolean;
-    categories: CategoryProps[];
-    brand: BrandProps;
-    stock: StockProps;
+    productId: string;
+    categoryId: string;
+    category: CategoryProps;
 }
+
 
 interface CategoryProps {
     id: string;
     name: string;
+    description?: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 interface BrandProps {
@@ -31,10 +31,27 @@ interface StockProps {
     quantity: number;
 }
 
+interface ProductProps {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    active: boolean;
+    categories: ProductCategoryProps[];
+    brand: BrandProps;
+    stock: StockProps;
+}
+
+interface StockProps {
+    id: string;
+    quantity: number;
+}
+
 export default async function Produtos() {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product`);
 
     if (!response.ok) {
+        console.log(response)
         return <p>Ocorreu um erro ao carregar os produtos.</p>;
     }
 
@@ -43,8 +60,10 @@ export default async function Produtos() {
     if (!produtos || produtos.length === 0) {
         return (
             <Container>
-                <h2 className="text-3xl font-semibold mb-3 text-gray-800">Sem Produtos Cadastrados</h2>
-                <p className="text-gray-600 mb-10 text-sm leading-[1.6]">Atualmente, não há produtos cadastrados. Por favor, volte mais tarde.</p>
+                <h2 className="text-3xl font-semibold mb-3 text-gray-800 text-center">Sem Produtos Cadastrados</h2>
+                <p className="text-gray-600 mb-10 text-sm leading-[1.6] text-center">
+                    Atualmente, não há produtos cadastrados. Por favor, volte mais tarde.
+                </p>
                 <div className="mt-5 w-full flex justify-end">
                     <Link href={`/dashboard/produtos/adicionar`}>
                         <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">
@@ -52,6 +71,7 @@ export default async function Produtos() {
                         </Button>
                     </Link>
                 </div>
+
             </Container>
         );
     }
@@ -93,9 +113,10 @@ export default async function Produtos() {
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <Link href={`/dashboard/produtos/${produto.name}`} className="block">
-                                    {produto.categories.map((category) => (
-                                        <span key={category.id}>{category.name}{' '}</span>
-                                    ))}
+                                    {produto.categories.reduce((acc, item, index) => {
+                                        const separator = index > 0 ? ', ' : '';
+                                        return acc + separator + item.category.name;
+                                    }, '')}
                                 </Link>
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">

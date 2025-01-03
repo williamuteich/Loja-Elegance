@@ -8,10 +8,50 @@ export default async function Usuarios() {
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user`, { cache: 'force-cache' });
 
   if (!response.ok) {
-    return <p>Ocorreu um erro ao carregar os usuários.</p>;
+    console.log(response)
+    return <p>Ocorreu um erro ao carregar os produtos.</p>;
   }
 
   const usuarios = await response.json();
+
+  if (usuarios.length === 0 || !usuarios) {
+    return (
+      <Container>
+        <h2 className="text-3xl font-semibold mb-3 text-gray-800 text-center">Sem Usuários Cadastrados</h2>
+        <p className="text-gray-600 mb-10 text-sm leading-[1.6] text-center">
+          Atualmente, não há usuários cadastrados. Adicione um usuário para começar a gerenciar as permissões.
+        </p>
+        <div className="mt-5 w-full flex justify-end">
+          <ButtonAdicionar
+            config={{
+              id: "",
+              title: "Adicionar Usuário",
+              description: "Preencha os campos para adicionar um novo Usuário.",
+              action: "Adicionar",
+              fields: [
+                { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
+                { name: "email", label: "Email", type: "text", placeholder: "Digite o e-mail" },
+                {
+                  name: "role",
+                  label: "Permissão",
+                  type: "select",
+                  options: [
+                    { value: "admin", label: "Admin" },
+                    { value: "colaborador", label: "Colaborador" },
+                  ],
+                },
+                { name: "password", label: "Senha", type: "password", placeholder: "Digite uma Senha" },
+              ],
+              apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
+              urlRevalidate: "/dashboard/usuarios",
+              method: "POST",
+            }}
+          />
+        </div>
+      </Container>
+    );
+  }
+
 
   return (
     <Container>
@@ -30,7 +70,7 @@ export default async function Usuarios() {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-300">
-          {usuarios.data.map((usuario: any) => (
+          {usuarios.map((usuario: any) => (
             <tr key={usuario.id} className="hover:bg-gray-50 transition-colors">
               <td className="py-3 px-4 font-medium text-sm text-blue-600">{usuario.id}</td>
               <td className="py-3 px-4 font-medium text-sm text-gray-700">

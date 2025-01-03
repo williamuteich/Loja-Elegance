@@ -13,24 +13,34 @@ import {
 import { Button } from "@/components/ui/button"
 import { revalidatePath } from "next/cache"
 
-export default function ButtonDelete({ id }: { id: string }) {
+interface ButtonDeleteProps {
+    config: {
+        id: string;
+        title: string;
+        description: string;
+        apiEndpoint: string;
+        urlRevalidate: string;
+    }
+}
+
+export default function ButtonDelete({ config }: ButtonDeleteProps) {
     const handleDelete = async () => {
         "use server"
 
-        const response = await fetch(`${process.env.NEXTAUTH_URL}/api/setup`, {
+        const response = await fetch(`${config.apiEndpoint}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ id }),
-        })
+            body: JSON.stringify({ id: config.id }),
+        });
 
         if (!response.ok) {
-            alert("Erro ao deletar a variável")
+            console.log("Erro ao excluir variável:", response);
         }
 
-        revalidatePath("/dashboard/setup")
-    }
+        revalidatePath(`${config.urlRevalidate}`);
+    };
 
     return (
         <AlertDialog>
@@ -41,12 +51,9 @@ export default function ButtonDelete({ id }: { id: string }) {
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Tem certeza de que deseja excluir esta variável?</AlertDialogTitle>
+                    <AlertDialogTitle>{config.title}</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Esta ação irá remover permanentemente a variável do seu site. Isso pode afetar a configuração do seu site, como URLs ou nomes,
-                        e pode causar erros em partes do sistema que dependem dessa variável.
-                        <br />
-                        Certifique-se de que não há dependências antes de prosseguir com a exclusão.
+                        {config.description}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -55,5 +62,5 @@ export default function ButtonDelete({ id }: { id: string }) {
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-    )
+    );
 }
