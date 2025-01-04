@@ -62,7 +62,7 @@ export default async function Produtos() {
             <Container>
                 <h2 className="text-3xl font-semibold mb-3 text-gray-800 text-center">Sem Produtos Cadastrados</h2>
                 <p className="text-gray-600 mb-10 text-sm leading-[1.6] text-center">
-                    Atualmente, não há produtos cadastrados. Por favor, volte mais tarde.
+                    Não há produtos cadastrados no momento. Utilize o botão abaixo para adicionar novos produtos.
                 </p>
                 <div className="mt-5 w-full flex justify-end">
                     <Link href={`/dashboard/produtos/adicionar`}>
