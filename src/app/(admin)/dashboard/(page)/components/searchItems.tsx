@@ -1,14 +1,15 @@
-"use client"
-import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
+"use client";
+import { useDebouncedCallback } from "use-debounce";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 export default function SearchItems() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const {replace} = useRouter();
+    const { replace } = useRouter();
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const handleChange = useDebouncedCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const params = new URLSearchParams(searchParams);
         const searchString = e.target.value;
     
@@ -20,8 +21,7 @@ export default function SearchItems() {
         }
     
         replace(`${pathname}?${params.toString()}`);
-    }
-    
+    }, 600);
 
     return (
         <div className="relative">
@@ -33,5 +33,5 @@ export default function SearchItems() {
                 onChange={handleChange}
             />
         </div>
-    )
+    );
 }
