@@ -17,7 +17,7 @@ export async function GET(request: Request) {
         const search = url.searchParams.get('search');
         const page = parseInt(url.searchParams.get('page') || '1');
 
-        const pageSize = 3;
+        const pageSize = 10;
 
         const config: dadosDataProps[] = await prisma.config.findMany({
             where: search

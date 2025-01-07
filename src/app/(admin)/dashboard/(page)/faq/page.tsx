@@ -2,16 +2,26 @@ import Container from "../components/Container";
 import ModalDeletar from "../components/ModalDeletar";
 import ModalGeneric from "../components/ModalGeneric";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import SearchItems from "../components/searchItems";
+import Paginacao from "../components/Paginacao";
 
-export default async function Faq() {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/faq`);
+interface SearchParams {
+    search: string;
+    page: string;
+}
+
+export default async function Faq({ searchParams }: { searchParams: SearchParams }) {
+    const { search } = await searchParams;
+    const { page } = await searchParams;
+
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/faq?${search ? `search=${search}` : page ? `page=${page}` : ''}`);
 
     if (!response.ok) {
         console.error("Erro ao buscar FAQs:", response.statusText);
         return <p>Ocorreu um erro ao carregar as FAQs.</p>;
     }
 
-    const faqs = await response.json();
+    const {faq, totalRecords} = await response.json();
 
     interface FaqProps {
         id: string;
@@ -19,7 +29,7 @@ export default async function Faq() {
         response: string;
     }
 
-    if (faqs.length === 0 || !faqs) {
+    if (faq.length === 0 || !faq) {
         return (
             <div className="w-full px-8 py-10 min-h-screen bg-gray-50">
                 <div className="mx-auto bg-white p-8 rounded-lg shadow-lg text-center">
@@ -27,6 +37,9 @@ export default async function Faq() {
                     <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
                         Não há perguntas frequentes cadastradas no momento. Você pode adicionar novas perguntas clicando no botão abaixo.
                     </p>
+                    <div className="mb-4">
+                        <SearchItems />
+                    </div>
                     <div className="mt-5 flex justify-center">
                         <ModalGeneric
                             config={{
@@ -54,12 +67,15 @@ export default async function Faq() {
             <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
                 Aqui você pode encontrar as respostas para as perguntas mais frequentes.
             </p>
+            <div className="mb-4">
+                <SearchItems />
+            </div>
             <div className="w-full py-4 space-y-3">
-                {faqs.length === 0 ? (
+                {faq.length === 0 ? (
                     <p className="text-gray-500 text-xl font-normal">Nenhuma pergunta frequente encontrada.</p>
                 ) : (
                     <Accordion type="single" collapsible className="w-full">
-                        {faqs.map((faq: FaqProps) => (
+                        {faq.map((faq: FaqProps) => (
                             <AccordionItem key={faq.id} value={faq.id}>
                                 <div className="flex justify-between items-center pb-0">
                                     <AccordionTrigger className="flex flex-row-reverse gap-4 items-center space-x-4 text-md flex-1">
@@ -120,6 +136,7 @@ export default async function Faq() {
                     }}
                 />
             </div>
+            <Paginacao data={faq} totalRecords={totalRecords} />
         </Container>
     );
 }

@@ -20,7 +20,7 @@ export default function Paginacao({ data, totalRecords }: PaginacaoProps) {
     const pathname = usePathname();
     const { replace } = useRouter();
 
-    const pageSize = 3;
+    const pageSize = 10;
     const totalPages = Math.ceil(totalRecords / pageSize);
     const currentPage = parseInt(searchParams.get('page') || '1'); 
 

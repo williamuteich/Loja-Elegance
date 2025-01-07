@@ -4,16 +4,18 @@ import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaWhatsapp, FaTelegr
 import { usePathname } from "next/navigation";
 
 interface dadosContatoProps {
-  id: string;
-  name: string;
-  type: string;
-  url: string;
-  value: string;
-  createdAt: string;
-  updatedAt: string;
+  config: {
+    id: string;
+    name: string;
+    type: string;
+    url: string;
+    value: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
 }
 
-export default function Header({ data }: { data: dadosContatoProps[] }) {
+export default function Header({ data }: { data: dadosContatoProps }) {
   const rotaUrl = usePathname();
   const resUrl = rotaUrl.includes("/dashboard");
 
@@ -21,7 +23,7 @@ export default function Header({ data }: { data: dadosContatoProps[] }) {
     return null;
   }
 
-  const redesSociais = data.filter(item => item.type === 'redeSocial' && (item.url || item.value));
+  const redesSociais = data.config.filter(item => item.type === 'redeSocial' && (item.url || item.value));
 
   return (
     <header className="w-full z-50">

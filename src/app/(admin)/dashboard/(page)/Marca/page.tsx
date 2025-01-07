@@ -2,16 +2,27 @@ import { FaTag } from "react-icons/fa";
 import Container from "../components/Container";
 import ButtonAdicionar from "../components/ModalGeneric";
 import ModalDeletar from "../components/ModalDeletar";
+import SearchItems from "../components/searchItems";
+import Paginacao from "../components/Paginacao";
 
-export default async function Marca() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/brand`);
+interface SearchParams {
+  search: string;
+  page: string;
+}
+
+export default async function Marca({ searchParams }: { searchParams: SearchParams }) {
+
+  const { search } = await searchParams;
+  const { page } = await searchParams;
+
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/brand?${search ? `search=${search}` : page ? `page=${page}` : ''}`);
 
   if (!response.ok) {
     console.log(response)
     return <p>Ocorreu um erro ao carregar os produtos.</p>;
   }
 
-  const marcas = await response.json();
+  const {marcas, totalRecords} = await response.json();
 
   if (marcas.length === 0 || !marcas) {
     return (
@@ -24,6 +35,9 @@ export default async function Marca() {
             <br />
             As marcas são importantes para categorizar e organizar os produtos ou serviços. Ao adicionar uma nova marca, informe um nome relevante e uma breve descrição para facilitar a identificação.
           </p>
+          <div className="mb-4">
+            <SearchItems />
+          </div>
           <ButtonAdicionar
             config={{
               title: "Adicionar Marca",
@@ -49,6 +63,11 @@ export default async function Marca() {
       <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
         Gerencie as marcas e suas descrições. Adicione, edite ou exclua marcas conforme necessário.
       </p>
+
+      <div className="mb-4">
+        <SearchItems />
+      </div>
+
       <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-200">
           <tr>
@@ -121,6 +140,7 @@ export default async function Marca() {
           }}
         />
       </div>
+      <Paginacao data={marcas} totalRecords={totalRecords} />
     </Container>
   );
 }

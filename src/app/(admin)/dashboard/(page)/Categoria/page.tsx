@@ -2,19 +2,28 @@ import { FaList } from "react-icons/fa";
 import Container from "../components/Container";
 import ButtonAdicionar from "../components/ModalGeneric";
 import ModalDeletar from "../components/ModalDeletar";
+import SearchItems from "../components/searchItems";
+import Paginacao from "../components/Paginacao";
 
+interface SearchParams {
+  search: string;
+  page: string;
+}
 
-export default async function Categoria() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/category`);
+export default async function Categoria({ searchParams }: { searchParams: SearchParams }) {
+  const { search } = await searchParams;
+  const { page } = await searchParams;
+
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/category?${search ? `search=${search}` : ''}&page=${page || 1}`);
 
   if (!response.ok) {
-    console.log(response)
-    return <p>Ocorreu um erro ao carregar os produtos.</p>;
+    console.log(response);
+    return <p>Ocorreu um erro ao carregar as categorias.</p>;
   }
 
-  const categorias = await response.json();
+  const { category, totalRecords } = await response.json();
 
-  if (categorias.length === 0 || !categorias) {
+  if (!category || category.length === 0) {
     return (
       <div className="w-full px-8 py-10 min-h-screen bg-gray-50">
         <div className="mx-auto bg-white p-8 rounded-lg shadow-lg text-center">
@@ -33,6 +42,11 @@ export default async function Categoria() {
             <br />
             Quando estiver pronto para adicionar, basta preencher os campos e clicar em "Adicionar".
           </p>
+
+          <div className="mb-4">
+            <SearchItems />
+          </div>
+          
           <ButtonAdicionar
             config={{
               title: "Adicionar categoria",
@@ -58,6 +72,11 @@ export default async function Categoria() {
       <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
         Gerencie as categorias e suas descrições. Adicione, edite ou exclua marcas conforme necessário.
       </p>
+
+      <div className="mb-4">
+        <SearchItems />
+      </div>
+
       <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-200">
           <tr>
@@ -68,7 +87,7 @@ export default async function Categoria() {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-300">
-          {categorias.map((categoria: any) => (
+          {category.map((categoria: any) => (
             <tr key={categoria.id} className="hover:bg-gray-50 transition-colors">
               <td className="py-3 px-4 font-medium text-sm text-blue-600">{categoria.id}</td>
               <td className="py-3 px-4 font-medium text-sm text-gray-700">
@@ -130,6 +149,7 @@ export default async function Categoria() {
           }}
         />
       </div>
+      <Paginacao data={category} totalRecords={totalRecords} />
     </Container>
   );
 }
