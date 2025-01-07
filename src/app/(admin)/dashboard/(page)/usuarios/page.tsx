@@ -1,18 +1,27 @@
 import { FaUser } from "react-icons/fa";
-import ButtonDelete from "./components/deletar";
-import ButtonEditar from "./components/editar";
 import Container from "../components/Container";
 import ButtonAdicionar from "../components/ModalGeneric";
+import ModalDeletar from "../components/ModalDeletar";
+import Paginacao from "../components/Paginacao";
+import SearchItems from "../components/searchItems";
 
-export default async function Usuarios() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user`, { cache: 'force-cache' });
+interface SearchParams {
+  search: string;
+  page: string;
+}
+
+export default async function Usuarios({ searchParams }: { searchParams: SearchParams }) {
+  const { search } = await searchParams;
+  const { page } = await searchParams;
+
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user?${search ? `search=${search}` : page ? `page=${page}` : ''}`);
 
   if (!response.ok) {
     console.log(response)
     return <p>Ocorreu um erro ao carregar os produtos.</p>;
   }
 
-  const usuarios = await response.json();
+  const { usuarios, totalRecords } = await response.json();
 
   if (usuarios.length === 0 || !usuarios) {
     return (
@@ -21,6 +30,11 @@ export default async function Usuarios() {
         <p className="text-gray-600 mb-10 text-sm leading-[1.6] text-center">
           Atualmente, não há usuários cadastrados. Adicione um usuário para começar a gerenciar as permissões.
         </p>
+
+        <div className="mb-4">
+          <SearchItems />
+        </div>
+        
         <div className="mt-5 w-full flex justify-end">
           <ButtonAdicionar
             config={{
@@ -59,6 +73,11 @@ export default async function Usuarios() {
       <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
         Gerencie os usuários e suas permissões para criar e administrar conteúdo no site. Defina funções e controle o acesso de cada membro.
       </p>
+
+      <div className="mb-4">
+        <SearchItems />
+      </div>
+
       <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-200">
           <tr>
@@ -114,7 +133,16 @@ export default async function Usuarios() {
                       }
                     }}
                   />
-                  <ButtonDelete id={usuario.id} />
+                  <ModalDeletar
+                    config={{
+                      id: usuario.id,
+                      title: "Tem certeza de que deseja excluir esse usuário?",
+                      description:
+                        "Esta ação não pode ser desfeita. O usuário será excluído permanentemente.",
+                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
+                      urlRevalidate: "/dashboard/usuarios",
+                    }}
+                  />
                 </div>
               </td>
             </tr>
@@ -148,6 +176,7 @@ export default async function Usuarios() {
           }}
         />
       </div>
+      <Paginacao data={usuarios} totalRecords={totalRecords} />
     </Container>
   );
 }

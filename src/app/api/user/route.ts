@@ -6,17 +6,46 @@ const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
     try {
+        const url = new URL(request.url);
+        const search = url.searchParams.get('search');
+        const page = url.searchParams.get('page') ? parseInt(url.searchParams.get('page')!, 10) : 1;
+        const pageSize = 10;
+
+        const skip = (page - 1) * pageSize;
+
         const users = await prisma.user.findMany({
+            skip,
+            take: pageSize,
+            where: search
+                ? {
+                    OR: [
+                        { name: { contains: search, mode: 'insensitive' } },
+                        { email: { contains: search, mode: 'insensitive' } },
+                        { role: { contains: search, mode: 'insensitive' } }
+                    ]
+                }
+                : {},
             select: {
                 id: true,
                 name: true,
                 email: true,
-                password: false,
                 role: true,
             }
         });
 
-        return NextResponse.json(users , { status: 201 });
+        const totalRecords = await prisma.user.count({
+            where: search
+                ? {
+                    OR: [
+                        { name: { contains: search, mode: 'insensitive' } },
+                        { email: { contains: search, mode: 'insensitive' } },
+                        { role: { contains: search, mode: 'insensitive' } }
+                    ]
+                }
+                : {},
+        });
+
+        return NextResponse.json({ usuarios: users, totalRecords }, { status: 200 });
     } catch (err) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }

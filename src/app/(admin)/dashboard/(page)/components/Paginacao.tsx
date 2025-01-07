@@ -22,7 +22,7 @@ export default function Paginacao({ data, totalRecords }: PaginacaoProps) {
 
     const pageSize = 10;
     const totalPages = Math.ceil(totalRecords / pageSize);
-    const currentPage = parseInt(searchParams.get('page') || '1'); 
+    const currentPage = parseInt(searchParams.get('page') || '1');
 
     function handlePageChange(page: number) {
         const params = new URLSearchParams(searchParams.toString());
@@ -55,15 +55,18 @@ export default function Paginacao({ data, totalRecords }: PaginacaoProps) {
     return (
         <Pagination className="mt-10">
             <PaginationContent>
-                <PaginationItem>
-                    <PaginationPrevious
-                        className="cursor-pointer"
-                        onClick={(e) => {
-                            e.preventDefault(); 
-                            handlePrevious(); 
-                        }}
-                    />
-                </PaginationItem>
+                {/* Conditionally render the Previous button */}
+                {currentPage > 1 && (
+                    <PaginationItem>
+                        <PaginationPrevious
+                            className="cursor-pointer"
+                            onClick={(e) => {
+                                e.preventDefault(); 
+                                handlePrevious(); 
+                            }}
+                        />
+                    </PaginationItem>
+                )}
 
                 {Array.from({ length: totalPages }, (_, index) => (
                     <PaginationItem key={index}>
@@ -83,15 +86,18 @@ export default function Paginacao({ data, totalRecords }: PaginacaoProps) {
                     <PaginationEllipsis />
                 </PaginationItem>
 
-                <PaginationItem>
-                    <PaginationNext
-                        className="cursor-pointer"
-                        onClick={(e) => {
-                            e.preventDefault(); 
-                            handleNext(); 
-                        }}
-                    />
-                </PaginationItem>
+                {/* Conditionally render the Next button */}
+                {currentPage < totalPages && (
+                    <PaginationItem>
+                        <PaginationNext
+                            className="cursor-pointer"
+                            onClick={(e) => {
+                                e.preventDefault(); 
+                                handleNext(); 
+                            }}
+                        />
+                    </PaginationItem>
+                )}
             </PaginationContent>
         </Pagination>
     );

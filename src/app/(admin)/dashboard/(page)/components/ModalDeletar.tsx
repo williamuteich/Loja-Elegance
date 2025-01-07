@@ -58,7 +58,7 @@ export default function ButtonDelete({ config }: ButtonDeleteProps) {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>Excluir Variável</AlertDialogAction>
+                    <AlertDialogAction onClick={handleDelete}>Excluir</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
