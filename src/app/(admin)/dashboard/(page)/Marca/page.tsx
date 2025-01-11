@@ -12,50 +12,66 @@ interface SearchParams {
   status: string;
 }
 
-export default async function Marca({ searchParams }: { searchParams: SearchParams }) {
+interface FieldConfig {
+  name: string;
+  label: string;
+  type: "text" | "email" | "select" | "password";  
+  placeholder: string;
+}
 
+interface Marca {
+  id: string;
+  name: string;
+  description: string;
+}
+
+const modalConfig = (action: string, initialValues?: Marca) => {
+  const initialValuesFormatted: { [key: string]: string } | undefined = initialValues
+    ? { name: initialValues.name, description: initialValues.description }
+    : undefined;
+
+  return {
+    title: `${action} Marca`,
+    description: action === "Adicionar"
+      ? "Preencha os campos abaixo para adicionar uma nova marca."
+      : "Faça alterações na marca abaixo.",
+    action,
+    fields: [
+      { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da Marca" },
+      { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da marca" },
+    ] as FieldConfig[],
+    apiEndpoint: `${process.env.NEXTAUTH_URL}/api/brand`,
+    urlRevalidate: "/dashboard/marca",
+    method: action === "Adicionar" ? "POST" : "PUT",
+    initialValues: initialValuesFormatted,
+  };
+};
+
+export default async function Marca({ searchParams }: { searchParams: SearchParams }) {
   const { search, page, status } = await searchParams;
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/brand?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
+  const response = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/brand?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`
+  );
 
-  if (!response.ok) {
-    console.log(response)
-    return <p>Ocorreu um erro ao carregar os produtos.</p>;
-  }
+  if (!response.ok) return <p>Ocorreu um erro ao carregar as marcas.</p>;
 
   const { marcas, totalRecords } = await response.json();
 
   if (marcas.length === 0 || !marcas) {
     return (
-      <div className="w-full px-8 py-10 min-h-screen bg-gray-50">
-        <div className="mx-auto bg-white p-8 rounded-lg shadow-lg text-center">
-          <h2 className="text-3xl font-semibold mb-4 text-gray-800">Nenhuma Marca encontrada</h2>
-          <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
-            No momento, não há marcas cadastradas. Você pode adicionar novas marcas clicando no botão abaixo.
-            <br />
-            <br />
-            As marcas são importantes para categorizar e organizar os produtos ou serviços. Ao adicionar uma nova marca, informe um nome relevante e uma breve descrição para facilitar a identificação.
-          </p>
-          <div className="flex gap-2 mb-4">
-            <SearchItems />
-            <FiltroBuscarItem />
-          </div>
-          <ButtonAdicionar
-            config={{
-              title: "Adicionar Marca",
-              description: "Preencha os campos para adicionar uma nova marca.",
-              action: "Adicionar",
-              fields: [
-                { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da Marca" },
-                { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da marca" },
-              ],
-              apiEndpoint: `${process.env.NEXTAUTH_URL}/api/brand`,
-              urlRevalidate: "/dashboard/marca",
-              method: "POST",
-            }}
-          />
+      <Container>
+        <h2 className="text-3xl font-semibold mb-3 text-gray-800">Marcas</h2>
+        <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
+          Gerencie as marcas e suas descrições. Adicione, edite ou exclua marcas conforme necessário.
+        </p>
+        <div className="flex gap-2 mb-6">
+          <SearchItems />
+          <FiltroBuscarItem />
         </div>
-      </div>
+        <p className="mt-10 font-medium text-lg">Nenhuma Marca Encontrada</p>
+        <ButtonAdicionar config={modalConfig("Adicionar")} />
+      </Container>
     );
   }
 
@@ -65,12 +81,14 @@ export default async function Marca({ searchParams }: { searchParams: SearchPara
       <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
         Gerencie as marcas e suas descrições. Adicione, edite ou exclua marcas conforme necessário.
       </p>
-
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-6">
         <SearchItems />
         <FiltroBuscarItem />
       </div>
-
+      <p className="text-gray-700 text-base mb-3">
+        <span className="font-semibold text-gray-800">Total de Marcas: </span>
+        <span className="font-medium text-blue-600">{totalRecords}</span>
+      </p>
       <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-200">
           <tr>
@@ -93,25 +111,7 @@ export default async function Marca({ searchParams }: { searchParams: SearchPara
               <td className="py-3 px-4 font-medium text-sm text-gray-700">{marca.description}</td>
               <td className="py-3 px-0 font-medium text-sm text-gray-700">
                 <div className="flex justify-end items-center space-x-3">
-                  <ButtonAdicionar
-                    config={{
-                      id: marca.id,
-                      title: "Adicionar Marca",
-                      description: "Preencha os campos para adicionar uma nova marca.",
-                      action: "Editar",
-                      fields: [
-                        { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da Marca" },
-                        { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da marca" },
-                      ],
-                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/brand`,
-                      urlRevalidate: "/dashboard/marca",
-                      method: "PUT",
-                      initialValues: {
-                        name: marca.name,
-                        description: marca.description,
-                      }
-                    }}
-                  />
+                  <ButtonAdicionar config={modalConfig("Editar", marca)} />
                   <ModalDeletar
                     config={{
                       id: marca.id,
@@ -128,20 +128,7 @@ export default async function Marca({ searchParams }: { searchParams: SearchPara
         </tbody>
       </table>
       <div className="mt-5 flex justify-between">
-        <ButtonAdicionar
-          config={{
-            title: "Adicionar Marca",
-            description: "Preencha os campos para adicionar uma nova marca.",
-            action: "Adicionar",
-            fields: [
-              { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da Marca" },
-              { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da marca" },
-            ],
-            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/brand`,
-            urlRevalidate: "/dashboard/marca",
-            method: "POST",
-          }}
-        />
+        <ButtonAdicionar config={modalConfig("Adicionar")} />
       </div>
       <Paginacao data={marcas} totalRecords={totalRecords} />
     </Container>

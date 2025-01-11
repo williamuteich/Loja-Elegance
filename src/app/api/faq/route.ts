@@ -17,8 +17,6 @@ export async function GET(request: Request) {
         const pageSize = 10;
         const skip = (page - 1) * pageSize;
 
-        console.log("Buscando FAQs:", { search, page, skip });
-
         const faqs = await prisma.faq.findMany({
             skip,
             take: pageSize,

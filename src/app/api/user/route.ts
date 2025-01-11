@@ -81,7 +81,7 @@ export async function POST(request: Request) {
         }
 
         const hashPassword = await bcrypt.hash(body.password, saltRounds);
-        console.log("resposta do corpo", body)
+
         const newUser = await prisma.user.create({
             data: {
                 name: body.name,
@@ -100,12 +100,14 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
     try {
-        const { id, name, email, role, password } = await request.json();
+        const { id, name, email, role, password, active } = await request.json();
         const saltRounds = 10;
 
-        if (!id || !name || !email || !role || !password) {
+        if (!id || !name || !email || !role || !password || active === undefined) {
             return NextResponse.json({ message: 'ID, name, email, role and password are required' }, { status: 400 });
         }
+
+        const updatedActive = active === "true" ? true : false;
 
         const hashPassword = await bcrypt.hash(password, saltRounds);
 
@@ -115,7 +117,8 @@ export async function PUT(request: Request) {
                 name,
                 email,
                 role,
-                password: hashPassword
+                password: hashPassword,
+                active: updatedActive
             }
         });
 
@@ -124,6 +127,7 @@ export async function PUT(request: Request) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
+
 
 export async function DELETE(request: Request) {
     try {

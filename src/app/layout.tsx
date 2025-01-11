@@ -11,9 +11,9 @@ export default async function RootLayout({
   const data = await dadosGerais.json();
 
   return (
-    <html lang="en">
+    <html >
       <body>
-        <Header data={data} />
+        <Header/>
         <div>{children}</div>
         <Footer data={data}/>
       </body>

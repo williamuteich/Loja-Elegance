@@ -72,14 +72,15 @@ export default async function Produtos({ searchParams }: { searchParams: SearchP
     if (!produtos || produtos.length === 0) {
         return (
             <Container>
-                <h2 className="text-3xl font-semibold mb-3 text-gray-800 text-center">Sem Produtos Cadastrados</h2>
-                <p className="text-gray-600 mb-10 text-sm leading-[1.6] text-center">
-                    Não há produtos cadastrados no momento. Utilize o botão abaixo para adicionar novos produtos.
+                <h2 className="text-3xl font-semibold mb-3 text-gray-800">Produtos</h2>
+                <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
+                    Gerencie os produtos disponíveis na loja. Acesse, edite ou exclua informações sobre itens cadastrados e controle o estoque para manter o sistema atualizado.
                 </p>
                 <div className="flex gap-2 mb-4">
                     <SearchItems />
                     <FiltroBuscarItem />
-                </div>
+                </div> 
+                <p className="mt-10 font-medium text-lg">Nenhum Produto Encontrado</p>
                 <div className="mt-5 w-full flex justify-end">
                     <Link href={`/dashboard/produtos/adicionar`}>
                         <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">

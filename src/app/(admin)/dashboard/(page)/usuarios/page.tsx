@@ -12,14 +12,59 @@ interface SearchParams {
   status: string;
 }
 
-export default async function Usuarios({ searchParams }: { searchParams: SearchParams }) {
+type FieldConfig = {
+  name: string;
+  label: string;
+  type: "text" | "email" | "select" | "password";  
+  placeholder?: string;
+  options?: { value: string; label: string }[];
+};
 
+const userFields: FieldConfig[] = [
+  { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
+  { name: "email", label: "Email", type: "text", placeholder: "Digite o e-mail" },
+  {
+    name: "role",
+    label: "Permissão",
+    type: "select",
+    options: [
+      { value: "admin", label: "Admin" },
+      { value: "colaborador", label: "Colaborador" },
+    ],
+  },
+  {
+    name: "active",
+    label: "Status de Usuário",
+    type: "select",
+    options: [
+      { value: "true", label: "Ativo" },
+      { value: "false", label: "Inativo" },
+    ],
+  },
+  { name: "password", label: "Senha", type: "password", placeholder: "Digite uma Senha" },
+];
+
+const createButtonConfig = (action: string, userId?: string, initialValues?: any) => ({
+  id: userId || "",
+  title: `${action} Usuário`,
+  description: `Preencha os campos para ${action.toLowerCase()} as informações do usuário.`,
+  action,
+  fields: userFields,
+  apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
+  urlRevalidate: "/dashboard/usuarios",
+  method: action === "Adicionar" ? "POST" : "PUT",
+  initialValues,
+});
+
+export default async function Usuarios({ searchParams }: { searchParams: SearchParams }) {
   const { search, page, status } = await searchParams;
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
+  const response = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/user?${search ? `search=${search}&` : ""}${page ? `page=${page}&` : ""}${status ? `status=${status}` : ""}`
+  );
 
   if (!response.ok) {
-    console.log(response)
+    console.log(response);
     return <p>Ocorreu um erro ao carregar os produtos.</p>;
   }
 
@@ -28,56 +73,21 @@ export default async function Usuarios({ searchParams }: { searchParams: SearchP
   if (usuarios.length === 0 || !usuarios) {
     return (
       <Container>
-        <h2 className="text-3xl font-semibold mb-3 text-gray-800 text-center">Sem Usuários Cadastrados</h2>
-        <p className="text-gray-600 mb-10 text-sm leading-[1.6] text-center">
-          Atualmente, não há usuários cadastrados. Adicione um usuário para começar a gerenciar as permissões.
+        <h2 className="text-3xl font-semibold mb-3 text-gray-800">Usuários</h2>
+        <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
+          Gerencie os usuários e suas permissões para criar e administrar conteúdo no site. Defina funções e controle o acesso de cada membro.
         </p>
-
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-6">
           <SearchItems />
           <FiltroBuscarItem />
         </div>
-
+        <p className="mt-10 font-medium text-lg">Nenhum Usuário Encontrado</p>
         <div className="mt-5 w-full flex justify-end">
-          <ButtonAdicionar
-            config={{
-              id: "",
-              title: "Adicionar Usuário",
-              description: "Preencha os campos para adicionar um novo Usuário.",
-              action: "Adicionar",
-              fields: [
-                { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
-                { name: "email", label: "Email", type: "text", placeholder: "Digite o e-mail" },
-                {
-                  name: "role",
-                  label: "Permissão",
-                  type: "select",
-                  options: [
-                    { value: "admin", label: "Admin" },
-                    { value: "colaborador", label: "Colaborador" },
-                  ],
-                },
-                {
-                  name: "active",
-                  label: "Status de Usuário",
-                  type: "select",
-                  options: [
-                    { value: "true", label: "Ativo" },
-                    { value: "false", label: "Inativo" },
-                  ],
-                },
-                { name: "password", label: "Senha", type: "password", placeholder: "Digite uma Senha" },
-              ],
-              apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
-              urlRevalidate: "/dashboard/usuarios",
-              method: "POST",
-            }}
-          />
+          <ButtonAdicionar config={createButtonConfig("Adicionar")} />
         </div>
       </Container>
     );
   }
-
 
   return (
     <Container>
@@ -85,11 +95,13 @@ export default async function Usuarios({ searchParams }: { searchParams: SearchP
       <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
         Gerencie os usuários e suas permissões para criar e administrar conteúdo no site. Defina funções e controle o acesso de cada membro.
       </p>
-
-      <div className="mb-4">
+      <div className="mb-6">
         <SearchItems />
       </div>
-
+      <p className="text-gray-700 text-base mb-3">
+        <span className="font-semibold text-gray-800">Total de Usuários: </span>
+        <span className="font-medium text-blue-600">{totalRecords}</span>
+      </p>
       <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-200">
           <tr>
@@ -114,62 +126,18 @@ export default async function Usuarios({ searchParams }: { searchParams: SearchP
               <td className="py-3 px-4 font-medium text-sm text-gray-700">{usuario.email}</td>
               <td className="py-3 px-4 font-medium text-sm text-blue-500">{usuario.role}</td>
               <td className="py-3 px-4 font-medium text-sm text-red-700">
-                <span
-                  className={Boolean(usuario.active) ? "text-green-600" : "text-red-600"}
-                >
+                <span className={Boolean(usuario.active) ? "text-green-600" : "text-red-600"}>
                   {Boolean(usuario.active) ? "Ativo" : "Inativo"}
                 </span>
               </td>
               <td className="py-3 px-0 font-medium text-sm text-gray-700">
                 <div className="flex justify-end items-center space-x-3">
-                  <ButtonAdicionar
-                    config={{
-                      id: usuario.id,
-                      title: "Editar Usuário",
-                      description: "Preencha os campos para editar as informações do usuário.",
-                      action: "Editar",
-                      fields: [
-                        { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
-                        { name: "email", label: "Email", type: "text", placeholder: "Digite o e-mail" },
-                        {
-                          name: "role",
-                          label: "Permissão",
-                          type: "select",
-                          options: [
-                            { value: "admin", label: "Admin" },
-                            { value: "colaborador", label: "Colaborador" },
-                          ],
-                        },
-                        {
-                          name: "active",
-                          label: "Status de Usuário",
-                          type: "select",
-                          options: [
-                            { value: "true", label: "Ativo" },
-                            { value: "false", label: "Inativo" },
-                          ],
-                        },
-                        { name: "password", label: "Senha", type: "password", placeholder: "Digite uma Senha" },
-                      ],
-                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
-                      urlRevalidate: "/dashboard/usuarios",
-                      method: "PUT",
-                      initialValues: {
-                        name: usuario.name,
-                        email: usuario.email,
-                        role: usuario.role,
-                        status: usuario.status,
-                        password: usuario.password,
-                      },
-                    }}
-                  />
-
+                  <ButtonAdicionar config={createButtonConfig("Editar", usuario.id, { name: usuario.name, email: usuario.email, role: usuario.role, status: usuario.active })} />
                   <ModalDeletar
                     config={{
                       id: usuario.id,
                       title: "Tem certeza de que deseja excluir esse usuário?",
-                      description:
-                        "Esta ação não pode ser desfeita. O usuário será excluído permanentemente.",
+                      description: "Esta ação não pode ser desfeita. O usuário será excluído permanentemente.",
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
                       urlRevalidate: "/dashboard/usuarios",
                     }}
@@ -181,40 +149,7 @@ export default async function Usuarios({ searchParams }: { searchParams: SearchP
         </tbody>
       </table>
       <div className="mt-5 flex justify-between">
-        <ButtonAdicionar
-          config={{
-            id: "",
-            title: "Adicionar Usuário",
-            description: "Preencha os campos para adicionar um novo Usuário.",
-            action: "Adicionar",
-            fields: [
-              { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
-              { name: "email", label: "Email", type: "text", placeholder: "Digite o e-mail" },
-              {
-                name: "role",
-                label: "Permissão",
-                type: "select",
-                options: [
-                  { value: "admin", label: "Admin" },
-                  { value: "colaborador", label: "Colaborador" },
-                ],
-              },
-              {
-                name: "active",
-                label: "Status",
-                type: "select",
-                options: [
-                  { value: "true", label: "Ativo" },
-                  { value: "false", label: "Inativo" },
-                ],
-              },
-              { name: "password", label: "Senha", type: "password", placeholder: "Digite uma Senha" },
-            ],
-            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
-            urlRevalidate: "/dashboard/usuarios",
-            method: "POST",
-          }}
-        />
+        <ButtonAdicionar config={createButtonConfig("Adicionar")} />
       </div>
       <Paginacao data={usuarios} totalRecords={totalRecords} />
     </Container>

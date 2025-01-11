@@ -13,7 +13,7 @@ interface SearchParams {
 }
 
 export default async function Settings({ searchParams }: { searchParams: SearchParams }) {
-  
+
   const { search, page, status } = await searchParams;
 
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/setup?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
@@ -27,42 +27,34 @@ export default async function Settings({ searchParams }: { searchParams: SearchP
 
   if (config.length === 0 || !config) {
     return (
-      <div className="w-full px-8 py-10 min-h-screen bg-gray-50">
-        <div className="mx-auto bg-white p-8 rounded-lg shadow-lg text-center">
-          <h2 className="text-3xl font-semibold mb-4 text-gray-800">
-            Nenhuma Configuração Encontrada
-          </h2>
-          <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
-            Gerencie as variáveis do seu site, como URLs e nomes. As alterações feitas aqui são aplicadas globalmente, sem necessidade de alterar o código.
-            <br />
-            <br />
-            No campo "Variável", para criar variáveis de redes sociais, o padrão deve ser "redeSocial", e para variáveis de contatos, o padrão deve ser "contato".
-            Isso garante consistência e facilita a organização.
-          </p>
-          <div className="flex gap-2 mb-4">
-            <SearchItems />
-            <FiltroBuscarItem />
-          </div>
-
-          <ModalGeneric
-            config={{
-              title: "Adicionar Pergunta Frequente",
-              description:
-                "Preencha os campos abaixo para adicionar uma nova pergunta frequente à plataforma.",
-              action: "Adicionar",
-              fields: [
-                { name: "type", label: "Variável", type: "text", placeholder: "Digite o nome da variável" },
-                { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
-                { name: "url", label: "URL", type: "text", placeholder: "Digite a URL" },
-                { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
-              ],
-              apiEndpoint: `${process.env.NEXTAUTH_URL}/api/faq`,
-              urlRevalidate: "/dashboard/faq",
-              method: "POST",
-            }}
-          />
+      <Container>
+        <h2 className="text-3xl font-semibold mb-3 text-gray-800">Configurações Gerais</h2>
+        <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
+          Gerencie as variáveis do seu site, como URLs e nomes. As alterações feitas aqui são aplicadas globalmente, sem necessidade de alterar o código.
+        </p>
+        <div className="flex gap-2 mb-4">
+          <SearchItems />
+          <FiltroBuscarItem />
         </div>
-      </div>
+        <p className="mt-10 font-medium text-lg">Nenhuma Configuração Encontrada</p>
+        <ModalGeneric
+          config={{
+            title: "Adicionar Pergunta Frequente",
+            description:
+              "Preencha os campos abaixo para adicionar uma nova pergunta frequente à plataforma.",
+            action: "Adicionar",
+            fields: [
+              { name: "type", label: "Variável", type: "text", placeholder: "Digite o nome da variável" },
+              { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
+              { name: "url", label: "URL", type: "text", placeholder: "Digite a URL" },
+              { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
+            ],
+            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/faq`,
+            urlRevalidate: "/dashboard/faq",
+            method: "POST",
+          }}
+        />
+      </Container>
     );
   }
 
@@ -71,17 +63,16 @@ export default async function Settings({ searchParams }: { searchParams: SearchP
       <h2 className="text-3xl font-semibold mb-3 text-gray-800">Configurações Gerais</h2>
       <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
         Gerencie as variáveis do seu site, como URLs e nomes. As alterações feitas aqui são aplicadas globalmente, sem necessidade de alterar o código.
-        <br />
-        <br />
-        No campo "Variável", para criar variáveis de redes sociais, o padrão deve ser "redeSocial", e para variáveis de contatos, o padrão deve ser "contato".
-        Isso garante consistência e facilita a organização.
       </p>
 
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-6">
         <SearchItems />
         <FiltroBuscarItem />
       </div>
-
+      <p className="text-gray-700 text-base mb-3">
+        <span className="font-semibold text-gray-800">Total de Categorias: </span>
+        <span className="font-medium text-blue-600">{totalRecords}</span>
+      </p>
       <table className="min-w-full table-auto border-collapse rounded-md border border-gray-300">
         <thead className="bg-gray-200">
           <tr>
