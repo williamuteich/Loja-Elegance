@@ -4,24 +4,26 @@ import ModalGeneric from "../components/ModalGeneric";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import SearchItems from "../components/searchItems";
 import Paginacao from "../components/Paginacao";
+import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 
 interface SearchParams {
     search: string;
     page: string;
-}
+    status: string;
+  }
 
 export default async function Faq({ searchParams }: { searchParams: SearchParams }) {
-    const { search } = await searchParams;
-    const { page } = await searchParams;
+    
+    const { search, page, status } = await searchParams;
 
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/faq?${search ? `search=${search}` : page ? `page=${page}` : ''}`);
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/faq?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
 
     if (!response.ok) {
         console.error("Erro ao buscar FAQs:", response.statusText);
         return <p>Ocorreu um erro ao carregar as FAQs.</p>;
     }
 
-    const {faq, totalRecords} = await response.json();
+    const { faq, totalRecords } = await response.json();
 
     interface FaqProps {
         id: string;
@@ -37,8 +39,9 @@ export default async function Faq({ searchParams }: { searchParams: SearchParams
                     <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
                         Não há perguntas frequentes cadastradas no momento. Você pode adicionar novas perguntas clicando no botão abaixo.
                     </p>
-                    <div className="mb-4">
+                    <div className="flex gap-2 mb-4">
                         <SearchItems />
+                        <FiltroBuscarItem />
                     </div>
                     <div className="mt-5 flex justify-center">
                         <ModalGeneric
@@ -67,8 +70,9 @@ export default async function Faq({ searchParams }: { searchParams: SearchParams
             <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
                 Aqui você pode encontrar as respostas para as perguntas mais frequentes.
             </p>
-            <div className="mb-4">
+            <div className="flex gap-2 mb-4">
                 <SearchItems />
+                <FiltroBuscarItem />
             </div>
             <div className="w-full py-4 space-y-3">
                 {faq.length === 0 ? (

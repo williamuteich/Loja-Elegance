@@ -17,8 +17,8 @@ import {
     SelectItem,
     SelectLabel,
     SelectTrigger,
-    SelectValue, // Corrigido: importação do SelectValue
-} from "@/components/ui/select"; 
+    SelectValue, 
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { revalidatePath } from "next/cache";
@@ -48,14 +48,14 @@ interface ButtonAdicionarProps {
 export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
 
     async function newUser(formData: FormData) {
-        "use server"
-
+        "use server";
+    
         const data = Object.fromEntries(formData.entries());
-
+    
         if (config.id) {
             data.id = config.id;
         }
-
+    
         const response = await fetch(config.apiEndpoint, {
             method: `${config.method}`,
             headers: {
@@ -63,13 +63,14 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
             },
             body: JSON.stringify(data),
         });
-
+    
         if (!response.ok) {
             console.log("Erro ao adicionar Conteúdo.");
         }
-
+    
         revalidatePath(config.urlRevalidate);
     }
+    
 
     return (
         <div className="w-full text-end">
@@ -97,8 +98,8 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
                                     {field.label}
                                 </Label>
                                 {field.type === "select" && field.options ? (
-                                    <Select name={field.name} defaultValue={config.initialValues?.[field.name]}>
-                                        <SelectTrigger className="w-auto">
+                                    <Select name={field.name} defaultValue={field.options[0].value}>
+                                        <SelectTrigger className="w-[340px]">
                                             <SelectValue placeholder={field.placeholder} />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -112,6 +113,7 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
+
                                 ) : (
                                     <Input
                                         id={field.name}

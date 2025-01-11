@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import Sidebar from './components/sidebar/sidebar';
+import Sidebar from './components/sidebar';
 import { getServerSession } from "next-auth";
 import { auth as authOptions } from "@/lib/auth-config";
 import { redirect } from "next/navigation";

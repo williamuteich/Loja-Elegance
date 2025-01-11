@@ -5,23 +5,51 @@ const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
     try {
+        const url = new URL(request.url);
+        const search = url.searchParams.get("search");
+        const page = parseInt(url.searchParams.get("page") || "1");
+        const status = url.searchParams.get("status");
+        const pageSize = 10;
+
+        const where: any = search
+            ? {
+                OR: [
+                    { name: { contains: search, mode: "insensitive" } },
+                    { description: { contains: search, mode: "insensitive" } },
+                ],
+            }
+            : {};
+
+        if (status !== null) {
+            where.active = status === "true";  
+        }
+
         const products = await prisma.product.findMany({
+            where,
+            skip: (page - 1) * pageSize,
+            take: pageSize,
             include: {
                 brand: true,
                 categories: {
                     include: {
-                        category: true, 
+                        category: true,
                     },
                 },
                 stock: true,
             },
         });
 
-        return NextResponse.json(products, { status: 200 });
+        const totalRecords = await prisma.product.count({
+            where,
+        });
+
+        return NextResponse.json({ produtos: products, totalRecords }, { status: 200 });
     } catch (err) {
+        console.error("Erro no filtro de status", err);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
+
 
 
 export async function POST(request: Request) {
@@ -33,7 +61,7 @@ export async function POST(request: Request) {
             !body.description || 
             !body.price || 
             !body.brandId || 
-            !body.categoryIds || 
+            !body.categoryIds ||
             typeof body.quantity !== "number"
         ) {
             return NextResponse.json(
@@ -60,6 +88,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "One or more categoryIds are invalid" }, { status: 400 });
         }
 
+        console.log("está recebendo verdadeiro ou false?", body.active);
         const newProduct = await prisma.product.create({
             data: {
                 name: body.name,
@@ -90,6 +119,42 @@ export async function POST(request: Request) {
 
     } catch (err) {
         console.error(err);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
+}
+
+export async function DELETE(request: Request) {
+    try {
+        const body = await request.json();
+        const { id } = body;
+        
+        if (!id) {
+            return NextResponse.json({ error: "ID is required" }, { status: 400 });
+        }
+
+        const productExists = await prisma.product.findUnique({
+            where: { id }
+        });
+
+        if (!productExists) {
+            return NextResponse.json({ error: "Product not found" }, { status: 404 });
+        }
+
+        await prisma.productCategory.deleteMany({
+            where: { productId: id }
+        });
+
+        await prisma.stock.deleteMany({
+            where: { productId: id }
+        });
+
+        await prisma.product.delete({
+            where: { id }
+        });
+
+        return NextResponse.json({ message: "Product and related data deleted successfully" }, { status: 200 });
+    } catch (err) {
+        console.error("Error deleting product:", err);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }

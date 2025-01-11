@@ -22,7 +22,7 @@ export default function AdicionarProduto() {
           return;
         }
         const data = await response.json();
-        setMarcas(data);
+        setMarcas(data.marcas);
       } catch (error) {
         console.error("Erro ao buscar marcas:", error);
       }
@@ -36,7 +36,7 @@ export default function AdicionarProduto() {
           return;
         }
         const data = await response.json();
-        setCategorias(data);
+        setCategorias(data.category);
       } catch (error) {
         console.error("Erro ao buscar categorias:", error);
       }
@@ -63,7 +63,7 @@ export default function AdicionarProduto() {
     const price = parseFloat(event.target.price.value.replace("R$", "").replace(".", "").replace(",", "."));
     const brandId = event.target.brand.value; 
     const quantity = parseInt(event.target.stock.value, 10); 
-    const active = event.target.status.value === true;  
+    const active = event.target.status.value === "true"; 
     const categoryIds = selectedCategories ? selectedCategories.map((category) => category.value) : [];
 
 
@@ -79,7 +79,7 @@ export default function AdicionarProduto() {
         brandId,  
         categoryIds, 
         quantity,  
-        active,  
+        active, 
         imageUrl: "",  
       }),
     });
@@ -190,8 +190,8 @@ export default function AdicionarProduto() {
             name="status"
             className="mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           >
-            <option value="true">Ativo</option>
-            <option value="false">Inativo</option>
+            <option id="active" value="true">Ativo</option>
+            <option id="active" value="false">Inativo</option>
           </select>
         </div>
 

@@ -4,17 +4,19 @@ import ButtonAdicionar from "../components/ModalGeneric";
 import ModalDeletar from "../components/ModalDeletar";
 import SearchItems from "../components/searchItems";
 import Paginacao from "../components/Paginacao";
+import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 
 interface SearchParams {
   search: string;
   page: string;
+  status: string;
 }
 
 export default async function Categoria({ searchParams }: { searchParams: SearchParams }) {
-  const { search } = await searchParams;
-  const { page } = await searchParams;
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/category?${search ? `search=${search}` : ''}&page=${page || 1}`);
+  const { search, page, status } = await searchParams;
+
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/category?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
 
   if (!response.ok) {
     console.log(response);
@@ -43,10 +45,11 @@ export default async function Categoria({ searchParams }: { searchParams: Search
             Quando estiver pronto para adicionar, basta preencher os campos e clicar em "Adicionar".
           </p>
 
-          <div className="mb-4">
+          <div className="flex gap-2 mb-4">
             <SearchItems />
+            <FiltroBuscarItem />
           </div>
-          
+
           <ButtonAdicionar
             config={{
               title: "Adicionar categoria",
@@ -73,8 +76,9 @@ export default async function Categoria({ searchParams }: { searchParams: Search
         Gerencie as categorias e suas descrições. Adicione, edite ou exclua marcas conforme necessário.
       </p>
 
-      <div className="mb-4">
+      <div className="flex gap-2 mb-4">
         <SearchItems />
+        <FiltroBuscarItem />
       </div>
 
       <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">

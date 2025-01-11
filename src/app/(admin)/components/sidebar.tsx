@@ -1,7 +1,14 @@
+"use client";
 import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaSignOutAlt, FaCog, FaTag, FaIndustry } from 'react-icons/fa';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation'
 
 export default function Sidebar() {
+    const pathname = usePathname(); // Obtendo o caminho atual
+
+    // Função para verificar se o caminho atual corresponde ao link
+    const isActive = (path: string) => pathname === path;
+
     return (
         <div className="w-64 bg-gray-800">
             <div className='text-white flex flex-col min-h-screen fixed w-[inherit] justify-between'>
@@ -12,42 +19,42 @@ export default function Sidebar() {
                     <ul className="space-y-2 p-4">
                         <li>
                             <Link href="/dashboard">
-                                <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-700">
+                                <div className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>
                                     <FaHome size={24} /> Inicio
                                 </div>
                             </Link>
                         </li>
                         <li>
                             <Link href="/dashboard/usuarios">
-                                <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-700">
+                                <div className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/usuarios') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>
                                     <FaUserCircle size={24} /> Usuários
                                 </div>
                             </Link>
                         </li>
                         <li>
                             <Link href="/dashboard/produtos">
-                                <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-700">
+                                <div className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/produtos') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>
                                     <FaBoxOpen size={24} /> Produtos
                                 </div>
                             </Link>
                         </li>
                         <li>
                             <Link href="/dashboard/faq">
-                                <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-700">
+                                <div className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/faq') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>
                                     <FaQuestionCircle size={24} /> FAQ
                                 </div>
                             </Link>
                         </li>
                         <li>
                             <Link href="/dashboard/marca">
-                                <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-700">
+                                <div className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/marca') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>
                                     <FaIndustry size={24} /> Marca
                                 </div>
                             </Link>
                         </li>
                         <li>
                             <Link href="/dashboard/categoria">
-                                <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-700">
+                                <div className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/categoria') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>
                                     <FaTag size={24} /> Categoria
                                 </div>
                             </Link>
@@ -57,7 +64,7 @@ export default function Sidebar() {
 
                 <div className="mb-6 p-4">
                     <Link href="/dashboard/setup" className='text-white'>
-                        <div className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-700">
+                        <div className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/setup') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>
                             <FaCog size={24} /> Configurações
                         </div>
                     </Link>

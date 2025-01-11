@@ -4,17 +4,19 @@ import ModalGeneric from "../components/ModalGeneric";
 import ModalDeletar from "../components/ModalDeletar";
 import SearchItems from "../components/searchItems";
 import Paginacao from "../components/Paginacao";
+import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 
 interface SearchParams {
   search: string;
   page: string;
+  status: string;
 }
 
 export default async function Settings({ searchParams }: { searchParams: SearchParams }) {
-  const { search } = await searchParams;
-  const { page } = await searchParams;
+  
+  const { search, page, status } = await searchParams;
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/setup?${search ? `search=${search}` : page ? `page=${page}` : ''}`);
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/setup?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
 
   if (!response.ok) {
     console.log(response);
@@ -37,8 +39,9 @@ export default async function Settings({ searchParams }: { searchParams: SearchP
             No campo "Variável", para criar variáveis de redes sociais, o padrão deve ser "redeSocial", e para variáveis de contatos, o padrão deve ser "contato".
             Isso garante consistência e facilita a organização.
           </p>
-          <div className="mb-4">
+          <div className="flex gap-2 mb-4">
             <SearchItems />
+            <FiltroBuscarItem />
           </div>
 
           <ModalGeneric
@@ -74,8 +77,9 @@ export default async function Settings({ searchParams }: { searchParams: SearchP
         Isso garante consistência e facilita a organização.
       </p>
 
-      <div className="mb-4">
+      <div className="flex gap-2 mb-4">
         <SearchItems />
+        <FiltroBuscarItem />
       </div>
 
       <table className="min-w-full table-auto border-collapse rounded-md border border-gray-300">

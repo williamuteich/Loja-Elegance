@@ -4,6 +4,10 @@ import { FaBox } from "react-icons/fa";
 import Container from "../components/Container";
 import ButtonAdicionar from "../components/ModalGeneric";
 import { Button } from "@/components/ui/button";
+import Paginacao from "../components/Paginacao";
+import SearchItems from "../components/searchItems";
+import ModalDeletar from "../components/ModalDeletar";
+import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 
 interface ProductCategoryProps {
     id: string;
@@ -11,7 +15,6 @@ interface ProductCategoryProps {
     categoryId: string;
     category: CategoryProps;
 }
-
 
 interface CategoryProps {
     id: string;
@@ -47,15 +50,24 @@ interface StockProps {
     quantity: number;
 }
 
-export default async function Produtos() {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product`);
+interface SearchParams {
+    search: string;
+    page: string;
+    status: string;
+}
+
+export default async function Produtos({ searchParams }: { searchParams: SearchParams }) {
+
+    const { search, page, status } = await searchParams;
+
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
 
     if (!response.ok) {
         console.log(response)
         return <p>Ocorreu um erro ao carregar os produtos.</p>;
     }
 
-    const produtos: ProductProps[] = await response.json();
+    const { produtos, totalRecords } = await response.json();
 
     if (!produtos || produtos.length === 0) {
         return (
@@ -64,6 +76,10 @@ export default async function Produtos() {
                 <p className="text-gray-600 mb-10 text-sm leading-[1.6] text-center">
                     Não há produtos cadastrados no momento. Utilize o botão abaixo para adicionar novos produtos.
                 </p>
+                <div className="flex gap-2 mb-4">
+                    <SearchItems />
+                    <FiltroBuscarItem />
+                </div>
                 <div className="mt-5 w-full flex justify-end">
                     <Link href={`/dashboard/produtos/adicionar`}>
                         <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">
@@ -71,7 +87,6 @@ export default async function Produtos() {
                         </Button>
                     </Link>
                 </div>
-
             </Container>
         );
     }
@@ -81,6 +96,14 @@ export default async function Produtos() {
             <h2 className="text-3xl font-semibold mb-3 text-gray-800">Produtos</h2>
             <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
                 Gerencie os produtos disponíveis na loja. Acesse, edite ou exclua informações sobre itens cadastrados e controle o estoque para manter o sistema atualizado.
+            </p>
+            <div className="flex gap-2 mb-6">
+                <SearchItems />
+                <FiltroBuscarItem />
+            </div>
+            <p className="text-gray-700 text-base mb-3">
+                <span className="font-semibold text-gray-800">Total de produtos: </span>
+                <span className="font-medium text-blue-600">{totalRecords}</span>
             </p>
             <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
                 <thead className="bg-gray-200">
@@ -96,7 +119,7 @@ export default async function Produtos() {
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-300">
-                    {produtos.map((produto) => (
+                    {produtos.map((produto: ProductProps) => (
                         <tr key={produto.id} className="hover:bg-gray-50 transition-colors cursor-pointer">
                             <td className="py-3 px-4 font-medium text-sm text-blue-600">
                                 <Link href={`/dashboard/produtos/${produto.name}`} className="block">
@@ -126,7 +149,7 @@ export default async function Produtos() {
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <Link href={`/dashboard/produtos/${produto.name}`} className="block">
-                                    {produto.price}
+                                    R$ {produto.price}
                                 </Link>
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
@@ -148,6 +171,21 @@ export default async function Produtos() {
                                 </Link>
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
+                                <div className="flex justify-end items-center space-x-3">
+                                    <Button className="bg-blue-500 text-white hover:bg-blue-600 font-semibold py-1 px-3 rounded-md transition duration-300 ease-in-out">
+                                        Editar
+                                    </Button>
+                                    <ModalDeletar
+                                        config={{
+                                            id: produto.id,
+                                            title: "Tem certeza de que deseja excluir esse produto?",
+                                            description:
+                                                "Esta ação não pode ser desfeita. O produto será excluído permanentemente.",
+                                            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/product`,
+                                            urlRevalidate: "/dashboard/produtos",
+                                        }}
+                                    />
+                                </div>
                             </td>
                         </tr>
                     ))}
@@ -160,6 +198,7 @@ export default async function Produtos() {
                     </Button>
                 </Link>
             </div>
+            <Paginacao data={produtos} totalRecords={totalRecords} />
         </Container>
     );
 }

@@ -14,12 +14,14 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
   name     String
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
   email    String @unique
   password String
   role     String @default("colaborador")
+  active   Boolean @default(true)
 }
+
 
 model Product {
   id          String           @id @default(auto()) @map("_id") @db.ObjectId
@@ -79,6 +81,7 @@ model config {
     value     String?
     url       String?
     type      String
+    active      Boolean          @default(true)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }

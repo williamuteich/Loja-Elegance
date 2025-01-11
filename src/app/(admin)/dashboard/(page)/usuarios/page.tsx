@@ -4,17 +4,19 @@ import ButtonAdicionar from "../components/ModalGeneric";
 import ModalDeletar from "../components/ModalDeletar";
 import Paginacao from "../components/Paginacao";
 import SearchItems from "../components/searchItems";
+import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 
 interface SearchParams {
   search: string;
   page: string;
+  status: string;
 }
 
 export default async function Usuarios({ searchParams }: { searchParams: SearchParams }) {
-  const { search } = await searchParams;
-  const { page } = await searchParams;
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user?${search ? `search=${search}` : page ? `page=${page}` : ''}`);
+  const { search, page, status } = await searchParams;
+
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
 
   if (!response.ok) {
     console.log(response)
@@ -31,10 +33,11 @@ export default async function Usuarios({ searchParams }: { searchParams: SearchP
           Atualmente, não há usuários cadastrados. Adicione um usuário para começar a gerenciar as permissões.
         </p>
 
-        <div className="mb-4">
+        <div className="flex gap-2 mb-4">
           <SearchItems />
+          <FiltroBuscarItem />
         </div>
-        
+
         <div className="mt-5 w-full flex justify-end">
           <ButtonAdicionar
             config={{
@@ -52,6 +55,15 @@ export default async function Usuarios({ searchParams }: { searchParams: SearchP
                   options: [
                     { value: "admin", label: "Admin" },
                     { value: "colaborador", label: "Colaborador" },
+                  ],
+                },
+                {
+                  name: "active",
+                  label: "Status de Usuário",
+                  type: "select",
+                  options: [
+                    { value: "true", label: "Ativo" },
+                    { value: "false", label: "Inativo" },
                   ],
                 },
                 { name: "password", label: "Senha", type: "password", placeholder: "Digite uma Senha" },
@@ -85,6 +97,7 @@ export default async function Usuarios({ searchParams }: { searchParams: SearchP
             <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[200px]">Usuário</th>
             <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[250px]">Email</th>
             <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[150px]">Permissão</th>
+            <th className="py-3 px-0 text-left text-sm font-medium text-gray-700">Status</th>
             <th className="py-3 px-0 text-left text-sm font-medium text-gray-700 w-[200px]"></th>
           </tr>
         </thead>
@@ -99,14 +112,21 @@ export default async function Usuarios({ searchParams }: { searchParams: SearchP
                 </div>
               </td>
               <td className="py-3 px-4 font-medium text-sm text-gray-700">{usuario.email}</td>
-              <td className="py-3 px-4 font-medium text-sm text-red-700">{usuario.role}</td>
+              <td className="py-3 px-4 font-medium text-sm text-blue-500">{usuario.role}</td>
+              <td className="py-3 px-4 font-medium text-sm text-red-700">
+                <span
+                  className={Boolean(usuario.active) ? "text-green-600" : "text-red-600"}
+                >
+                  {Boolean(usuario.active) ? "Ativo" : "Inativo"}
+                </span>
+              </td>
               <td className="py-3 px-0 font-medium text-sm text-gray-700">
                 <div className="flex justify-end items-center space-x-3">
                   <ButtonAdicionar
                     config={{
                       id: usuario.id,
                       title: "Editar Usuário",
-                      description: "Preencha os campos para adicionar um novo produto.",
+                      description: "Preencha os campos para editar as informações do usuário.",
                       action: "Editar",
                       fields: [
                         { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
@@ -120,6 +140,15 @@ export default async function Usuarios({ searchParams }: { searchParams: SearchP
                             { value: "colaborador", label: "Colaborador" },
                           ],
                         },
+                        {
+                          name: "active",
+                          label: "Status de Usuário",
+                          type: "select",
+                          options: [
+                            { value: "true", label: "Ativo" },
+                            { value: "false", label: "Inativo" },
+                          ],
+                        },
                         { name: "password", label: "Senha", type: "password", placeholder: "Digite uma Senha" },
                       ],
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
@@ -129,10 +158,12 @@ export default async function Usuarios({ searchParams }: { searchParams: SearchP
                         name: usuario.name,
                         email: usuario.email,
                         role: usuario.role,
-                        passowrd: usuario.password,
-                      }
+                        status: usuario.status,
+                        password: usuario.password,
+                      },
                     }}
                   />
+
                   <ModalDeletar
                     config={{
                       id: usuario.id,
@@ -166,6 +197,15 @@ export default async function Usuarios({ searchParams }: { searchParams: SearchP
                 options: [
                   { value: "admin", label: "Admin" },
                   { value: "colaborador", label: "Colaborador" },
+                ],
+              },
+              {
+                name: "active",
+                label: "Status",
+                type: "select",
+                options: [
+                  { value: "true", label: "Ativo" },
+                  { value: "false", label: "Inativo" },
                 ],
               },
               { name: "password", label: "Senha", type: "password", placeholder: "Digite uma Senha" },
