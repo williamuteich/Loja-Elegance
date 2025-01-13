@@ -16,6 +16,9 @@ export default async function Login() {
                     <p className="mt-4 text-sm text-center text-gray-600">
                         <Link href="/resetPwd" className="text-blue-600 hover:underline">Esqueceu a senha?</Link>
                     </p>
+                    <p className="mt-4 text-sm text-center text-gray-600">
+                        <Link href="/cadastro" className="text-blue-600 hover:underline">Cadastrar?</Link>
+                    </p>
                 </div>
             </div>
        

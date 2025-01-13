@@ -38,7 +38,7 @@ export default function Header() {
 
   return (
     <header className="w-full z-50">
-      <div className="bg-pink-500 frete-gratuito">
+      <div className="bg-pink-700 frete-gratuito">
         <div className="max-w-[1400px] py-1 mx-auto px-4 font-medium text-center text-sm sm:text-base sm:px-6 lg:px-8 text-white">
           Frete Grátis para compras acima de R$ 100,00
         </div>
@@ -53,7 +53,7 @@ export default function Header() {
             <div className="flex-shrink-0">
               <Link
                 href="/"
-                className="text-3xl font-bold text-pink-600 hover:text-pink-800 transition-all"
+                className="text-3xl font-bold text-pink-700 hover:text-pink-800 transition-all"
               >
                 Elegance
               </Link>
@@ -63,35 +63,35 @@ export default function Header() {
               <Link
                 href="/"
                 title="Inicio"
-                className="text-gray-600 hover:text-pink-600 transition-colors duration-300"
+                className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
               >
                 Inicio
               </Link>
               <Link
                 href="/produtos"
                 title="Produtos"
-                className="text-gray-600 hover:text-pink-600 transition-colors duration-300"
+                className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
               >
                 Produtos
               </Link>
               <Link
                 href="/sobre"
                 title="Sobre"
-                className="text-gray-600 hover:text-pink-600 transition-colors duration-300"
+                className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
               >
                 Sobre
               </Link>
               <Link
                 href="/contato"
                 title="Contato"
-                className="text-gray-600 hover:text-pink-600 transition-colors duration-300"
+                className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
               >
                 Contato
               </Link>
               <Link
                 href="/faq"
                 title="FAQ"
-                className="text-gray-600 hover:text-pink-600 transition-colors duration-300"
+                className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
               >
                 FAQ
               </Link>
@@ -101,18 +101,18 @@ export default function Header() {
             <div className="flex gap-4 text-gray-600">
               <SearchHeaderItems />
 
-              <button
-                title="Rastreamento de pedidos"
+              <Link
+                href="/rastreamento"
                 className="hover:text-pink-600 transition-colors duration-300"
               >
                 <Truck className="w-6 h-6" />
-              </button>
-              <button
-                title="Usuários"
+              </Link>
+              <Link
+                href="/login"
                 className="hover:text-pink-600 transition-colors duration-300"
               >
                 <User className="w-6 h-6" />
-              </button>
+              </Link>
               <CheckoutHeader />
             </div>
           </div>
@@ -141,22 +141,20 @@ export default function Header() {
 
                 <div className="grid gap-6 py-4 border-t-[1px] border-gray-300 mt-6">
                   <nav className="flex flex-col gap-6">
-                    <button
-                      title="Rastreamento de pedidos"
+                    <Link
+                      href="/rastreamento"
                       aria-label="Rastreamento de pedidos"
-                      className="flex items-center gap-3 text-gray-600 hover:text-pink-600 transition-colors duration-300"
+                      className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                     >
                       <Truck className="w-6 h-6" aria-hidden="true" />
                       <span>Rastrear Pedido</span>
-                    </button>
-
+                    </Link>
                     <span className="font-medium text-xl">Explore</span>
-
                     <Link
                       href="/"
                       title="Início"
                       aria-label="Início"
-                      className="flex items-center gap-3 text-gray-600 hover:text-pink-600 transition-colors duration-300"
+                      className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                     >
                       <Home className="w-6 h-6" aria-hidden="true" />
                       <span>Início</span>
@@ -166,7 +164,7 @@ export default function Header() {
                       href="/produtos"
                       title="Produtos"
                       aria-label="Produtos"
-                      className="flex items-center gap-3 text-gray-600 hover:text-pink-600 transition-colors duration-300"
+                      className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                     >
                       <Package className="w-6 h-6" aria-hidden="true" />
                       <span>Produtos</span>
@@ -176,7 +174,7 @@ export default function Header() {
                       href="/sobre"
                       title="Sobre"
                       aria-label="Sobre"
-                      className="flex items-center gap-3 text-gray-600 hover:text-pink-600 transition-colors duration-300"
+                      className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                     >
                       <Info className="w-6 h-6" aria-hidden="true" />
                       <span>Sobre</span>
@@ -186,7 +184,7 @@ export default function Header() {
                       href="/contato"
                       title="Contato"
                       aria-label="Contato"
-                      className="flex items-center gap-3 text-gray-600 hover:text-pink-600 transition-colors duration-300"
+                      className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                     >
                       <Phone className="w-6 h-6" aria-hidden="true" />
                       <span>Contato</span>
@@ -196,7 +194,7 @@ export default function Header() {
                       href="/faq"
                       title="FAQ"
                       aria-label="FAQ"
-                      className="flex items-center gap-3 text-gray-600 hover:text-pink-600 transition-colors duration-300"
+                      className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                     >
                       <HelpCircle className="w-6 h-6" aria-hidden="true" />
                       <span>FAQ</span>
