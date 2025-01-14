@@ -6,12 +6,6 @@ import SearchItems from "../components/searchItems";
 import Paginacao from "../components/Paginacao";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 
-interface SearchParams {
-    search: string;
-    page: string;
-    status: string;
-}
-
 interface FaqProps {
     id: string;
     question: string;
@@ -49,7 +43,7 @@ const ModalConfig = (action: string, initialValues?: FaqProps) => {
     };
 };
 
-export default async function Faq({ searchParams }: { searchParams: SearchParams }) {
+export default async function Faq({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
     const { search, page, status } = await searchParams;
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/faq?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
 

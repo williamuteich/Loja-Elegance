@@ -15,7 +15,7 @@ export default function Rastreamento() {
         />
       </Head>
       <Container>
-        <div className="flex flex-col items-center justify-center sm:px-6 lg:px-8 py-16 bg-white">
+        <div className="flex flex-col items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="flex justify-center items-center gap-2">
               <Truck className="w-8 h-8 text-black" aria-hidden="true" />

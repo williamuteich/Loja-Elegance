@@ -86,7 +86,7 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
                         </Button>
                     )}
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="bg-white">
                     <AlertDialogHeader>
                         <AlertDialogTitle>{config.title}</AlertDialogTitle>
                         <AlertDialogDescription>{config.description}</AlertDialogDescription>
@@ -98,12 +98,12 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
                                     {field.label}
                                 </Label>
                                 {field.type === "select" && field.options ? (
-                                    <Select name={field.name} defaultValue={field.options[0].value}>
+                                    <Select  name={field.name} defaultValue={field.options[0].value}>
                                         <SelectTrigger className="w-[340px]">
                                             <SelectValue placeholder={field.placeholder} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectGroup>
+                                            <SelectGroup className="bg-white cursor-pointer">
                                                 <SelectLabel>{field.label}</SelectLabel>
                                                 {field.options.map((option) => (
                                                     <SelectItem key={option.value} value={option.value}>

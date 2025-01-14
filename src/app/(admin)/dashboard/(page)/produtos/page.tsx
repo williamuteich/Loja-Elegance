@@ -56,7 +56,7 @@ interface SearchParams {
     status: string;
 }
 
-export default async function Produtos({ searchParams }: { searchParams: SearchParams }) {
+export default async function Produtos({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
 
     const { search, page, status } = await searchParams;
 

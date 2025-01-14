@@ -6,11 +6,6 @@ import SearchItems from "../components/searchItems";
 import Paginacao from "../components/Paginacao";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 
-interface SearchParams {
-  search: string;
-  page: string;
-  status: string;
-}
 
 interface Categoria {
   id: string;
@@ -47,7 +42,7 @@ const modalConfig = (action: string, initialValues?: Categoria) => {
   };
 };
 
-export default async function Categoria({ searchParams }: { searchParams: SearchParams }) {
+export default async function Categoria({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
   const { search, page, status } = await searchParams;
 
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/category?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);

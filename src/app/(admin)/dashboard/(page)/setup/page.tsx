@@ -6,13 +6,8 @@ import SearchItems from "../components/searchItems";
 import Paginacao from "../components/Paginacao";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 
-interface SearchParams {
-  search: string;
-  page: string;
-  status: string;
-}
 
-export default async function Settings({ searchParams }: { searchParams: SearchParams }) {
+export default async function Settings({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
 
   const { search, page, status } = await searchParams;
 

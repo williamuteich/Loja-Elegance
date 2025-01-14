@@ -6,12 +6,6 @@ import SearchItems from "../components/searchItems";
 import Paginacao from "../components/Paginacao";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 
-interface SearchParams {
-  search: string;
-  page: string;
-  status: string;
-}
-
 interface FieldConfig {
   name: string;
   label: string;
@@ -47,7 +41,7 @@ const modalConfig = (action: string, initialValues?: Marca) => {
   };
 };
 
-export default async function Marca({ searchParams }: { searchParams: SearchParams }) {
+export default async function Marca({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
   const { search, page, status } = await searchParams;
 
   const response = await fetch(

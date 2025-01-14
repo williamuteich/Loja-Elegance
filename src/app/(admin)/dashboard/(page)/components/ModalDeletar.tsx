@@ -49,7 +49,7 @@ export default function ButtonDelete({ config }: ButtonDeleteProps) {
                     Excluir
                 </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-white">
                 <AlertDialogHeader>
                     <AlertDialogTitle>{config.title}</AlertDialogTitle>
                     <AlertDialogDescription>
