@@ -13,7 +13,6 @@ export default async function Login() {
         redirect("/");
     }
 
-    console.log("está logado", isLoggedIn)
     return (
         <div className="flex items-center justify-center min-h-screen">
             <div className="w-full max-w-xl p-6">

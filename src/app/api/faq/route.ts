@@ -3,12 +3,6 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-interface dadosDataProps {
-    id: string;
-    question: string;
-    response: string;
-}
-
 export async function GET(request: Request) {
     try {
         const url = new URL(request.url);

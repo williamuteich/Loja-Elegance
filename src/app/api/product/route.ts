@@ -88,7 +88,6 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "One or more categoryIds are invalid" }, { status: 400 });
         }
 
-        console.log("está recebendo verdadeiro ou false?", body.active);
         const newProduct = await prisma.product.create({
             data: {
                 name: body.name,

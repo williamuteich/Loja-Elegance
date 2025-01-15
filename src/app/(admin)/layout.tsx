@@ -13,7 +13,6 @@ export default async function AdminLayout({ children }: LayoutProps) {
   const validaUser = session?.user.role
 
   if(!validaUser || (validaUser !== 'admin' && validaUser !== 'colaborador')){
-    console.log("retorna aqui")
     redirect('/')
     return
   }

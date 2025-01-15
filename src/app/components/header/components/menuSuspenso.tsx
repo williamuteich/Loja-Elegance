@@ -16,7 +16,7 @@ import CheckoutHeader from "./checkoutHeader";
 
 export default function MenuSuspenso() {
     const pathname = usePathname();
-    console.log(pathname)
+
     if (pathname.startsWith("/dashboard")) {
         return null;
     }
@@ -107,12 +107,14 @@ export default function MenuSuspenso() {
                             <Link
                                 href="/rastreamento"
                                 className="hover:text-pink-600 transition-colors duration-300"
+                                aria-label="Rastrear Pedido"
                             >
                                 <Truck className="w-6 h-6" />
                             </Link>
                             <Link
                                 href="/login"
                                 className="hover:text-pink-600 transition-colors duration-300"
+                                aria-label="Fazer login"
                             >
                                 <User className="w-6 h-6" />
                             </Link>

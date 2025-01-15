@@ -2,18 +2,10 @@ import { Truck } from "lucide-react";
 import { Container } from "../../components/container";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Head from "next/head";
 
 export default function Rastreamento() {
   return (
     <>
-      <Head>
-        <title>Rastrear Pedido</title>
-        <meta
-          name="description"
-          content="Insira o código de rastreio que você recebeu para acompanhar seu pedido."
-        />
-      </Head>
       <Container>
         <div className="flex flex-col items-center justify-center min-h-screen">
           <div className="text-center">

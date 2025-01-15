@@ -23,11 +23,9 @@ const items = [
   { label: "Tênis", value: "tenis" },
   { label: "Boné", value: "bone" },
   { label: "Mochila", value: "mochila" },
-  // Adicione mais itens conforme necessário
 ];
 
 export default function SearchHeaderItems() {
-  const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
   return (
@@ -35,8 +33,7 @@ export default function SearchHeaderItems() {
       <DialogTrigger asChild>
         <button
           type="button"
-          aria-haspopup="dialog"
-          aria-expanded="false"
+          aria-label="Pesquisar em Nossa Loja"
           className="cursor-pointer hover:text-pink-600 transition-colors"
         >
           <Search className="w-6 h-6" />

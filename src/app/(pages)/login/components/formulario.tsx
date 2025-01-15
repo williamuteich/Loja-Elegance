@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { signIn } from "next-auth/react";
+import Form from 'next/form'
 
 export default function Formulario() {
     const router = useRouter();
@@ -40,7 +41,7 @@ export default function Formulario() {
     }
 
     return (
-        <form onSubmit={login} className="relative">
+        <Form onSubmit={login} action="/search" className="relative">
             <div className="mb-6">
                 <input
                     type="email"
@@ -91,6 +92,6 @@ export default function Formulario() {
             >
                 ENTRAR
             </button>
-        </form>
+        </Form>
     );
 }

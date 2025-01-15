@@ -1,11 +1,15 @@
+import { stat } from "fs";
 import type { NextConfig } from "next";
+import dynamic from "next/dynamic";
 
-export const experimental_ppr = true;
 
 const nextConfig: NextConfig = {
-  experimental: {
-    ppr:"incremental"
-  }
+    experimental: {
+        staleTimes: {
+            dynamic: 60,
+            static: 180,
+        }
+    }
 };
 
 export default nextConfig;
