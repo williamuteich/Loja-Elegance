@@ -77,11 +77,11 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
             <AlertDialog>
                 <AlertDialogTrigger asChild>
                     {config.action === "Adicionar" ? (
-                        <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">
+                        <Button variant="outline" className="bg-green-800 text-white hover:bg-green-600 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">
                             {config.action}
                         </Button>
                     ) : (
-                        <Button className="bg-blue-500 text-white hover:bg-blue-600 font-semibold py-1 px-3 rounded-md transition duration-300 ease-in-out">
+                        <Button className="bg-blue-800 text-white hover:bg-blue-700 font-semibold py-1 px-3 rounded-md transition duration-300 ease-in-out">
                             {config.action}
                         </Button>
                     )}

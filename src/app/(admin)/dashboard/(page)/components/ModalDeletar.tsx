@@ -45,7 +45,7 @@ export default function ButtonDelete({ config }: ButtonDeleteProps) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button variant="outline" className="bg-red-500 text-white hover:bg-red-600 font-semibold py-[6px] px-3 rounded-md transition duration-300 ease-in-out">
+                <Button variant="outline" className="bg-red-700 text-white hover:bg-red-600 font-semibold py-[6px] px-3 rounded-md transition duration-300 ease-in-out">
                     Excluir
                 </Button>
             </AlertDialogTrigger>

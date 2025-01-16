@@ -60,7 +60,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
 
     const { search, page, status } = await searchParams;
 
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}, {cache: 'force-cache'}`);
 
     if (!response.ok) {
         console.log(response)
