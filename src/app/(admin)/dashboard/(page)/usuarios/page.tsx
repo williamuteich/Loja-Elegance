@@ -3,7 +3,7 @@ import { FaUser } from "react-icons/fa";
 import Container from "../components/Container";
 import ButtonAdicionar from "../components/ModalGeneric";
 import ModalDeletar from "../components/ModalDeletar";
-import Paginacao from "../components/Paginacao";
+import Paginacao from "../../../../components/Paginacao";
 import SearchItems from "../components/searchItems";
 import { LoadSkeleton } from "../components/loadSkeleton";
 

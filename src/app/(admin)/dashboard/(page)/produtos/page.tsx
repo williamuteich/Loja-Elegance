@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { FaBox } from "react-icons/fa";
-
 import Container from "../components/Container";
 import ButtonAdicionar from "../components/ModalGeneric";
 import { Button } from "@/components/ui/button";
-import Paginacao from "../components/Paginacao";
+import Paginacao from "../../../../components/Paginacao";
 import SearchItems from "../components/searchItems";
 import ModalDeletar from "../components/ModalDeletar";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
@@ -19,9 +18,6 @@ interface ProductCategoryProps {
 interface CategoryProps {
     id: string;
     name: string;
-    description?: string;
-    createdAt?: string;
-    updatedAt?: string;
 }
 
 interface BrandProps {
@@ -45,25 +41,13 @@ interface ProductProps {
     stock: StockProps;
 }
 
-interface StockProps {
-    id: string;
-    quantity: number;
-}
-
-interface SearchParams {
-    search: string;
-    page: string;
-    status: string;
-}
-
 export default async function Produtos({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
 
     const { search, page, status } = await searchParams;
 
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}, {cache: 'force-cache'}`);
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`, { cache: 'force-cache' });
 
     if (!response.ok) {
-        console.log(response)
         return <p>Ocorreu um erro ao carregar os produtos.</p>;
     }
 
@@ -79,7 +63,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                 <div className="flex gap-2 mb-4">
                     <SearchItems />
                     <FiltroBuscarItem />
-                </div> 
+                </div>
                 <p className="mt-10 font-medium text-lg">Nenhum Produto Encontrado</p>
                 <div className="mt-5 w-full flex justify-end">
                     <Link href={`/dashboard/produtos/adicionar`}>
@@ -163,7 +147,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                                     <span
                                         className={
                                             produto.active
-                                                ? "text-green-600"
+                                                ? "text-green-700"
                                                 : "text-red-600"
                                         }
                                     >
@@ -173,7 +157,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <div className="flex justify-end items-center space-x-3">
-                                    <Button className="bg-blue-500 text-white hover:bg-blue-600 font-semibold py-1 px-3 rounded-md transition duration-300 ease-in-out">
+                                    <Button className="bg-blue-800 text-white hover:bg-blue-700 font-semibold py-1 px-3 rounded-md transition duration-300 ease-in-out">
                                         Editar
                                     </Button>
                                     <ModalDeletar
@@ -194,7 +178,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
             </table>
             <div className="mt-5 w-full flex justify-end">
                 <Link href={`/dashboard/produtos/adicionar`}>
-                    <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">
+                    <Button variant="outline" className="bg-green-800 text-white hover:bg-green-600 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">
                         Novo Produto
                     </Button>
                 </Link>

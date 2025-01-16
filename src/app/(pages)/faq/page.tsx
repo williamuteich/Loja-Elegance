@@ -5,7 +5,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
-import Paginacao from "@/app/(admin)/dashboard/(page)/components/Paginacao";
+import Paginacao from "@/app/components/Paginacao";
 
 async function getFaq({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
     const { search, page, status } = await searchParams;

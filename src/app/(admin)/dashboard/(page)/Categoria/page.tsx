@@ -1,11 +1,12 @@
 import { FaList } from "react-icons/fa";
+import { Suspense } from "react";
 import Container from "../components/Container";
 import ButtonAdicionar from "../components/ModalGeneric";
 import ModalDeletar from "../components/ModalDeletar";
 import SearchItems from "../components/searchItems";
-import Paginacao from "../components/Paginacao";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
-
+import { LoadSkeleton } from "../components/loadSkeleton";
+import Paginacao from "@/app/components/Paginacao";
 
 interface Categoria {
   id: string;
@@ -42,62 +43,34 @@ const modalConfig = (action: string, initialValues?: Categoria) => {
   };
 };
 
-export default async function Categoria({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
-  const { search, page, status } = await searchParams;
-
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/category?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
+async function fetchCategories(search: string, page: string, status: string) {
+  const response = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/category?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`,
+    {
+      cache: 'no-store', 
+    }
+  );
 
   if (!response.ok) {
-    console.log(response);
-    return <p>Ocorreu um erro ao carregar as categorias.</p>;
+    throw new Error("Erro ao carregar os dados.");
   }
 
-  const { category, totalRecords } = await response.json();
+  const data = await response.json();
+  return data;
+}
 
-  if (!category || category.length === 0) {
-    return (
-      <Container>
-        <h2 className="text-3xl font-semibold mb-3 text-gray-800">Categorias</h2>
-        <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
-          Gerencie as categorias e suas descrições. Adicione, edite ou exclua marcas conforme necessário.
-        </p>
-        <div className="flex gap-2 mb-6">
-          <SearchItems />
-          <FiltroBuscarItem />
-        </div>
-        <p className="mt-10 font-medium text-lg">Nenhuma Marca Encontrada</p>
-        <ButtonAdicionar
-          config={{
-            title: "Adicionar categoria",
-            description: "Preencha os campos para adicionar uma nova categoria.",
-            action: "Adicionar",
-            fields: [
-              { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da categoria" },
-              { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da categoria" },
-            ],
-            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/category`,
-            urlRevalidate: "/dashboard/categoria",
-            method: "POST",
-          }}
-        />
-      </Container>
-    );
+const CategoriasList = async ({ search, page, status }: { search: string, page: string, status: string }) => {
+  const data = await fetchCategories(search, page, status);
+
+  if (!data.category || data.category.length === 0) {
+    return <p className="mt-10 font-medium text-lg">Nenhuma Categoria Encontrada</p>;
   }
 
   return (
-    <Container>
-      <h2 className="text-3xl font-semibold mb-3 text-gray-800">Categorias</h2>
-      <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
-        Gerencie as categorias e suas descrições. Adicione, edite ou exclua marcas conforme necessário.
-      </p>
-
-      <div className="flex gap-2 mb-6">
-        <SearchItems />
-        <FiltroBuscarItem />
-      </div>
+    <div>
       <p className="text-gray-700 text-base mb-3">
         <span className="font-semibold text-gray-800">Total de Categorias: </span>
-        <span className="font-medium text-blue-600">{totalRecords}</span>
+        <span className="font-medium text-blue-600">{data.totalRecords}</span>
       </p>
       <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-200">
@@ -109,7 +82,7 @@ export default async function Categoria({ searchParams }: { searchParams: Promis
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-300">
-          {category.map((categoria: Categoria) => (
+          {data.category.map((categoria: Categoria) => (
             <tr key={categoria.id} className="hover:bg-gray-50 transition-colors">
               <td className="py-3 px-4 font-medium text-sm text-blue-600">{categoria.id}</td>
               <td className="py-3 px-4 font-medium text-sm text-gray-700">
@@ -121,25 +94,7 @@ export default async function Categoria({ searchParams }: { searchParams: Promis
               <td className="py-3 px-4 font-medium text-sm text-gray-700">{categoria.description}</td>
               <td className="py-3 px-0 font-medium text-sm text-gray-700">
                 <div className="flex justify-end items-center space-x-3">
-                  <ButtonAdicionar
-                    config={{
-                      id: categoria.id,
-                      title: "Adicionar Categoria",
-                      description: "Preencha os campos para adicionar uma nova categoria.",
-                      action: "Editar",
-                      fields: [
-                        { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da Categoria" },
-                        { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da categoria" },
-                      ],
-                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/category`,
-                      urlRevalidate: "/dashboard/categoria",
-                      method: "PUT",
-                      initialValues: {
-                        name: categoria.name,
-                        description: categoria.description,
-                      }
-                    }}
-                  />
+                  <ButtonAdicionar config={modalConfig("Editar", categoria)} />
                   <ModalDeletar
                     config={{
                       id: categoria.id,
@@ -156,22 +111,38 @@ export default async function Categoria({ searchParams }: { searchParams: Promis
         </tbody>
       </table>
       <div className="mt-5 flex justify-between">
-        <ButtonAdicionar
-          config={{
-            title: "Adicionar categoria",
-            description: "Preencha os campos para adicionar uma nova categoria.",
-            action: "Adicionar",
-            fields: [
-              { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da categoria" },
-              { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da categoria" },
-            ],
-            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/category`,
-            urlRevalidate: "/dashboard/categoria",
-            method: "POST",
-          }}
-        />
+        <ButtonAdicionar config={modalConfig("Adicionar")} />
       </div>
-      <Paginacao data={category} totalRecords={totalRecords} />
+      <Paginacao data={data.category} totalRecords={data.totalRecords} />
+    </div>
+  );
+};
+
+const CategoriasWrapper = ({ search, page, status }: { search: string, page: string, status: string }) => {
+  return (
+    <Suspense fallback={<LoadSkeleton />}>
+      <CategoriasList search={search} page={page} status={status} />
+    </Suspense>
+  );
+};
+
+export default async function Categoria({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
+  const { search, page, status } = await searchParams;
+
+  return (
+    <Container>
+      <h2 className="text-3xl font-semibold mb-3 text-gray-800">Categorias</h2>
+      <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
+        Gerencie as categorias e suas descrições. Adicione, edite ou exclua marcas conforme necessário.
+      </p>
+      <div className="flex gap-2 mb-6">
+        <SearchItems />
+        <FiltroBuscarItem />
+      </div>
+      <CategoriasWrapper search={search} page={page} status={status} />
+      <div className="mt-5 flex justify-between">
+        <ButtonAdicionar config={modalConfig("Adicionar")} />
+      </div>
     </Container>
   );
 }

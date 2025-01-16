@@ -3,13 +3,15 @@ import Container from "../components/Container";
 import ButtonAdicionar from "../components/ModalGeneric";
 import ModalDeletar from "../components/ModalDeletar";
 import SearchItems from "../components/searchItems";
-import Paginacao from "../components/Paginacao";
+import Paginacao from "../../../../components/Paginacao";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
+import { Suspense } from "react";
+import { LoadSkeleton } from "../components/loadSkeleton";
 
 interface FieldConfig {
   name: string;
   label: string;
-  type: "text" | "email" | "select" | "password";  
+  type: "text" | "email" | "select" | "password";
   placeholder: string;
 }
 
@@ -19,6 +21,7 @@ interface Marca {
   description: string;
 }
 
+// Configuração do modal para adicionar/editar categorias
 const modalConfig = (action: string, initialValues?: Marca) => {
   const initialValuesFormatted: { [key: string]: string } | undefined = initialValues
     ? { name: initialValues.name, description: initialValues.description }
@@ -41,44 +44,34 @@ const modalConfig = (action: string, initialValues?: Marca) => {
   };
 };
 
-export default async function Marca({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
-  const { search, page, status } = await searchParams;
-
+// Função para buscar as marcas da API
+const fetchMarcas = async (search: string, page: string, status: string) => {
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/brand?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`
   );
 
-  if (!response.ok) return <p>Ocorreu um erro ao carregar as marcas.</p>;
+  if (!response.ok) {
+    throw new Error("Erro ao carregar as marcas.");
+  }
 
-  const { marcas, totalRecords } = await response.json();
+  const data = await response.json();
+  return data;
+};
+
+// Componente responsável pela renderização da lista de marcas
+const MarcasList = async ({ search, page, status }: { search: string, page: string, status: string }) => {
+  const { marcas, totalRecords } = await fetchMarcas(search, page, status);
 
   if (marcas.length === 0 || !marcas) {
     return (
-      <Container>
-        <h2 className="text-3xl font-semibold mb-3 text-gray-800">Marcas</h2>
-        <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
-          Gerencie as marcas e suas descrições. Adicione, edite ou exclua marcas conforme necessário.
-        </p>
-        <div className="flex gap-2 mb-6">
-          <SearchItems />
-          <FiltroBuscarItem />
-        </div>
+      <>
         <p className="mt-10 font-medium text-lg">Nenhuma Marca Encontrada</p>
-        <ButtonAdicionar config={modalConfig("Adicionar")} />
-      </Container>
+      </>
     );
   }
 
   return (
-    <Container>
-      <h2 className="text-3xl font-semibold mb-3 text-gray-800">Marcas</h2>
-      <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
-        Gerencie as marcas e suas descrições. Adicione, edite ou exclua marcas conforme necessário.
-      </p>
-      <div className="flex gap-2 mb-6">
-        <SearchItems />
-        <FiltroBuscarItem />
-      </div>
+    <div>
       <p className="text-gray-700 text-base mb-3">
         <span className="font-semibold text-gray-800">Total de Marcas: </span>
         <span className="font-medium text-blue-600">{totalRecords}</span>
@@ -93,7 +86,7 @@ export default async function Marca({ searchParams }: { searchParams: Promise<{ 
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-300">
-          {marcas.map((marca: any) => (
+          {marcas.map((marca: Marca) => (
             <tr key={marca.id} className="hover:bg-gray-50 transition-colors">
               <td className="py-3 px-4 font-medium text-sm text-blue-600">{marca.id}</td>
               <td className="py-3 px-4 font-medium text-sm text-gray-700">
@@ -125,6 +118,34 @@ export default async function Marca({ searchParams }: { searchParams: Promise<{ 
         <ButtonAdicionar config={modalConfig("Adicionar")} />
       </div>
       <Paginacao data={marcas} totalRecords={totalRecords} />
+    </div>
+  );
+};
+
+// Componente de wrapper para lidar com a renderização da lista de marcas com carregamento
+const MarcasWrapper = ({ search, page, status }: { search: string, page: string, status: string }) => {
+  return (
+    <Suspense fallback={<LoadSkeleton />}>
+      <MarcasList search={search} page={page} status={status} />
+    </Suspense>
+  );
+};
+
+// Componente principal da página de Marcas
+export default async function Marca({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
+  const { search, page, status } = await searchParams;
+
+  return (
+    <Container>
+      <h2 className="text-3xl font-semibold mb-3 text-gray-800">Marcas</h2>
+      <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
+        Gerencie as marcas e suas descrições. Adicione, edite ou exclua marcas conforme necessário.
+      </p>
+      <div className="flex gap-2 mb-6">
+        <SearchItems />
+        <FiltroBuscarItem />
+      </div>
+      <MarcasWrapper search={search} page={page} status={status} />
     </Container>
   );
 }
