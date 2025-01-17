@@ -18,10 +18,10 @@ export function LogoutDashboard() {
     return (
         <button
             onClick={() => signOut()}
-            title='Configurações'
+            title='sair'
             className="flex items-center w-full gap-2 p-2 rounded-md text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition duration-200">
             <FaSignOutAlt size={24} />
-            <span className='hidden xl:block'>Sair</span>
+            <span>Sair</span>
         </button>
     )
 }

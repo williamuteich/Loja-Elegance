@@ -1,17 +1,27 @@
 "use client";
-import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaSignOutAlt, FaCog, FaTag, FaIndustry } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaSignOutAlt } from 'react-icons/fa';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation';
 import { LogoutDashboard } from '@/app/components/logoutAccount';
 
-export default function Sidebar() {
-    const pathname = usePathname(); 
+import {
+    Sheet,
+    SheetContent,
+    SheetFooter,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet";
+import { AlignJustify } from 'lucide-react';
 
-    const isActive = (path: string) => pathname === path;
+export default function Sidebar() {
+    const pathname = usePathname();
+
+    const isActive = (path: string) => pathname === path; 
 
     return (
         <>
-            <div className="xl:w-64 xl:flex hidden bg-gray-800">
+            <div className="xl:min-w-56 xl:flex hidden bg-gray-800">
                 <div className='text-white flex flex-col min-h-screen fixed w-[inherit] justify-between'>
                     <div>
                         <div className="p-4 text-center">
@@ -100,6 +110,105 @@ export default function Sidebar() {
                         <LogoutDashboard />
                     </div>
                 </div>
+            </div>
+
+            <div className='xl:hidden absolute left-4 top-3'>
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <AlignJustify className="w-6 h-6 text-gray-800" />
+                    </SheetTrigger>
+
+                    <SheetContent
+                        aria-describedby={undefined}
+                        side="left"
+                        className="bg-gray-800 p-6"
+                    >
+                        <SheetHeader>
+                            <SheetTitle className="text-start">
+                                <span className="text-2xl font-bold text-white">
+                                    Dashboard
+                                </span>
+                            </SheetTitle>
+                        </SheetHeader>
+
+                        <div className="flex flex-col gap-6 min-h-screen py-4">
+                            <div className="">
+                                <Link
+                                    href="/dashboard"
+                                    title="Início"
+                                    aria-label="Início"
+                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard') ? 'bg-gray-700' : ''}`}
+                                >
+                                    <FaHome className="w-6 h-6" aria-hidden="true" />
+                                    <span>Início</span>
+                                </Link>
+
+                                <Link
+                                    href="/dashboard/usuarios"
+                                    title="Usuários"
+                                    aria-label="Usuários"
+                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/usuarios') ? 'bg-gray-700' : ''}`}
+                                >
+                                    <FaUserCircle className="w-6 h-6" aria-hidden="true" />
+                                    <span>Usuários</span>
+                                </Link>
+
+                                <Link
+                                    href="/dashboard/produtos"
+                                    title="Produtos"
+                                    aria-label="Produtos"
+                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/produtos') ? 'bg-gray-700' : ''}`}
+                                >
+                                    <FaBoxOpen className="w-6 h-6" aria-hidden="true" />
+                                    <span>Produtos</span>
+                                </Link>
+
+                                <Link
+                                    href="/dashboard/faq"
+                                    title="FAQ"
+                                    aria-label="FAQ"
+                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/faq') ? 'bg-gray-700' : ''}`}
+                                >
+                                    <FaQuestionCircle className="w-6 h-6" aria-hidden="true" />
+                                    <span>FAQ</span>
+                                </Link>
+
+                                <Link
+                                    href="/dashboard/marca"
+                                    title="Marca"
+                                    aria-label="Marca"
+                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/marca') ? 'bg-gray-700' : ''}`}
+                                >
+                                    <FaIndustry className="w-6 h-6" aria-hidden="true" />
+                                    <span>Marca</span>
+                                </Link>
+
+                                <Link
+                                    href="/dashboard/categoria"
+                                    title="Categoria"
+                                    aria-label="Categoria"
+                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/categoria') ? 'bg-gray-700' : ''}`}
+                                >
+                                    <FaTag className="w-6 h-6" aria-hidden="true" />
+                                    <span>Categoria</span>
+                                </Link>
+                            </div>
+
+                            <div className='mt-16 space-y-2 flex flex-col'>
+                                <Link
+                                    href="/dashboard/setup"
+                                    title="Categoria"
+                                    aria-label="Categoria"
+                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/setup') ? 'bg-gray-700' : ''}`}
+                                >
+                                    <FaCog size={24} />
+                                    <span className=''>Configurações</span>
+                                </Link>
+                                <LogoutDashboard />
+                            </div>
+                        </div>
+                    </SheetContent>
+                </Sheet>
             </div>
         </>
     );
