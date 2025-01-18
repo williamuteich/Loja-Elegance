@@ -21,7 +21,7 @@ const produtos = [
         descricao: "Com 3% de desconto",
         preco: "R$ 76,63",
         precoAnterior: "R$ 79,00",
-        precoParcelado: "38,32",
+        precoParcelado: "PROMO",
     },
     {
         id: 2,
@@ -30,7 +30,7 @@ const produtos = [
         descricao: "Com 5% de desconto",
         preco: "R$ 599,99",
         precoAnterior: "R$ 630,00",
-        precoParcelado: "300,00",
+        precoParcelado: "PROMO",
     },
     {
         id: 3,
@@ -39,7 +39,7 @@ const produtos = [
         descricao: "Com 10% de desconto",
         preco: "R$ 200,00",
         precoAnterior: "R$ 220,00",
-        precoParcelado: "100,00",
+        precoParcelado: "PROMO",
     },
     {
         id: 4,
@@ -48,7 +48,7 @@ const produtos = [
         descricao: "Com 8% de desconto",
         preco: "R$ 129,90",
         precoAnterior: "R$ 140,00",
-        precoParcelado: "65,00",
+        precoParcelado: "PROMO",
     },
     {
         id: 5,
@@ -57,7 +57,7 @@ const produtos = [
         descricao: "Com 12% de desconto",
         preco: "R$ 399,00",
         precoAnterior: "R$ 450,00",
-        precoParcelado: "199,50",
+        precoParcelado: "PROMO",
     },
     {
         id: 6,
@@ -66,115 +66,94 @@ const produtos = [
         descricao: "Com 7% de desconto",
         preco: "R$ 350,00",
         precoAnterior: "R$ 375,00",
-        precoParcelado: "175,00",
+        precoParcelado: "PROMO",
     },
 ];
 
 export function Promocao() {
     return (
-        <div className="py-10 w-full bg-white flex justify-center items-center">
+        <div className="py-10 lg:pt-24 w-full bg-white flex justify-center items-center">
             <Container>
-                <div className="flex flex-col lg:flex-row gap-4 lg:gap-20 items-center">
-                    <div className="w-full sm:w-[40%] lg:w-[25%] xl:w-[20%] text-center md:text-left">
-                        <div className="flex flex-col gap-4 mb-4 lg:mb-0 lg:gap-6">
-                            <h1 className="text-pink-800 text-4xl font-bold uppercase text-center lg:text-start">
-                                Promoções
-                            </h1>
-                            <p className="uppercase text-gray-700 text-sm text-center lg:text-start">
-                                Descontos imperdíveis em diversos produtos + Frete grátis em compras selecionadas!
+                <div className="flex flex-col lg:flex-row gap-10 items-center">
+                    <div className="w-full text-center lg:text-left mb-6 lg:mb-0">
+                        <div className="flex flex-col gap-4">
+                            <h2 className="text-2xl  text-center lg:text-start uppercase font-extrabold text-pink-700">
+                                Promoções Imperdíveis!
+                            </h2>
+                            <p className="uppercase text-gray-700 text-xs lg:text-sm font-medium text-center lg:text-start">
+                                Não perca as ofertas especiais que preparamos para você. Aproveite descontos exclusivos em
+                                produtos selecionados, com frete grátis em compras acima de R$150,00. Oferta por tempo limitado!
                             </p>
-                            <Button className="uppercase text-white bg-pink-800 hover:bg-pink-600 focus:bg-pink-600">
-                                Aproveite já!
+
+                            <Button className="uppercase text-xs lg:text-sm text-white bg-pink-800 hover:bg-pink-600 focus:bg-pink-600">
+                                Aproveite Agora!
                             </Button>
                         </div>
                     </div>
-                    <div className="w-[75%] sm:w-[90%] md:w-[90%] lg:w-[63%] xl:w-[70%]">
-                        <Carousel opts={{ align: "start" }} className="w-full">
-                            <CarouselContent className="p-2">
+
+
+                    <div className="w-full lg:w-[75%] xl:w-[70%] relative ">
+                        <Carousel opts={{ align: "start" }} className="w-full ">
+                            <div className="absolute right-12 -top-12 sm:flex ">
+                                <p className="text-pink-700 font-extrabold mr-10">Ver Todos</p>
+                                <div>
+                                    <CarouselPrevious className="left-24 rounded-none" style={{ borderRadius: "5px" }} />
+                                    <CarouselNext className="rounded-none" style={{ borderRadius: "5px" }} />
+                                </div>
+                            </div>
+                            <CarouselContent className="flex gap-[1px] px-3">
                                 {produtos.map((produto) => (
                                     <CarouselItem
                                         key={produto.id}
-                                        className="sm:basis-1/3 md:basis-1/3 lg:basis-1/3 xl:basis-1/3"
+                                        className="flex-shrink-0 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/4 xl:basis-1/4"
                                     >
-                                        <div className="p-0">
-                                            <Card className="border-0 p-1 pb-6">
-                                                <CardContent className="flex aspect-square p-0 hover:scale-[1.02] transition-all justify-center">
-                                                    <Link href={`/produtos/${produto.titulo}`} className="w-full h-fit">
-                                                        <div className="w-full p-10 max-h-full flex flex-col items-center">
-                                                            {/* Imagem do Produto */}
-                                                            <Image
-                                                                src={produto.imagem}
-                                                                alt={produto.titulo}
-                                                                width={400}
-                                                                height={400}
-                                                                className="object-cover w-full h-[200px] mb-2 rounded-lg"
-                                                            />
-                                                            {/* Título do Produto */}
-                                                            <div className="text-center leading-5 text-base mb-1 text-gray-800">
-                                                                {produto.titulo}
-                                                            </div>
+                                        <Link
+                                            href={`/produtos/${produto.titulo}`}
+                                            className="group relative flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all"
+                                        >
+                                            <div className="relative flex aspect-[300/300] items-center justify-center">
+                                                <Image
+                                                    alt={produto.titulo}
+                                                    src={produto.imagem}
+                                                    className="object-contain p-5 lg:p-3"
+                                                    width={300}
+                                                    height={300}
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                />
+                                            </div>
+                                            <div className="flex w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
+                                                <div className="flex flex-col gap-2 w-full">
+                                                    <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
+                                                        {produto.titulo}
+                                                    </h3>
+                                                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                                        <p className="text-sm font-semibold text-pink-600 line-through">
+                                                            {produto.precoAnterior}
+                                                        </p>
+                                                        <p className="text-lg font-semibold text-pink-700">
+                                                            {produto.preco}
+                                                        </p>
+                                                    </div>
+                                                    <p className="text-xs font-medium text-neutral-700 sm:text-sm">
+                                                        {produto.descricao}
+                                                    </p>
+                                                    <div className="mt-3">
+                                                        <button className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all">
+                                                            Adicionar ao Carrinho
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                                            <div className="list-star flex justify-center mb-3 mt-1">
-                                                                {[...Array(5)].map((_, index) => (
-                                                                    <FaStar
-                                                                        key={index}
-                                                                        className="text-yellow-500 w-4 h-4 mr-1"
-                                                                    />
-                                                                ))}
-                                                            </div>
-
-                                                            <div className="product-price">
-                                                                {produto.precoAnterior ? (
-                                                                    <div className="price-before text-center">
-                                                                        <span className="line-price text-sm text-gray-600 line-through">
-                                                                            De: {produto.precoAnterior}
-                                                                        </span>
-                                                                    </div>
-                                                                ) : null}
-                                                                <div className="price-off">
-                                                                    <span className="por text-base text-pink-800 font-semibold">
-                                                                        Por
-                                                                    </span>
-                                                                    <span className="text-xl font-bold text-pink-800">
-                                                                        {" "}
-                                                                        {produto.preco}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="product-payment text-center mt-2">
-                                                                {produto.precoParcelado ? (
-                                                                    <span className="txt-corparcelas text-sm">
-                                                                        ou até
-                                                                        <strong className="color text-sm text-pink-800">
-                                                                            {" "}
-                                                                            2x
-                                                                        </strong>
-                                                                        <span className="preco-de"> de </span>
-                                                                        <strong className="preco-parc2 text-sm text-pink-800">
-                                                                            R$ {produto.precoParcelado}
-                                                                        </strong>
-                                                                        <span className="operadora text-sm">
-                                                                            {" "}
-                                                                            Sem juros
-                                                                        </span>
-                                                                    </span>
-                                                                ) : (
-                                                                    <span className="txt-corparcelas text-sm">
-                                                                        Pagamento à vista
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </Link>
-                                                </CardContent>
-                                            </Card>
-                                        </div>
+                                            {produto.precoParcelado && (
+                                                <p className="absolute left-3 top-3 z-20 flex items-center bg-pink-700 px-3 py-1 text-sm font-semibold text-white">
+                                                    {produto.precoParcelado}
+                                                </p>
+                                            )}
+                                        </Link>
                                     </CarouselItem>
                                 ))}
                             </CarouselContent>
-                            <CarouselPrevious className="rounded-none" style={{ borderRadius: "5px" }} />
-                            <CarouselNext className="rounded-none" style={{ borderRadius: "5px" }} />
                         </Carousel>
                     </div>
                 </div>
