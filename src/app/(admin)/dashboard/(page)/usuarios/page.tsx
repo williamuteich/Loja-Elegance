@@ -6,6 +6,7 @@ import ModalDeletar from "../components/ModalDeletar";
 import Paginacao from "../../../../components/Paginacao";
 import SearchItems from "../components/searchItems";
 import { LoadSkeleton } from "../components/loadSkeleton";
+import TableMobile from "./components/tableMobile";
 
 
 type FieldConfig = {
@@ -83,59 +84,63 @@ const UsuariosList = async ({ search, page, status }: { search: string, page: st
         <span className="font-medium text-blue-600">{data.totalRecords}</span>
       </p>
 
-      <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[120px]">ID</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[200px]">Usuário</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[250px]">Email</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[150px]">Permissão</th>
-            <th className="py-3 px-0 text-left text-sm font-medium text-gray-700">Status</th>
-            <th className="py-3 px-0 text-left text-sm font-medium text-gray-700 w-[200px]"></th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-300">
-          {data.usuarios.map((usuario: any) => (
-            <tr key={usuario.id} className="hover:bg-gray-50 transition-colors">
-              <td className="py-3 px-4 font-medium text-sm text-blue-600">{usuario.id}</td>
-              <td className="py-3 px-4 font-medium text-sm text-gray-700">
-                <div className="flex items-center space-x-2">
-                  <FaUser size={22} className="text-gray-500" />
-                  <span>{usuario.name}</span>
-                </div>
-              </td>
-              <td className="py-3 px-4 font-medium text-sm text-gray-700">{usuario.email}</td>
-              <td className="py-3 px-4 font-medium text-sm text-blue-700">{usuario.role}</td>
-              <td className="py-3 px-4 font-medium text-sm text-red-700">
-                <span className={Boolean(usuario.active) ? "text-green-700" : "text-red-600"}>
-                  {Boolean(usuario.active) ? "Ativo" : "Inativo"}
-                </span>
-              </td>
-              <td className="py-3 px-0 font-medium text-sm text-gray-700">
-                <div className="flex justify-end items-center space-x-3">
-                  <ButtonAdicionar
-                    config={createButtonConfig("Editar", usuario.id, {
-                      name: usuario.name,
-                      email: usuario.email,
-                      role: usuario.role,
-                      status: usuario.active,
-                    })}
-                  />
-                  <ModalDeletar
-                    config={{
-                      id: usuario.id,
-                      title: "Tem certeza de que deseja excluir esse usuário?",
-                      description: "Esta ação não pode ser desfeita. O usuário será excluído permanentemente.",
-                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
-                      urlRevalidate: "/dashboard/usuarios",
-                    }}
-                  />
-                </div>
-              </td>
+      <div className="hidden xl:block">
+        <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
+          <thead className="bg-gray-200">
+            <tr>
+              <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[120px]">ID</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[200px]">Usuário</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[250px]">Email</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[150px]">Permissão</th>
+              <th className="py-3 px-0 text-left text-sm font-medium text-gray-700">Status</th>
+              <th className="py-3 px-0 text-left text-sm font-medium text-gray-700 w-[200px]"></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-300">
+            {data.usuarios.map((usuario: any) => (
+              <tr key={usuario.id} className="hover:bg-gray-50 transition-colors">
+                <td className="py-3 px-4 font-medium text-sm text-blue-600">{usuario.id}</td>
+                <td className="py-3 px-4 font-medium text-sm text-gray-700">
+                  <div className="flex items-center space-x-2">
+                    <FaUser size={22} className="text-gray-500" />
+                    <span>{usuario.name}</span>
+                  </div>
+                </td>
+                <td className="py-3 px-4 font-medium text-sm text-gray-700">{usuario.email}</td>
+                <td className="py-3 px-4 font-medium text-sm text-blue-700">{usuario.role}</td>
+                <td className="py-3 px-4 font-medium text-sm text-red-700">
+                  <span className={Boolean(usuario.active) ? "text-green-700" : "text-red-600"}>
+                    {Boolean(usuario.active) ? "Ativo" : "Inativo"}
+                  </span>
+                </td>
+                <td className="py-3 px-0 font-medium text-sm text-gray-700">
+                  <div className="flex justify-end items-center space-x-3">
+                    <ButtonAdicionar
+                      config={createButtonConfig("Editar", usuario.id, {
+                        name: usuario.name,
+                        email: usuario.email,
+                        role: usuario.role,
+                        status: usuario.active,
+                      })}
+                    />
+                    <ModalDeletar
+                      config={{
+                        id: usuario.id,
+                        title: "Tem certeza de que deseja excluir esse usuário?",
+                        description: "Esta ação não pode ser desfeita. O usuário será excluído permanentemente.",
+                        apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
+                        urlRevalidate: "/dashboard/usuarios",
+                      }}
+                    />
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <TableMobile data={data} createButtonConfig={createButtonConfig} />
 
       <Paginacao
         totalRecords={data.totalRecords} data={[]} />

@@ -51,7 +51,7 @@ export default function SubBannerHeader() {
             })
         ]}
       >
-        <CarouselContent className="flex gap-4">
+        <CarouselContent className="flex">
           <CarouselItem className="p-3 justify-center w-full bg-gradient-to-r from-pink-700 via-pink-600 to-pink-500 flex items-center gap-4">
             <FaWhatsapp size={28} className="text-green-500 text-2xl" />
             <div className="flex flex-col items-start">

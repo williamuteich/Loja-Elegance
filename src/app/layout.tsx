@@ -1,6 +1,7 @@
 import Header from "@/app/components/header/header";
 import type { Metadata } from 'next'
 import "./globals.css";
+import Footer from "./components/footer/footer";
 
 
 export const metadata: Metadata = {
@@ -51,6 +52,7 @@ export default async function RootLayout({
       <body>
         <Header />
         <div>{children}</div>
+        <Footer />
       </body>
     </html>
   );

@@ -27,7 +27,7 @@ export function Banners() {
                 >
                     <CarouselContent>
                         <CarouselItem>
-                            <div className="relative opacity-85 w-full h-[350px] md:h-[400px]">  
+                            <div className="relative opacity-85 w-full h-[350px] md:h-[500px]">  
                                 <Image
                                     className='object-cover'
                                     src="/imagem0.jpg"
@@ -39,7 +39,7 @@ export function Banners() {
                             </div>
                         </CarouselItem>
                         <CarouselItem>
-                            <div className="relative opacity-85 w-full h-[350px] md:h-[400px]">  
+                            <div className="relative opacity-85 w-full h-[350px] md:h-[500px]">  
                                 <Image 
                                     className='object-cover'
                                     src="/imagem1.jpg"
