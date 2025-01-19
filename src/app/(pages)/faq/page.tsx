@@ -43,7 +43,7 @@ export default async function FaqPage({ searchParams }: { searchParams: Promise<
 
     return (
         <div className="py-10">
-            <div className="container mx-auto">
+            <div className="mx-auto ">
                 <h2 className="text-2xl text-gray-800 font-bold mb-6 text-start">
                     Perguntas Frequentes
                 </h2>

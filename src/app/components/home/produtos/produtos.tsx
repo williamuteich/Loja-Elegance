@@ -107,7 +107,7 @@ export default function Produtos() {
               </p>
 
               {produto.promocao && (
-                <div className="mt-2 text-xs font-semibold text-white bg-green-600 px-2 py-1 rounded-md w-max">
+                <div className="mt-2 text-xs font-semibold text-white bg-green-700 px-2 py-1 rounded-md w-max">
                   Em Estoque
                 </div>
               )}
