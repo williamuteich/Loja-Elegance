@@ -42,11 +42,11 @@ export default async function FaqPage({ searchParams }: { searchParams: Promise<
     const defaultSearchParams = await searchParams;
 
     return (
-        <div className="py-16 my-10">
+        <div className="py-10">
             <div className="container mx-auto">
-                <h1 className="text-2xl text-gray-800 font-bold mb-6 text-start">
+                <h2 className="text-2xl text-gray-800 font-bold mb-6 text-start">
                     Perguntas Frequentes
-                </h1>
+                </h2>
                 <Suspense fallback={<div>Carregando...</div>}>
                     {await getFaq({ searchParams: Promise.resolve(defaultSearchParams) })}
                 </Suspense>

@@ -131,7 +131,14 @@ export default function MenuSuspenso() {
                     <div className="flex justify-between items-center gap-4">
                         <Sheet>
                             <SheetTrigger asChild>
-                                <AlignJustify className="w-6 h-6 text-gray-700" />
+
+                                <button
+                                    type="button"
+                                    aria-label="Menu Mobile"
+                                    className="cursor-pointer hover:text-pink-600 transition-colors"
+                                >
+                                    <AlignJustify className="w-6 h-6 text-gray-700" />
+                                </button>
                             </SheetTrigger>
 
                             <SheetContent aria-describedby={undefined} side="left" className="bg-white p-6">
@@ -218,10 +225,13 @@ export default function MenuSuspenso() {
                     </div>
 
                     <div className="flex items-center justify-center gap-4 text-gray-600">
-                        <button title="Usuários" className="hover:text-pink-600 cursor-pointer transition-colors duration-300">
+                        <Link
+                            href="/login"
+                            className="hover:text-pink-600 transition-colors duration-300"
+                            aria-label="Fazer login"
+                        >
                             <User className="w-6 h-6" />
-                        </button>
-
+                        </Link>
                         <CheckoutHeader />
                     </div>
                 </div>
