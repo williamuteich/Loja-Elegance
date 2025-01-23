@@ -9,70 +9,60 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { FaStar } from 'react-icons/fa';
 import Link from "next/link";
-import { Container } from "../../container";
+import { Container } from "@/app/components/container";
 
 const produtos = [
     {
         id: 1,
-        titulo: "Sunga Slip Canelada Ferrugem Olivia",
-        imagem: "/Frame_24.webp",
-        descricao: "Com 3% de desconto",
-        preco: "R$ 76,63",
-        precoAnterior: "R$ 79,00",
-        precoParcelado: "PROMO",
+        nome: "Relógio Tymos Eminence Silver",
+        precoOriginal: "R$ 319,99",
+        precoPromocional: "R$ 239,71",
+        descricao: "5 cores disponíveis",
+        promocao: true,
+        imagem: "/Frame_22.webp",
     },
     {
         id: 2,
-        titulo: "Tênis Nike Air Max 2021",
-        imagem: "/Frame_22.webp",
-        descricao: "Com 5% de desconto",
-        preco: "R$ 599,99",
-        precoAnterior: "R$ 630,00",
-        precoParcelado: "PROMO",
+        nome: "Relógio Tymos Eminence Black",
+        precoOriginal: "R$ 319,99",
+        precoPromocional: "R$ 239,72",
+        descricao: "5 cores disponíveis",
+        promocao: true,
+        imagem: "/Frame_24.webp",
     },
     {
         id: 3,
-        titulo: "Relógio Casio Vintage preto ",
-        imagem: "/Frame_24.webp",
-        descricao: "Com 10% de desconto",
-        preco: "R$ 200,00",
-        precoAnterior: "R$ 220,00",
-        precoParcelado: "PROMO",
+        nome: "Relógio Tymos Eminence Blue",
+        precoOriginal: "R$ 319,99",
+        precoPromocional: "R$ 239,73",
+        descricao: "5 cores disponíveis",
+        promocao: true,
+        imagem: "/Frame8.webp",
     },
     {
         id: 4,
-        titulo: "Camiseta Adidas Original",
-        imagem: "/Frame8.webp",
-        descricao: "Com 8% de desconto",
-        preco: "R$ 129,90",
-        precoAnterior: "R$ 140,00",
-        precoParcelado: "PROMO",
+        nome: "Relógio Tymos Eminence Green",
+        precoOriginal: "R$ 319,99",
+        precoPromocional: "R$ 239,74",
+        descricao: "5 cores disponíveis",
+        promocao: true,
+        imagem: "/Frame6.webp",
     },
     {
         id: 5,
-        titulo: "Jaqueta North Face Puffer",
-        imagem: "/Frame6.webp",
-        descricao: "Com 12% de desconto",
-        preco: "R$ 399,00",
-        precoAnterior: "R$ 450,00",
-        precoParcelado: "PROMO",
-    },
-    {
-        id: 6,
-        titulo: "Fone de Ouvido JBL Xtreme",
+        nome: "Relógio Tymos Eminence Blue",
+        precoOriginal: "R$ 319,99",
+        precoPromocional: "R$ 500,73",
+        descricao: "5 cores disponíveis",
+        promocao: true,
         imagem: "/Frame8.webp",
-        descricao: "Com 7% de desconto",
-        preco: "R$ 350,00",
-        precoAnterior: "R$ 375,00",
-        precoParcelado: "PROMO",
     },
 ];
 
 export function Promocao() {
     return (
-        <div className="py-10 lg:pt-24 w-full bg-white flex justify-center items-center">
+        <div className="py-10 lg:pt-24 w-full mx-auto bg-white flex justify-center items-center">
             <Container>
                 <div className="flex flex-col lg:flex-row gap-10 items-center">
                     <div className="w-full text-center lg:text-left mb-6 lg:mb-0">
@@ -108,12 +98,12 @@ export function Promocao() {
                                         className="flex-shrink-0 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/4 xl:basis-1/4"
                                     >
                                         <Link
-                                            href={`/produtos/${produto.titulo}`}
+                                           href={`/produtos/${produto.id}`}
                                             className="group relative flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all"
                                         >
                                             <div className="relative flex aspect-[300/300] items-center justify-center">
                                                 <Image
-                                                    alt={produto.titulo}
+                                                    alt={produto.nome}
                                                     src={produto.imagem}
                                                     className="object-contain p-5 lg:p-3"
                                                     width={300}
@@ -124,14 +114,14 @@ export function Promocao() {
                                             <div className="flex w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
                                                 <div className="flex flex-col gap-2 w-full">
                                                     <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
-                                                        {produto.titulo}
+                                                        {produto.nome}
                                                     </h3>
                                                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                                                         <p className="text-sm font-semibold text-pink-600 line-through">
-                                                            {produto.precoAnterior}
+                                                            {produto.precoOriginal}
                                                         </p>
                                                         <p className="text-lg font-semibold text-pink-700">
-                                                            {produto.preco}
+                                                            {produto.precoPromocional}
                                                         </p>
                                                     </div>
                                                     <p className="text-xs font-medium text-neutral-700 sm:text-sm">
@@ -145,9 +135,9 @@ export function Promocao() {
                                                 </div>
                                             </div>
 
-                                            {produto.precoParcelado && (
+                                            {produto.promocao && (
                                                 <p className="absolute left-3 top-3 z-20 flex items-center bg-pink-700 px-3 py-1 text-sm font-semibold text-white">
-                                                    {produto.precoParcelado}
+                                                    25% OFF
                                                 </p>
                                             )}
                                         </Link>

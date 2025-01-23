@@ -127,8 +127,8 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
                             </div>
                         ))}
                         <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction type="submit">Salvar</AlertDialogAction>
+                            <AlertDialogCancel className="bg-red-700 text-white hover:bg-red-600 hover:textwhite hover:text-white">Cancelar</AlertDialogCancel>
+                            <AlertDialogAction className="bg-blue-800 hover:bg-blue-700 text-white" type="submit">Salvar</AlertDialogAction>
                         </AlertDialogFooter>
                     </form>
                 </AlertDialogContent>

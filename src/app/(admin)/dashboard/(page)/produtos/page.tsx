@@ -7,6 +7,7 @@ import Paginacao from "../../../../components/Paginacao";
 import SearchItems from "../components/searchItems";
 import ModalDeletar from "../components/ModalDeletar";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
+import Image from "next/image";
 
 interface ProductCategoryProps {
     id: string;
@@ -39,13 +40,14 @@ interface ProductProps {
     categories: ProductCategoryProps[];
     brand: BrandProps;
     stock: StockProps;
+    imagePrimary: string;
 }
 
 export default async function Produtos({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
 
     const { search, page, status } = await searchParams;
 
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`, { cache: 'force-cache' });
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
 
     if (!response.ok) {
         return <p>Ocorreu um erro ao carregar os produtos.</p>;
@@ -114,11 +116,19 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <Link href={`/dashboard/produtos/${produto.name}`} className="block">
                                     <div className="flex items-center space-x-2">
-                                        <FaBox size={22} className="text-gray-500" />
+                                        <div className="relative w-[40px] h-[40px]">
+                                            <Image
+                                                fill
+                                                src={produto.imagePrimary}
+                                                alt={produto.name}
+                                                className="object-cover"
+                                            />
+                                        </div>
                                         <span>{produto.name}</span>
                                     </div>
                                 </Link>
                             </td>
+
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <Link href={`/dashboard/produtos/${produto.name}`} className="block">
                                     {produto.categories.reduce((acc, item, index) => {

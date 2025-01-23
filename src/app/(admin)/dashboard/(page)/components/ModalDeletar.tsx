@@ -57,8 +57,8 @@ export default function ButtonDelete({ config }: ButtonDeleteProps) {
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDelete}>Excluir</AlertDialogAction>
+                    <AlertDialogCancel className="bg-blue-800 hover:bg-blue-700 text-white hover:text-white">Cancelar</AlertDialogCancel>
+                    <AlertDialogAction className="bg-red-700 text-white hover:bg-red-600" onClick={handleDelete}>Excluir</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
