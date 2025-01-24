@@ -10,7 +10,7 @@ export default async function Home() {
   return (
     <div className="text-red-800">
       <Banners/>
-      <Promocao produtos={res} /> 
+      <Promocao produtos={res.produtos} /> 
       <Container data={res}>
         <Produtos/>
       </Container>

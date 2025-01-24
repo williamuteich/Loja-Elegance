@@ -54,7 +54,7 @@ export default function Produtos() {
   return (
     <div className="mx-auto py-10 sm:px-0">
       <h2 className="text-2xl relative uppercase font-extrabold text-pink-700 mb-6 text-start">
-        Mais vendidos
+        Produtos em Destaque
       </h2>
       <Carousel
         opts={{
