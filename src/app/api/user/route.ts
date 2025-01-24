@@ -57,9 +57,9 @@ export async function POST(request: Request) {
         const body = await request.json();
         const saltRounds = 10;
 
-        
-        if (!body.name || !body.email  || !body.password || body.active === undefined) {
-            return new Response("Name, email and password are required", {
+        console.log(body)
+        if (!body.name || !body.email  || !body.password || !body.role || body.active === undefined) {
+            return new Response("Name, email, role, active and password are required", {
                 status: 400,
             });
         }

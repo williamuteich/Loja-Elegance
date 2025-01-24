@@ -70,7 +70,7 @@ export function Promocao() {
                             <h2 className="text-2xl  text-center lg:text-start uppercase font-extrabold text-pink-700">
                                 Promoções Imperdíveis!
                             </h2>
-                            <p className="uppercase text-gray-700 text-xs lg:text-sm font-medium text-center lg:text-start">
+                            <p className="uppercase text-gray-700 text-xs lg:text-sm font-normal text-center lg:text-start">
                                 Não perca as ofertas especiais que preparamos para você. Aproveite descontos exclusivos em
                                 produtos selecionados, com frete grátis em compras acima de R$150,00. Oferta por tempo limitado!
                             </p>
