@@ -12,62 +12,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/app/components/container";
 
-const produtos = [
-    {
-        id: 1,
-        nome: "Relógio Tymos Eminence Silver",
-        precoOriginal: "R$ 319,99",
-        precoPromocional: "R$ 239,71",
-        descricao: "5 cores disponíveis",
-        promocao: true,
-        imagem: "/Frame_22.webp",
-    },
-    {
-        id: 2,
-        nome: "Relógio Tymos Eminence Black",
-        precoOriginal: "R$ 319,99",
-        precoPromocional: "R$ 239,72",
-        descricao: "5 cores disponíveis",
-        promocao: true,
-        imagem: "/Frame_24.webp",
-    },
-    {
-        id: 3,
-        nome: "Relógio Tymos Eminence Blue",
-        precoOriginal: "R$ 319,99",
-        precoPromocional: "R$ 239,73",
-        descricao: "5 cores disponíveis",
-        promocao: true,
-        imagem: "/Frame8.webp",
-    },
-    {
-        id: 4,
-        nome: "Relógio Tymos Eminence Green",
-        precoOriginal: "R$ 319,99",
-        precoPromocional: "R$ 239,74",
-        descricao: "5 cores disponíveis",
-        promocao: true,
-        imagem: "/Frame6.webp",
-    },
-    {
-        id: 5,
-        nome: "Relógio Tymos Eminence Blue",
-        precoOriginal: "R$ 319,99",
-        precoPromocional: "R$ 500,73",
-        descricao: "5 cores disponíveis",
-        promocao: true,
-        imagem: "/Frame8.webp",
-    },
-];
+export function Promocao({ produtos }) {
+    
+    const produtosEmPromocao = produtos.produtos.filter(produto => produto.onSale);
 
-export function Promocao() {
     return (
         <div className="py-10 lg:pt-24 w-full mx-auto bg-white flex justify-center items-center">
             <Container>
                 <div className="flex flex-col lg:flex-row gap-10 items-center">
                     <div className="w-full text-center lg:text-left mb-6 lg:mb-0">
                         <div className="flex flex-col gap-4">
-                            <h2 className="text-2xl  text-center lg:text-start uppercase font-extrabold text-pink-700">
+                            <h2 className="text-2xl text-center lg:text-start uppercase font-extrabold text-pink-700">
                                 Promoções Imperdíveis!
                             </h2>
                             <p className="uppercase text-gray-700 text-xs lg:text-sm font-normal text-center lg:text-start">
@@ -81,7 +36,6 @@ export function Promocao() {
                         </div>
                     </div>
 
-
                     <div className="w-full lg:w-[75%] xl:w-[70%] relative ">
                         <Carousel opts={{ align: "start" }} className="w-full ">
                             <div className="absolute right-12 -top-12 sm:flex ">
@@ -92,7 +46,7 @@ export function Promocao() {
                                 </div>
                             </div>
                             <CarouselContent className="flex gap-[1px] px-3">
-                                {produtos.map((produto) => (
+                                {produtosEmPromocao.map((produto) => (
                                     <CarouselItem
                                         key={produto.id}
                                         className="flex-shrink-0 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/4 xl:basis-1/4"
@@ -103,9 +57,9 @@ export function Promocao() {
                                         >
                                             <div className="relative flex aspect-[300/300] items-center justify-center">
                                                 <Image
-                                                    alt={produto.nome}
-                                                    src={produto.imagem}
-                                                    className="object-contain p-5 lg:p-3"
+                                                    alt={produto.name}
+                                                    src={produto.imagePrimary}
+                                                    className="object-contain"
                                                     width={300}
                                                     height={300}
                                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -114,18 +68,18 @@ export function Promocao() {
                                             <div className="flex w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
                                                 <div className="flex flex-col gap-2 w-full">
                                                     <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
-                                                        {produto.nome}
+                                                        {produto.name}
                                                     </h3>
                                                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                                                         <p className="text-sm font-semibold text-pink-600 line-through">
-                                                            {produto.precoOriginal}
+                                                            R${produto.priceOld}
                                                         </p>
                                                         <p className="text-lg font-semibold text-pink-700">
-                                                            {produto.precoPromocional}
+                                                            R${produto.price}
                                                         </p>
                                                     </div>
-                                                    <p className="text-xs font-medium text-neutral-700 sm:text-sm">
-                                                        {produto.descricao}
+                                                    <p className="text-xs font-medium text-neutral-700 sm:text-sm truncate">
+                                                        {produto.description}
                                                     </p>
                                                     <div className="mt-3">
                                                         <button className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all">
@@ -135,7 +89,7 @@ export function Promocao() {
                                                 </div>
                                             </div>
 
-                                            {produto.promocao && (
+                                            {produto.onSale && (
                                                 <p className="absolute left-3 top-3 z-20 flex items-center bg-pink-700 px-3 py-1 text-sm font-semibold text-white">
                                                     25% OFF
                                                 </p>
