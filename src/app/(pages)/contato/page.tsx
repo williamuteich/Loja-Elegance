@@ -1,8 +1,66 @@
+"use client"
 import Image from "next/image";
+import { ToastContainer, toast } from "react-toastify";
+import { FormEvent, useState } from 'react'
 
 export default function Contato() {
+    const [loading, setLoading] = useState(false)
+
+    async function onSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+
+        const formData = new FormData(event.currentTarget);
+        const formObject: { [key: string]: string } = {};
+
+        formData.forEach((value, key) => {
+            formObject[key] = value.toString();
+        });
+
+        const jsonData = JSON.stringify(formObject);
+
+        setLoading(true);
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/formContact`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: jsonData,
+            })
+
+            if (!response.ok) {
+                toast.error("Falha ao Enviar Formulario De Contato", {
+                    position: "top-center",
+                    autoClose: 3000
+                })
+                setLoading(false);
+                return
+            }
+
+            toast.success("Formulario Enviado Com Sucesso", {
+                position: "top-center",
+                autoClose: 4500
+            })
+
+            setLoading(false);
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 5000);
+
+        } catch (err) {
+            toast.error("Falha ao Enviar Formulario De Contato", {
+                position: "top-center",
+                autoClose: 3000
+            })
+        }
+
+    }
+
     return (
         <div className="flex flex-col items-center py-10">
+            <ToastContainer />
             <div className=" w-full">
                 <h1 className="text-2xl uppercase  font-extrabold text-pink-700 mb-2">Contato</h1>
                 <p className="text-gray-700 text-base">
@@ -34,15 +92,17 @@ export default function Contato() {
                             Precisa de ajuda ou tem dúvidas? Preencha o formulário abaixo e nossa equipe entrará em contato com você.
                         </p>
 
-                        <form className="space-y-4">
+                        <form onSubmit={onSubmit} className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <input
                                     type="text"
+                                    name="name"
                                     placeholder="Seu Nome"
                                     className="w-full border border-gray-300 rounded-lg p-2 focus:outline-pink-800"
                                 />
                                 <input
                                     type="email"
+                                    name="email"
                                     placeholder="Seu Email"
                                     className="w-full border border-gray-300 rounded-lg p-2 focus:outline-pink-800"
                                 />
@@ -50,24 +110,37 @@ export default function Contato() {
                             <div className="grid grid-cols-2 gap-4">
                                 <input
                                     type="text"
+                                    name="telefone"
                                     placeholder="Seu Telefone"
                                     className="w-full border border-gray-300 rounded-lg p-2 focus:outline-pink-800"
                                 />
                                 <input
                                     type="text"
+                                    name="assunto"
                                     placeholder="Assunto"
                                     className="w-full border border-gray-300 rounded-lg p-2 focus:outline-pink-800"
                                 />
                             </div>
                             <textarea
                                 placeholder="Mensagem"
+                                name="mensagem"
                                 className="w-full border border-gray-300 rounded-lg p-2 focus:outline-pink-800 h-32"
                             ></textarea>
                             <button
                                 type="submit"
-                                className="bg-pink-800 text-white font-bold py-2 px-6 rounded-lg hover:bg-pink-700"
+                                className={`bg-pink-800 text-white font-bold py-2 px-6 rounded-lg hover:bg-pink-700 ${loading ? "cursor-not-allowed opacity-50" : ""}`}
+                                disabled={loading}
                             >
-                                Enviar Mensagem
+                                {loading ? (
+                                    <div className="flex justify-center items-center space-x-2">
+                                        {/* Ícone de carregamento */}
+                                        <div className="animate-spin border-2 border-t-2 border-white w-4 h-4 rounded-full"></div>
+                                        {/* Mensagem "Enviando..." */}
+                                        <span>Enviando...</span>
+                                    </div>
+                                ) : (
+                                    "Enviar Mensagem"
+                                )}
                             </button>
                         </form>
                     </div>

@@ -23,22 +23,22 @@ model User {
 }
 
 model Product {
-  id                String            @id @default(auto()) @map("_id") @db.ObjectId
-  name              String
-  description       String
-  price             Float
-  priceOld          Float?
-  active            Boolean           @default(true)
-  onSale            Boolean           @default(false)
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  brandId           String            @db.ObjectId
-  stock             Stock?            @relation("ProductStock")
-  brand             Brand             @relation(fields: [brandId], references: [id])
-  categories        ProductCategory[]
-  imagePrimary      String?         
-  imagesSecondary   String[]          
-  features          String?
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  description     String
+  price           Float
+  priceOld        Float?
+  active          Boolean           @default(true)
+  onSale          Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  brandId         String            @db.ObjectId
+  stock           Stock?            @relation("ProductStock")
+  brand           Brand             @relation(fields: [brandId], references: [id])
+  categories      ProductCategory[]
+  imagePrimary    String?
+  imagesSecondary String[]
+  features        String?
 }
 
 model Brand {
@@ -95,4 +95,16 @@ model Faq {
   response  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Formulario {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  email      String
+  telefone   String
+  assunto    String
+  mensagem   String
+  respondido Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
