@@ -2,10 +2,17 @@ import { SendEmail } from "@/infra/SendEmail";
 import { MyTemplate } from "transactional/emails/emailContact";
 
 export class SendWelcomeEmail {
-  async execute() {
-    const sendEmail = new SendEmail();
-    const html = await sendEmail.getHtml(MyTemplate());
+  async execute(toEmail: string, message: string) {
+    console.log("esta pegandooo email e mesagem", toEmail, message);
+    try {
+      const sendEmail = new SendEmail();
+      const html = await sendEmail.getHtml(MyTemplate({message}));
 
-    await sendEmail.sendEmail("willianuteich@hotmail.com", "Welcome", html);
+      await sendEmail.sendEmail(toEmail, "Welcome", html);
+
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error || "Erro ao enviar e-mail" };
+    }
   }
 }

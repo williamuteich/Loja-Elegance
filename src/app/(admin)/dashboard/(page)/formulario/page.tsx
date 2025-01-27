@@ -8,7 +8,7 @@ import { LoadSkeleton } from "../components/loadSkeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Formulario } from "@/utils/types/formulario";
-import { SendWelcomeEmail } from "@/usecases/SendWelcomeEmail";
+
 
 
 const fetchFormularios = async (search: string, page: string, status: string) => {
@@ -23,12 +23,6 @@ const fetchFormularios = async (search: string, page: string, status: string) =>
     const data = await response.json();
     return data;
 };
-
-async function SendEmail() {
-    "use server"
-    const usecase = new SendWelcomeEmail();
-    await usecase.execute();
-}
 
 const FormularioList = async ({ search, page, status }: { search: string, page: string, status: string }) => {
     const { formContacts, totalRecords } = await fetchFormularios(search, page, status);
@@ -114,12 +108,6 @@ export default async function FormularioPage({ searchParams }: { searchParams: P
             </div>
 
             <FormularioWrapper search={search} page={page} status={status} />
-            <button
-                className="p-5 bg-red text-black"
-                onClick={SendEmail}
-            >
-                enviar
-            </button>
         </Container>
     );
 }

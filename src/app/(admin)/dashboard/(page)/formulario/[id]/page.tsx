@@ -1,63 +1,49 @@
-"use client";
-import { Button } from "@/components/ui/button";
+import { SendWelcomeEmail } from "@/usecases/SendWelcomeEmail";
 import Container from "../../components/Container";
+import Form from "@/components/Form";
+import { Button } from "@/components/ui/button";
 
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+export default async function RespFormulario({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
 
-import { Formulario } from "@/utils/types/formulario";
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/formContact?id=${id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
 
-import { useEffect, useState } from "react";
-import EnvForm from "./components/envForm";
+    if (!res.ok) {
+        return <div>Erro ao carregar formulário</div>;
+    }
 
-export default function RespFormulario({ params }: { params: Promise<{ id: string }> }) {
-    const [getForm, setGetForm] = useState<Formulario | null>(null);  
-    const [loading, setLoading] = useState(true);  
-    const [resposta, setResposta] = useState(''); 
+    const { formContacts } = await res.json();
 
-    const response = async (id: string) => {
-        try {
-            setLoading(true); 
-            const res = await fetch(`/api/formContact?id=${id}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+    async function loadingAction(prevState: any, formData: FormData) {
+        "use server"
+        const getText = formData.get("textArea") as string;
 
-            if (!res.ok) {
-                toast.error("Erro ao carregar o formulário.");
-                return;
-            }
-
-            const { formContacts } = await res.json();
-            setGetForm(formContacts);  
-            setLoading(false);  
-
-        } catch (error) {
-            toast.error("Erro ao fazer a requisição.");
-            console.error(error);
-            setLoading(false);  
+        if (getText === "") {
+            return { error: "Mensagem vazia, não foi enviada" };
         }
-    };
 
-    const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setResposta(e.target.value);  
-    };
+        const usecase = new SendWelcomeEmail();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const resolvedParams = await params;
-            const id = resolvedParams.id;
-            response(id);
-        };
+        const result = await usecase.execute(formContacts.email, getText);
+    
+        console.log("pegando resultado", result);
 
-        fetchData();
-    }, [params]);
+        if (result.success) {
+            return { success: "Enviado com Sucesso" };
+        }
+
+        if (!result.success) {
+            return { error: result.error || "Erro ao enviar mensagem" };
+        }
+    }
 
     return (
         <Container>
-            <ToastContainer />
             <div className="space-y-6">
                 <h2 className="text-3xl font-semibold mb-3 text-gray-800">Responder ao Formulário</h2>
                 <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
@@ -65,51 +51,39 @@ export default function RespFormulario({ params }: { params: Promise<{ id: strin
                 </p>
 
                 <div className="bg-white p-4 rounded-lg shadow-md space-y-4">
-                    {loading ? (
-                        <div className="flex space-x-2 p-6">
-                            <div className="animate-spin rounded-full h-6 w-6 border-t-[2px] border-blue-800 border-solid"></div>
-                            <span className="text-xl text-blue-800">Carregando Dados...</span>
-                        </div>
-                    ) : (
-                        getForm && (
-                            <>
-                                <div className="space-y-2">
-                                    <p><strong>ID:</strong> {getForm.id}</p>
-                                    <p><strong>Nome:</strong> {getForm.name}</p>
-                                    <p><strong>Email:</strong> {getForm.email}</p>
-                                    <p><strong>Telefone:</strong> {getForm.telefone}</p>
-                                    <p><strong>Assunto:</strong> {getForm.assunto}</p>
-                                    <div className="flex flex-col mt-8">
-                                        <strong>Mensagem:</strong> 
-                                        <p className="bg-slate-100 p-4">{getForm.mensagem}</p>
-                                    </div>
+                    {formContacts && (
+                        <>
+                            <div className="space-y-2">
+                                <p><strong>ID:</strong> {formContacts.id}</p>
+                                <p><strong>Nome:</strong> {formContacts.name}</p>
+                                <p><strong>Email:</strong> {formContacts.email}</p>
+                                <p><strong>Telefone:</strong> {formContacts.telefone}</p>
+                                <p><strong>Assunto:</strong> {formContacts.assunto}</p>
+                                <div className="flex flex-col mt-8">
+                                    <strong>Mensagem:</strong>
+                                    <p className="bg-slate-100 p-4">{formContacts.mensagem}</p>
                                 </div>
-                            </>
-                        )
+                            </div>
+                        </>
                     )}
                 </div>
 
-                <div className="bg-white p-4 rounded-lg shadow-md space-y-4">
+                <Form action={loadingAction} className="bg-white p-4 rounded-lg shadow-md space-y-4">
                     <h3 className="text-lg font-medium text-gray-800">Sua Resposta</h3>
                     <textarea
+                        name="textArea"
                         className="w-full h-40 p-4 border border-gray-300 rounded-md resize-none"
                         placeholder="Digite sua resposta aqui..."
-                        value={resposta}  
-                        onChange={handleTextareaChange}  
                     />
 
                     <div className="flex justify-end space-x-3 text-white">
-                        <Button variant="outline" className="bg-gray-800 text-white hover:bg-gray-600">
-                            Marcar como respondido
+                        <Button
+                            className="bg-green-800 text-white hover:bg-green-600"
+                        >
+                            Enviar Resposta
                         </Button>
-                        {getForm && (
-                            <EnvForm
-                                formulario={getForm}
-                                resposta={resposta}  
-                            />
-                        )}
                     </div>
-                </div>
+                </Form>
             </div>
         </Container>
     );

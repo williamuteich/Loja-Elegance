@@ -1,11 +1,6 @@
 import { createTransport } from "nodemailer";
 import { render } from "@react-email/render";
 
-console.log('SMTP_EMAIL_HOST:', process.env.SMTP_EMAIL_HOST);
-console.log('EMAIL_USER:', process.env.EMAIL_USER);
-console.log('PASSOWRD_EMAIL_PASS:', process.env.PASSOWRD_EMAIL_PASS);
-console.log('SMTP_NAME:', process.env.SMTP_NAME);
-
 export class SendEmail {
     async sendEmail(to: string, subject: string, html: string, text?: string): Promise<void> {
         const transporter = createTransport({
