@@ -12,9 +12,9 @@ export default async function AdminLayout({ children }: LayoutProps) {
   const session = await getServerSession(authOptions);
   const validaUser = session?.user.role
 
-  if(!validaUser || (validaUser !== 'admin' && validaUser !== 'colaborador')){
+  if(!validaUser){
     redirect('/')
-    return
+    return;
   }
 
   return (

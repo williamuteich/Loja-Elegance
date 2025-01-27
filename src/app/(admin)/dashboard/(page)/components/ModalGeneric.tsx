@@ -92,40 +92,40 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
                         <AlertDialogDescription>{config.description}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <form action={newUser} className="grid gap-4 py-4">
-                        {config.fields.map((field) => (
-                            <div key={field.name} className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor={field.name} className="text-right">
-                                    {field.label}
-                                </Label>
-                                {field.type === "select" && field.options ? (
-                                    <Select  name={field.name} defaultValue={field.options[0].value}>
-                                        <SelectTrigger className="w-[340px]">
-                                            <SelectValue placeholder={field.placeholder} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup className="bg-white cursor-pointer">
-                                                <SelectLabel>{field.label}</SelectLabel>
-                                                {field.options.map((option) => (
-                                                    <SelectItem key={option.value} value={option.value}>
-                                                        {option.label}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-
-                                ) : (
-                                    <Input
-                                        id={field.name}
-                                        name={field.name}
-                                        type={field.type}
-                                        placeholder={field.placeholder}
-                                        defaultValue={config.initialValues?.[field.name]}
-                                        className="col-span-3"
-                                    />
-                                )}
-                            </div>
+                    {config.fields.map((field) => (
+    <div key={field.name} className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor={field.name} className="text-right">
+            {field.label}
+        </Label>
+        {field.type === "select" && field.options ? (
+            <Select name={field.name} defaultValue={field.options[0].value || undefined}>
+                <SelectTrigger className="w-[340px]">
+                    <SelectValue placeholder={field.placeholder} />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup className="bg-white cursor-pointer">
+                        <SelectLabel>{field.label}</SelectLabel>
+                        {field.options.map((option) => (
+                            <SelectItem key={option.value} value={option.value || "user"}>
+                                {option.label}
+                            </SelectItem>
                         ))}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+        ) : (
+            <Input
+                id={field.name}
+                name={field.name}
+                type={field.type}
+                placeholder={field.placeholder}
+                defaultValue={config.initialValues?.[field.name]}
+                className="col-span-3"
+            />
+        )}
+    </div>
+))}
+
                         <AlertDialogFooter>
                             <AlertDialogCancel className="bg-red-700 text-white hover:bg-red-600 hover:textwhite hover:text-white">Cancelar</AlertDialogCancel>
                             <AlertDialogAction className="bg-blue-800 hover:bg-blue-700 text-white" type="submit">Salvar</AlertDialogAction>

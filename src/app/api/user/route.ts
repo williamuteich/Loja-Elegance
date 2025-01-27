@@ -58,13 +58,14 @@ export async function POST(request: Request) {
         const saltRounds = 10;
 
         console.log(body)
-        if (!body.name || !body.email  || !body.password || !body.role || body.active === undefined) {
-            return new Response("Name, email, role, active and password are required", {
+        if (!body.name || !body.email || !body.password) {
+            return new Response("Name, email, active and password are required", {
                 status: 400,
             });
         }
 
-        body.active = body.active === "true" ? true : false;
+        body.role = body.role || '';
+        body.active = true;
 
         const emailVerify = await prisma.user.findUnique({
             where: {

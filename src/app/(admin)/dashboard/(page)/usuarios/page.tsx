@@ -26,7 +26,7 @@ const userFields: FieldConfig[] = [
     type: "select",
     options: [
       { value: "admin", label: "Admin" },
-      { value: "colaborador", label: "Colaborador" },
+      { value: "", label: "User" },
     ],
   },
   {
@@ -107,7 +107,7 @@ const UsuariosList = async ({ search, page, status }: { search: string, page: st
                   </div>
                 </td>
                 <td className="py-3 px-4 font-medium text-sm text-gray-700">{usuario.email}</td>
-                <td className="py-3 px-4 font-medium text-sm text-blue-700">{usuario.role}</td>
+                <td className="py-3 px-4 font-medium text-sm text-blue-700">{usuario.role ? usuario.role : "User"}</td>
                 <td className="py-3 px-4 font-medium text-sm text-red-700">
                   <span className={Boolean(usuario.active) ? "text-green-700" : "text-red-600"}>
                     {Boolean(usuario.active) ? "Ativo" : "Inativo"}

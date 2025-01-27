@@ -5,13 +5,27 @@ const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
     try {
-        const formContacts = await prisma.formulario.findMany();
+        const url = new URL(request.url);
+        const id = url.searchParams.get('id'); 
+        let formContacts;
+
+        if (id) {
+            formContacts = await prisma.formulario.findUnique({ where: { id } });
+            if (!formContacts) {
+                return NextResponse.json({ error: 'Formulário não encontrado' }, { status: 404 });
+            }
+        } else {
+            formContacts = await prisma.formulario.findMany();
+        }
 
         return NextResponse.json({ formContacts }, { status: 200 });
+
     } catch (err) {
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        console.error(err); 
+        return NextResponse.json({ error: 'Erro no servidor' }, { status: 500 });
     }
 }
+
 
 export async function POST(request: Request) {
     try{

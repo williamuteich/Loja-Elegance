@@ -39,7 +39,7 @@ export default function Formulario() {
 
             const session = await sessionResponse.json();
 
-            if (session?.user?.role === "admin" || session?.user?.role === "colaborador") {
+            if (session?.user?.role) {
                 router.push("/dashboard");
             } else {
                 router.push("/");

@@ -73,12 +73,12 @@ const CategoriasList = async ({ search, page, status }: { search: string, page: 
         <span className="font-medium text-blue-600">{data.totalRecords}</span>
       </p>
       <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
-        <thead className="bg-gray-200">
+        <thead className="bg-gray-800 text-white">
           <tr>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[315px]">ID</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[210px]">Nome</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[calc(100%-275px)]">Descrição</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[calc(210px)]"></th>
+            <th className="py-3 px-4 text-left text-sm font-medium text-white w-[315px]">ID</th>
+            <th className="py-3 px-4 text-left text-sm font-medium text-white w-[210px]">Nome</th>
+            <th className="py-3 px-4 text-left text-sm font-medium text-white w-[calc(100%-275px)]">Descrição</th>
+            <th className="py-3 px-4 text-left text-sm font-medium text-white w-[calc(210px)]"></th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-300">
