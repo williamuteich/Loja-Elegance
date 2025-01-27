@@ -2,6 +2,7 @@ import { SendWelcomeEmail } from "@/usecases/SendWelcomeEmail";
 import Container from "../../components/Container";
 import Form from "@/components/Form";
 import { Button } from "@/components/ui/button";
+import Submit from "@/components/Submit";
 
 export default async function RespFormulario({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -24,21 +25,19 @@ export default async function RespFormulario({ params }: { params: Promise<{ id:
         const getText = formData.get("textArea") as string;
 
         if (getText === "") {
-            return { error: "Mensagem vazia, não foi enviada" };
+            return { error: 'Campo "Resposta" é Obrigatório' };
         }
-
+    
         const usecase = new SendWelcomeEmail();
 
         const result = await usecase.execute(formContacts.email, getText);
-    
-        console.log("pegando resultado", result);
 
         if (result.success) {
             return { success: "Enviado com Sucesso" };
         }
 
         if (!result.success) {
-            return { error: result.error || "Erro ao enviar mensagem" };
+            return { error: result.error || "Algo Deu Errado" };
         }
     }
 
@@ -77,11 +76,11 @@ export default async function RespFormulario({ params }: { params: Promise<{ id:
                     />
 
                     <div className="flex justify-end space-x-3 text-white">
-                        <Button
+                        <Submit
                             className="bg-green-800 text-white hover:bg-green-600"
                         >
                             Enviar Resposta
-                        </Button>
+                        </Submit>
                     </div>
                 </Form>
             </div>
