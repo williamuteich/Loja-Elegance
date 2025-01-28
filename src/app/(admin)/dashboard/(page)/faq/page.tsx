@@ -82,7 +82,7 @@ const FaqList = async ({ search, page, status }: { search: string, page: string,
                                     <span>{faqItem.question}</span>
                                 </AccordionTrigger>
                                 <div className="flex space-x-4">
-                                    <ModalGeneric config={modalConfig("editar", faqItem)} />
+                                <ModalGeneric config={modalConfig("editar", faqItem)} params={faqItem.id} />
                                     <ModalDeletar
                                         config={{
                                             id: faqItem.id,

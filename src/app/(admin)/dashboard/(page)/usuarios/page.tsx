@@ -122,6 +122,7 @@ const UsuariosList = async ({ search, page, status }: { search: string, page: st
                         role: usuario.role,
                         status: usuario.active,
                       })}
+                      params={usuario.id}
                     />
                     <ModalDeletar
                       config={{

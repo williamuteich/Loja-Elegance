@@ -110,9 +110,6 @@ const CategoriasList = async ({ search, page, status }: { search: string, page: 
           ))}
         </tbody>
       </table>
-      <div className="mt-5 flex justify-between">
-        <ButtonAdicionar config={modalConfig("Adicionar")} />
-      </div>
       <Paginacao data={data.category} totalRecords={data.totalRecords} />
     </div>
   );

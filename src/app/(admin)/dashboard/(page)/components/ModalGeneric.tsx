@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -17,11 +16,13 @@ import {
     SelectItem,
     SelectLabel,
     SelectTrigger,
-    SelectValue, 
+    SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { revalidatePath } from "next/cache";
+import Form from "@/components/Form";
+import Submit from "@/components/Submit";
 
 interface FieldConfig {
     name: string;
@@ -42,35 +43,51 @@ interface ButtonAdicionarProps {
         method: string;
         action: string;
         initialValues?: { [key: string]: string };
-    };
+    },
+    params?: string; 
 }
 
-export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
+export default function ButtonAdicionar({ config, params  }: ButtonAdicionarProps) {
 
-    async function newUser(formData: FormData) {
+    async function newUser(prevState: any, formData: FormData): Promise<{ success?: string; error?: string }> {
         "use server";
-    
+
         const data = Object.fromEntries(formData.entries());
-    
-        if (config.id) {
-            data.id = config.id;
+
+        for (const [key, value] of Object.entries(data)) {
+            if (!value) {
+                return { error: `O campo ${key} não pode estar vazio.` }; // Aqui você pode customizar a mensagem conforme necessário
+            }
         }
-    
-        const response = await fetch(config.apiEndpoint, {
-            method: `${config.method}`,
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        });
-    
-        if (!response.ok) {
-            console.log("Erro ao adicionar Conteúdo.");
+        
+        if (params) {
+            data.id = params; 
         }
-    
-        revalidatePath(config.urlRevalidate);
+
+        console.log("recebe o ID aqui", data.id)
+        console.log("recebe o metodo aqui", config)
+        try {
+            const response = await fetch(config.apiEndpoint, {
+                method: config.method,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                return { error: "Erro ao adicionar conteúdo." };
+            }
+
+            revalidatePath(config.urlRevalidate);
+
+            return { success: "Conteúdo adicionado com sucesso!" };
+        } catch (error) {
+            console.error("Erro ao adicionar conteúdo:", error);
+            return { error: "Erro ao adicionar conteúdo. Tente novamente mais tarde." };
+        }
     }
-    
+
 
     return (
         <div className="w-full text-end">
@@ -91,46 +108,48 @@ export default function ButtonAdicionar({ config }: ButtonAdicionarProps) {
                         <AlertDialogTitle>{config.title}</AlertDialogTitle>
                         <AlertDialogDescription>{config.description}</AlertDialogDescription>
                     </AlertDialogHeader>
-                    <form action={newUser} className="grid gap-4 py-4">
-                    {config.fields.map((field) => (
-    <div key={field.name} className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor={field.name} className="text-right">
-            {field.label}
-        </Label>
-        {field.type === "select" && field.options ? (
-            <Select name={field.name} defaultValue={field.options[0].value || undefined}>
-                <SelectTrigger className="w-[340px]">
-                    <SelectValue placeholder={field.placeholder} />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup className="bg-white cursor-pointer">
-                        <SelectLabel>{field.label}</SelectLabel>
-                        {field.options.map((option) => (
-                            <SelectItem key={option.value} value={option.value || "user"}>
-                                {option.label}
-                            </SelectItem>
-                        ))}
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-        ) : (
-            <Input
-                id={field.name}
-                name={field.name}
-                type={field.type}
-                placeholder={field.placeholder}
-                defaultValue={config.initialValues?.[field.name]}
-                className="col-span-3"
-            />
-        )}
-    </div>
-))}
+                    <div>
+                        <Form action={newUser} className="grid gap-4 py-4 pb-0">
+                            {config.fields.map((field) => (
+                                <div key={field.name} className="grid grid-cols-4 items-center gap-4">
+                                    <Label htmlFor={field.name} className="text-right">
+                                        {field.label}
+                                    </Label>
+                                    {field.type === "select" && field.options ? (
+                                        <Select name={field.name} defaultValue={field.options[0].value || undefined}>
+                                            <SelectTrigger className="w-[340px]">
+                                                <SelectValue placeholder={field.placeholder} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup className="bg-white cursor-pointer">
+                                                    <SelectLabel>{field.label}</SelectLabel>
+                                                    {field.options.map((option) => (
+                                                        <SelectItem key={option.value} value={option.value || "user"}>
+                                                            {option.label}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    ) : (
+                                        <Input
+                                            id={field.name}
+                                            name={field.name}
+                                            type={field.type}
+                                            placeholder={field.placeholder}
+                                            defaultValue={config.initialValues?.[field.name]}
+                                            className="col-span-3"
+                                        />
+                                    )}
+                                </div>
+                            ))}
 
-                        <AlertDialogFooter>
-                            <AlertDialogCancel className="bg-red-700 text-white hover:bg-red-600 hover:textwhite hover:text-white">Cancelar</AlertDialogCancel>
-                            <AlertDialogAction className="bg-blue-800 hover:bg-blue-700 text-white" type="submit">Salvar</AlertDialogAction>
-                        </AlertDialogFooter>
-                    </form>
+                            <AlertDialogFooter>
+                                <Submit className="bg-blue-800 w-full hover:bg-blue-700 text-white" type="submit">Salvar</Submit>
+                            </AlertDialogFooter>
+                        </Form>
+                        <AlertDialogCancel className="bg-red-700 w-full text-white hover:bg-red-600 hover:textwhite hover:text-white">Fechar</AlertDialogCancel>
+                    </div>
                 </AlertDialogContent>
             </AlertDialog>
         </div>
