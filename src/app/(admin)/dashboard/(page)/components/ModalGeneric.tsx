@@ -64,8 +64,6 @@ export default function ButtonAdicionar({ config, params  }: ButtonAdicionarProp
             data.id = params; 
         }
 
-        console.log("recebe o ID aqui", data.id)
-        console.log("recebe o metodo aqui", config)
         try {
             const response = await fetch(config.apiEndpoint, {
                 method: config.method,

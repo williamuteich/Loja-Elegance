@@ -86,6 +86,7 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
                         value: config.value,
                       },
                     }}
+                    params={config.id}
                   />
                   <ModalDeletar
                     config={{

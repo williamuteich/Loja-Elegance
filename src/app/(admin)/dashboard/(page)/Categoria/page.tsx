@@ -94,7 +94,7 @@ const CategoriasList = async ({ search, page, status }: { search: string, page: 
               <td className="py-3 px-4 font-medium text-sm text-gray-700">{categoria.description}</td>
               <td className="py-3 px-0 font-medium text-sm text-gray-700">
                 <div className="flex justify-end items-center space-x-3">
-                  <ButtonAdicionar config={modalConfig("Editar", categoria)} />
+                  <ButtonAdicionar config={modalConfig("Editar", categoria)} params={categoria.id}/>
                   <ModalDeletar
                     config={{
                       id: categoria.id,

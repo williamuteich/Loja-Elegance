@@ -98,7 +98,7 @@ const MarcasList = async ({ search, page, status }: { search: string, page: stri
               <td className="py-3 px-4 font-medium text-sm text-gray-700">{marca.description}</td>
               <td className="py-3 px-0 font-medium text-sm text-gray-700">
                 <div className="flex justify-end items-center space-x-3">
-                  <ButtonAdicionar config={modalConfig("Editar", marca)} />
+                  <ButtonAdicionar config={modalConfig("Editar", marca)} params={marca.id}/>
                   <ModalDeletar
                     config={{
                       id: marca.id,

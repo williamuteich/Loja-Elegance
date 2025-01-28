@@ -1,7 +1,8 @@
 
+import Form from "@/components/Form";
+import Submit from "@/components/Submit";
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -11,7 +12,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { revalidatePath } from "next/cache"
+import { revalidatePath } from "next/cache";
 
 interface ButtonDeleteProps {
     config: {
@@ -24,7 +25,7 @@ interface ButtonDeleteProps {
 }
 
 export default function ButtonDelete({ config }: ButtonDeleteProps) {
-    const handleDelete = async () => {
+    async function handleDelete(prevState: any, formData: FormData): Promise<{ success?: string; error?: string }>  {
         "use server"
 
         const response = await fetch(`${config.apiEndpoint}`, {
@@ -36,10 +37,12 @@ export default function ButtonDelete({ config }: ButtonDeleteProps) {
         });
 
         if (!response.ok) {
-            console.log("Erro ao excluir variável:", response);
+            return { error: "Erro ao adicionar conteúdo." };
         }
 
-        revalidatePath(`${config.urlRevalidate}`);
+        revalidatePath(config.urlRevalidate);
+
+        return { success: "Conteúdo excluído com sucesso!" };
     };
 
     return (
@@ -49,17 +52,19 @@ export default function ButtonDelete({ config }: ButtonDeleteProps) {
                     Excluir
                 </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="bg-white">
-                <AlertDialogHeader>
-                    <AlertDialogTitle>{config.title}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        {config.description}
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel className="bg-blue-800 hover:bg-blue-700 text-white hover:text-white">Cancelar</AlertDialogCancel>
-                    <AlertDialogAction className="bg-red-700 text-white hover:bg-red-600" onClick={handleDelete}>Excluir</AlertDialogAction>
-                </AlertDialogFooter>
+            <AlertDialogContent className="bg-white gap-0">
+                <Form action={handleDelete}  >
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{config.title}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {config.description}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <Submit className="bg-red-700 mt-4 text-white w-full hover:bg-red-600" >Excluir</Submit>
+                    </AlertDialogFooter>
+                </Form>
+                <AlertDialogCancel className="bg-blue-800 hover:bg-blue-700 text-white hover:text-white">Fechar</AlertDialogCancel>
             </AlertDialogContent>
         </AlertDialog>
     );
