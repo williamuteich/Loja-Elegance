@@ -42,7 +42,7 @@ export function FiltroBuscarItem() {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-16">
+      <DropdownMenuContent className="w-16 bg-white">
         <DropdownMenuLabel>Filtrar Por:</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup value={statusFilter} onValueChange={handleChangeStatus}>

@@ -4,7 +4,6 @@ import ButtonAdicionar from "../components/ModalGeneric";
 import ModalDeletar from "../components/ModalDeletar";
 import SearchItems from "../components/searchItems";
 import Paginacao from "../../../../components/Paginacao";
-import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 import { Suspense } from "react";
 import { LoadSkeleton } from "../components/loadSkeleton";
 
@@ -21,7 +20,6 @@ interface Marca {
   description: string;
 }
 
-// Configuração do modal para adicionar/editar categorias
 const modalConfig = (action: string, initialValues?: Marca) => {
   const initialValuesFormatted: { [key: string]: string } | undefined = initialValues
     ? { name: initialValues.name, description: initialValues.description }
@@ -44,7 +42,6 @@ const modalConfig = (action: string, initialValues?: Marca) => {
   };
 };
 
-// Função para buscar as marcas da API
 const fetchMarcas = async (search: string, page: string, status: string) => {
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/brand?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`
@@ -58,7 +55,6 @@ const fetchMarcas = async (search: string, page: string, status: string) => {
   return data;
 };
 
-// Componente responsável pela renderização da lista de marcas
 const MarcasList = async ({ search, page, status }: { search: string, page: string, status: string }) => {
   const { marcas, totalRecords } = await fetchMarcas(search, page, status);
 
@@ -77,12 +73,13 @@ const MarcasList = async ({ search, page, status }: { search: string, page: stri
         <span className="font-medium text-blue-600">{totalRecords}</span>
       </p>
       <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
-        <thead className="bg-gray-200">
+        <thead className="text-white bg-gray-800">
           <tr>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[315px]">ID</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[210px]">Nome</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[calc(100%-255px)]">Descrição</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[calc(210px)]"></th>
+            {['ID', 'Nome', 'Descrição', ''].map((header, idx) => (
+              <th key={idx} className="py-3 px-4 text-left text-sm font-medium text-white">
+                {header}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-300">
@@ -98,7 +95,7 @@ const MarcasList = async ({ search, page, status }: { search: string, page: stri
               <td className="py-3 px-4 font-medium text-sm text-gray-700">{marca.description}</td>
               <td className="py-3 px-0 font-medium text-sm text-gray-700">
                 <div className="flex justify-end items-center space-x-3">
-                  <ButtonAdicionar config={modalConfig("Editar", marca)} params={marca.id}/>
+                  <ButtonAdicionar config={modalConfig("Editar", marca)} params={marca.id} />
                   <ModalDeletar
                     config={{
                       id: marca.id,
@@ -122,7 +119,6 @@ const MarcasList = async ({ search, page, status }: { search: string, page: stri
   );
 };
 
-// Componente de wrapper para lidar com a renderização da lista de marcas com carregamento
 const MarcasWrapper = ({ search, page, status }: { search: string, page: string, status: string }) => {
   return (
     <Suspense fallback={<LoadSkeleton />}>
@@ -131,7 +127,6 @@ const MarcasWrapper = ({ search, page, status }: { search: string, page: string,
   );
 };
 
-// Componente principal da página de Marcas
 export default async function Marca({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
   const { search, page, status } = await searchParams;
 
@@ -143,7 +138,6 @@ export default async function Marca({ searchParams }: { searchParams: Promise<{ 
       </p>
       <div className="flex gap-2 mb-6">
         <SearchItems />
-        <FiltroBuscarItem />
       </div>
       <MarcasWrapper search={search} page={page} status={status} />
     </Container>

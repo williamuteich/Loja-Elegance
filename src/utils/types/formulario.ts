@@ -5,12 +5,9 @@ export interface Formulario {
     telefone: string;
     assunto: string;
     mensagem: string;
+    resposta?: string;
     respondido: boolean;
     status: boolean;
     createdAt: string;
     updatedAt: string;
-}
-
-export interface formulariosProps {
-    formularios: Formulario[];
 }

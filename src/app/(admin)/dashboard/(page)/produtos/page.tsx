@@ -93,16 +93,13 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                 <span className="font-medium text-blue-600">{totalRecords}</span>
             </p>
             <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
-                <thead className="bg-gray-200">
+                <thead className="bg-gray-800 text-white">
                     <tr>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[120px]">ID</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[200px]">Nome</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[150px]">Categoria</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[150px]">Marca</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[150px]">Preço</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[120px]">Quantidade</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[120px]">Status</th>
-                        <th className="py-3 px-0 text-left text-sm font-medium text-gray-700 w-[200px]"></th>
+                        {['ID', 'Nome', 'Categoria', 'Marca', 'Preço', 'Quantidade', 'Status', ''].map((header, idx) => (
+                            <th key={idx} className="py-3 px-4 text-left text-sm font-medium text-white">
+                                {header}
+                            </th>
+                        ))}
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-300">

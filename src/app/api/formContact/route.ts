@@ -42,12 +42,31 @@ export async function POST(request: Request) {
                 telefone: body.telefone,
                 assunto: body.assunto,
                 mensagem: body.mensagem,
+                resposta: body.resposta || null,
                 respondido: body.respondido || false 
             }
         })
 
         return NextResponse.json({ message: "Created", formContact }, {  status: 201 })
     } catch (err) {
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
+export async function PUT(request: Request) {
+    try {
+        const { id, resposta } = await request.json();
+        console.log("está recebendo os dados na api", id)
+        const formContact = await prisma.formulario.update({
+            where: { id },
+            data: {
+                respondido: true,
+                resposta: resposta
+            }
+        })
+
+        return NextResponse.json({ formContact }, { status: 200 });
+    } catch(err) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

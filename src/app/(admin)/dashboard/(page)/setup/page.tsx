@@ -38,13 +38,13 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
       </p>
 
       <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
-        <thead className="bg-gray-200">
+        <thead className="bg-gray-800 text-white">
           <tr>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">Variável</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">Nome</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">URL</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">Valor</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">Ações</th>
+            {['Variável', 'Nome', 'URL', 'Valor', ''].map((header, idx) => (
+              <th key={idx} className="py-3 px-4 text-left text-sm font-medium text-white">
+                {header}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-300">

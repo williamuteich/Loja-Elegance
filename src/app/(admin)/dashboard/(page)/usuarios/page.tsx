@@ -7,6 +7,7 @@ import Paginacao from "../../../../components/Paginacao";
 import SearchItems from "../components/searchItems";
 import { LoadSkeleton } from "../components/loadSkeleton";
 import TableMobile from "./components/tableMobile";
+import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 
 
 type FieldConfig = {
@@ -86,14 +87,13 @@ const UsuariosList = async ({ search, page, status }: { search: string, page: st
 
       <div className="hidden xl:block">
         <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
-          <thead className="bg-gray-200">
+          <thead className="bg-gray-800 text-white">
             <tr>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[120px]">ID</th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[200px]">Usuário</th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[250px]">Email</th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-700 w-[150px]">Permissão</th>
-              <th className="py-3 px-0 text-left text-sm font-medium text-gray-700">Status</th>
-              <th className="py-3 px-0 text-left text-sm font-medium text-gray-700 w-[200px]"></th>
+              {['ID', 'Usuario', 'Email', 'Permissão', 'Status', ''].map((header, idx) => (
+                <th key={idx} className="py-3 px-4 text-left text-sm font-medium text-white">
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-300">
@@ -166,8 +166,9 @@ export default async function Usuarios({ searchParams }: { searchParams: Promise
       <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
         Gerencie os usuários e suas permissões para criar e administrar conteúdo no site. Defina funções e controle o acesso de cada membro.
       </p>
-      <div className="mb-6">
+      <div className="flex gap-2 mb-6">
         <SearchItems />
+        <FiltroBuscarItem />
       </div>
       <UsuariosWrapper search={search} page={page} status={status} />
       <div className="mt-5 flex justify-between">

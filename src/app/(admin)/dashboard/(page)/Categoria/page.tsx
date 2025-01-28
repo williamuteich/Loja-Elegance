@@ -4,7 +4,6 @@ import Container from "../components/Container";
 import ButtonAdicionar from "../components/ModalGeneric";
 import ModalDeletar from "../components/ModalDeletar";
 import SearchItems from "../components/searchItems";
-import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 import { LoadSkeleton } from "../components/loadSkeleton";
 import Paginacao from "@/app/components/Paginacao";
 
@@ -14,55 +13,42 @@ interface Categoria {
   description: string;
 }
 
-interface FieldConfig {
-  name: string;
-  label: string;
-  type: "text" | "select" | "email" | "password";
-  placeholder: string;
-}
-
-const modalConfig = (action: string, initialValues?: Categoria) => {
-  const initialValuesFormatted: { [key: string]: string } | undefined = initialValues
-    ? { name: initialValues.name, description: initialValues.description }
-    : undefined;
-
-  return {
-    title: `${action} Categoria`,
-    description: action === "Adicionar"
+const modalConfig = (action: string, categoria?: Categoria) => ({
+  title: `${action} Categoria`,
+  description:
+    action === "Adicionar"
       ? "Preencha os campos abaixo para adicionar uma nova categoria."
       : "Faça alterações na categoria abaixo.",
-    action,
-    fields: [
-      { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da Categoria" },
-      { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da categoria" },
-    ] as FieldConfig[],
-    apiEndpoint: `${process.env.NEXTAUTH_URL}/api/category`,
-    urlRevalidate: "/dashboard/categoria",
-    method: action === "Adicionar" ? "POST" : "PUT",
-    initialValues: initialValuesFormatted,
-  };
+  action,
+  fields: [
+    { name: "name", label: "Nome", type: "text" as "text", placeholder: "Digite o nome da Categoria" },
+    { name: "description", label: "Descrição", type: "text" as "text", placeholder: "Descrição da categoria" },
+  ],
+  apiEndpoint: `${process.env.NEXTAUTH_URL}/api/category`,
+  urlRevalidate: "/dashboard/categoria",
+  method: action === "Adicionar" ? "POST" : "PUT",
+  initialValues: categoria ? { name: categoria.name, description: categoria.description } : undefined,
+});
+
+const fetchCategories = async (search: string, page: string, status: string) => {
+  const params = new URLSearchParams();
+  if (search) params.append("search", search);
+  if (page) params.append("page", page);
+  if (status) params.append("status", status);
+
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/category?${params}`, {
+    cache: "no-store",
+  });
+
+  if (!response.ok) throw new Error("Erro ao carregar os dados.");
+
+  return response.json();
 };
 
-async function fetchCategories(search: string, page: string, status: string) {
-  const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/category?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`,
-    {
-      cache: 'no-store', 
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Erro ao carregar os dados.");
-  }
-
-  const data = await response.json();
-  return data;
-}
-
-const CategoriasList = async ({ search, page, status }: { search: string, page: string, status: string }) => {
+const CategoriasList = async ({ search, page, status }: { search: string; page: string; status: string }) => {
   const data = await fetchCategories(search, page, status);
 
-  if (!data.category || data.category.length === 0) {
+  if (!data.category?.length) {
     return <p className="mt-10 font-medium text-lg">Nenhuma Categoria Encontrada</p>;
   }
 
@@ -75,10 +61,11 @@ const CategoriasList = async ({ search, page, status }: { search: string, page: 
       <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-800 text-white">
           <tr>
-            <th className="py-3 px-4 text-left text-sm font-medium text-white w-[315px]">ID</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-white w-[210px]">Nome</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-white w-[calc(100%-275px)]">Descrição</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-white w-[calc(210px)]"></th>
+            {['ID', 'Nome', 'Descrição', ''].map((header, idx) => (
+              <th key={idx} className="py-3 px-4 text-left text-sm font-medium text-white">
+                {header}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-300">
@@ -94,12 +81,13 @@ const CategoriasList = async ({ search, page, status }: { search: string, page: 
               <td className="py-3 px-4 font-medium text-sm text-gray-700">{categoria.description}</td>
               <td className="py-3 px-0 font-medium text-sm text-gray-700">
                 <div className="flex justify-end items-center space-x-3">
-                  <ButtonAdicionar config={modalConfig("Editar", categoria)} params={categoria.id}/>
+                  <ButtonAdicionar config={modalConfig("Editar", categoria)} params={categoria.id} />
                   <ModalDeletar
                     config={{
                       id: categoria.id,
                       title: "Tem certeza que deseja excluir esta categoria?",
-                      description: "Esta ação não pode ser desfeita. A categoria será removida permanentemente. Deseja continuar?",
+                      description:
+                        "Esta ação não pode ser desfeita. A categoria será removida permanentemente. Deseja continuar?",
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/category`,
                       urlRevalidate: "/dashboard/categoria",
                     }}
@@ -115,15 +103,13 @@ const CategoriasList = async ({ search, page, status }: { search: string, page: 
   );
 };
 
-const CategoriasWrapper = ({ search, page, status }: { search: string, page: string, status: string }) => {
-  return (
-    <Suspense fallback={<LoadSkeleton />}>
-      <CategoriasList search={search} page={page} status={status} />
-    </Suspense>
-  );
-};
+const CategoriasWrapper = ({ search, page, status }: { search: string; page: string; status: string }) => (
+  <Suspense fallback={<LoadSkeleton />}>
+    <CategoriasList search={search} page={page} status={status} />
+  </Suspense>
+);
 
-export default async function Categoria({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
+export default async function Categoria({ searchParams }: { searchParams: Promise<{ search: string; page: string; status: string }> }) {
   const { search, page, status } = await searchParams;
 
   return (
@@ -134,7 +120,6 @@ export default async function Categoria({ searchParams }: { searchParams: Promis
       </p>
       <div className="flex gap-2 mb-6">
         <SearchItems />
-        <FiltroBuscarItem />
       </div>
       <CategoriasWrapper search={search} page={page} status={status} />
       <div className="mt-5 flex justify-between">
