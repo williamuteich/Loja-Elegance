@@ -1,5 +1,5 @@
 "use client";
-import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt  } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages  } from 'react-icons/fa';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogoutDashboard } from '@/app/components/logoutAccount';
@@ -102,6 +102,17 @@ export default function Sidebar() {
                                     >
                                         <FaFileAlt  size={24} />
                                         <span className='hidden xl:block'>Formulario</span>
+                                    </div>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/dashboard/galeria">
+                                    <div
+                                        className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/galeria') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                                        title='galeria'
+                                    >
+                                        <FaImages  size={24} />
+                                        <span className='hidden xl:block'>Galeria</span>
                                     </div>
                                 </Link>
                             </li>
