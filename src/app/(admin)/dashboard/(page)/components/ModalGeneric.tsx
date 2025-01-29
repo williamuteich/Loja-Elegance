@@ -23,29 +23,7 @@ import { Label } from "@/components/ui/label";
 import { revalidatePath } from "next/cache";
 import Form from "@/components/Form";
 import Submit from "@/components/Submit";
-
-interface FieldConfig {
-    name: string;
-    label: string;
-    placeholder?: string;
-    type: "text" | "email" | "password" | "select";
-    options?: { value: string; label: string }[];
-}
-
-interface ButtonAdicionarProps {
-    config: {
-        id?: string;
-        title: string;
-        description: string;
-        fields: FieldConfig[];
-        apiEndpoint: string;
-        urlRevalidate: string;
-        method: string;
-        action: string;
-        initialValues?: { [key: string]: string };
-    },
-    params?: string; 
-}
+import { ButtonAdicionarProps } from "@/utils/types/modaGeneric";
 
 export default function ButtonAdicionar({ config, params  }: ButtonAdicionarProps) {
 
@@ -85,7 +63,6 @@ export default function ButtonAdicionar({ config, params  }: ButtonAdicionarProp
             return { error: "Erro ao adicionar conteúdo. Tente novamente mais tarde." };
         }
     }
-
 
     return (
         <div className="w-full text-end">

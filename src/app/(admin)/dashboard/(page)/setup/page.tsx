@@ -1,12 +1,10 @@
 import React, { Suspense } from "react";
-import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 import Container from "../components/Container";
 import ModalGeneric from "../components/ModalGeneric";
 import ModalDeletar from "../components/ModalDeletar";
 import SearchItems from "../components/searchItems";
 import Paginacao from "../../../../components/Paginacao";
 import { LoadSkeleton } from "../components/loadSkeleton";
-import { FaCog } from "react-icons/fa";
 
 const fetchConfig = async (search: string, page: string, status: string) => {
   const response = await fetch(
@@ -131,7 +129,6 @@ export default async function Settings({ searchParams }: { searchParams: Promise
 
       <div className="flex gap-2 mb-4">
         <SearchItems />
-        <FiltroBuscarItem />
       </div>
 
       <ConfigWrapper search={search} page={page} status={status} />

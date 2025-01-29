@@ -4,22 +4,10 @@ import ModalGeneric from "../components/ModalGeneric";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import SearchItems from "../components/searchItems";
 import Paginacao from "../../../../components/Paginacao";
-import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 import { Suspense } from "react";
 import { LoadSkeleton } from "../components/loadSkeleton";
-
-interface FaqProps {
-    id: string;
-    question: string;
-    response: string;
-}
-
-interface FieldConfig {
-    name: string;
-    label: string;
-    type: "text" | "email" | "select" | "password";
-    placeholder: string;
-}
+import { FaqProps } from "@/utils/types/faq";
+import { FieldConfig } from "@/utils/types/fieldConfig";
 
 const modalConfig = (action: string, initialValues?: FaqProps) => {
     const initialValuesFormatted = initialValues
@@ -126,7 +114,6 @@ export default async function Faq({ searchParams }: { searchParams: Promise<{ se
             <p className="text-gray-600 mb-10 text-sm leading-[1.6]">Aqui você pode encontrar as respostas para as perguntas mais frequentes.</p>
             <div className="flex gap-2 mb-6">
                 <SearchItems />
-                <FiltroBuscarItem />
             </div>
             <FaqWrapper search={search} page={page} status={status} />
         </Container>

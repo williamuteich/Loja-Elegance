@@ -8,15 +8,7 @@ import SearchItems from "../components/searchItems";
 import { LoadSkeleton } from "../components/loadSkeleton";
 import TableMobile from "./components/tableMobile";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
-
-
-type FieldConfig = {
-  name: string;
-  label: string;
-  type: "text" | "email" | "select" | "password";
-  placeholder?: string;
-  options?: { value: string; label: string }[];
-};
+import { FieldConfig } from "@/utils/types/fieldConfig";
 
 const userFields: FieldConfig[] = [
   { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
@@ -56,7 +48,7 @@ const createButtonConfig = (action: string, userId?: string, initialValues?: any
 
 const fetchUsuarios = async (search: string, page: string, status: string) => {
   const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/user?${search ? `search=${search}&` : ""}${page ? `page=${page}&` : ""}${status ? `status=${status}` : ""}`
+    `${process.env.NEXTAUTH_URL}/api/user?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`
   );
 
   if (!response.ok) {

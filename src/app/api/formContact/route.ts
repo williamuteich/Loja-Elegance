@@ -6,7 +6,14 @@ const prisma = new PrismaClient();
 export async function GET(request: Request) {
     try {
         const url = new URL(request.url);
-        const id = url.searchParams.get('id'); 
+        const search = url.searchParams.get('search');
+        const page = parseInt(url.searchParams.get('page') || '1', 10);
+        const status = url.searchParams.get('status');
+        const pageSize = 10;
+        const id = url.searchParams.get('id');
+
+        const skip = (page - 1) * pageSize;
+
         let formContacts;
 
         if (id) {
@@ -15,23 +22,52 @@ export async function GET(request: Request) {
                 return NextResponse.json({ error: 'Formulário não encontrado' }, { status: 404 });
             }
         } else {
-            formContacts = await prisma.formulario.findMany();
+            const where: any = search
+            ? {
+                OR: [
+                    { name: { contains: search, mode: 'insensitive' } },
+                    { assunto: { contains: search, mode: 'insensitive' } },
+                    { mensagem: { contains: search, mode: 'insensitive' } },
+                ],
+            }
+            : {};
+
+        if (status !== null) {
+            where.respondido = status === "true";
+        }
+            formContacts = await prisma.formulario.findMany({
+                skip,
+                take: pageSize,
+                where,
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    telefone: true,
+                    assunto: true,
+                    mensagem: true,
+                    respondido: true,
+                    resposta: true
+                }
+            });
         }
 
-        return NextResponse.json({ formContacts }, { status: 200 });
+        const totalRecords = await prisma.formulario.count();
+
+        return NextResponse.json({ formContacts, totalRecords }, { status: 200 });
 
     } catch (err) {
-        console.error(err); 
+        console.error(err);
         return NextResponse.json({ error: 'Erro no servidor' }, { status: 500 });
     }
 }
 
 
 export async function POST(request: Request) {
-    try{
+    try {
         const body = await request.json()
 
-        if(!body.name || !body.email || !body.telefone || !body.assunto || !body.mensagem) {
+        if (!body.name || !body.email || !body.telefone || !body.assunto || !body.mensagem) {
             return NextResponse.json({ message: "name, email, assunto and messagem are required" }, { status: 400 })
         }
 
@@ -43,11 +79,11 @@ export async function POST(request: Request) {
                 assunto: body.assunto,
                 mensagem: body.mensagem,
                 resposta: body.resposta || null,
-                respondido: body.respondido || false 
+                respondido: body.respondido || false
             }
         })
 
-        return NextResponse.json({ message: "Created", formContact }, {  status: 201 })
+        return NextResponse.json({ message: "Created", formContact }, { status: 201 })
     } catch (err) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
@@ -66,7 +102,7 @@ export async function PUT(request: Request) {
         })
 
         return NextResponse.json({ formContact }, { status: 200 });
-    } catch(err) {
+    } catch (err) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

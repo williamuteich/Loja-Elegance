@@ -1,47 +1,13 @@
 import Link from "next/link";
-import { FaBox } from "react-icons/fa";
 import Container from "../components/Container";
-import ButtonAdicionar from "../components/ModalGeneric";
 import { Button } from "@/components/ui/button";
 import Paginacao from "../../../../components/Paginacao";
 import SearchItems from "../components/searchItems";
 import ModalDeletar from "../components/ModalDeletar";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 import Image from "next/image";
-
-interface ProductCategoryProps {
-    id: string;
-    productId: string;
-    categoryId: string;
-    category: CategoryProps;
-}
-
-interface CategoryProps {
-    id: string;
-    name: string;
-}
-
-interface BrandProps {
-    id: string;
-    name: string;
-}
-
-interface StockProps {
-    id: string;
-    quantity: number;
-}
-
-interface ProductProps {
-    id: string;
-    name: string;
-    description: string;
-    price: number;
-    active: boolean;
-    categories: ProductCategoryProps[];
-    brand: BrandProps;
-    stock: StockProps;
-    imagePrimary: string;
-}
+import { Produto } from "@/utils/types/produto";
+import { FaBox } from 'react-icons/fa';
 
 export default async function Produtos({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
 
@@ -103,7 +69,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-300">
-                    {produtos.map((produto: ProductProps) => (
+                    {produtos.map((produto: Produto) => (
                         <tr key={produto.id} className="hover:bg-gray-50 transition-colors cursor-pointer">
                             <td className="py-3 px-4 font-medium text-sm text-blue-600">
                                 <Link href={`/dashboard/produtos/${produto.name}`} className="block">
@@ -113,13 +79,19 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <Link href={`/dashboard/produtos/${produto.name}`} className="block">
                                     <div className="flex items-center space-x-2">
-                                        <div className="relative w-[40px] h-[40px]">
-                                            <Image
-                                                fill
-                                                src={produto.imagePrimary}
-                                                alt={produto.name}
-                                                className="object-cover"
-                                            />
+                                        <div className="relative w-[40px] h-[40px] flex items-center justify-center">
+                                            {produto.imagePrimary ? (
+                                                <Image
+                                                    fill
+                                                    src={produto.imagePrimary}
+                                                    alt={produto.name}
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <div className="flex justify-center items-center">
+                                                    <FaBox size={25} color="#1f2937c4" />
+                                                </div>
+                                            )}
                                         </div>
                                         <span>{produto.name}</span>
                                     </div>
@@ -164,9 +136,11 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <div className="flex justify-end items-center space-x-3">
-                                    <Button className="bg-blue-800 text-white hover:bg-blue-700 font-semibold py-1 px-3 rounded-md transition duration-300 ease-in-out">
-                                        Editar
-                                    </Button>
+                                    <Link href={`/dashboard/produtos/${produto.id}`}>
+                                        <Button className="bg-blue-800 text-white hover:bg-blue-700 font-semibold py-1 px-3 rounded-md transition duration-300 ease-in-out">
+                                            Editar
+                                        </Button>
+                                    </Link>
                                     <ModalDeletar
                                         config={{
                                             id: produto.id,

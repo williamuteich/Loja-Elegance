@@ -6,12 +6,7 @@ import ModalDeletar from "../components/ModalDeletar";
 import SearchItems from "../components/searchItems";
 import { LoadSkeleton } from "../components/loadSkeleton";
 import Paginacao from "@/app/components/Paginacao";
-
-interface Categoria {
-  id: string;
-  name: string;
-  description: string;
-}
+import type { Categoria } from "@/utils/types/categoria";
 
 const modalConfig = (action: string, categoria?: Categoria) => ({
   title: `${action} Categoria`,

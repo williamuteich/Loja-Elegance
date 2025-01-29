@@ -8,23 +8,30 @@ export async function GET(request: Request) {
     try {
         const url = new URL(request.url);
         const search = url.searchParams.get('search');
-        const page = url.searchParams.get('page') ? parseInt(url.searchParams.get('page')!, 10) : 1;
+        const page = parseInt(url.searchParams.get('page') || '1', 10);
+        const status = url.searchParams.get('status');
         const pageSize = 10;
 
         const skip = (page - 1) * pageSize;
 
+        const where: any = search
+            ? {
+                OR: [
+                    { name: { contains: search, mode: 'insensitive' } },
+                    { email: { contains: search, mode: 'insensitive' } },
+                    { role: { contains: search, mode: 'insensitive' } },
+                ],
+            }
+            : {};
+
+        if (status !== null) {
+            where.active = status === "true";
+        }
+
         const users = await prisma.user.findMany({
             skip,
             take: pageSize,
-            where: search
-                ? {
-                    OR: [
-                        { name: { contains: search, mode: 'insensitive' } },
-                        { email: { contains: search, mode: 'insensitive' } },
-                        { role: { contains: search, mode: 'insensitive' } }
-                    ]
-                }
-                : {},
+            where,
             select: {
                 id: true,
                 name: true,
@@ -35,19 +42,12 @@ export async function GET(request: Request) {
         });
 
         const totalRecords = await prisma.user.count({
-            where: search
-                ? {
-                    OR: [
-                        { name: { contains: search, mode: 'insensitive' } },
-                        { email: { contains: search, mode: 'insensitive' } },
-                        { role: { contains: search, mode: 'insensitive' } }
-                    ]
-                }
-                : {},
+            where,
         });
 
         return NextResponse.json({ usuarios: users, totalRecords }, { status: 200 });
     } catch (err) {
+        console.error("Erro no filtro de status", err);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
         }
 
         body.role = body.role || '';
-        body.active = true;
+        body.active = body.active === 'true' ? true : false;
 
         const emailVerify = await prisma.user.findUnique({
             where: {
@@ -133,7 +133,7 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
     try {
         const body = await request.json();
-        
+
         const { id } = body;
 
         if (!id) {

@@ -10,35 +10,36 @@ export interface Produto {
     imagePrimary: string;
     imagesSecondary: string[];
     features: string | null;
-    brand: {
-      id: string;
-      name: string;
-      description: string | null;
-      active: boolean;
-      createdAt: string;
-      updatedAt: string;
-    };
-    categories: {
-      id: string;
-      name: string;
-      description: string | null;
-      active: boolean;
-      createdAt: string;
-      updatedAt: string;
-    }[];
-    stock?: {
-      id: string;
-      size: string;
-      quantity: number;
-      active: boolean;
-      createdAt: string;
-      updatedAt: string;
-    }[];
+    categories: ProductCategoryProps[];
+    brand: BrandProps;
+    stock: StockProps;
     createdAt: string;
     updatedAt: string;
   }
-  
+
   export interface ProdutoProps {
     produtos: Produto[];
   }
+  
+  interface ProductCategoryProps {
+    id: string;
+    productId: string;
+    categoryId: string;
+    category: CategoryProps;
+}
+
+interface CategoryProps {
+    id: string;
+    name: string;
+}
+
+interface BrandProps {
+    id: string;
+    name: string;
+}
+
+interface StockProps {
+    id: string;
+    quantity: number;
+}
   

@@ -6,19 +6,8 @@ import SearchItems from "../components/searchItems";
 import Paginacao from "../../../../components/Paginacao";
 import { Suspense } from "react";
 import { LoadSkeleton } from "../components/loadSkeleton";
-
-interface FieldConfig {
-  name: string;
-  label: string;
-  type: "text" | "email" | "select" | "password";
-  placeholder: string;
-}
-
-interface Marca {
-  id: string;
-  name: string;
-  description: string;
-}
+import type { Marca } from "@/utils/types/marca";
+import { FieldConfig } from "@/utils/types/fieldConfig";
 
 const modalConfig = (action: string, initialValues?: Marca) => {
   const initialValuesFormatted: { [key: string]: string } | undefined = initialValues

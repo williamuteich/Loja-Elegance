@@ -3,7 +3,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function LoadSkeleton() {
   return (
     <div className="space-y-4">
-      {/* Tabela Skeleton */}
       <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-200">
           <tr>
@@ -28,7 +27,6 @@ export function LoadSkeleton() {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-300">
-          {/* 5 linhas de dados simulando a tabela */}
           {Array.from({ length: 5 }).map((_, index) => (
             <tr key={index} className="hover:bg-gray-50 transition-colors">
               <td className="py-3 px-4">

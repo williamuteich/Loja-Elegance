@@ -103,7 +103,7 @@ export default function AdicionarProduto() {
         autoClose: 3000,
       });
     } finally {
-      setIsLoading(false); // Desativa o loading
+      setIsLoading(false); 
     }
   };
 

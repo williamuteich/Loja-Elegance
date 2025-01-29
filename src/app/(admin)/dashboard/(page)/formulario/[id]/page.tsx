@@ -4,7 +4,6 @@ import Form from "@/components/Form";
 import Submit from "@/components/Submit";
 import { Formulario } from "@/utils/types/formulario";
 
-
 export default async function RespFormulario({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 

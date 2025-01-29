@@ -22,7 +22,7 @@ export default function Sidebar() {
     return (
         <>
             <div className="xl:min-w-56 xl:flex hidden bg-gray-800">
-                <div className='text-white flex flex-col min-h-screen fixed w-[inherit] justify-between'>
+                <div className='text-white xl:min-w-56 flex flex-col min-h-screen fixed w-[inherit] justify-between'>
                     <div>
                         <div className="p-4 text-center">
                             <h2 className="text-lg font-semibold underline hidden xl:block">Admin Dashboard</h2>
