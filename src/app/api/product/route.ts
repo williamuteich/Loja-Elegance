@@ -16,7 +16,10 @@ export async function GET(request: Request) {
 
 
     if(id) {
-      products = await prisma.product.findUnique({ where: { id } });
+      products = await prisma.product.findUnique({ where: { id } }
+        
+        
+      );
       console.log(products)
       if (!products) {
           return NextResponse.json({ error: 'Formulário não encontrado' }, { status: 404 });
