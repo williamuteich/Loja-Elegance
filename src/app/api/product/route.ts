@@ -18,7 +18,6 @@ export async function GET(request: Request) {
     if(id) {
       products = await prisma.product.findUnique({ where: { id } }
         
-        
       );
       console.log(products)
       if (!products) {
