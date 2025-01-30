@@ -11,21 +11,21 @@ import { uploadImage } from "@/supabase/storage/client";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UploadImage from "@/app/components/upload-Image/uploadImage";
+import Image from "next/image";
 
 export default function EditarProduto({ params }: { params: Promise<{ id: string }> }) {
-  console.log("esta recebendo", params);
+
   const [produto, setProduto] = useState<any>(null);
   const [marcas, setMarcas] = useState<any[]>([]);
   const [categorias, setCategorias] = useState<any[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
   const [primaryImage, setPrimaryImage] = useState<File | null>(null);
   const [secondaryImages, setSecondaryImages] = useState<File[]>([]);
-  const [isLoading, setIsLoading] = useState(false); // Estado para controle de loading
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = async () => {
     const { id } = await params;
 
-    console.log("ta pegando o ID", id);
     const productRes = await fetch(`/api/product?id=${id}`);
     if (!productRes.ok) {
       toast.error("Produto não encontrado");
@@ -35,10 +35,9 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
     const productData = await productRes.json();
     setProduto(productData.produtos);
 
-    // Pegar as marcas e categorias
     const [brandsRes, categoriesRes] = await Promise.all([
-      fetch("http://localhost:3000/api/brand"),
-      fetch("http://localhost:3000/api/category"),
+      fetch("/api/brand"),
+      fetch("/api/category"),
     ]);
     const [brandsData, categoriesData] = await Promise.all([
       brandsRes.json(),
@@ -135,8 +134,8 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
   const categories = produto?.categories || [];
   const brand = produto?.brand || {};
 
-  const imagePrimaryUrl = produto?.imagePrimary || ''; // A URL da imagem principal
-  const imagesSecondaryUrls = produto?.imagesSecondary || []; // URLs das imagens secundárias
+  const imagePrimaryUrl = produto?.imagePrimary || '';
+  const imagesSecondaryUrls = produto?.imagesSecondary || [];
 
   return (
     <Container>
@@ -153,19 +152,26 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
             Imagem Principal
           </label>
           <div>
-            {imagePrimaryUrl ? (
+            {primaryImage || imagePrimaryUrl ? (
               <div className="flex flex-col items-center">
-                <img
-                  src={imagePrimaryUrl}
+                <Image
+                  src={primaryImage ? URL.createObjectURL(primaryImage) : imagePrimaryUrl}
                   alt="Imagem do Produto"
                   width={400}
                   height={400}
+                  priority
                   className="object-cover rounded-lg"
                 />
                 <button
                   type="button"
-                  onClick={() => setPrimaryImage(null)}
-                  className="w-full px-4 py-2 bg-red-500 text-white rounded-lg"
+                  onClick={() => {
+                    setPrimaryImage(null);
+                    setProduto((prevProduto: any) => ({
+                      ...prevProduto,
+                      imagePrimary: '',
+                    }));
+                  }}
+                  className="w-full px-4 py-2 bg-red-700 text-white rounded-lg"
                 >
                   Remover Imagem
                 </button>
@@ -175,11 +181,13 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
                 <FaImage className="text-gray-500" size={110} />
               </div>
             )}
-            {!imagePrimaryUrl && (
+
+            {!primaryImage && !imagePrimaryUrl && (
               <UploadImage onImagesSelected={(files) => handlePrimaryImageSelection(files[0])} limit={1} />
             )}
           </div>
         </div>
+
 
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
@@ -198,24 +206,35 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">Categoria</label>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+              Categoria
+            </label>
             <Select
               id="category"
               name="category"
               isMulti
               options={categorias.map((categoria) => ({ label: categoria.name, value: categoria.id }))}
-              value={selectedCategories}
+              value={selectedCategories.length > 0 ? selectedCategories : produto?.categories?.map((category: any) => ({
+                label: category.category.name,
+                value: category.categoryId,
+              })) || []}
               onChange={handleCategoryChange}
-              defaultValue={categories.length > 0 ? categories.map((category: any) => ({ label: category.name, value: category.id })) : []}
               placeholder="Selecione a(s) categoria(s)"
               className="react-select-container"
               instanceId="category-select"
+              aria-labelledby="category" 
             />
           </div>
 
           <div className="space-y-2">
             <label htmlFor="brand" className="block text-sm font-medium text-gray-700">Marca</label>
-            <select id="brand" name="brand" defaultValue={brand.id || ''} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select
+              id="brand"
+              name="brand"
+              value={produto?.brand?.id || ""}
+              onChange={(e) => setProduto({ ...produto, brand: { id: e.target.value } })}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
               <option value="">Selecione a marca</option>
               {marcas.map((marca) => (
                 <option key={marca.id} value={marca.id}>{marca.name}</option>
@@ -225,7 +244,14 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
 
           <div className="space-y-2">
             <label htmlFor="stock" className="block text-sm font-medium text-gray-700">Quantidade em Estoque</label>
-            <input id="stock" name="stock" type="number" defaultValue={produto.quantity} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input
+              id="stock"
+              name="stock"
+              type="number"
+              value={produto?.stock?.quantity || 0}
+              onChange={(e) => setProduto({ ...produto, stock: { quantity: Number(e.target.value) } })}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
 
           <div className="space-y-2">
@@ -245,19 +271,32 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
           </div>
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="secondaryImages" className="block text-sm font-medium text-gray-700">Outras Imagens</label>
+        <div>
           {imagesSecondaryUrls && imagesSecondaryUrls.length > 0 ? (
             <div className="flex gap-4">
               {imagesSecondaryUrls.map((url: string, index: number) => (
                 <div key={index} className="flex flex-col items-center">
-                  <img
+                  <Image
                     src={url}
                     alt={`Imagem Secundária ${index + 1}`}
                     width={150}
                     height={150}
+                    priority={false}
                     className="object-cover rounded-lg"
                   />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updatedImages = imagesSecondaryUrls.filter((_: any, i: number) => i !== index);
+                      setSecondaryImages(updatedImages);
+                      const updatedProduct = { ...produto };
+                      updatedProduct.imagesSecondary = updatedImages;
+                      setProduto(updatedProduct);
+                    }}
+                    className="mt-2 w-full px-4 py-2 bg-red-700 text-white rounded-lg"
+                  >
+                    Remover Imagem
+                  </button>
                 </div>
               ))}
             </div>

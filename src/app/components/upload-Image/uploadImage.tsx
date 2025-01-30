@@ -9,7 +9,7 @@ interface UploadImageProps {
 }
 
 const UploadImage: React.FC<UploadImageProps> = ({ onImagesSelected, limit = Infinity }) => {
-  const [imageUrls, setImageUrls] = useState<string[]>([]); // URLs das imagens
+  const [imageUrls, setImageUrls] = useState<string[]>([]); 
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

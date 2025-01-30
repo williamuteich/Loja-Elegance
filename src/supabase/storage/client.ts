@@ -55,3 +55,16 @@ export const deleteImage = async (imageUrl: string) => {
 
   return { data, error };
 };
+
+export const listImages = async (bucket: string) => {
+  const storage = getStorage();
+
+  const { data, error } = await storage.from(bucket).list("");
+
+  if (error) {
+    console.error("Error fetching images:", error);
+    return []; 
+  }
+
+  return data; 
+}

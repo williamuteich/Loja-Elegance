@@ -3,7 +3,7 @@ import { MyTemplate } from "transactional/emails/emailContact";
 
 export class SendWelcomeEmail {
   async execute(toEmail: string, message: string) {
-    console.log("esta pegandooo email e mesagem", toEmail, message);
+
     try {
       const sendEmail = new SendEmail();
       const html = await sendEmail.getHtml(MyTemplate({message}));

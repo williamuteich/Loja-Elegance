@@ -16,10 +16,22 @@ export async function GET(request: Request) {
 
 
     if(id) {
-      products = await prisma.product.findUnique({ where: { id } }
+      products = await prisma.product.findUnique({ 
+        where: { id },
+        include: {
+          brand: true,
+          categories: {
+            include: {
+              category: true,
+            },
+          },
+          stock: true,
+        },
+        
+      }
         
       );
-      console.log(products)
+
       if (!products) {
           return NextResponse.json({ error: 'Formulário não encontrado' }, { status: 404 });
       }
@@ -67,8 +79,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log(body)
-    console.log(body);
+
     if (
       !body.name ||
       !body.description ||
@@ -141,6 +152,115 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+
+    if (
+      !body.id ||
+      !body.name ||
+      !body.description ||
+      !body.brandId ||
+      !body.features ||
+      !body.categoryIds ||
+      typeof body.quantity !== "number" ||
+      typeof body.price !== "number"
+    ) {
+      return NextResponse.json(
+        { error: "id, name, description, price, brandId, categoryIds, features, and quantity are required" },
+        { status: 400 }
+      );
+    }
+
+    const productExists = await prisma.product.findUnique({
+      where: { id: body.id },
+    });
+
+    if (!productExists) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    const brandExists = await prisma.brand.findUnique({
+      where: { id: body.brandId },
+    });
+
+    if (!brandExists) {
+      return NextResponse.json({ error: "Invalid brandId" }, { status: 400 });
+    }
+
+    const categoriesExist = await prisma.category.findMany({
+      where: {
+        id: { in: body.categoryIds },
+      },
+    });
+
+    if (categoriesExist.length !== body.categoryIds.length) {
+      return NextResponse.json({ error: "One or more categoryIds are invalid" }, { status: 400 });
+    }
+
+    const imagePrimary = body.uploadedImageUrls[0] || null;
+    const imagesSecondary = body.uploadedImageUrls.slice(1);
+
+    const updatedProduct = await prisma.product.update({
+      where: { id: body.id },
+      data: {
+        name: body.name,
+        description: body.description,
+        features: body.features,
+        price: body.price,
+        priceOld: body.priceOld || "asasas",
+        onSale: body.onSale ?? true,
+        active: body.active ?? true,
+        brand: { connect: { id: body.brandId } },
+        stock: {
+          update: {
+            quantity: body.quantity,
+          },
+        },
+        imagePrimary,
+        imagesSecondary,
+      },
+      include: {
+        stock: true,
+      },
+    });
+
+    const existingCategories = await prisma.productCategory.findMany({
+      where: { productId: body.id },
+      select: { categoryId: true },
+    });
+
+    const existingCategoryIds = existingCategories.map((c) => c.categoryId);
+    const categoriesToAdd = body.categoryIds.filter((id: string) => !existingCategoryIds.includes(id));
+    const categoriesToRemove = existingCategoryIds.filter((id) => !body.categoryIds.includes(id));
+
+    if (categoriesToRemove.length > 0) {
+      await prisma.productCategory.deleteMany({
+        where: {
+          productId: body.id,
+          categoryId: { in: categoriesToRemove },
+        },
+      });
+    }
+
+    if (categoriesToAdd.length > 0) {
+      await prisma.productCategory.createMany({
+        data: categoriesToAdd.map((categoryId: string) => ({
+          productId: body.id,
+          categoryId,
+        })),
+      });
+    }
+
+    return NextResponse.json({ message: "Product updated", data: updatedProduct }, { status: 200 });
+
+  } catch (err) {
+    console.error("Error updating product:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
 
 export async function DELETE(request: Request) {
   try {

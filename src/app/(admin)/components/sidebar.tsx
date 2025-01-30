@@ -7,7 +7,6 @@ import { LogoutDashboard } from '@/app/components/logoutAccount';
 import {
     Sheet,
     SheetContent,
-    SheetFooter,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
