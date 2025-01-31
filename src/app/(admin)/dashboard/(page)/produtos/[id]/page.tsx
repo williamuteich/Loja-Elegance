@@ -67,6 +67,9 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
         bucket: "elegance_image",
       });
       if (!error) uploadedImageUrls.push(uploadedPrimaryImageUrl);
+    } else if (produto.imagePrimary) {
+      // Se não trocar a imagem, mantém a imagem atual
+      uploadedImageUrls.push(produto.imagePrimary);
     }
 
     for (const image of secondaryImages) {
@@ -76,7 +79,12 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
       });
       if (!error) uploadedImageUrls.push(uploadedImageUrl);
     }
+    
+    // Manter as imagens secundárias existentes, adicionando as novas
+    const allSecondaryImages = [...produto.imagesSecondary, ...uploadedImageUrls];
+    
 
+    console.log("uploadedImageUrls", uploadedImageUrls);
     const name = event.target.name.value;
     const description = event.target.description.value;
     const features = event.target.features.value;
@@ -88,6 +96,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
     const onSale = event.target.onSale.value === "true";
     const categoryIds = selectedCategories.map((category: any) => category.value);
 
+    console.log("está mandando as imagens", uploadedImageUrls)
     try {
       const response = await fetch("/api/product", {
         method: "PUT",
@@ -105,6 +114,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
           categoryIds,
           quantity,
           uploadedImageUrls,
+          imagesSecondary: allSecondaryImages,  
         }),
       });
 
@@ -130,9 +140,6 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
   };
 
   if (!produto) return <Container>Produto não encontrado</Container>;
-
-  const categories = produto?.categories || [];
-  const brand = produto?.brand || {};
 
   const imagePrimaryUrl = produto?.imagePrimary || '';
   const imagesSecondaryUrls = produto?.imagesSecondary || [];
@@ -271,16 +278,20 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
           </div>
         </div>
 
+        <div className="mb-4">
+          <UploadImage onImagesSelected={handleSecondaryImageSelection} />
+        </div>
+
         <div>
-          {imagesSecondaryUrls && imagesSecondaryUrls.length > 0 ? (
-            <div className="flex gap-4">
+          {imagesSecondaryUrls && imagesSecondaryUrls.length > 0 && (
+            <div className="flex gap-4 items-end">
               {imagesSecondaryUrls.map((url: string, index: number) => (
                 <div key={index} className="flex flex-col items-center">
                   <Image
                     src={url}
                     alt={`Imagem Secundária ${index + 1}`}
-                    width={150}
-                    height={150}
+                    width={100}
+                    height={100}
                     priority={false}
                     className="object-cover rounded-lg"
                   />
@@ -293,15 +304,13 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
                       updatedProduct.imagesSecondary = updatedImages;
                       setProduto(updatedProduct);
                     }}
-                    className="mt-2 w-full px-4 py-2 bg-red-700 text-white rounded-lg"
+                    className="mt-1 w-full px-4 py-1 bg-red-700 text-white rounded-lg"
                   >
                     Remover Imagem
                   </button>
                 </div>
               ))}
             </div>
-          ) : (
-            <UploadImage onImagesSelected={handleSecondaryImageSelection} />
           )}
         </div>
 

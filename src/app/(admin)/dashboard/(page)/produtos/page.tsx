@@ -79,13 +79,15 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <Link href={`/dashboard/produtos/${produto.name}`} className="block">
                                     <div className="flex items-center space-x-2">
-                                        <div className="relative w-[40px] h-[40px] flex items-center justify-center">
+                                        <div className="relative flex items-center justify-center">
                                             {produto.imagePrimary ? (
                                                 <Image
-                                                    fill
+                                                    priority
+                                                    width={40}
+                                                    height={40}
                                                     src={produto.imagePrimary}
                                                     alt={produto.name}
-                                                    className="object-cover"
+                                                    className="object-cover w-auto h-auto" 
                                                 />
                                             ) : (
                                                 <div className="flex justify-center items-center">

@@ -11,12 +11,12 @@ export async function GET(request: Request) {
     const status = url.searchParams.get("status");
     const id = url.searchParams.get('id');
     const pageSize = 10;
+    const fetchAll = url.searchParams.get("fetchAll") === "true"; 
 
     let products;
 
-
-    if(id) {
-      products = await prisma.product.findUnique({ 
+    if (id) {
+      products = await prisma.product.findUnique({
         where: { id },
         include: {
           brand: true,
@@ -27,53 +27,63 @@ export async function GET(request: Request) {
           },
           stock: true,
         },
-        
-      }
-        
-      );
+      });
 
       if (!products) {
-          return NextResponse.json({ error: 'Formulário não encontrado' }, { status: 404 });
+        return NextResponse.json({ error: 'Formulário não encontrado' }, { status: 404 });
       }
-    }else{
+    } else {
+      const where: any = search
+        ? {
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { description: { contains: search, mode: "insensitive" } },
+            ],
+          }
+        : {};
 
-    const where: any = search
-      ? {
-        OR: [
-          { name: { contains: search, mode: "insensitive" } },
-          { description: { contains: search, mode: "insensitive" } },
-        ],
+      if (status !== null) {
+        where.active = status === "true";
       }
-      : {};
 
-    if (status !== null) {
-      where.active = status === "true";
-    }
-    products = await prisma.product.findMany({
-      where,
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-      include: {
-        brand: true,
-        categories: {
+      if (fetchAll) {
+        products = await prisma.product.findMany({
+          where,
           include: {
-            category: true,
+            brand: true,
+            categories: {
+              include: {
+                category: true,
+              },
+            },
+            stock: true,
           },
-        },
-        stock: true,
-      },
-    });
+        });
+      } else {
+        products = await prisma.product.findMany({
+          where,
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+          include: {
+            brand: true,
+            categories: {
+              include: {
+                category: true,
+              },
+            },
+            stock: true,
+          },
+        });
+      }
     }
 
     const totalRecords = await prisma.product.count({});
-
     return NextResponse.json({ produtos: products, totalRecords }, { status: 200 });
   } catch (err) {
     console.error("Erro no filtro de status", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-
 
 
 export async function POST(request: Request) {
@@ -199,8 +209,11 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "One or more categoryIds are invalid" }, { status: 400 });
     }
 
-    const imagePrimary = body.uploadedImageUrls[0] || null;
-    const imagesSecondary = body.uploadedImageUrls.slice(1);
+    const imagePrimary = body.uploadedImageUrls[0] || productExists.imagePrimary; 
+
+    const imagesSecondary = body.uploadedImageUrls.slice(1);  
+
+    const allSecondaryImages = productExists.imagesSecondary.concat(imagesSecondary); 
 
     const updatedProduct = await prisma.product.update({
       where: { id: body.id },
@@ -219,7 +232,7 @@ export async function PUT(request: Request) {
           },
         },
         imagePrimary,
-        imagesSecondary,
+        imagesSecondary: allSecondaryImages, 
       },
       include: {
         stock: true,
@@ -260,7 +273,6 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-
 
 export async function DELETE(request: Request) {
   try {

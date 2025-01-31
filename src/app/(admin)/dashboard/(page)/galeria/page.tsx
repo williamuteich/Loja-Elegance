@@ -82,6 +82,19 @@ export default function Galeria() {
         }
     };
 
+    if (images.length === 0 && !loadingImages) {
+        return (
+            <Container>
+                <h2 className="text-3xl font-semibold mb-3 text-gray-800">Galeria de Imagens</h2>
+                <p className="text-gray-600 mb-10 text-sm leading-[1.6]">
+                    Gerencie suas imagens: selecione para excluir ou visualize. Você pode excluir imagens conforme necessário.
+                </p>
+
+                <p className="font-medium text-lg">Nenhuma Marca Encontrada</p>
+            </Container>
+        )
+    }
+
     return (
         <Container>
             <ToastContainer />
@@ -97,13 +110,13 @@ export default function Galeria() {
                     {images.map((img) => (
                         <div
                             key={img.id}
-                            className="relative p-2 bg-gray-200 rounded-md"
+                            className="relative p-2 bg-gray-200 rounded-md cursor-pointer"
                             onClick={() => handleSelectImage(img.name)}
                         >
                             <Image
                                 className="object-cover w-full h-full rounded-md"
                                 src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/elegance_image/${img.name}`}
-                                priority={false}
+                                priority
                                 width={300}
                                 height={300}
                                 quality={100}

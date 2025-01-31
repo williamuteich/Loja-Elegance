@@ -5,26 +5,39 @@ import Image from "next/image";
 
 interface UploadImageProps {
   onImagesSelected: (images: File[]) => void;
-  limit?: number; 
+  limit?: number;
 }
 
 const UploadImage: React.FC<UploadImageProps> = ({ onImagesSelected, limit = Infinity }) => {
-  const [imageUrls, setImageUrls] = useState<string[]>([]); 
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [images, setImages] = useState<File[]>([]);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
-      
+
       if (filesArray.length > limit) {
         alert(`Você pode adicionar no máximo ${limit} imagem(s).`);
         return;
       }
-      const newImageUrls = filesArray.map((file) => URL.createObjectURL(file));
 
+      const newImageUrls = filesArray.map((file) => URL.createObjectURL(file));
       setImageUrls((prev) => (limit === 1 ? newImageUrls : [...prev, ...newImageUrls]));
+      setImages((prev) => (limit === 1 ? filesArray : [...prev, ...filesArray]));
       onImagesSelected(filesArray);
+
     }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const updatedImageUrls = imageUrls.filter((_, i) => i !== index);
+    const updatedImages = images.filter((_, i) => i !== index);
+
+    setImageUrls(updatedImageUrls);
+    setImages(updatedImages);
+    onImagesSelected(updatedImages);
   };
 
   return (
@@ -32,7 +45,7 @@ const UploadImage: React.FC<UploadImageProps> = ({ onImagesSelected, limit = Inf
       <input
         type="file"
         hidden
-        multiple={limit !== 1} 
+        multiple={limit !== 1}
         ref={imageInputRef}
         onChange={handleImageChange}
       />
@@ -48,7 +61,7 @@ const UploadImage: React.FC<UploadImageProps> = ({ onImagesSelected, limit = Inf
 
       <div className="flex gap-4 overflow-x-auto mt-4">
         {imageUrls.map((url, index) => (
-          <div key={index} className="relative w-24 h-24">
+          <div key={index} className="relative w-45 h-45">
             <Image
               src={url}
               width={200}
@@ -56,6 +69,15 @@ const UploadImage: React.FC<UploadImageProps> = ({ onImagesSelected, limit = Inf
               alt={`img-${index}`}
               className="rounded-lg object-cover"
             />
+            <button
+              onClick={(e) => {
+                e.preventDefault();  
+                handleRemoveImage(index); 
+              }}
+              className="absolute text-xs top-0 right-0 bg-red-700 text-white px-2 py-1 rounded-full"
+            >
+              X
+            </button>
           </div>
         ))}
       </div>

@@ -17,7 +17,7 @@ export default function AdicionarProduto() {
   const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
   const [primaryImage, setPrimaryImage] = useState<File | null>(null);
   const [secondaryImages, setSecondaryImages] = useState<File[]>([]);
-  const [isLoading, setIsLoading] = useState(false); // Estado para controlar o loading
+  const [isLoading, setIsLoading] = useState(false); 
 
   useEffect(() => {
     async function fetchData() {
@@ -45,7 +45,7 @@ export default function AdicionarProduto() {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    setIsLoading(true); // Ativa o loading
+    setIsLoading(true); 
 
     const uploadedImageUrls: string[] = [];
 
