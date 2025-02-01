@@ -68,7 +68,6 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
       });
       if (!error) uploadedImageUrls.push(uploadedPrimaryImageUrl);
     } else if (produto.imagePrimary) {
-      // Se não trocar a imagem, mantém a imagem atual
       uploadedImageUrls.push(produto.imagePrimary);
     }
 
@@ -80,11 +79,8 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
       if (!error) uploadedImageUrls.push(uploadedImageUrl);
     }
     
-    // Manter as imagens secundárias existentes, adicionando as novas
     const allSecondaryImages = [...produto.imagesSecondary, ...uploadedImageUrls];
     
-
-    console.log("uploadedImageUrls", uploadedImageUrls);
     const name = event.target.name.value;
     const description = event.target.description.value;
     const features = event.target.features.value;
@@ -94,6 +90,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
     const quantity = parseInt(event.target.stock.value, 10);
     const active = event.target.status.value === "true";
     const onSale = event.target.onSale.value === "true";
+    const destaque = event.target.destaque.value === "true";
     const categoryIds = selectedCategories.map((category: any) => category.value);
 
     console.log("está mandando as imagens", uploadedImageUrls)
@@ -108,6 +105,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
           priceOld,
           price,
           onSale,
+          destaque,
           features,
           active,
           brandId,
@@ -208,7 +206,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700">Preço Antigo</label>
+            <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700">Preço Promo</label>
             <NumericFormat id="priceOld" name="priceOld" defaultValue={produto.priceOld} placeholder="Digite o preço anterior" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
           </div>
 
@@ -264,6 +262,14 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
           <div className="space-y-2">
             <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
             <select id="status" name="status" defaultValue={produto.active ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="true">Ativo</option>
+              <option value="false">Inativo</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="destaque" className="block text-sm font-medium text-gray-700">Destaque</label>
+            <select id="destaque" name="destaque" defaultValue={produto.destaque ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="true">Ativo</option>
               <option value="false">Inativo</option>
             </select>

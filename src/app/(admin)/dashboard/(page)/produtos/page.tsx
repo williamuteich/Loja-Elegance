@@ -72,12 +72,12 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                     {produtos.map((produto: Produto) => (
                         <tr key={produto.id} className="hover:bg-gray-50 transition-colors cursor-pointer">
                             <td className="py-3 px-4 font-medium text-sm text-blue-600">
-                                <Link href={`/dashboard/produtos/${produto.name}`} className="block">
+                                <Link href={`/dashboard/produtos/${produto.id}`} className="block">
                                     {produto.id}
                                 </Link>
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
-                                <Link href={`/dashboard/produtos/${produto.name}`} className="block">
+                                <Link href={`/dashboard/produtos/${produto.id}`} className="block">
                                     <div className="flex items-center space-x-2">
                                         <div className="relative flex items-center justify-center">
                                             {produto.imagePrimary ? (
@@ -86,7 +86,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                                                     width={40}
                                                     height={40}
                                                     src={produto.imagePrimary}
-                                                    alt={produto.name}
+                                                    alt={produto.id}
                                                     className="object-cover w-auto h-auto" 
                                                 />
                                             ) : (
@@ -101,7 +101,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                             </td>
 
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
-                                <Link href={`/dashboard/produtos/${produto.name}`} className="block">
+                                <Link href={`/dashboard/produtos/${produto.id}`} className="block">
                                     {produto.categories.reduce((acc, item, index) => {
                                         const separator = index > 0 ? ', ' : '';
                                         return acc + separator + item.category.name;
@@ -109,22 +109,22 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                                 </Link>
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
-                                <Link href={`/dashboard/produtos/${produto.name}`} className="block">
+                                <Link href={`/dashboard/produtos/${produto.id}`} className="block">
                                     {produto.brand.name}
                                 </Link>
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
-                                <Link href={`/dashboard/produtos/${produto.name}`} className="block">
+                                <Link href={`/dashboard/produtos/${produto.id}`} className="block">
                                     R$ {produto.price}
                                 </Link>
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
-                                <Link href={`/dashboard/produtos/${produto.name}`} className="block">
+                                <Link href={`/dashboard/produtos/${produto.id}`} className="block">
                                     {produto.stock.quantity}
                                 </Link>
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
-                                <Link href={`/dashboard/produtos/${produto.name}`} className="block">
+                                <Link href={`/dashboard/produtos/${produto.id}`} className="block">
                                     <span
                                         className={
                                             produto.active

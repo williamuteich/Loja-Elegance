@@ -73,7 +73,8 @@ export default function AdicionarProduto() {
     const brandId = event.target.brand.value;
     const quantity = parseInt(event.target.stock.value, 10);
     const active = event.target.status.value === "true";
-    const onSale = event.target.onSale.value === "true";
+    const onSale = event.target.onSale.value === "false";
+    const destaque = event.target.destaque.value === "false";
     const categoryIds = selectedCategories.map((category: any) => category.value);
 
     try {
@@ -81,7 +82,7 @@ export default function AdicionarProduto() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name, description, priceOld, price, onSale, features, active,
+          name, description, priceOld, price, onSale, destaque, features, active,
           brandId, categoryIds, quantity, uploadedImageUrls,
         }),
       });
@@ -162,7 +163,7 @@ export default function AdicionarProduto() {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700">Preço Antigo</label>
+            <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700">Preço Promo</label>
             <NumericFormat id="priceOld" name="priceOld" placeholder="Digite o preço anterior" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
           </div>
 
@@ -193,10 +194,18 @@ export default function AdicionarProduto() {
           </div>
 
           <div className="space-y-2">
+            <label htmlFor="destaque" className="block text-sm font-medium text-gray-700">Destaque</label>
+            <select id="destaque" name="destaque" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="false">Inativo</option>
+              <option value="true">Ativo</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
             <label htmlFor="onSale" className="block text-sm font-medium text-gray-700">Em Promoção</label>
             <select id="onSale" name="onSale" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="true">Ativo</option>
               <option value="false">Inativo</option>
+              <option value="true">Ativo</option>
             </select>
           </div>
         </div>

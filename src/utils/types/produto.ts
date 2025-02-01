@@ -6,6 +6,7 @@ export interface Produto {
     priceOld?: number;
     active: boolean;
     onSale: boolean;
+    destaque: boolean;
     brandId: string;
     imagePrimary: string;
     imagesSecondary: string[];

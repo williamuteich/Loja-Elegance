@@ -85,7 +85,6 @@ export async function GET(request: Request) {
   }
 }
 
-
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -133,6 +132,7 @@ export async function POST(request: Request) {
         price: body.price,
         priceOld: body.priceOld || null,
         onSale: body.onSale !== undefined ? body.onSale : true,
+        destaque: body.destaque !== undefined ? body.destaque : false,
         active: body.active !== undefined ? body.active : true,
         brand: { connect: { id: body.brandId } },
         stock: {
@@ -166,7 +166,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-
+    console.log("recebendooo", body)
     if (
       !body.id ||
       !body.name ||
@@ -222,8 +222,9 @@ export async function PUT(request: Request) {
         description: body.description,
         features: body.features,
         price: body.price,
-        priceOld: body.priceOld || "asasas",
+        priceOld: body.priceOld || null,
         onSale: body.onSale ?? true,
+        destaque: body.destaque ?? false,
         active: body.active ?? true,
         brand: { connect: { id: body.brandId } },
         stock: {

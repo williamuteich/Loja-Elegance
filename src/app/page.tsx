@@ -12,7 +12,7 @@ export default async function Home() {
       <Banners/>
       <Promocao produtos={res.produtos} /> 
       <Container >
-        <Produtos/>
+        <Produtos titulo="Produtos Destaques" isDestaque={true}/>
       </Container>
     </div>
   );
