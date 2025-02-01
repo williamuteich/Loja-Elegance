@@ -131,9 +131,9 @@ export async function POST(request: Request) {
         features: body.features,
         price: body.price,
         priceOld: body.priceOld || null,
-        onSale: body.onSale !== undefined ? body.onSale : true,
-        destaque: body.destaque !== undefined ? body.destaque : false,
-        active: body.active !== undefined ? body.active : true,
+        onSale: body.onSale ?? false,
+        destaque: body.destaque ?? false,
+        active: body.active ?? false,
         brand: { connect: { id: body.brandId } },
         stock: {
           create: {
@@ -166,7 +166,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    console.log("recebendooo", body)
+
     if (
       !body.id ||
       !body.name ||

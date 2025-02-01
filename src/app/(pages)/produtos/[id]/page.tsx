@@ -1,5 +1,4 @@
 import { Container } from "@/app/components/container";
-
 import { FaFileAlt, FaList, FaTruck, FaCreditCard, FaBox } from 'react-icons/fa'
 
 import {
@@ -10,6 +9,7 @@ import {
 } from "@/components/ui/accordion"
 import ViewImages from "../components/viewImages";
 import Produtos from "../components/produtos";
+import { Produto } from "@/utils/types/produto";
 
 export default async function ProdutoSlug({
   params
@@ -27,6 +27,7 @@ export default async function ProdutoSlug({
 
   const { produtos } = await response.json();
   const quantity = produtos.stock.quantity;
+  const categorias = produtos.categories.map((prodctCategory: Produto) => prodctCategory);
 
   return (
     <Container>
@@ -127,7 +128,11 @@ export default async function ProdutoSlug({
 
             </div>
           </div>
-          <Produtos titulo="Produtos Similares" isDestaque={false}/>
+          <p className="mt-32 bg-gray-700 text-white text-lg">
+            Abaixo as categorias:
+          </p>
+
+          <Produtos titulo="Produtos Similares" isDestaque={false} categoriaProduct={categorias}/>
         </div>
       </div>
     </Container>

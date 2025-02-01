@@ -13,7 +13,7 @@ import { ProdutoProps } from "@/utils/types/produto";
 
 export function Promocao({ produtos }: ProdutoProps) {
     const produtosEmPromocao = produtos.filter(produto => produto.onSale);
-
+    
     return (
         <div className="py-10 lg:pt-24 w-full mx-auto bg-gray-100 flex justify-center items-center">
             <Container>
@@ -47,18 +47,18 @@ export function Promocao({ produtos }: ProdutoProps) {
                             </div>
                             <CarouselContent className="flex gap-[1px] px-3">
                                 {produtosEmPromocao.map((produto) => {
-                                    
-                                    const percentualDesconto = produto.priceOld && produto.priceOld > produto.price 
+
+                                    const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
                                         ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
-                                        : 0; 
-                                    
+                                        : 0;
+
                                     return (
                                         <CarouselItem
                                             key={produto.id}
                                             className="flex-shrink-0 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/4 xl:basis-1/4"
                                         >
                                             <Link
-                                               href={`/produtos/${produto.id}`}
+                                                href={`/produtos/${produto.id}`}
                                                 className="group relative flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all"
                                             >
                                                 <div className="relative flex aspect-[300/300] items-center justify-center">
@@ -87,6 +87,18 @@ export function Promocao({ produtos }: ProdutoProps) {
                                                         <p className="text-xs font-medium text-neutral-700 sm:text-sm truncate">
                                                             {produto.description}
                                                         </p>
+                                                        <div
+                                                            className={`mt-2 text-xs font-semibold text-white ${produto.stock.quantity > 0
+                                                                ? "bg-green-700"
+                                                                : "bg-red-700 text-white"
+                                                                } px-2 py-1 rounded-md w-max`}
+                                                        >
+                                                            {produto.stock.quantity > 0
+                                                                ? produto.stock.quantity > 1
+                                                                    ? `${produto.stock.quantity} Disponíveis`
+                                                                    : "Última Unidade"
+                                                                : "Indisponível"}
+                                                        </div>
                                                         <div className="mt-3">
                                                             <button className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all">
                                                                 Adicionar ao Carrinho

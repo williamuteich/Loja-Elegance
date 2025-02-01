@@ -34,7 +34,7 @@ export default function ButtonAdicionar({ config, params  }: ButtonAdicionarProp
 
         for (const [key, value] of Object.entries(data)) {
             if (!value) {
-                return { error: `O campo ${key} não pode estar vazio.` }; // Aqui você pode customizar a mensagem conforme necessário
+                return { error: `O campo ${key} não pode estar vazio.` }; 
             }
         }
         

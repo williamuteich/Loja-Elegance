@@ -4,7 +4,7 @@ import Produtos from "./(pages)/produtos/components/produtos";
 import { Promocao } from "./(pages)/produtos/components/promocao";
 
 export default async function Home() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?fetchAll=true`, { next: { revalidate: 160 } });
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?fetchAll=true`);
   const res = await response.json(); 
 
   return (

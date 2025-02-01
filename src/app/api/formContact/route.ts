@@ -92,7 +92,6 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
     try {
         const { id, resposta } = await request.json();
-        console.log("está recebendo os dados na api", id)
         const formContact = await prisma.formulario.update({
             where: { id },
             data: {
