@@ -3,8 +3,8 @@ import { Container } from "@/app/components/container";
 export default function Sobre() {
     return (
         <Container>
-            <div className="min-h-screen flex items-center justify-center py-12 px-6">
-                <div className="max-w-7xl w-full p-6 flex flex-col md:flex-row items-start gap-2 lg:gap-8">
+            <div className="flex items-center justify-center py-12 px-6">
+                <div className="max-w-7xl min-h-screen  w-full p-6 flex flex-col md:flex-row items-start gap-2 lg:gap-8">
                     <div className="flex-1 mb-6 md:mb-0 md:pr-8">
                     <h2 className="text-2xl text-center mb-2 lg:text-start uppercase font-extrabold text-pink-700">
                                 Sobre a Empresa

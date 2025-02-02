@@ -30,9 +30,9 @@ export function LogoutMenu() {
     return (
         <button
             onClick={() => signOut()}
-            className="flex p-2 pt-[5px] pb-[5px] text-slate-800 text-base items-center gap-2 hover:bg-slate-300 rounded-md"
+            className="hover:text-pink-600 transition-colors duration-300 flex items-center justify-center"
         >
-            <FaSignOutAlt size={24} className="text-slate-500" /> Sair
+            <FaSignOutAlt className="w-6 h-6" /> 
         </button>
     )
 }

@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
 
-import { Home, Package, Info, Phone, HelpCircle, Truck, User, AlignJustify } from "lucide-react";
+import { Home, Package, Info, Phone, HelpCircle, Truck, User, AlignJustify, LogIn  } from "lucide-react";
 import SearchHeaderItems from "./searchHeaderItems";
 import CheckoutHeader from "./checkoutHeader";
+import { LoggedInSession } from "@/utils/types/isLoggedIn";
 
-export default function MenuSuspenso() {
+
+export default function MenuSuspenso({ session }: { session: LoggedInSession }) {
     const pathname = usePathname();
 
     if (pathname.startsWith("/dashboard")) {
@@ -111,13 +113,15 @@ export default function MenuSuspenso() {
                             >
                                 <Truck className="w-6 h-6" />
                             </Link>
+
                             <Link
-                                href="/login"
+                                href={session ? "/profile" : "/login"}
                                 className="hover:text-pink-600 transition-colors duration-300"
-                                aria-label="Fazer login"
+                                aria-label={session ? "Perfil" : "Fazer login"}
                             >
                                 <User className="w-6 h-6" />
                             </Link>
+
                             <CheckoutHeader />
                         </div>
                     </div>

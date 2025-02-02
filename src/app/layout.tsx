@@ -2,6 +2,7 @@ import Header from "@/app/components/header/header";
 import type { Metadata } from 'next'
 import "./globals.css";
 import Footer from "./components/footer/footer";
+import AuthProvider from "./components/providers/auth-provider";
 
 
 export const metadata: Metadata = {
@@ -50,9 +51,11 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
+        <AuthProvider>
         <Header />
         <div>{children}</div>
         <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
