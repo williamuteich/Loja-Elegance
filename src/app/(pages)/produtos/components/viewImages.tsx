@@ -14,7 +14,7 @@ export default function ViewImages({produtos}: {produtos: any}) {
 
     return (
         <>
-            <div className="flex flex-col space-y-2 items-center">,,
+            <div className="flex flex-col space-y-2 items-center">
                 {imagesToDisplay?.map((img: string, index: number) => (
                     <Image
                         key={index}

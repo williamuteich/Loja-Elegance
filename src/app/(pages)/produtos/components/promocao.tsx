@@ -77,11 +77,11 @@ export function Promocao({ produtos }: ProdutoProps) {
                                                             {produto.name}
                                                         </h3>
                                                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                                                            <p className="text-sm font-semibold text-pink-600 line-through">
-                                                                R${produto.priceOld}
-                                                            </p>
                                                             <p className="text-lg font-semibold text-pink-700">
                                                                 R${produto.price}
+                                                            </p>
+                                                            <p className="text-sm font-semibold text-pink-600 line-through">
+                                                                R${produto.priceOld}
                                                             </p>
                                                         </div>
                                                         <p className="text-xs font-medium text-neutral-700 sm:text-sm truncate">

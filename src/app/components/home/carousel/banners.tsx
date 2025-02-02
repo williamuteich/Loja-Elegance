@@ -21,7 +21,7 @@ export function Banners() {
                     }}
                     plugins={[
                         Autoplay({
-                            delay: 3000,
+                            delay: 6000,
                         })
                     ]}
                 >

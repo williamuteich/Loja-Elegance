@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 
-const response = await fetch("http://localhost:3000/api/product?fetchAll=true", { cache: "no-store" });
+const response = await fetch("http://localhost:3000/api/product?fetchAll=true");
 
 if (!response.ok) {
   throw new Error("Erro ao buscar produtos");
@@ -14,7 +14,42 @@ const { produtos } = await response.json();
 
 export default function Produtos({ titulo, isDestaque, categoriaProduct }: { titulo: string; isDestaque: boolean; categoriaProduct?: Produto[] }) {
 
-  const produtosFiltrados = isDestaque === false ? produtos : produtos.filter((produto: Produto) => produto.destaque === true);
+  let produtosFiltrados = produtos;
+
+  if (categoriaProduct) {
+    const categoriasProdutoAtual = categoriaProduct.map((itemCategory: any) => itemCategory.category);
+  
+    produtosFiltrados = produtos.filter((produto: Produto) => {
+      const categoriasProduto = produto.categories.map((cat: any) => cat.category);
+  
+      const categoriaCorrespondente = categoriasProduto.some((catProduto) =>
+        categoriasProdutoAtual.some((catProp) =>
+          catProp.id === catProduto.id && catProp.name === catProduto.name
+        )
+      );
+  
+      const productIdCorrespondente = !categoriaProduct.some((itemCategory: any) => itemCategory.productId === produto.id);
+  
+      return categoriaCorrespondente && productIdCorrespondente && produto.stock.quantity > 0;
+    });
+  
+    if (produtosFiltrados.length === 0) {
+      produtosFiltrados = produtos
+        .filter((produto: Produto) => {
+          const produtoAtualId = categoriaProduct[0]?.category?.id; 
+  
+          return produto.id !== produtoAtualId && produto.stock.quantity > 0;
+        })
+        .sort(() => Math.random() - 0.5)  
+        .slice(0, 10);  
+    }
+  
+  } else {
+    produtosFiltrados = isDestaque
+      ? produtos.filter((produto: Produto) => produto.destaque === true && produto.stock.quantity > 0) 
+      : produtos.filter((produto: Produto) => produto.stock.quantity > 0);
+  }
+
   return (
     <div className="mx-auto py-10 sm:px-0">
       <h2 className="text-2xl relative uppercase font-extrabold text-pink-700 mb-6 text-start">
@@ -107,10 +142,9 @@ export default function Produtos({ titulo, isDestaque, categoriaProduct }: { tit
               );
             })
           ) : (
-            <div className="bg-red-800">Nenhum produto encontrado</div>
+            <div className="text-red-800 pl-10">Nenhum produto encontrado</div>
           )}
         </CarouselContent>
-
       </Carousel>
     </div>
   );

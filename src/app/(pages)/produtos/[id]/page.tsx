@@ -19,10 +19,10 @@ export default async function ProdutoSlug({
 
   const { id } = await params;
 
-  const response = await fetch(`http://localhost:3000/api/product?id=${id}`, { cache: "no-store" });
+  const response = await fetch(`http://localhost:3000/api/product?id=${id}`);
 
   if (!response.ok) {
-    throw new Error("Erro ao buscar produto");
+    return <div className="py-10 px-4 text-gra-800 text-xl font-bold">Erro ao buscar produto</div>
   }
 
   const { produtos } = await response.json();
@@ -37,7 +37,7 @@ export default async function ProdutoSlug({
             <ViewImages produtos={produtos} />
             <div className="w-96 p-4 space-y-6 border border-gray-300 " style={{ borderRadius: "5px" }}>
               <div className="w-full">
-                <h2 className="text-xl relative uppercase font-extrabold text-pink-700 mb-4 text-start">HOLLOW LEISURE MECHANICAL</h2>
+                <h2 className="text-xl relative uppercase font-extrabold text-pink-700 mb-4 text-start">{produtos.name}</h2>
                 <div className="flex gap-2">
                   <p className="text-3xl text-pink-700 mb-1 font-bold">R${produtos.price}</p>
                   <p className="text-xl text-gray-500 mb-1 line-through ">R${produtos.priceOld}</p>
@@ -128,11 +128,8 @@ export default async function ProdutoSlug({
 
             </div>
           </div>
-          <p className="mt-32 bg-gray-700 text-white text-lg">
-            Abaixo as categorias:
-          </p>
 
-          <Produtos titulo="Produtos Similares" isDestaque={false} categoriaProduct={categorias}/>
+          <Produtos titulo="Produtos Relacionados" isDestaque={false} categoriaProduct={categorias}/>
         </div>
       </div>
     </Container>
