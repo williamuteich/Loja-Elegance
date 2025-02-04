@@ -13,16 +13,16 @@ export default function Profile() {
         state: "SP",
         role: "Administrador",
         active: true,
-        image: "", 
+        image: "https://static.xx.fbcdn.net/rsrc.php/y1/r/4lCu2zih0ca.svg"
     };
 
     return (
-        <div className="w-full mx-auto">
+        <div className="w-full mx-auto py-12">
             <div className="space-y-12">
                 <div>
                     <h2 className="text-2xl font-semibold mb-4">Meus Dados</h2>
 
-                    <div className="space-y-2 w-1/6 bg-gray-100 pt-4">
+                    <div className="space-y-2 w-1/6 bg-gray-100">
                         <div className="flex flex-col items-center">
                             {user.image ? (
                                 <Image
@@ -30,7 +30,7 @@ export default function Profile() {
                                     alt="Imagem do Usuário"
                                     width={150}
                                     height={150}
-                                    className="object-cover rounded-full"
+                                    className="object-cover w-full h-full"
                                 />
                             ) : (
                                 <div className="p-4 bg-gray-200 flex items-center justify-center rounded-full">
@@ -40,9 +40,9 @@ export default function Profile() {
 
                             <button
                                 type="button"
-                                className="w-full px-4 py-2 bg-red-700 text-white rounded-lg mt-4"
+                                className={`w-full px-4 py-2 text-white rounded-lg ${user.image ? 'bg-red-700' : 'bg-blue-500'}`}
                             >
-                                Remover Imagem
+                               {user.image ? 'Remover Imagem' : 'Adicionar Imagem'} 
                             </button>
                         </div>
                     </div>

@@ -52,7 +52,6 @@ export default function CheckoutHeader() {
             </div>
           </div>
 
-          {/* Resumo */}
           <div className="border-t pt-4 space-y-2">
             <div className="flex justify-between">
               <p className="text-sm">Subtotal</p>

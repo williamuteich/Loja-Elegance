@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 
 export default function Rastreamento() {
   return (
-    <>
-      <Container>
-        <div className="flex flex-col items-center justify-center min-h-screen">
+    <Container>
+      <div className="flex flex-col items-center justify-center">
+        <div className="min-h-screen p-12 w-1/2">
           <div className="text-center">
             <div className="flex justify-center items-center gap-2">
               <Truck className="w-8 h-8 text-black" aria-hidden="true" />
@@ -16,10 +16,13 @@ export default function Rastreamento() {
               </h1>
             </div>
             <p className="mt-2 text-gray-600 text-sm">
-              Insira o código que você recebeu por e-mail.
+              Insira o código de rastreio que você recebeu por e-mail. Com ele, você poderá acompanhar a localização e o status da sua encomenda em tempo real.
+            </p>
+            <p className="mt-2 text-gray-500 text-xs">
+              Se você não encontrou o código, verifique sua caixa de entrada ou entre em contato com o suporte.
             </p>
           </div>
-          <form className="mt-6 w-full max-w-sm">
+          <form className="mt-6 w-full">
             <Input
               className="w-full h-12 px-4 text-sm border border-gray-300 rounded focus:outline-none focus:ring focus:ring-black"
               placeholder="Código de rastreio"
@@ -34,7 +37,7 @@ export default function Rastreamento() {
             </Button>
           </form>
         </div>
-      </Container>
-    </>
+      </div>
+    </Container>
   );
 }

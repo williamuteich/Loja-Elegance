@@ -19,7 +19,7 @@ async function getFaq({ searchParams }: { searchParams: Promise<{ search: string
     const { faq, totalRecords } = await response.json();
 
     return (
-        <>
+        <div className="min-h-screen">
             <Accordion type="single" collapsible className="w-full">
                 {faq && faq.map((faqItem: { id: string, question: string, response: string }) => (
                     <AccordionItem key={faqItem.id} value={faqItem.id}>
@@ -33,7 +33,7 @@ async function getFaq({ searchParams }: { searchParams: Promise<{ search: string
                 ))}
             </Accordion>
             <Paginacao data={faq} totalRecords={totalRecords} />
-        </>
+        </div>
     );
 }
 
@@ -43,7 +43,7 @@ export default async function FaqPage({ searchParams }: { searchParams: Promise<
 
     return (
         <div className="py-10">
-            <div className="mx-auto ">
+            <div className="mx-auto min-h-screen">
                 <h2 className="text-2xl text-gray-800 font-bold mb-6 text-start">
                     Perguntas Frequentes
                 </h2>

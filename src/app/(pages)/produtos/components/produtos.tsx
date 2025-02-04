@@ -4,49 +4,51 @@ import Link from "next/link";
 import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 
-const response = await fetch("http://localhost:3000/api/product?fetchAll=true");
-
-if (!response.ok) {
-  throw new Error("Erro ao buscar produtos");
-}
-
-const { produtos } = await response.json();
-
-export default function Produtos({ titulo, isDestaque, categoriaProduct }: { titulo: string; isDestaque: boolean; categoriaProduct?: Produto[] }) {
+export default async function Produtos({ titulo, isDestaque, categoriaProduct, produtos }: { titulo: string; isDestaque: boolean; categoriaProduct?: Produto[]; produtos: Produto[] }) {
 
   let produtosFiltrados = produtos;
 
   if (categoriaProduct) {
+    const response = await fetch("http://localhost:3000/api/product?fetchAll=true");
+
+    if (!response.ok) {
+      throw new Error("Erro ao buscar produtos");
+    }
+
+    const { produtos } = await response.json();
+
+    produtosFiltrados = produtos;
+
     const categoriasProdutoAtual = categoriaProduct.map((itemCategory: any) => itemCategory.category);
-  
+
     produtosFiltrados = produtos.filter((produto: Produto) => {
       const categoriasProduto = produto.categories.map((cat: any) => cat.category);
-  
+
       const categoriaCorrespondente = categoriasProduto.some((catProduto) =>
         categoriasProdutoAtual.some((catProp) =>
           catProp.id === catProduto.id && catProp.name === catProduto.name
         )
       );
-  
+
       const productIdCorrespondente = !categoriaProduct.some((itemCategory: any) => itemCategory.productId === produto.id);
-  
+
       return categoriaCorrespondente && productIdCorrespondente && produto.stock.quantity > 0;
     });
-  
+
     if (produtosFiltrados.length === 0) {
       produtosFiltrados = produtos
         .filter((produto: Produto) => {
-          const produtoAtualId = categoriaProduct[0]?.category?.id; 
-  
+          const produtoAtualId = categoriaProduct[0]?.category?.id;
+
           return produto.id !== produtoAtualId && produto.stock.quantity > 0;
         })
-        .sort(() => Math.random() - 0.5)  
-        .slice(0, 10);  
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 10);
     }
-  
+
   } else {
     produtosFiltrados = isDestaque
-      ? produtos.filter((produto: Produto) => produto.destaque === true && produto.stock.quantity > 0) 
+      ? produtos.filter((produto: Produto) => produto.destaque === true && produto.stock.quantity > 0)
       : produtos.filter((produto: Produto) => produto.stock.quantity > 0);
   }
 
@@ -102,11 +104,11 @@ export default function Produtos({ titulo, isDestaque, categoriaProduct }: { tit
                         </h3>
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                           <p className="text-xl font-bold text-pink-600 ">
-                            R${produto.price}
+                            {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.price)}
                           </p>
                           {produto.priceOld && (
                             <p className="text-md font-bold text-pink-700 line-through">
-                              R${produto.priceOld}
+                              {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.priceOld)}
                             </p>
                           )}
                         </div>

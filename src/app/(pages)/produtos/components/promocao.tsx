@@ -81,10 +81,10 @@ export function Promocao({ produtos }: ProdutoProps) {
                                                             </h3>
                                                             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                                                                 <p className="text-lg font-semibold text-pink-700">
-                                                                    R${produto.price}
+                                                                    {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.price)}
                                                                 </p>
                                                                 <p className="text-sm font-semibold text-pink-600 line-through">
-                                                                    R${produto.priceOld}
+                                                                    {produto.priceOld && `R${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.priceOld)}`}
                                                                 </p>
                                                             </div>
                                                             <p className="text-xs font-medium text-neutral-700 sm:text-sm truncate">

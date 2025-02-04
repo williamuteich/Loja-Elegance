@@ -58,6 +58,9 @@ export async function GET(request: Request) {
             },
             stock: true,
           },
+          orderBy: {
+            createdAt: "desc",
+          },
         });
       } else {
         products = await prisma.product.findMany({
@@ -72,6 +75,9 @@ export async function GET(request: Request) {
               },
             },
             stock: true,
+          },
+          orderBy: {
+            createdAt: "desc",
           },
         });
       }

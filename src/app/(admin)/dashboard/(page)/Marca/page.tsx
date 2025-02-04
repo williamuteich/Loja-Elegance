@@ -51,6 +51,9 @@ const MarcasList = async ({ search, page, status }: { search: string, page: stri
     return (
       <>
         <p className="mt-10 font-medium text-lg">Nenhuma Marca Encontrada</p>
+        <div className="mt-5 flex justify-between">
+          <ButtonAdicionar config={modalConfig("Adicionar")} />
+        </div>
       </>
     );
   }
