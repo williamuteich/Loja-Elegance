@@ -133,7 +133,7 @@ export default async function ProdutosGerais({ searchParams }: { searchParams: P
             <div className="text-red-800 pl-10">Nenhum produto encontrado</div>
           )}
         </div>
-      <Paginacao data={produtos} totalRecords={totalRecords} />
+        <Paginacao data={produtos} totalRecords={totalRecords} />
       </div>
     </div>
   );

@@ -1,8 +1,19 @@
 "use client";
-import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages  } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaLink   } from 'react-icons/fa';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogoutDashboard } from '@/app/components/logoutAccount';
+
+import {
+    Menubar,
+    MenubarContent,
+    MenubarItem,
+    MenubarMenu,
+    MenubarSeparator,
+    MenubarShortcut,
+    MenubarTrigger,
+} from "@/components/ui/menubar"
+
 
 import {
     Sheet,
@@ -16,7 +27,7 @@ import { AlignJustify } from 'lucide-react';
 export default function Sidebar() {
     const pathname = usePathname();
 
-    const isActive = (path: string) => pathname === path; 
+    const isActive = (path: string) => pathname === path;
 
     return (
         <>
@@ -99,7 +110,7 @@ export default function Sidebar() {
                                         className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/formulario') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
                                         title='formulario'
                                     >
-                                        <FaFileAlt  size={24} />
+                                        <FaFileAlt size={24} />
                                         <span className='hidden xl:block'>Formulario</span>
                                     </div>
                                 </Link>
@@ -110,10 +121,30 @@ export default function Sidebar() {
                                         className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/galeria') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
                                         title='galeria'
                                     >
-                                        <FaImages  size={24} />
+                                        <FaImages size={24} />
                                         <span className='hidden xl:block'>Galeria</span>
                                     </div>
                                 </Link>
+                            </li>
+                            <li >
+                                <Menubar >
+                                    <MenubarMenu>
+                                        <MenubarTrigger className={`flex border-none items-center gap-2 p-2 rounded-md ${isActive('/dashboard/pages') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>
+                                            <FaLink size={24} />
+                                            <span className='hidden xl:block'>Pasges</span>
+                                        </MenubarTrigger>
+                                        <MenubarContent className=''>
+                                            <MenubarItem>
+                                                New Tab <MenubarShortcut>⌘T</MenubarShortcut>
+                                            </MenubarItem>
+                                            <MenubarItem>New Window</MenubarItem>
+                                            <MenubarSeparator />
+                                            <MenubarItem>Share</MenubarItem>
+                                            <MenubarSeparator />
+                                            <MenubarItem>Print</MenubarItem>
+                                        </MenubarContent>
+                                    </MenubarMenu>
+                                </Menubar>
                             </li>
                         </ul>
                     </div>
