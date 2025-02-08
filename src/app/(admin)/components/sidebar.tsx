@@ -1,5 +1,5 @@
 "use client";
-import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaLink   } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaLink } from 'react-icons/fa';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogoutDashboard } from '@/app/components/logoutAccount';
@@ -126,22 +126,17 @@ export default function Sidebar() {
                                     </div>
                                 </Link>
                             </li>
-                            <li >
-                                <Menubar >
+                            <li className='border-none shadow-none'>
+                                <Menubar className='border-none p-0 '>
                                     <MenubarMenu>
-                                        <MenubarTrigger className={`flex border-none items-center gap-2 p-2 rounded-md ${isActive('/dashboard/pages') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>
+                                        <MenubarTrigger className={`flex w-full cursor-pointer border-none items-center p-2 gap-2 rounded-md ${isActive('/dashboard/pages') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>
                                             <FaLink size={24} />
-                                            <span className='hidden xl:block'>Pasges</span>
+                                            <span className='hidden xl:block'>Pages</span>
                                         </MenubarTrigger>
-                                        <MenubarContent className=''>
-                                            <MenubarItem>
-                                                New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-                                            </MenubarItem>
-                                            <MenubarItem>New Window</MenubarItem>
-                                            <MenubarSeparator />
-                                            <MenubarItem>Share</MenubarItem>
-                                            <MenubarSeparator />
-                                            <MenubarItem>Print</MenubarItem>
+                                        <MenubarContent className="border-0 border-l-2 border-gray-200 text-white shadow-none">
+                                            <Link href={`/dashboard/pages/home`}><MenubarItem className='cursor-pointer hover:hover:bg-gray-700'>Home</MenubarItem></Link>
+                                            <Link href={`/dashboard/pages/sobre`}><MenubarItem className='cursor-pointer hover:hover:bg-gray-700'>Sobre</MenubarItem></Link>
+                                            <Link href={`/dashboard/pages/contato`}><MenubarItem className='cursor-pointer hover:hover:bg-gray-700'>Contato</MenubarItem></Link>
                                         </MenubarContent>
                                     </MenubarMenu>
                                 </Menubar>
@@ -169,7 +164,6 @@ export default function Sidebar() {
                     <SheetTrigger asChild>
                         <AlignJustify className="w-6 h-6 text-gray-800" />
                     </SheetTrigger>
-
                     <SheetContent
                         aria-describedby={undefined}
                         side="left"
@@ -185,76 +179,66 @@ export default function Sidebar() {
 
                         <div className="flex flex-col gap-6 min-h-screen py-4">
                             <div className="">
-                                <Link
-                                    href="/dashboard"
-                                    title="Início"
-                                    aria-label="Início"
-                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard') ? 'bg-gray-700' : ''}`}
-                                >
-                                    <FaHome className="w-6 h-6" aria-hidden="true" />
+                                <Link href="/dashboard" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard') ? 'bg-gray-700' : ''}`}>
+                                    <FaHome className="w-6 h-6" />
                                     <span>Início</span>
                                 </Link>
 
-                                <Link
-                                    href="/dashboard/usuarios"
-                                    title="Usuários"
-                                    aria-label="Usuários"
-                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/usuarios') ? 'bg-gray-700' : ''}`}
-                                >
-                                    <FaUserCircle className="w-6 h-6" aria-hidden="true" />
+                                <Link href="/dashboard/usuarios" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/usuarios') ? 'bg-gray-700' : ''}`}>
+                                    <FaUserCircle className="w-6 h-6" />
                                     <span>Usuários</span>
                                 </Link>
 
-                                <Link
-                                    href="/dashboard/produtos"
-                                    title="Produtos"
-                                    aria-label="Produtos"
-                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/produtos') ? 'bg-gray-700' : ''}`}
-                                >
-                                    <FaBoxOpen className="w-6 h-6" aria-hidden="true" />
+                                <Link href="/dashboard/produtos" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/produtos') ? 'bg-gray-700' : ''}`}>
+                                    <FaBoxOpen className="w-6 h-6" />
                                     <span>Produtos</span>
                                 </Link>
 
-                                <Link
-                                    href="/dashboard/faq"
-                                    title="FAQ"
-                                    aria-label="FAQ"
-                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/faq') ? 'bg-gray-700' : ''}`}
-                                >
-                                    <FaQuestionCircle className="w-6 h-6" aria-hidden="true" />
+                                <Link href="/dashboard/faq" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/faq') ? 'bg-gray-700' : ''}`}>
+                                    <FaQuestionCircle className="w-6 h-6" />
                                     <span>FAQ</span>
                                 </Link>
 
-                                <Link
-                                    href="/dashboard/marca"
-                                    title="Marca"
-                                    aria-label="Marca"
-                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/marca') ? 'bg-gray-700' : ''}`}
-                                >
-                                    <FaIndustry className="w-6 h-6" aria-hidden="true" />
+                                <Link href="/dashboard/marca" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/marca') ? 'bg-gray-700' : ''}`}>
+                                    <FaIndustry className="w-6 h-6" />
                                     <span>Marca</span>
                                 </Link>
 
-                                <Link
-                                    href="/dashboard/categoria"
-                                    title="Categoria"
-                                    aria-label="Categoria"
-                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/categoria') ? 'bg-gray-700' : ''}`}
-                                >
-                                    <FaTag className="w-6 h-6" aria-hidden="true" />
+                                <Link href="/dashboard/categoria" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/categoria') ? 'bg-gray-700' : ''}`}>
+                                    <FaTag className="w-6 h-6" />
                                     <span>Categoria</span>
                                 </Link>
+
+                                <Link href="/dashboard/formulario" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/formulario') ? 'bg-gray-700' : ''}`}>
+                                    <FaFileAlt className="w-6 h-6" />
+                                    <span>Formulário</span>
+                                </Link>
+
+                                <Link href="/dashboard/galeria" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/galeria') ? 'bg-gray-700' : ''}`}>
+                                    <FaImages className="w-6 h-6" />
+                                    <span>Galeria</span>
+                                </Link>
+
+                                <div className="mt-4">
+                                    <span className="text-gray-400 text-sm">Páginas</span>
+                                    <div className="flex flex-col gap-2 mt-2">
+                                        <Link href="/dashboard/pages/home" className="text-white hover:bg-gray-700 p-2 rounded-md">
+                                            Home
+                                        </Link>
+                                        <Link href="/dashboard/pages/sobre" className="text-white hover:bg-gray-700 p-2 rounded-md">
+                                            Sobre
+                                        </Link>
+                                        <Link href="/dashboard/pages/contato" className="text-white hover:bg-gray-700 p-2 rounded-md">
+                                            Contato
+                                        </Link>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className='mt-16 space-y-2 flex flex-col'>
-                                <Link
-                                    href="/dashboard/setup"
-                                    title="Categoria"
-                                    aria-label="Categoria"
-                                    className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/setup') ? 'bg-gray-700' : ''}`}
-                                >
+                            <div className="mt-16 space-y-2 flex flex-col">
+                                <Link href="/dashboard/setup" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/setup') ? 'bg-gray-700' : ''}`}>
                                     <FaCog size={24} />
-                                    <span className=''>Configurações</span>
+                                    <span>Configurações</span>
                                 </Link>
                                 <LogoutDashboard />
                             </div>

@@ -33,9 +33,9 @@ export default async function ProdutoSlug({
     <Container>
       <div className="flex justify-center py-10">
         <div className="bg-white w-full">
-          <div className="flex flex-row gap-4">
+          <div className="lg:flex lg:flex-row flex-col gap-4">
             <ViewImages produtos={produtos} />
-            <div className="w-96 p-4 space-y-6 border border-gray-300 " style={{ borderRadius: "5px" }}>
+            <div className="lg:w-96 w-full p-4 space-y-6 border border-gray-300 " style={{ borderRadius: "5px" }}>
               <div className="w-full">
                 <h2 className="text-xl relative uppercase font-extrabold text-pink-700 mb-4 text-start">{produtos.name}</h2>
                 <div className="flex gap-2">
@@ -83,7 +83,7 @@ export default async function ProdutoSlug({
                       </span>
                       Descrição do produto
                     </AccordionTrigger>
-                    <AccordionContent>
+                    <AccordionContent className="max-h-44 overflow-y-auto">
                       {produtos.description}
                     </AccordionContent>
                   </AccordionItem>
@@ -95,7 +95,7 @@ export default async function ProdutoSlug({
                       </span>
                       Características
                     </AccordionTrigger>
-                    <AccordionContent>
+                    <AccordionContent className="max-h-44 overflow-y-auto">
                       {produtos.features}
                     </AccordionContent>
                   </AccordionItem>

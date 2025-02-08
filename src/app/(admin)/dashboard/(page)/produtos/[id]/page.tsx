@@ -192,7 +192,6 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
           </div>
         </div>
 
-
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nome do Produto</label>
