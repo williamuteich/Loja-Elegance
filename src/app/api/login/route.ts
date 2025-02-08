@@ -23,6 +23,7 @@ export async function POST(request: Request) {
                 id: true,
                 name: true,
                 email: true,
+                active: true,
                 role: true,
                 password: true
             }
@@ -30,6 +31,10 @@ export async function POST(request: Request) {
 
         if (!user) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
+        }
+
+        if(!user.active) {
+            return NextResponse.json({ message: 'User is not active' }, { status: 401 });
         }
 
         const matchPassword = await bcrypt.compare(password, user.password);
@@ -44,6 +49,7 @@ export async function POST(request: Request) {
                 id: user.id,
                 name: user.name,
                 email: user.email,
+                active: user.active,
                 role: user.role
             }
         }, { status: 200 });

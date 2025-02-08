@@ -58,7 +58,7 @@ export async function POST(request: Request) {
         const saltRounds = 10;
 
         if (!body.name || !body.email || !body.password) {
-            return new Response("Name, email, active and password are required", {
+            return new Response(JSON.stringify({ message: "Name, email and password are required" }), {
                 status: 400,
             });
         }
@@ -70,14 +70,14 @@ export async function POST(request: Request) {
             where: {
                 email: body.email
             }
-        })
+        });
 
         if (emailVerify) {
-            return NextResponse.json({ message: 'Email already exists' }, { status: 400 });
+            return new Response(JSON.stringify({ message: 'Email já em uso' }), { status: 400 });
         }
 
         if (body.password.length < 8) {
-            return NextResponse.json({ message: 'Password must be at least 8 characters long' }, { status: 400 });
+            return new Response(JSON.stringify({ message: 'Password must be at least 8 characters long' }), { status: 400 });
         }
 
         const hashPassword = await bcrypt.hash(body.password, saltRounds);
@@ -90,11 +90,11 @@ export async function POST(request: Request) {
                 password: hashPassword,
                 active: body.active
             }
-        })
-
-        return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
+        });
+        
+        return new Response(JSON.stringify({ message: 'User created successfully' }), { status: 201 });
     } catch (err) {
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
     }
 }
 
