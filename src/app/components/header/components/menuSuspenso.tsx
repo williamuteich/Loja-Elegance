@@ -14,6 +14,7 @@ import { Home, Package, Info, Phone, HelpCircle, Truck, User, AlignJustify, LogI
 import SearchHeaderItems from "./searchHeaderItems";
 import CheckoutHeader from "./checkoutHeader";
 import { LoggedInSession } from "@/utils/types/isLoggedIn";
+import Image from 'next/image'
 
 
 export default function MenuSuspenso({ session }: { session: LoggedInSession }) {
@@ -58,9 +59,11 @@ export default function MenuSuspenso({ session }: { session: LoggedInSession }) 
                         <div className="flex-shrink-0">
                             <Link
                                 href="/"
-                                className="text-3xl font-bold text-pink-700 hover:text-pink-800 transition-all"
+                                className="text-3xl font-bold text-pink-700 hover:text-pink-800 transition-all flex flex-col relative"
                             >
-                                Elegance
+                                <h1 className="z-50">Elegance</h1>
+                                <span className="text-xs text-end z-50">Acessórios</span>
+                                <Image className="absolute -left-4 top-0 -rotate-45" src="/fundoLogo.png" alt="Fundo logo" width={60} height={60} quality={100}/>
                             </Link>
                         </div>
 

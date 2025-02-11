@@ -4,12 +4,11 @@ import Submit from "@/components/Submit";
 import Link from "next/link";
 
 export default function Cadastro() {
-    async function newUser(prevState: any, formData: FormData): Promise<{ success?: string; error?: string }> {
+    async function newUser(prevState: any, formData: FormData): Promise<{ success?: string; error?: string; confirm?: string}> {
         "use server";
 
         const data = Object.fromEntries(formData.entries());
 
-        // Validando cada campo individualmente
         if (!data.name) {
             return { error: "O campo Nome não pode estar vazio." };
         }
@@ -22,27 +21,21 @@ export default function Cadastro() {
             return { error: "O campo Senha não pode estar vazio." };
         }
 
-        try {
-            const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            });
+        const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
 
-            const result = await response.json();
+        const result = await response.json();
 
-            console.log("resultado", result);
-
-            if (response.ok) {
-                return { success: result.message || "Conta criada com sucesso!" };
-            } else {
-                return { error: result.message || "Erro ao tentar criar conta." };
-            }
-        } catch (error) {
-            return { error: "Erro ao criar conta." };
+        if (!response.ok) {
+            return { error: result.message || "Erro ao tentar criar conta." };
         }
+
+        return { confirm: "Conta criada com sucesso. Verifique Seu email." };
     }
 
     return (

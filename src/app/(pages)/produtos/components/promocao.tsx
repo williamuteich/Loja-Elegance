@@ -10,6 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/app/components/container";
 import { ProdutoProps } from "@/utils/types/produto";
+import AddToCartButton from "@/app/components/addTocartButton";
 
 export function Promocao({ produtos }: ProdutoProps) {
     const produtosEmPromocao = produtos.filter(produto => produto.onSale);
@@ -47,7 +48,7 @@ export function Promocao({ produtos }: ProdutoProps) {
                             </div>
                             <CarouselContent className="flex gap-[1px] px-3">
                                 {produtosEmPromocao
-                                    .filter((produto) => produto.stock.quantity > 0 && produto.priceOld && produto.price < produto.priceOld) 
+                                    .filter((produto) => produto.stock.quantity > 0 && produto.priceOld && produto.price < produto.priceOld)
                                     .map((produto) => {
 
 
@@ -60,11 +61,10 @@ export function Promocao({ produtos }: ProdutoProps) {
                                                 key={produto.id}
                                                 className="flex-shrink-0 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/4 xl:basis-1/4"
                                             >
-                                                <Link
-                                                    href={`/produtos/${produto.id}`}
+                                                <div
                                                     className="group relative flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all"
                                                 >
-                                                    <div className="relative flex aspect-[300/300] items-center justify-center">
+                                                    <Link href={`/produtos/${produto.id}`} className="relative flex aspect-[300/300] items-center justify-center">
                                                         <Image
                                                             alt={produto.name}
                                                             src={produto.imagePrimary}
@@ -73,9 +73,9 @@ export function Promocao({ produtos }: ProdutoProps) {
                                                             height={300}
                                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                         />
-                                                    </div>
-                                                    <div className="flex w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
-                                                        <div className="flex flex-col gap-2 w-full">
+                                                    </Link>
+                                                    <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
+                                                        <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
                                                             <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
                                                                 {produto.name}
                                                             </h3>
@@ -102,11 +102,9 @@ export function Promocao({ produtos }: ProdutoProps) {
                                                                         : "Última Unidade"
                                                                     : "Indisponível"}
                                                             </div>
-                                                            <div className="mt-3">
-                                                                <button className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all">
-                                                                    Adicionar ao Carrinho
-                                                                </button>
-                                                            </div>
+                                                        </Link>
+                                                        <div className="mt-3">
+                                                            <AddToCartButton produto={produto} />
                                                         </div>
                                                     </div>
 
@@ -115,7 +113,7 @@ export function Promocao({ produtos }: ProdutoProps) {
                                                             {percentualDesconto}% OFF
                                                         </p>
                                                     )}
-                                                </Link>
+                                                </div>
                                             </CarouselItem>
                                         );
                                     })}

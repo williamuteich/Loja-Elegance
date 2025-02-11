@@ -133,9 +133,7 @@ export default function Contato() {
                             >
                                 {loading ? (
                                     <div className="flex justify-center items-center space-x-2">
-                                        {/* Ícone de carregamento */}
                                         <div className="animate-spin border-2 border-t-2 border-white w-4 h-4 rounded-full"></div>
-                                        {/* Mensagem "Enviando..." */}
                                         <span>Enviando...</span>
                                     </div>
                                 ) : (
@@ -145,7 +143,7 @@ export default function Contato() {
                         </form>
                     </div>
                 </div>
-                <iframe title="Nossa localização" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3454.7429899232243!2d-51.11948492367529!3d-30.01553532993785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9519764274d6bf19%3A0x671f695511d4b7c6!2sAv.%20Baltazar%20De%20Oliveira%20Garcia%2C%202833!5e0!3m2!1spt-BR!2sbr!4v1737319923901!5m2!1spt-BR!2sbr" width="600" height="450" style={{ border: 0, width: "100%", height: "400px" }} loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+                <iframe title="Nossa localização" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3453.7039973696415!2d-51.1331397!3d-30.045348799999992!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9519762be7be6c89%3A0xd14c8ec78197d0d2!2sRua%20Ney%20da%20Gama%20Ahrends%20-%20Morro%20Santana%2C%20Porto%20Alegre%20-%20RS%2C%2091450-345!5e0!3m2!1spt-BR!2sbr!4v1739205015604!5m2!1spt-BR!2sbr" width="600" height="450" style={{ border: 0, width: "100%", height: "400px" }} loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     );

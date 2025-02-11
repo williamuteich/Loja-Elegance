@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FaWhatsapp } from 'react-icons/fa';
 
 export default function Footer() {
   const pathname = usePathname();
@@ -12,7 +13,12 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-black text-white py-10">
+    <footer className="bg-black text-white py-10 relative">
+    <div className="flex items-center justify-center fixed z-50 bottom-0 h-[12vh] right-[5vw] xl:right-[8vw] 2xl:right-[7vw] lg:right-[8vw]">
+      <Link href="https://wa.me/5551996615024" target="_blank">
+        <FaWhatsapp className="w-12 h-12 text-green-500 animate-pulse cursor-pointer transition-all" />
+      </Link>
+    </div>
       <div className="container mx-auto px-4">
         <div>
           <div>
@@ -75,7 +81,7 @@ export default function Footer() {
               <h3 className="font-semibold mb-4">Contato</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="mailto:contato@tymos.com.br" className="hover:underline">contato@tymos.com.br</Link>
+                  <Link href="mailto:contato@elegance.com.br" className="hover:underline">contato@elegance.com.br</Link>
                 </li>
                 <li>Atendimento das 8h às 17h</li>
               </ul>

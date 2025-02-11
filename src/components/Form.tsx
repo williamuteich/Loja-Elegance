@@ -9,10 +9,9 @@ type HTMLFormProps = React.DetailedHTMLProps<React.FormHTMLAttributes<HTMLFormEl
 
 type FormProps = PropsWithChildren<Omit<HTMLFormProps, "action"> & { action: (prevState: any, formData: FormData) => Promise<any> }>;
 
-// Componente Form
 export default function Form(props: FormProps) {
-    const [state, formAction] = useActionState(props.action, { error: null, success: null });
-    const [isSubmitted, setIsSubmitted] = useState(false); // Estado para controle de submissão
+    const [state, formAction] = useActionState(props.action, { error: null, success: null, confirm: null });
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     useEffect(() => {
         if (state.success) {
@@ -20,21 +19,41 @@ export default function Form(props: FormProps) {
                 position: "top-right",
                 autoClose: 3000,
             });
-            setIsSubmitted(true); // Quando sucesso, marca o formulário como "submetido"
+            setIsSubmitted(true);
         } else if (state.error) {
             toast.error(state.error, {
                 position: "top-right",
                 autoClose: 3000,
             });
-        }
-    }, [state.success, state.error]);
+        } else if (state.confirm) {
+            toast.info(state.confirm, {
+                position: "top-right",
+                autoClose: 5000,
+            })
+        };
+
+    }, [state.success, state.error, state.confirm]);
 
     return (
         <form {...props} action={formAction}>
             <ToastContainer />
-            {!isSubmitted && props.children}
-        
-            {isSubmitted && <p className="font-semibold text-blue-700 text-lg mb-4">Enviado com sucesso!</p>} 
+            {state.confirm && (
+                <div className="flex flex-col items-center justify-center p-8 bg-white border border-pink-900 rounded-lg shadow-lg mt-6">
+                    <p className="text-lg text-gray-700 mb-4 text-center">
+                        Agora, para concluir o processo, por favor, verifique seu e-mail e confirme sua identidade.
+                    </p>
+                    <p className="font-semibold text-pink-900 text-lg text-center">
+                        Enviamos um e-mail de confirmação. Não se esqueça de verificar a sua caixa de entrada.
+                    </p>
+                    <div className="mt-6 text-center">
+                        <p className="text-sm text-gray-500">Se você não recebeu o e-mail, verifique sua pasta de spam.</p>
+                    </div>
+                </div>
+            )}
+
+            {!isSubmitted && !state.confirm && props.children}
+
+            {isSubmitted && !state.confirm && <p className="font-semibold text-green-700 text-lg mb-4 text-center">Adicionado com sucesso!</p>}
         </form>
     );
 }

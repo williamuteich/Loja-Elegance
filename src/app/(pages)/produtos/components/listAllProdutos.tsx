@@ -2,6 +2,7 @@ import * as React from "react";
 import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
+import AddToCartButton from "@/app/components/addTocartButton";
 
 export default async function ListAllProdutos() {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product`);
@@ -31,8 +32,8 @@ export default async function ListAllProdutos() {
                                 key={produto.id}
                                 className="flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all hover:scale-[1.02]"
                             >
-                                <Link
-                                    href={`/produtos/${produto.id}`}
+                                <div
+
                                     className="group relative flex flex-col border border-gray-50"
                                 >
                                     <div className="relative flex aspect-[300/300] items-center justify-center">
@@ -46,8 +47,8 @@ export default async function ListAllProdutos() {
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         />
                                     </div>
-                                    <div className="flex w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
-                                        <div className="flex flex-col gap-2 w-full">
+                                    <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
+                                        <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
                                             <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
                                                 {produto.name}
                                             </h3>
@@ -76,11 +77,9 @@ export default async function ListAllProdutos() {
                                                         : "Última Unidade"
                                                     : "Indisponível"}
                                             </div>
-                                            <div className="mt-3">
-                                                <button className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all">
-                                                    Adicionar ao Carrinho
-                                                </button>
-                                            </div>
+                                        </Link>
+                                        <div className="mt-3">
+                                            <AddToCartButton produto={produto} />
                                         </div>
                                     </div>
                                     {produto.onSale && percentualDesconto > 0 && (
@@ -88,7 +87,7 @@ export default async function ListAllProdutos() {
                                             {percentualDesconto}% OFF
                                         </p>
                                     )}
-                                </Link>
+                                </div>
                             </div>
                         );
                     })

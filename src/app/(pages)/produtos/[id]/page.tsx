@@ -10,6 +10,7 @@ import {
 import ViewImages from "../components/viewImages";
 import Produtos from "../components/produtos";
 import { Produto } from "@/utils/types/produto";
+import AddToCartButton from "@/app/components/addTocartButton";
 
 export default async function ProdutoSlug({
   params
@@ -55,12 +56,16 @@ export default async function ProdutoSlug({
                 </div>
               </div>
 
-              <button
-                className={`uppercase text-white py-3 px-6 rounded mt-6 w-full ${quantity > 0 ? 'bg-black hover:bg-gray-900 transition-all' : 'bg-gray-500'}`}
-                disabled={quantity <= 0}
-              >
-                {quantity > 0 ? 'Adicionar ao Carrinho' : 'Produto Indisponível'}
-              </button>
+              {quantity > 0 ? (
+                <AddToCartButton produto={produtos} />
+              ) : (
+                <button
+                  className="uppercase text-white py-3 px-6 rounded mt-6 w-full bg-gray-500"
+                  disabled
+                >
+                  Produto Indisponível
+                </button>
+              )}
 
               <div className="mt-6 space-y-2">
                 <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">
@@ -129,7 +134,7 @@ export default async function ProdutoSlug({
             </div>
           </div>
 
-          <Produtos titulo="Produtos Relacionados" isDestaque={false} categoriaProduct={categorias} produtos={[]}/>
+          <Produtos titulo="Produtos Relacionados" isDestaque={false} categoriaProduct={categorias} produtos={[]} />
         </div>
       </div>
     </Container>

@@ -5,9 +5,12 @@ import { signIn } from "next-auth/react";
 import { ToastContainer, toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
+import { useState } from "react";
+import Link from "next/link";
 
 export default function Formulario() {
     const router = useRouter();
+    const [userActive, setUserActive] = useState();
 
     async function login(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -18,42 +21,59 @@ export default function Formulario() {
             password: formData.get("password") as string,
         };
 
-        const res = await signIn("credentials", {
+        await signIn("credentials", {
             ...data,
             redirect: false,
         });
 
-        if (res?.ok) {
-            toast.success("Login efetuado com sucesso!", {
-                position: "top-center",
+        const sessionResponse = await fetch(`/api/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!sessionResponse.ok) {
+            toast.error("Email ou Senha Incorreto.", {
+                position: "top-right",
                 autoClose: 3000,
-            });
-
-            const sessionResponse = await fetch(`/api/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            });
-
-            const session = await sessionResponse.json();
-
-            if (session?.user?.role) {
-                router.push("/dashboard");
-            } else {
-                router.push("/");
-            }
-        } else {
-            toast.error("Email ou senha incorretos.", {
-                position: "top-center",
-                autoClose: 3000,
-            });
+            })
         }
+
+        const session = await sessionResponse.json();
+
+        if (session?.user?.role && session?.user?.active === true) {
+            router.push("/dashboard");
+        } else if (session?.user?.active === true) {
+            router.push("/");
+        }
+
+        setUserActive(session.active);
+    }
+
+    if (userActive === false) {
+        return (
+            <div className="flex flex-col items-center justify-center p-8 bg-white border border-pink-900 rounded-lg shadow-lg mt-6">
+                <h2 className="text-2xl font-semibold text-pink-900 mb-4 text-center">
+                    Verifique seu E-mail para Acessar sua Conta!
+                </h2>
+                <p className="text-lg text-gray-700 mb-4 text-center">
+                    Para concluir o processo de criação de conta, por favor, verifique o seu e-mail e confirme sua identidade.
+                </p>
+                <p className="font-semibold text-pink-900 text-lg text-center">
+                    Enviamos um e-mail de confirmação. Não se esqueça de verificar a sua caixa de entrada.
+                </p>
+                <div className="mt-6 text-center">
+                    <p className="text-sm text-gray-500">Se você não recebeu o e-mail, verifique sua pasta de spam.</p>
+                </div>
+            </div>
+        )
     }
 
     return (
         <>
+            <h1 className="text-2xl font-bold text-center text-black mb-6">BEM VINDO DE VOLTA!</h1>
             <ToastContainer />
             <form onSubmit={login} className="relative">
                 <div className="mb-6">
@@ -79,11 +99,24 @@ export default function Formulario() {
                 <button
                     title="login"
                     type="submit"
-                    className="w-full py-3 bg-black text-white font-semibold rounded-md hover:bg-gray-800"
+                    className="w-full py-3 bg-black text-white font-semibold uppercase rounded-md hover:bg-gray-800"
                 >
-                    ENTRAR
+                    Entrar
                 </button>
             </form>
+            <div className="mt-4 text-center">
+                <Link href="/resetPwd" className="text-sm text-gray-600 hover:text-black font-medium">
+                    Esqueci minha senha
+                </Link>
+            </div>
+            <div className="mt-6 border-t border-gray-300 pt-6 text-center">
+                <p className="text-sm text-gray-600">
+                    Não tem uma conta?{' '}
+                    <Link href="/cadastro" className="text-black font-semibold hover:underline">
+                        Crie uma agora
+                    </Link>
+                </p>
+            </div>
         </>
     );
 }

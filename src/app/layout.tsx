@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import "./globals.css";
 import Footer from "./components/footer/footer";
 import AuthProvider from "./components/providers/auth-provider";
+import { CartProvider } from "@/context/cartContext";
 
 
 export const metadata: Metadata = {
@@ -52,9 +53,11 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
+        <CartProvider>
         <Header />
         <div>{children}</div>
         <Footer />
+        </CartProvider>
         </AuthProvider>
       </body>
     </html>

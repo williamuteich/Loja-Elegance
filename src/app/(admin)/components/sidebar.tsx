@@ -129,14 +129,14 @@ export default function Sidebar() {
                             <li className='border-none shadow-none'>
                                 <Menubar className='border-none p-0 '>
                                     <MenubarMenu>
-                                        <MenubarTrigger className={`flex w-full cursor-pointer border-none items-center p-2 gap-2 rounded-md ${isActive('/dashboard/pages') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>
+                                        <MenubarTrigger className={`flex w-full cursor-pointer border-none items-center p-2 gap-2 rounded-md `}>
                                             <FaLink size={24} />
-                                            <span className='hidden xl:block'>Pages</span>
+                                            <span className='hidden xl:block'>Páginas</span>
                                         </MenubarTrigger>
                                         <MenubarContent className="border-0 border-l-2 border-gray-200 text-white shadow-none">
-                                            <Link href={`/dashboard/pages/home`}><MenubarItem className='cursor-pointer hover:hover:bg-gray-700'>Home</MenubarItem></Link>
-                                            <Link href={`/dashboard/pages/sobre`}><MenubarItem className='cursor-pointer hover:hover:bg-gray-700'>Sobre</MenubarItem></Link>
-                                            <Link href={`/dashboard/pages/contato`}><MenubarItem className='cursor-pointer hover:hover:bg-gray-700'>Contato</MenubarItem></Link>
+                                            <Link href={`/dashboard/home`}><MenubarItem className={`cursor-pointer hover:hover:bg-gray-700 ${isActive('/dashboard/home') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>Home</MenubarItem></Link>
+                                            <Link href={`/dashboard/sobre`}><MenubarItem className={`cursor-pointer hover:hover:bg-gray-700 ${isActive('/dashboard/sobre') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>Sobre</MenubarItem></Link>
+                                            <Link href={`/dashboard/contato`}><MenubarItem className={`cursor-pointer hover:hover:bg-gray-700 ${isActive('/dashboard/contato') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>Contato</MenubarItem></Link>
                                         </MenubarContent>
                                     </MenubarMenu>
                                 </Menubar>

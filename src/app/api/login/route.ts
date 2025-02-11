@@ -23,18 +23,14 @@ export async function POST(request: Request) {
                 id: true,
                 name: true,
                 email: true,
-                active: true,
                 role: true,
-                password: true
+                password: true,
+                active: true
             }
         });
 
         if (!user) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
-        }
-
-        if(!user.active) {
-            return NextResponse.json({ message: 'User is not active' }, { status: 401 });
         }
 
         const matchPassword = await bcrypt.compare(password, user.password);
@@ -43,14 +39,18 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: 'Invalid password' }, { status: 401 });
         }
 
+        if(user.active === false) {
+            return NextResponse.json({ message: "Necessária Validação de Email", active: user.active }, { status: 401 });
+        }
+
         return NextResponse.json({ 
             message: 'User authenticated successfully',
             user: {
                 id: user.id,
                 name: user.name,
                 email: user.email,
-                active: user.active,
-                role: user.role
+                role: user.role,
+                active: user.active
             }
         }, { status: 200 });
         

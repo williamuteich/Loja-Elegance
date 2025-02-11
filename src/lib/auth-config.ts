@@ -32,14 +32,14 @@ export const auth: NextAuthOptions = {
           if (response.ok) {
             const data = await response.json();
             const user = data.user;
-
+           
             if (user) {
-
               return {
                 id: user.id,
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                active: user.active,
               } as User; 
             }
           }
@@ -54,18 +54,20 @@ export const auth: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
-    maxAge:  2 * 60 * 60, //I intended this cookie to have a 4 hour expiration, but it has a 14.4 seconds expiration instead!
+    maxAge:  2 * 60 * 60,
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
+        token.active = user.active;
       }
       return token;
     },
     async session({ session, token }) {
       if (token.role) {
         session.user.role = token.role;
+        session.user.active = token.active;
       }
       return session;
     },
