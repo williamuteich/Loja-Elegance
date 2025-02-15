@@ -1,19 +1,8 @@
 "use client";
-import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaLink } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage  } from 'react-icons/fa';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogoutDashboard } from '@/app/components/logoutAccount';
-
-import {
-    Menubar,
-    MenubarContent,
-    MenubarItem,
-    MenubarMenu,
-    MenubarSeparator,
-    MenubarShortcut,
-    MenubarTrigger,
-} from "@/components/ui/menubar"
-
 
 import {
     Sheet,
@@ -126,20 +115,16 @@ export default function Sidebar() {
                                     </div>
                                 </Link>
                             </li>
-                            <li className='border-none shadow-none'>
-                                <Menubar className='border-none p-0 '>
-                                    <MenubarMenu>
-                                        <MenubarTrigger className={`flex w-full cursor-pointer border-none items-center p-2 gap-2 rounded-md `}>
-                                            <FaLink size={24} />
-                                            <span className='hidden xl:block'>Páginas</span>
-                                        </MenubarTrigger>
-                                        <MenubarContent className="border-0 border-l-2 border-gray-200 text-white shadow-none">
-                                            <Link href={`/dashboard/home`}><MenubarItem className={`cursor-pointer hover:hover:bg-gray-700 ${isActive('/dashboard/home') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>Home</MenubarItem></Link>
-                                            <Link href={`/dashboard/sobre`}><MenubarItem className={`cursor-pointer hover:hover:bg-gray-700 ${isActive('/dashboard/sobre') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>Sobre</MenubarItem></Link>
-                                            <Link href={`/dashboard/contato`}><MenubarItem className={`cursor-pointer hover:hover:bg-gray-700 ${isActive('/dashboard/contato') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}>Contato</MenubarItem></Link>
-                                        </MenubarContent>
-                                    </MenubarMenu>
-                                </Menubar>
+                            <li>
+                                <Link href="/dashboard/banners">
+                                    <div
+                                        className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/banners') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                                        title='banners'
+                                    >
+                                        <FaRegImage  size={24} />
+                                        <span className='hidden xl:block'>Banners</span>
+                                    </div>
+                                </Link>
                             </li>
                         </ul>
                     </div>
@@ -218,21 +203,6 @@ export default function Sidebar() {
                                     <FaImages className="w-6 h-6" />
                                     <span>Galeria</span>
                                 </Link>
-
-                                <div className="mt-4">
-                                    <span className="text-gray-400 text-sm">Páginas</span>
-                                    <div className="flex flex-col gap-2 mt-2">
-                                        <Link href="/dashboard/pages/home" className="text-white hover:bg-gray-700 p-2 rounded-md">
-                                            Home
-                                        </Link>
-                                        <Link href="/dashboard/pages/sobre" className="text-white hover:bg-gray-700 p-2 rounded-md">
-                                            Sobre
-                                        </Link>
-                                        <Link href="/dashboard/pages/contato" className="text-white hover:bg-gray-700 p-2 rounded-md">
-                                            Contato
-                                        </Link>
-                                    </div>
-                                </div>
                             </div>
 
                             <div className="mt-16 space-y-2 flex flex-col">

@@ -29,9 +29,9 @@ export const metadata: Metadata = {
     'joias',
     'bijuterias',
   ],
-  openGraph: {
-    images: ['/Frame8.webp'],
-  },
+  //openGraph: {
+  //  images: ['/Frame8.webp'],
+  //},
   robots: {
     index: true,
     follow: true,

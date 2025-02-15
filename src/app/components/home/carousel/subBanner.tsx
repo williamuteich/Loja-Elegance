@@ -1,3 +1,4 @@
+"use client"
 import { FaWhatsapp, FaUnlockAlt, FaCreditCard } from "react-icons/fa";
 import Autoplay from 'embla-carousel-autoplay';
 import {

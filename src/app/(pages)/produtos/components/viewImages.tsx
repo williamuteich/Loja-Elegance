@@ -15,7 +15,7 @@ export default function ViewImages({ produtos }: { produtos: any }) {
     return (
         <>
             <div className="flex gap-4 flex-col-reverse items-center flex-wrap lg:items-start lg:flex-row lg:mb-0 mb-6 ">
-                <div className="flex lg:flex-col space-y-2 items-center overflow-x-auto gap-2">
+                <div className="flex lg:flex-col space-y-2 items-center overflow-x-auto lg:overflow-x-visible gap-2">
                     {imagesToDisplay?.map((img: string, index: number) => (
                         <Image
                             key={index}

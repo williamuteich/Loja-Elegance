@@ -29,7 +29,7 @@ export function Promocao({ produtos }: ProdutoProps) {
                                 produtos selecionados, com frete grátis em compras acima de R$150,00. Oferta por tempo limitado!
                             </p>
 
-                            <Link href="/produtos/promocao" className="w-full">
+                            <Link href="/promocoes" className="w-full">
                                 <Button className="uppercase text-xs lg:text-sm text-white bg-pink-800 hover:bg-pink-600 focus:bg-pink-600 w-full">
                                     Aproveite Agora!
                                 </Button>

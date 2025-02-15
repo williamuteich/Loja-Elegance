@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
 
-import { Home, Package, Info, Phone, HelpCircle, Truck, User, AlignJustify, LogIn  } from "lucide-react";
+import { Home, Package, Tag , Phone, HelpCircle, Truck, User, AlignJustify, LogIn } from "lucide-react";
 import SearchHeaderItems from "./searchHeaderItems";
 import CheckoutHeader from "./checkoutHeader";
 import { LoggedInSession } from "@/utils/types/isLoggedIn";
@@ -47,11 +47,11 @@ export default function MenuSuspenso({ session }: { session: LoggedInSession }) 
         <>
             <div className="bg-pink-700 frete-gratuito">
                 <div className="max-w-[1400px] py-1 mx-auto px-4 font-medium text-center text-sm sm:text-base sm:px-6 lg:px-8 text-white">
-                    Frete Grátis para compras acima de R$ 100,00
+                    Ofertas imperdíveis, aproveite!
                 </div>
             </div>
             <div
-                className={`hidden md:block ${isFixed ? "hidden md:block sm:fixed z-10 top-0 left-0 w-full" : "relative"
+                className={`hidden md:block z-50 ${isFixed ? "hidden md:block sm:fixed z-10 top-0 left-0 w-full" : "relative"
                     } transition-all bg-white text-gray-900 font-bold shadow-md shadow-pink-100`}
             >
                 <div className="max-w-[1400px] mx-auto w-full sm:px-6 lg:px-8">
@@ -63,7 +63,16 @@ export default function MenuSuspenso({ session }: { session: LoggedInSession }) 
                             >
                                 <h1 className="z-50">Elegance</h1>
                                 <span className="text-xs text-end z-50">Acessórios</span>
-                                <Image className="absolute -left-4 top-0 -rotate-45" src="/fundoLogo.png" alt="Fundo logo" width={60} height={60} quality={100}/>
+                                <Image
+                                    className="absolute -left-4 top-0 -rotate-45 w-[60] h-[60]"
+                                    src="/fundoLogo.png"
+                                    alt="Fundo logo"
+                                    width={60}
+                                    height={60}
+                                    quality={100}
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+
                             </Link>
                         </div>
 
@@ -83,11 +92,11 @@ export default function MenuSuspenso({ session }: { session: LoggedInSession }) 
                                 Produtos
                             </Link>
                             <Link
-                                href="/sobre"
-                                title="Sobre"
+                                href="/promocoes"
+                                title="Promoções"
                                 className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                             >
-                                Sobre
+                                Promoções
                             </Link>
                             <Link
                                 href="/contato"
@@ -189,13 +198,13 @@ export default function MenuSuspenso({ session }: { session: LoggedInSession }) 
                                         </Link>
 
                                         <Link
-                                            href="/sobre"
-                                            title="Sobre"
-                                            aria-label="Sobre"
+                                            href="/promocoes"
+                                            title="Promoções"
+                                            aria-label="Promoções"
                                             className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                                         >
-                                            <Info className="w-6 h-6" aria-hidden="true" />
-                                            <span>Sobre</span>
+                                            <Tag className="w-6 h-6" aria-hidden="true" />
+                                            <span>Promoções</span>
                                         </Link>
 
                                         <Link
