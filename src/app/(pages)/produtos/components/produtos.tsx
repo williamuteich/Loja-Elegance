@@ -103,12 +103,12 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
                         <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
                           {produto.name}
                         </h3>
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                          <p className="text-xl font-bold text-pink-600 ">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 flex-wrap">
+                          <p className="text-xl font-bold text-pink-600 flex-wrap">
                             {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.price)}
                           </p>
                           {produto.priceOld && (
-                            <p className="text-md font-bold text-pink-700 line-through">
+                            <p className="text-md font-bold text-pink-700 line-through flex-wrap">
                               {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.priceOld)}
                             </p>
                           )}

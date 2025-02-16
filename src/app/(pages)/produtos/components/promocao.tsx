@@ -79,12 +79,12 @@ export function Promocao({ produtos }: ProdutoProps) {
                                                             <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
                                                                 {produto.name}
                                                             </h3>
-                                                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                                                                <p className="text-lg font-semibold text-pink-700">
+                                                            <div className="flex flex-col sm:flex-row sm:items-center gap-1  flex-wrap">
+                                                                <p className="text-lg font-semibold text-pink-700 flex-wrap">
                                                                     {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.price)}
                                                                 </p>
-                                                                <p className="text-sm font-semibold text-pink-600 line-through">
-                                                                    {produto.priceOld && `R${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.priceOld)}`}
+                                                                <p className="text-sm font-semibold text-pink-600 line-through flex-wrap">
+                                                                    {produto.priceOld && `${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.priceOld)}`}
                                                                 </p>
                                                             </div>
                                                             <p className="text-xs font-medium text-neutral-700 sm:text-sm truncate">

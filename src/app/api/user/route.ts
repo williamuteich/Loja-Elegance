@@ -63,8 +63,9 @@ export async function POST(request: Request) {
             });
         }
 
-        body.role = body.role || '';
+        body.role = body.role || 'colaborador';  
         body.active = body.active === 'true' ? true : false;
+        body.telefone = body.telefone || null;  
 
         const emailVerify = await prisma.user.findUnique({
             where: {
@@ -86,17 +87,23 @@ export async function POST(request: Request) {
             data: {
                 name: body.name,
                 email: body.email,
-                role: body.role,
+                role: body.role,  
                 password: hashPassword,
-                active: body.active
+                active: body.active,
+                telefone: body.telefone, 
             }
         });
-        
+
         return new Response(JSON.stringify({ message: 'User created successfully' }), { status: 201 });
+
     } catch (err) {
-        return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
+
+        console.error("Erro ao criar usuário:", err);
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        return new Response(JSON.stringify({ error: 'Internal server error', details: errorMessage }), { status: 500 });
     }
 }
+
 
 export async function PUT(request: Request) {
     try {

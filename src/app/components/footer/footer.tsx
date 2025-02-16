@@ -9,13 +9,9 @@ import { LogoutMenu } from "../logoutAccount";
 import { useEffect, useState } from "react";
 
 export default function Footer() {
-  const [socialMedia, setSocialMedia] = useState<{ name: string; url: string; type: string; active: boolean }[]>([]);
   const { data: session } = useSession();
   const pathname = usePathname();
-
-  if (pathname.startsWith("/dashboard")) {
-    return null;
-  }
+  const [socialMedia, setSocialMedia] = useState<{ name: string; url: string; type: string; active: boolean }[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +31,10 @@ export default function Footer() {
 
     fetchData();
   }, []);
+
+  if (pathname.startsWith("/dashboard")) {
+    return null;
+  }
 
   const socialIcons = {
     whatsapp: { icon: FaWhatsapp, color: "text-green-500" },

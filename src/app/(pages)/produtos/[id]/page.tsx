@@ -39,9 +39,9 @@ export default async function ProdutoSlug({
             <div className="lg:w-96 w-full p-4 space-y-6 border border-gray-300 " style={{ borderRadius: "5px" }}>
               <div className="w-full">
                 <h2 className="text-xl relative uppercase font-extrabold text-pink-700 mb-4 text-start">{produtos.name}</h2>
-                <div className="flex gap-2">
-                  <p className="text-3xl text-pink-700 mb-1 font-bold">{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produtos.price)}</p>
-                  <p className="text-xl text-gray-500 mb-1 line-through ">{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produtos.priceOld)}</p>
+                <div className="flex gap-1 flex-wrap mb-1">
+                  <p className="text-3xl text-pink-700  font-bold">{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produtos.price)}</p>
+                  <p className="text-xl text-gray-500 line-through ">{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produtos.priceOld)}</p>
                 </div>
                 <p className="text-sm text-gray-600 mb-4 flex gap-1 items-center"> <FaCreditCard size={16} className="text-pink-700" /> até <span className="font-bold text-pink-700">12x</span> de <span className="font-bold text-pink-700">R$10,30</span></p>
 
