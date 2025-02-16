@@ -52,7 +52,7 @@ export default async function ListAllProdutos() {
                                             <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
                                                 {produto.name}
                                             </h3>
-                                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 flex-wrap">
                                                 <p className="text-xl font-bold text-pink-600">
                                                     {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.price)}
                                                 </p>
