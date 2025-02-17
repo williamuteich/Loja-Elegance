@@ -53,7 +53,7 @@ export default function Form(props: FormProps) {
 
             {!isSubmitted && !state.confirm && props.children}
 
-            {isSubmitted && !state.confirm && <p className="font-semibold text-green-700 text-lg mb-4 text-center">Adicionado com sucesso!</p>}
+            {isSubmitted && !state.confirm && <p className="font-semibold text-green-700 text-lg mb-4 text-center">{state.success}</p>}
         </form>
     );
 }

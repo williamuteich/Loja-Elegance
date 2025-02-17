@@ -7,7 +7,7 @@ export function LogoutButton() {
     return (
         <button
             onClick={() => signOut()}
-            className="sm:flex sm:pt-[5px] sm:px-2 sm:pb-[5px] px-4 p-1 flex items-center gap-2 text-slate-800 hover:text-white focus:text-white rounded-md transition duration-200"
+            className=" px-2 py-1 text-sm flex items-center gap-2 text-pink-700 hover:text-red-700 hover:bg-gray-100 w-full focus:text-red-800 transition"
         >
             <FaSignOutAlt className="md:w-[24px] md:h-[24px] w-4 h-4" /> Sair
         </button>
@@ -30,9 +30,23 @@ export function LogoutMenu() {
     return (
         <button
             onClick={() => signOut()}
-            aria-label="Log out" 
+            aria-label="Log out"
         >
-            <FaSignOutAlt size={18} /> 
+            <FaSignOutAlt size={18} />
+        </button>
+    )
+}
+
+export function LogoutMenuHome() {
+    return (
+        <button
+            onClick={() => signOut()}
+            aria-label="Log out"
+        >
+            <div className="flex gap-3  hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition duration-200">
+                <FaSignOutAlt size={24}/>
+                <p className="md:sr-only">Sair</p>
+            </div>
         </button>
     )
 }

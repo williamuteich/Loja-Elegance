@@ -5,22 +5,23 @@ import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
 import AddToCartButton from "@/app/components/addTocartButton";
+import { FaSlidersH  } from "react-icons/fa";
 
 export default function ProdutosGerais() {
   const [produtos, setProdutos] = React.useState<Produto[]>([]);
   const [produtosFiltrados, setProdutosFiltrados] = React.useState<Produto[]>([]);
   const [totalRecords, setTotalRecords] = React.useState<number>(0);
-  const [search, setSearch] = React.useState<string>(""); 
-  const [categorias, setCategorias] = React.useState<{ id: string, name: string }[]>([]); 
-  const [precoMinimo, setPrecoMinimo] = React.useState<number | string>(""); 
-  const [precoMaximo, setPrecoMaximo] = React.useState<number | string>(""); 
-  const [paginaAtual, setPaginaAtual] = React.useState<number>(1); 
-  const [loading, setLoading] = React.useState<boolean>(true); 
-  const produtosPorPagina = 10; 
+  const [search, setSearch] = React.useState<string>("");
+  const [categorias, setCategorias] = React.useState<{ id: string, name: string }[]>([]);
+  const [precoMinimo, setPrecoMinimo] = React.useState<number | string>("");
+  const [precoMaximo, setPrecoMaximo] = React.useState<number | string>("");
+  const [paginaAtual, setPaginaAtual] = React.useState<number>(1);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const produtosPorPagina = 10;
 
   React.useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);  
+      setLoading(true);
 
       const response = await fetch(`/api/product?fetchAll=true`);
 
@@ -31,7 +32,7 @@ export default function ProdutosGerais() {
       const { produtos, totalRecords }: { produtos: Produto[], totalRecords: number } = await response.json();
       setProdutos(produtos);
       setTotalRecords(totalRecords);
-      setLoading(false);  
+      setLoading(false);
     };
 
     fetchData();
@@ -71,7 +72,7 @@ export default function ProdutosGerais() {
     setProdutosFiltrados(filteredProdutos);
     setTotalRecords(filteredProdutos.length);
 
-    setPaginaAtual(1);  
+    setPaginaAtual(1);
   };
 
   React.useEffect(() => {
@@ -95,7 +96,10 @@ export default function ProdutosGerais() {
     <div className="flex mx-auto py-10 sm:px-0">
       <div className="w-1/4 p-4 bg-neutral-100 border-r">
         <div className="sticky top-16 max-h-screen overflow-y-auto p-4">
-          <h3 className="text-lg font-semibold text-pink-700 mb-4">Filtros</h3>
+          <h3 className="text-lg font-semibold text-pink-700 mb-4 flex gap-2 border-b-[1px] border-gray-400 pb-2 items-center">
+            <FaSlidersH  size={16} />
+            Filtros
+          </h3>
 
           <div className="mb-6">
             <h4 className="text-sm font-medium text-neutral-700">Categoria</h4>
@@ -156,7 +160,7 @@ export default function ProdutosGerais() {
                     className="flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all hover:scale-[1.02]"
                   >
                     <div
-                      
+
                       className="group relative flex flex-col border border-gray-50"
                     >
                       <Link href={`/produtos/${produto.id}`} className="relative flex aspect-[300/300] items-center justify-center">
@@ -201,9 +205,9 @@ export default function ProdutosGerais() {
                               : "Indisponível"}
                           </div>
                         </Link>
-                          <div className="mt-3">
-                            <AddToCartButton produto={produto} />
-                          </div>
+                        <div className="mt-3">
+                          <AddToCartButton produto={produto} />
+                        </div>
                       </div>
                       {produto.onSale && percentualDesconto > 0 && (
                         <p className="absolute top-2 right-2 bg-pink-700 text-white text-xs font-semibold px-2 py-1 rounded-full">

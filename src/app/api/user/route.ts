@@ -104,11 +104,49 @@ export async function POST(request: Request) {
     }
 }
 
-
 export async function PUT(request: Request) {
     try {
-        const { id, name, email, role, password, active } = await request.json();
-        const saltRounds = 10;
+        const url = new URL(request.url);
+        const userID = url.searchParams.get('userID');  
+
+        console.log("UserID na URL:", userID);  
+
+        const { id, name, email, role, password, active, currentPassword, newPassword, confirmPassword } = await request.json();
+
+        if (userID) {
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                return NextResponse.json({ message: 'Current password, new password, and confirmation are required' }, { status: 400 });
+            }
+
+            if (newPassword !== confirmPassword) {
+                return NextResponse.json({ message: 'New password and confirmation do not match' }, { status: 400 });
+            }
+
+            console.log("Procurando usuário com ID:", userID);  
+            const user = await prisma.user.findUnique({
+                where: { id: userID },
+            });
+
+            if (!user) {
+                return NextResponse.json({ message: 'User not found' }, { status: 404 });
+            }
+
+            const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password);
+
+            if (!isPasswordCorrect) {
+                return NextResponse.json({ message: 'Current password is incorrect' }, { status: 400 });
+            }
+
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+            const updatedUser = await prisma.user.update({
+                where: { id: userID },
+                data: { password: hashedPassword },
+            });
+
+            return NextResponse.json({ message: 'Password updated successfully', user: updatedUser }, { status: 200 });
+        }
 
         if (!id || !name || !email || !role || !password || active === undefined) {
             return NextResponse.json({ message: 'ID, name, email, role and password are required' }, { status: 400 });
@@ -116,7 +154,8 @@ export async function PUT(request: Request) {
 
         const updatedActive = active === "true" ? true : false;
 
-        const hashPassword = await bcrypt.hash(password, saltRounds);
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const user = await prisma.user.update({
             where: { id },
@@ -124,17 +163,17 @@ export async function PUT(request: Request) {
                 name,
                 email,
                 role,
-                password: hashPassword,
-                active: updatedActive
+                password: hashedPassword,
+                active: updatedActive,
             }
         });
 
         return NextResponse.json({ message: 'User updated successfully', user }, { status: 200 });
     } catch (err) {
+        console.error(err);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
-
 
 export async function DELETE(request: Request) {
     try {

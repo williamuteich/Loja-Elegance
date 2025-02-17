@@ -5,6 +5,7 @@ import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
 import AddToCartButton from "@/app/components/addTocartButton";
+import { FaSlidersH  } from 'react-icons/fa';
 
 export default function Promocoes() {
     const [produtos, setProdutos] = React.useState<Produto[]>([]);
@@ -21,9 +22,9 @@ export default function Promocoes() {
                 const response = await await fetch(`/api/product?fetchAll=true`);
                 if (!response.ok) throw new Error("Erro ao buscar produtos");
                 const { produtos } = await response.json();
-                
+
                 const emPromocao = produtos.filter((p: Produto) => p.priceOld && p.priceOld > p.price);
-                
+
                 setProdutos(emPromocao);
                 setProdutosFiltrados(emPromocao);
                 setLoading(false);
@@ -52,8 +53,8 @@ export default function Promocoes() {
     }, [search, precoMinimo, precoMaximo, produtos]);
 
     const aplicarFiltros = () => {
-        let filtrados = produtos.filter(p => 
-            p.priceOld && p.priceOld > p.price // Mantém apenas produtos em promoção
+        let filtrados = produtos.filter(p =>
+            p.priceOld && p.priceOld > p.price
         );
 
         if (search) {
@@ -77,8 +78,9 @@ export default function Promocoes() {
         <div className="flex mx-auto py-10 sm:px-0">
             <div className="w-1/4 p-4 bg-neutral-100 border-r">
                 <div className="sticky top-16 max-h-screen overflow-y-auto p-4">
-                    <h3 className="text-lg font-semibold text-pink-700 mb-4">Filtros de Promoções</h3>
-
+                    <h3 className="text-lg font-semibold text-pink-700 mb-4 flex gap-2 border-b-[1px] border-gray-400 pb-2 items-center">
+                        <FaSlidersH  size={16} /> Filtros de Promoções
+                    </h3>
                     <div className="mb-6">
                         <h4 className="text-sm font-medium text-neutral-700">Categoria</h4>
                         <select
@@ -128,7 +130,7 @@ export default function Promocoes() {
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                         {produtosFiltrados.length > 0 ? (
                             produtosFiltrados.map((produto: Produto) => {
-                                const percentualDesconto = produto.priceOld 
+                                const percentualDesconto = produto.priceOld
                                     ? Math.round((produto.priceOld - produto.price) / produto.priceOld * 100)
                                     : 0;
 

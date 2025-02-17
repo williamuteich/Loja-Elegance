@@ -4,6 +4,8 @@ declare module "next-auth" {
     interface Session {
         user: {
             userID: string
+            name: string
+            email: string
             role?: string 
             active: boolean
 
@@ -11,6 +13,8 @@ declare module "next-auth" {
     }
     interface User {
         userID: string
+        name: string
+        email: string
         role: string | undefined
         active: boolean
     }

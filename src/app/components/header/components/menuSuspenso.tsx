@@ -10,11 +10,12 @@ import {
 } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
 
-import { Home, Package, Tag , Phone, HelpCircle, Truck, User, AlignJustify, LogIn } from "lucide-react";
+import { Home, Package, Tag , Phone, HelpCircle, Truck, User, AlignJustify } from "lucide-react";
 import SearchHeaderItems from "./searchHeaderItems";
 import CheckoutHeader from "./checkoutHeader";
 import { LoggedInSession } from "@/utils/types/isLoggedIn";
 import Image from 'next/image'
+import { LogoutMenu, LogoutMenuHome } from "../../logoutAccount";
 
 
 export default function MenuSuspenso({ session }: { session: LoggedInSession }) {
@@ -72,7 +73,6 @@ export default function MenuSuspenso({ session }: { session: LoggedInSession }) 
                                     quality={100}
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 />
-
                             </Link>
                         </div>
 
@@ -119,14 +119,6 @@ export default function MenuSuspenso({ session }: { session: LoggedInSession }) 
                             <SearchHeaderItems />
 
                             <Link
-                                href="/rastreamento"
-                                className="hover:text-pink-600 transition-colors duration-300"
-                                aria-label="Rastrear Pedido"
-                            >
-                                <Truck className="w-6 h-6" />
-                            </Link>
-
-                            <Link
                                 href={session ? "/profile" : "/login"}
                                 className="hover:text-pink-600 transition-colors duration-300"
                                 aria-label={session ? "Perfil" : "Fazer login"}
@@ -135,6 +127,7 @@ export default function MenuSuspenso({ session }: { session: LoggedInSession }) 
                             </Link>
 
                             <CheckoutHeader />
+                            {session && <LogoutMenuHome />}
                         </div>
                     </div>
                 </div>
@@ -168,14 +161,6 @@ export default function MenuSuspenso({ session }: { session: LoggedInSession }) 
 
                                 <div className="grid gap-6 py-4 border-t-[1px] border-gray-300 mt-6">
                                     <nav className="flex flex-col gap-6">
-                                        <Link
-                                            href="/rastreamento"
-                                            aria-label="Rastreamento de pedidos"
-                                            className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
-                                        >
-                                            <Truck className="w-6 h-6" aria-hidden="true" />
-                                            <span>Rastrear Pedido</span>
-                                        </Link>
                                         <span className="font-medium text-xl">Explore</span>
                                         <Link
                                             href="/"
@@ -227,6 +212,7 @@ export default function MenuSuspenso({ session }: { session: LoggedInSession }) 
                                             <span>FAQ</span>
                                         </Link>
                                     </nav>
+                                    {session && <LogoutMenuHome />}
                                 </div>
                             </SheetContent>
                         </Sheet>

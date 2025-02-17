@@ -4,6 +4,7 @@ import { useState } from "react";
 import { EnderecoProps, UserProps } from "@/utils/types/user";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaUser, FaMapMarkerAlt, FaPhoneAlt, FaRegEnvelope } from 'react-icons/fa';
 
 export default function DataProfile({
   data,
@@ -14,7 +15,6 @@ export default function DataProfile({
   endereco: EnderecoProps;
   userID: string;
 }) {
-
   const [editInfo, setEditInfo] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -106,145 +106,112 @@ export default function DataProfile({
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-12 w-full mt-6 lg:mt-0">
       <div>
         <ToastContainer />
-        <h2 className="text-2xl font-semibold mb-4">Informações do Usuário</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Nome</label>
-            <input
-              type="text"
-              name="name"
-              value={userInfo.name || ""}
-              disabled={!editInfo}
-              onChange={handleUserChange}
-              className="w-full p-3 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={userInfo.email || ""}
-              disabled={!editInfo}
-              onChange={handleUserChange}
-              className="w-full p-3 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Celular</label>
-            <input
-              type="text"
-              name="telefone"
-              value={userInfo.telefone || ""}
-              disabled={!editInfo}
-              onChange={handleUserChange}
-              className="w-full p-3 border border-gray-300 rounded-md"
-            />
+           
+                <h2 className="text-2xl font-semibold mb-6 text-pink-700 flex gap-3 items-center">
+                <FaUser size={28} />
+                Informações do Usuário
+                </h2>
+           
+
+        <div className="bg-white p-6 border rounded-lg shadow-md">
+          <h3 className="text-xl font-semibold text-pink-700 mb-6">Dados Pessoais</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Nome</label>
+              <input
+                type="text"
+                name="name"
+                value={userInfo.name || ""}
+                disabled={!editInfo}
+                onChange={handleUserChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={userInfo.email || ""}
+                disabled={!editInfo}
+                onChange={handleUserChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Celular</label>
+              <input
+                type="text"
+                name="telefone"
+                value={userInfo.telefone || ""}
+                disabled={!editInfo}
+                onChange={handleUserChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
           </div>
         </div>
       </div>
 
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Meu Endereço</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Endereço</label>
-            <input
-              type="text"
-              name="logradouro"
-              value={addressInfo.logradouro || ""}
-              disabled={!editInfo}
-              onChange={handleAddressChange}
-              className="w-full p-3 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Bairro</label>
-            <input
-              type="text"
-              name="bairro"
-              value={addressInfo.bairro || ""}
-              disabled={!editInfo}
-              onChange={handleAddressChange}
-              className="w-full p-3 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Cidade</label>
-            <input
-              type="text"
-              name="cidade"
-              value={addressInfo.cidade || ""}
-              disabled={!editInfo}
-              onChange={handleAddressChange}
-              className="w-full p-3 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">CEP</label>
-            <input
-              type="text"
-              name="cep"
-              value={addressInfo.cep || ""}
-              disabled={!editInfo}
-              onChange={handleAddressChange}
-              className="w-full p-3 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Estado</label>
-            <input
-              type="text"
-              name="estado"
-              value={addressInfo.estado || ""}
-              disabled={!editInfo}
-              onChange={handleAddressChange}
-              className="w-full p-3 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Número</label>
-            <input
-              type="text"
-              name="numero"
-              value={addressInfo.numero || ""}
-              disabled={!editInfo}
-              onChange={handleAddressChange}
-              className="w-full p-3 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Complemento</label>
-            <input
-              type="text"
-              name="complemento"
-              value={addressInfo.complemento || ""}
-              disabled={!editInfo}
-              onChange={handleAddressChange}
-              className="w-full p-3 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">País</label>
-            <input
-              type="text"
-              name="pais"
-              value={addressInfo.pais || ""}
-              disabled={!editInfo}
-              onChange={handleAddressChange}
-              className="w-full p-3 border border-gray-300 rounded-md"
-            />
+        <div className="bg-white p-6 border rounded-lg shadow-md">
+          <h3 className="text-xl font-semibold text-pink-700 mb-6">Endereço</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Endereço</label>
+              <input
+                type="text"
+                name="logradouro"
+                value={addressInfo.logradouro || ""}
+                disabled={!editInfo}
+                onChange={handleAddressChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Bairro</label>
+              <input
+                type="text"
+                name="bairro"
+                value={addressInfo.bairro || ""}
+                disabled={!editInfo}
+                onChange={handleAddressChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Cidade</label>
+              <input
+                type="text"
+                name="cidade"
+                value={addressInfo.cidade || ""}
+                disabled={!editInfo}
+                onChange={handleAddressChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">CEP</label>
+              <input
+                type="text"
+                name="cep"
+                value={addressInfo.cep || ""}
+                disabled={!editInfo}
+                onChange={handleAddressChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-4 mt-6">
         {!editInfo && (
           <button
-            className="bg-blue-500 text-white px-6 py-2 rounded-md font-medium"
+            className="bg-blue-500 text-white px-6 py-2 rounded-md font-medium hover:bg-blue-600"
             onClick={() => setEditInfo(!editInfo)}
           >
             Editar
@@ -253,14 +220,14 @@ export default function DataProfile({
         {editInfo && (
           <>
             <button
-              className="bg-green-500 text-white px-6 py-2 rounded-md font-medium ml-4"
+              className="bg-green-500 text-white px-6 py-2 rounded-md font-medium hover:bg-green-600"
               onClick={handleSubmit}
               disabled={isLoading}
             >
               {isLoading ? "Carregando..." : "Salvar"}
             </button>
             <button
-              className="bg-red-500 text-white px-6 py-2 rounded-md font-medium ml-4"
+              className="bg-red-500 text-white px-6 py-2 rounded-md font-medium hover:bg-red-600"
               onClick={handleCancel}
             >
               Cancelar
