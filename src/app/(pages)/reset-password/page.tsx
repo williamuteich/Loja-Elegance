@@ -3,6 +3,7 @@ import Form from "@/components/Form";
 import Submit from "@/components/Submit";
 import { getServerSession } from "next-auth";
 import { auth as authOptions } from "@/lib/auth-config";
+import { FaKey } from "react-icons/fa";
 
 export default async function ResetPassword() {
     const session = await getServerSession(authOptions);
@@ -24,13 +25,16 @@ export default async function ResetPassword() {
         }
         
         const result = await response.json();
-        return { success: "Senha resetada com sucesso" };
+        return { success: "Senha Atualiza Com Sucesso" };
     }
     return (
         <div className="w-full mx-auto py-12 flex gap-4 flex-col lg:flex-row">
             <NavProfile />
             <div className="flex w-full flex-col bg-white p-8 rounded-lg shadow-lg">
-                <h2 className="text-2xl font-semibold mb-6">Redefinir Senha</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-pink-700 flex gap-3 items-center">
+                    <FaKey size={28} />
+                   Redefinir Senha
+                </h2>
                 <Form action={handlePassword} className="space-y-6">
                     <div className="flex flex-col">
                         <label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">Senha Antiga</label>

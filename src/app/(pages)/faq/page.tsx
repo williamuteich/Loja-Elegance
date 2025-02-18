@@ -23,7 +23,7 @@ async function getFaq({ searchParams }: { searchParams: Promise<{ search: string
             <Accordion type="single" collapsible className="w-full">
                 {faq && faq.map((faqItem: { id: string, question: string, response: string }) => (
                     <AccordionItem key={faqItem.id} value={faqItem.id}>
-                        <AccordionTrigger className="text-md">
+                        <AccordionTrigger className="text-md text-pink-700">
                             {faqItem.question}
                         </AccordionTrigger>
                         <AccordionContent>
@@ -44,7 +44,7 @@ export default async function FaqPage({ searchParams }: { searchParams: Promise<
     return (
         <div className="py-10">
             <div className="mx-auto min-h-screen">
-                <h2 className="text-2xl text-gray-800 font-bold mb-6 text-start">
+                <h2 className="text-2xl uppercase font-extrabold text-pink-700 mb-6 text-start">
                     Perguntas Frequentes
                 </h2>
                 <Suspense fallback={<div>Carregando...</div>}>

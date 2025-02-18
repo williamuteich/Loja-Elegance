@@ -73,7 +73,7 @@ export default function Formulario() {
 
     return (
         <>
-            <h1 className="text-2xl font-bold text-center text-black mb-6">BEM VINDO DE VOLTA!</h1>
+            <h1 className="text-2xl font-bold text-center text-pink-700 mb-6 uppercase">Bem Vindo De Volta!</h1>
             <ToastContainer />
             <form onSubmit={login} className="relative">
                 <div className="mb-6">
@@ -99,7 +99,7 @@ export default function Formulario() {
                 <button
                     title="login"
                     type="submit"
-                    className="w-full py-3 bg-black text-white font-semibold uppercase rounded-md hover:bg-gray-800"
+                    className="w-full py-3 bg-pink-700 text-white font-semibold uppercase rounded-md hover:bg-pink-600"
                 >
                     Entrar
                 </button>

@@ -42,14 +42,14 @@ export default function Cadastro() {
         <Container>
             <div className="flex items-center justify-center">
                 <div className="w-full max-w-xl p-6 min-h-screen">
-                    <h1 className="text-2xl font-bold text-center text-black mb-6">CRIE SUA CONTA</h1>
+                    <h1 className="text-2xl font-bold text-center text-pink-700 mb-6 uppercase">Crie Sua Conta</h1>
                     <Form action={newUser}>
                         <div className="mb-4">
                             <input
                                 type="text"
                                 id="name"
                                 name="name"
-                                placeholder="Nome"
+                                placeholder="Nome Completo"
                                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                             />
                         </div>
@@ -76,7 +76,7 @@ export default function Cadastro() {
                         </div>
                         <Submit
                             type="submit"
-                            className="w-full py-3 bg-black text-white font-semibold uppercase rounded-md hover:bg-gray-800"
+                            className="w-full py-3 bg-pink-700 text-white font-semibold uppercase rounded-md hover:bg-pink-600"
                         >
                             Criar conta
                         </Submit>
