@@ -52,7 +52,7 @@ const fetchUsuarios = async (search: string, page: string, status: string) => {
   );
 
   if (!response.ok) {
-    throw new Error("Erro ao carregar os dados.");
+    console.log("Erro ao carregar os dados.");
   }
 
   const data = await response.json();

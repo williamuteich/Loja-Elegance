@@ -14,16 +14,15 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  email     String   @unique
+  email     String     @unique
   password  String
-  role      String   @default("colaborador")
-  active    Boolean  @default(true)
-  telefone  String?  // Este campo deve ser opcional
+  role      String     @default("colaborador")
+  active    Boolean    @default(true)
+  telefone  String?
   enderecos Endereco[] @relation("UserEnderecos")
 }
-
 
 model Product {
   id              String            @id @default(auto()) @map("_id") @db.ObjectId
@@ -125,17 +124,32 @@ model Banner {
 }
 
 model Endereco {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  cep         String
+  logradouro  String
+  numero      String
+  complemento String?
+  bairro      String
+  cidade      String
+  estado      String
+  pais        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String   @db.ObjectId
+  user        User     @relation("UserEnderecos", fields: [userId], references: [id])
+}
+
+model Cupom {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  cep          String
-  logradouro   String
-  numero       String
-  complemento  String?
-  bairro       String
-  cidade       String
-  estado       String
-  pais         String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  userId       String   @db.ObjectId
-  user         User     @relation("UserEnderecos", fields: [userId], references: [id])
+  code         String   @unique
+  type         String
+  value        Float
+  min_purchase Float
+  email        String?
+  qtds         Int
+  expires_at   DateTime
+  active       Boolean
+  category_ids String[]
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 }

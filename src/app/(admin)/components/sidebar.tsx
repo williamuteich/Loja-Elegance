@@ -1,5 +1,5 @@
 "use client";
-import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage  } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage, FaGift  } from 'react-icons/fa';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogoutDashboard } from '@/app/components/logoutAccount';
@@ -126,6 +126,17 @@ export default function Sidebar() {
                                     </div>
                                 </Link>
                             </li>
+                            <li>
+                                <Link href="/dashboard/cupom">
+                                    <div
+                                        className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/cupom') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                                        title='cupom'
+                                    >
+                                        <FaGift size={24} />
+                                        <span className='hidden xl:block'>Cupom</span>
+                                    </div>
+                                </Link>
+                            </li>
                         </ul>
                     </div>
 
@@ -203,11 +214,16 @@ export default function Sidebar() {
                                     <FaImages className="w-6 h-6" />
                                     <span>Galeria</span>
                                 </Link>
+
+                                <Link href="/dashboard/cupom" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/cupom') ? 'bg-gray-700' : ''}`}>
+                                    <FaImages className="w-6 h-6" />
+                                    <span>Cupom</span>
+                                </Link>
                             </div>
 
                             <div className="mt-16 space-y-2 flex flex-col">
                                 <Link href="/dashboard/setup" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/setup') ? 'bg-gray-700' : ''}`}>
-                                    <FaCog size={24} />
+                                    <FaGift size={24} />
                                     <span>Configurações</span>
                                 </Link>
                                 <LogoutDashboard />

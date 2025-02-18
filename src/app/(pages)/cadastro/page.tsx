@@ -2,6 +2,7 @@ import { Container } from "@/app/components/container";
 import Form from "@/components/Form";
 import Submit from "@/components/Submit";
 import Link from "next/link";
+import validator from 'validator';
 
 export default function Cadastro() {
     async function newUser(prevState: any, formData: FormData): Promise<{ success?: string; error?: string; confirm?: string}> {
@@ -15,6 +16,10 @@ export default function Cadastro() {
 
         if (!data.email) {
             return { error: "O campo E-mail não pode estar vazio." };
+        }
+
+        if (typeof data.email === 'string' && !validator.isEmail(data.email)) {
+            return { error: "E-mail inválido. Por favor, insira um e-mail válido." };
         }
 
         if (!data.password) {

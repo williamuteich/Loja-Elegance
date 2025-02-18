@@ -116,7 +116,7 @@ export default function AdicionarProduto() {
           <FaArrowLeft size={14} className="mr-2" /> Voltar
         </Button>
       </Link>
-      <h2 className="text-4xl font-semibold mt-8 mb-6 text-gray-900">Adicionar Produto</h2>
+      <h2 className="text-2xl font-semibold mt-8 mb-6 text-gray-900">Adicionar Produto</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2 w-1/6">
           <label htmlFor="primaryImage" className="block text-lg font-medium text-gray-700">
