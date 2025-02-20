@@ -63,7 +63,7 @@ export async function POST(request: Request) {
             });
         }
 
-        body.role = body.role || 'colaborador';  
+        body.role = body.role || 'user';  
         body.active = body.active === 'true' ? true : false;
         body.telefone = body.telefone || null;  
 
@@ -109,8 +109,6 @@ export async function PUT(request: Request) {
         const url = new URL(request.url);
         const userID = url.searchParams.get('userID');  
 
-        console.log("UserID na URL:", userID);  
-
         const { id, name, email, role, password, active, currentPassword, newPassword, confirmPassword } = await request.json();
 
         if (userID) {
@@ -122,7 +120,6 @@ export async function PUT(request: Request) {
                 return NextResponse.json({ message: 'New password and confirmation do not match' }, { status: 400 });
             }
 
-            console.log("Procurando usuário com ID:", userID);  
             const user = await prisma.user.findUnique({
                 where: { id: userID },
             });
@@ -165,6 +162,8 @@ export async function PUT(request: Request) {
                 role,
                 password: hashedPassword,
                 active: updatedActive,
+                //createdAt: new Date(),
+                //updatedAt: new Date(),
             }
         });
 
@@ -185,12 +184,17 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ message: 'Id not provided' }, { status: 400 });
         }
 
+        await prisma.endereco.deleteMany({
+            where: { userId: id }
+        })
+
         await prisma.user.delete({
             where: { id }
         });
 
         return NextResponse.json({ message: 'User deleted successfully' }, { status: 200 });
     } catch (err) {
+        console.log(err)
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

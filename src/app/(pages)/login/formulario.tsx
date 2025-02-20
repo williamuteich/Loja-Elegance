@@ -43,7 +43,7 @@ export default function Formulario() {
 
         const session = await sessionResponse.json();
 
-        if (session?.user?.role && session?.user?.active === true) {
+        if (session?.user?.role === "admin" && session?.user?.active === true) {
             router.push("/dashboard");
         } else if (session?.user?.active === true) {
             router.push("/");

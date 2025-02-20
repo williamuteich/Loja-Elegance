@@ -12,7 +12,7 @@ export async function GET(request: Request) {
         const pageSize = 10;
 
         const skip = (page - 1) * pageSize;
-        console.log("recebendo search", search)
+      
         const where: any = search
             ? {
                 OR: [
@@ -55,7 +55,6 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        console.log("recebendo os dados", body);
 
         if (!body.code || !body.type || !body.value || !body.min_purchase || !body.expires_at || !body.category_ids) {
             return new NextResponse(

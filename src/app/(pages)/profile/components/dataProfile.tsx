@@ -4,7 +4,7 @@ import { useState } from "react";
 import { EnderecoProps, UserProps } from "@/utils/types/user";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FaUser, FaMapMarkerAlt, FaPhoneAlt, FaRegEnvelope } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa';
 
 export default function DataProfile({
   data,
@@ -172,6 +172,28 @@ export default function DataProfile({
               />
             </div>
             <div>
+              <label className="block text-sm font-medium text-gray-700">Número</label>
+              <input
+                type="text"
+                name="numero"
+                value={addressInfo.numero || ""}
+                disabled={!editInfo}
+                onChange={handleAddressChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Complemento</label>
+              <input
+                type="text"
+                name="complemento"
+                value={addressInfo.complemento || ""}
+                disabled={!editInfo}
+                onChange={handleAddressChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
+            <div>
               <label className="block text-sm font-medium text-gray-700">Bairro</label>
               <input
                 type="text"
@@ -188,6 +210,28 @@ export default function DataProfile({
                 type="text"
                 name="cidade"
                 value={addressInfo.cidade || ""}
+                disabled={!editInfo}
+                onChange={handleAddressChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Estado</label>
+              <input
+                type="text"
+                name="estado"
+                value={addressInfo.estado || ""}
+                disabled={!editInfo}
+                onChange={handleAddressChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">País</label>
+              <input
+                type="text"
+                name="pais"
+                value={addressInfo.pais || ""}
                 disabled={!editInfo}
                 onChange={handleAddressChange}
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"

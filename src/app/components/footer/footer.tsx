@@ -113,12 +113,8 @@ export default function Footer() {
                 {session?.user ? (
                   <>
                     <li>
-                      <Link href="/rastreamento" className="hover:underline">Rastreamento</Link>
-                    </li>
-                    <li>
                       <p className="hover:underline flex gap-1 hover:text-pink-600 transition-colors duration-300 cursor-pointer">
                         <LogoutMenu />
-                        Sair
                       </p>
                     </li>
                   </>
@@ -126,9 +122,6 @@ export default function Footer() {
                   <>
                     <li>
                       <Link href="/cadastro" className="hover:underline">Criar conta</Link>
-                    </li>
-                    <li>
-                      <Link href="/rastreamento" className="hover:underline">Rastreamento</Link>
                     </li>
                     <li>
                       <Link href="/resetPwd" className="hover:underline">Esqueci minha senha</Link>

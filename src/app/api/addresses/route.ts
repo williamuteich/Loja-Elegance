@@ -70,7 +70,8 @@ export async function PUT(request: Request) {
                 id: true, 
                 role: true,
                 active: true,
-                enderecos: true 
+                enderecos: true, 
+                telefone: true
             }
         });
 

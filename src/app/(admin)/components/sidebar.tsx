@@ -126,6 +126,7 @@ export default function Sidebar() {
                                     </div>
                                 </Link>
                             </li>
+                            {/* 
                             <li>
                                 <Link href="/dashboard/cupom">
                                     <div
@@ -137,6 +138,7 @@ export default function Sidebar() {
                                     </div>
                                 </Link>
                             </li>
+                            */}
                         </ul>
                     </div>
 
@@ -214,11 +216,12 @@ export default function Sidebar() {
                                     <FaImages className="w-6 h-6" />
                                     <span>Galeria</span>
                                 </Link>
-
+                                {/*
                                 <Link href="/dashboard/cupom" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/cupom') ? 'bg-gray-700' : ''}`}>
                                     <FaImages className="w-6 h-6" />
                                     <span>Cupom</span>
                                 </Link>
+                                */}
                             </div>
 
                             <div className="mt-16 space-y-2 flex flex-col">

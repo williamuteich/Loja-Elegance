@@ -18,20 +18,20 @@ export default function AdicionarCupom() {
     const [categorias, setCategorias] = useState<Categoria[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState('');
-    const [qtdCupom, setQtdCupom] = useState(''); // Inicia com uma string vazia
+    const [qtdCupom, setQtdCupom] = useState(''); 
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const categoriesRes = await fetch("http://localhost:3000/api/category");
-                const categoriesData = await categoriesRes.json();
-                setCategorias(categoriesData.category);
-            } catch (error) {
-                alert("Erro ao carregar dados");
-            }
-        }
-        fetchData();
-    }, []);
+   // useEffect(() => {
+   //     async function fetchData() {
+   //         try {
+   //             const categoriesRes = await fetch("http://localhost:3000/api/category");
+   //             const categoriesData = await categoriesRes.json();
+   //             setCategorias(categoriesData.category);
+   //         } catch (error) {
+   //             alert("Erro ao carregar dados");
+   //         }
+   //     }
+   //     fetchData();
+   // }, []);
 
     const handleForm = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -76,15 +76,15 @@ export default function AdicionarCupom() {
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
         if (e.target.value) {
-            setQtdCupom('1'); // Se o email for preenchido, define a quantidade como 1
+            setQtdCupom('1'); 
         } else {
-            setQtdCupom(''); // Se o email for apagado, limpa a quantidade
+            setQtdCupom(''); 
         }
     };
 
     const handleQtdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!email) {
-            setQtdCupom(e.target.value); // Se o email não estiver preenchido, permite a alteração
+            setQtdCupom(e.target.value); 
         }
     };
 

@@ -31,8 +31,10 @@ export function LogoutMenu() {
         <button
             onClick={() => signOut()}
             aria-label="Log out"
+            className="flex gap-1"
         >
             <FaSignOutAlt size={18} />
+            Sair
         </button>
     )
 }

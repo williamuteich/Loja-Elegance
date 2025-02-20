@@ -15,10 +15,13 @@ import SearchHeaderItems from "./searchHeaderItems";
 import CheckoutHeader from "./checkoutHeader";
 import { LoggedInSession } from "@/utils/types/isLoggedIn";
 import Image from 'next/image'
-import { LogoutMenu, LogoutMenuHome } from "../../logoutAccount";
+import { LogoutMenuHome } from "../../logoutAccount";
+import { useSession } from "next-auth/react";
 
 
-export default function MenuSuspenso({ session }: { session: LoggedInSession }) {
+export default function MenuSuspenso() {
+    const { data: session } = useSession();
+   
     const pathname = usePathname();
 
     if (pathname.startsWith("/dashboard")) {
@@ -127,7 +130,6 @@ export default function MenuSuspenso({ session }: { session: LoggedInSession }) 
                             </Link>
 
                             <CheckoutHeader />
-                            {session && <LogoutMenuHome />}
                         </div>
                     </div>
                 </div>
@@ -212,7 +214,6 @@ export default function MenuSuspenso({ session }: { session: LoggedInSession }) 
                                             <span>FAQ</span>
                                         </Link>
                                     </nav>
-                                    {session && <LogoutMenuHome />}
                                 </div>
                             </SheetContent>
                         </Sheet>

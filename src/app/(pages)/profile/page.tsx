@@ -16,7 +16,7 @@ export default async function Profile() {
     const data = await response.json();
     
     const endereco = data.enderecos?.[0] || {}; 
-
+  
     return (
         <div className="w-full mx-auto py-12 flex gap-4 flex-col lg:flex-row">
             <NavProfile />

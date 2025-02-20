@@ -37,7 +37,7 @@ export async function POST(request: Request) {
             );
         }
 
-        const produtoValido = body.product_ids.every((id: string) => cupom.product_ids.includes(id));
+        const produtoValido = body.product_ids.every((id: string) => cupom.category_ids.includes(id));
         if (!produtoValido) {
             return new NextResponse(JSON.stringify({ message: 'This coupon cannot be used for the selected products' }), { status: 400 });
         }

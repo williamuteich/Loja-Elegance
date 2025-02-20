@@ -14,13 +14,12 @@ export default async function AdminLayout({ children }: LayoutProps) {
 
   if(!validaUser){
     redirect('/')
-    return;
   }
 
   return (
     <div className="flex min-h-screen">
       <Sidebar />
-      <div className="flex-1 xl:p-2">
+      <div className="flex-1 xl:p-2 bg-gray-50">
         {children}
       </div>
     </div>
