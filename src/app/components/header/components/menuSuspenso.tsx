@@ -13,20 +13,12 @@ import { usePathname } from "next/navigation";
 import { Home, Package, Tag , Phone, HelpCircle, Truck, User, AlignJustify } from "lucide-react";
 import SearchHeaderItems from "./searchHeaderItems";
 import CheckoutHeader from "./checkoutHeader";
-import { LoggedInSession } from "@/utils/types/isLoggedIn";
 import Image from 'next/image'
-import { LogoutMenuHome } from "../../logoutAccount";
 import { useSession } from "next-auth/react";
-
 
 export default function MenuSuspenso() {
     const { data: session } = useSession();
-   
     const pathname = usePathname();
-
-    if (pathname.startsWith("/dashboard")) {
-        return null;
-    }
 
     const [isFixed, setIsFixed] = useState(false);
 
@@ -46,6 +38,10 @@ export default function MenuSuspenso() {
 
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    if (pathname.startsWith("/dashboard")) {
+        return null; 
+    }
 
     return (
         <>
