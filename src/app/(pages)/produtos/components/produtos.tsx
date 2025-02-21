@@ -33,7 +33,7 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
 
       const productIdCorrespondente = !categoriaProduct.some((itemCategory: any) => itemCategory.productId === produto.id);
 
-      return categoriaCorrespondente && productIdCorrespondente && produto.stock.quantity > 0;
+      return categoriaCorrespondente && productIdCorrespondente && produto.availableStock! > 0;
     });
 
     if (produtosFiltrados.length === 0) {
@@ -41,7 +41,7 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
         .filter((produto: Produto) => {
           const produtoAtualId = categoriaProduct[0]?.category?.id;
 
-          return produto.id !== produtoAtualId && produto.stock.quantity > 0;
+          return produto.id !== produtoAtualId && produto.availableStock! > 0;
         })
         .sort(() => Math.random() - 0.5)
         .slice(0, 10);
@@ -49,8 +49,8 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
 
   } else {
     produtosFiltrados = isDestaque
-      ? produtos.filter((produto: Produto) => produto.destaque === true && produto.stock.quantity > 0)
-      : produtos.filter((produto: Produto) => produto.stock.quantity > 0);
+      ? produtos.filter((produto: Produto) => produto.destaque === true && produto.availableStock! > 0)
+      : produtos.filter((produto: Produto) => produto.availableStock! > 0);
   }
 
   return (
@@ -117,14 +117,14 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
                           {produto.description}
                         </p>
                         <div
-                          className={`mt-2 text-xs font-semibold text-white ${produto.stock.quantity > 0
+                          className={`mt-2 text-xs font-semibold text-white ${produto.availableStock! > 0
                             ? "bg-green-700"
                             : "bg-red-700 text-white"
                             } px-2 py-1 rounded-md w-max`}
                         >
-                          {produto.stock.quantity > 0
-                            ? produto.stock.quantity > 1
-                              ? `${produto.stock.quantity} Disponíveis`
+                          {produto.availableStock! > 0
+                            ? produto.availableStock! > 1
+                              ? `${produto.availableStock!} Disponíveis`
                               : "Última Unidade"
                             : "Indisponível"}
                         </div>

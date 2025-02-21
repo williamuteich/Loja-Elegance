@@ -28,10 +28,9 @@ export default async function TotalUsuarios() {
             </div>
             <div className="mt-1 flex gap-2 items-center">
                 <div className="flex gap-2">
-                    <FaArrowUp size={20} className="text-green-500" />
-                    <span className="text-green-500 font-bold text-sm">+15</span>
+                    <span className="bg-green-500 font-bold text-sm p-2 rounded-full"></span>
                 </div>
-                <span className="text-gray-500 font-medium text-sm">Esta Semana</span>
+                <span className="text-gray-500 font-medium text-sm">Usuários Cadastrados</span>
             </div>
         </div>
     )

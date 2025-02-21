@@ -23,7 +23,7 @@ export default function Promocoes() {
                 if (!response.ok) throw new Error("Erro ao buscar produtos");
                 const { produtos } = await response.json();
 
-                const emPromocao = produtos.filter((p: Produto) => p.priceOld && p.priceOld > p.price);
+                const emPromocao = produtos.filter((p: Produto) => p.priceOld && p.priceOld > p.price && p.availableStock! > 0);
 
                 setProdutos(emPromocao);
                 setProdutosFiltrados(emPromocao);
@@ -54,21 +54,21 @@ export default function Promocoes() {
 
     const aplicarFiltros = () => {
         let filtrados = produtos.filter(p =>
-            p.priceOld && p.priceOld > p.price
+            p.priceOld && p.priceOld > p.price && p.availableStock! > 0
         );
 
         if (search) {
             filtrados = filtrados.filter(p =>
-                p.categories.some(c => c.category.name === search)
+                p.categories.some(c => c.category.name === search && p.availableStock! > 0)
             );
         }
 
         if (precoMinimo) {
-            filtrados = filtrados.filter(p => p.price >= Number(precoMinimo));
+            filtrados = filtrados.filter(p => p.price >= Number(precoMinimo) && p.availableStock! > 0);
         }
 
         if (precoMaximo) {
-            filtrados = filtrados.filter(p => p.price <= Number(precoMaximo));
+            filtrados = filtrados.filter(p => p.price <= Number(precoMaximo) && p.availableStock! > 0);
         }
 
         setProdutosFiltrados(filtrados);

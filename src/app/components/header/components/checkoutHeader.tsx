@@ -1,13 +1,17 @@
-"use client";
+"use client"
 
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useCart } from "@/context/cartContext";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 export default function CheckoutHeader() {
   const { cart, removeFromCart, addToCart, cartOpen, setCartOpen } = useCart();
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null); 
 
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
@@ -31,14 +35,14 @@ export default function CheckoutHeader() {
       <SheetContent side="right" className="bg-white p-6 w-96" aria-label="Conteúdo do carrinho">
         <SheetTitle className="text-center">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-xl font-bold">MEU CARRINHO</h1>
+            <h1 className="text-xl font-bold text-pink-800">MEU CARRINHO</h1>
           </div>
         </SheetTitle>
         <div className="border-b mb-4" />
 
         {cart.length === 0 ? (
-          <p className="flex items-center justify-center gap-2 text-black font-bold text-lg">
-            <ShoppingCart size={24} className="mb-2 text-gray-800" />
+          <p className="flex items-center justify-center gap-2 text-pink-800 font-bold text-lg">
+            <ShoppingCart size={24} className="mb-2 text-pink-800" />
             Seu carrinho está vazio.
           </p>
         ) : (
@@ -57,28 +61,52 @@ export default function CheckoutHeader() {
                   </Link>
                   <div className="flex-1">
                     <Link href={`/produtos/${item.id}`} className="cursor-pointer">
-                    <h2 className="text-sm font-semibold">{item.name}</h2>
-                    <p className="text-xs text-gray-500">Quantidade: {item.quantity}</p>
-                    <p className="font-semibold text-sm mt-2">
-                      {new Intl.NumberFormat("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      }).format(item.price * item.quantity)}
-                    </p>
+                      <h2 className="text-sm font-semibold text-pink-800">{item.name}</h2>
+                      <p className="text-xs text-gray-700">Quantidade: {item.quantity}</p>
+                      <p className="font-semibold text-sm mt-2">
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(item.price * item.quantity)}
+                      </p>
                     </Link>
                     <div className="flex items-center gap-2 mt-1">
                       <button
-                        className="w-6 h-6 flex justify-center items-center bg-gray-200 rounded-full"
-                        onClick={() => removeFromCart(item.id)}
+                        className={`w-6 h-6 flex justify-center items-center bg-gray-200 rounded-full ${removingId === item.id ? 'opacity-50' : ''}`}
+                        onClick={async () => {
+                          setRemovingId(item.id); 
+                          try {
+                            await removeFromCart(item.id);
+                          } finally {
+                            setRemovingId(null); 
+                          }
+                        }}
+                        disabled={removingId === item.id} 
                       >
-                        <Trash2 className="w-4 h-4 text-red-500" />
+                        {removingId === item.id ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-pink-600"></div>
+                        ) : (
+                          <Trash2 className="w-4 h-4 text-red-500" />
+                        )}
                       </button>
                       <span className="text-sm font-medium">{item.quantity}</span>
                       <button
-                        className="w-6 h-6 flex justify-center items-center bg-gray-200 rounded-full"
-                        onClick={() => addToCart(item)}
+                        className="w-6 h-6 flex justify-center items-center bg-gray-200 rounded-full disabled:opacity-50"
+                        onClick={async () => {
+                          setLoadingId(item.id);
+                          try {
+                            await addToCart(item);
+                          } finally {
+                            setLoadingId(null);
+                          }
+                        }}
+                        disabled={loadingId === item.id}
                       >
-                        +
+                        {loadingId === item.id ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-pink-600"></div>
+                        ) : (
+                          '+'
+                        )}
                       </button>
                     </div>
                   </div>
@@ -109,9 +137,9 @@ export default function CheckoutHeader() {
                 </p>
               </div>
             </div>
-            <button className="w-full py-2 bg-black text-white font-semibold text-sm text-center rounded-md">
-              FINALIZAR COMPRA
-            </button>
+            <Link href={`/checkouts`} >
+              <Button className="w-full mt-4 py-2 bg-pink-700 text-white font-semibold text-sm text-center rounded-md hover:bg-pink-600 hover:">Finalizar Compra</Button>
+            </Link>
           </div>
         )}
       </SheetContent>

@@ -13,6 +13,7 @@ export interface Produto {
     imagesSecondary: string[];
     features: string | null;
     categories: ProductCategoryProps[];
+    availableStock?: number;
     brand: BrandProps;
     stock: StockProps;
     createdAt: string;

@@ -13,12 +13,12 @@ export default async function ListAllProdutos() {
 
     const { produtos }: { produtos: Produto[] } = await response.json();
 
-    const produtosAleatorios = produtos.sort(() => Math.random() - 0.5);
+    const produtosAleatorios = produtos.sort(() => Math.random() - 0.5).filter(produto => produto.availableStock! > 0);
 
     return (
         <div className="mx-auto py-10 sm:px-0">
             <h2 className="text-2xl relative uppercase font-extrabold text-pink-700 mb-6 text-start">
-                Todos os Produtos
+                Nossos Produtos
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {produtosAleatorios.length > 0 ? (
@@ -66,14 +66,14 @@ export default async function ListAllProdutos() {
                                                 {produto.description}
                                             </p>
                                             <div
-                                                className={`mt-2 text-xs font-semibold text-white ${produto.stock.quantity > 0
+                                                className={`mt-2 text-xs font-semibold text-white ${produto.availableStock! > 0
                                                     ? "bg-green-700"
                                                     : "bg-red-700 text-white"
                                                     } px-2 py-1 rounded-md w-max`}
                                             >
-                                                {produto.stock.quantity > 0
-                                                    ? produto.stock.quantity > 1
-                                                        ? `${produto.stock.quantity} Disponíveis`
+                                                {produto.availableStock! > 0
+                                                    ? produto.availableStock! > 1
+                                                        ? `${produto.availableStock!} Disponíveis`
                                                         : "Última Unidade"
                                                     : "Indisponível"}
                                             </div>

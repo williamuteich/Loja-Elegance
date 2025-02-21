@@ -5,7 +5,7 @@ import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
 import AddToCartButton from "@/app/components/addTocartButton";
-import { FaSlidersH  } from "react-icons/fa";
+import { FaSlidersH } from "react-icons/fa";
 
 export default function ProdutosGerais() {
   const [produtos, setProdutos] = React.useState<Produto[]>([]);
@@ -57,16 +57,16 @@ export default function ProdutosGerais() {
 
     if (search) {
       filteredProdutos = filteredProdutos.filter((produto) =>
-        produto.categories.some((categoria) => categoria.category.name === search)
+        produto.categories.some((categoria) => categoria.category.name === search && produto.availableStock! > 0)
       );
     }
 
     if (precoMinimo) {
-      filteredProdutos = filteredProdutos.filter((produto) => produto.price >= Number(precoMinimo));
+      filteredProdutos = filteredProdutos.filter((produto) => produto.price >= Number(precoMinimo) && produto.availableStock! > 0);
     }
 
     if (precoMaximo) {
-      filteredProdutos = filteredProdutos.filter((produto) => produto.price <= Number(precoMaximo));
+      filteredProdutos = filteredProdutos.filter((produto) => produto.price <= Number(precoMaximo) && produto.availableStock! > 0);
     }
 
     setProdutosFiltrados(filteredProdutos);
@@ -97,7 +97,7 @@ export default function ProdutosGerais() {
       <div className="w-1/4 p-4 bg-neutral-100 border-r">
         <div className="sticky top-16 max-h-screen overflow-y-auto p-4">
           <h3 className="text-lg font-semibold text-pink-700 mb-4 flex gap-2 border-b-[1px] border-gray-400 pb-2 items-center">
-            <FaSlidersH  size={16} />
+            <FaSlidersH size={16} />
             Filtros
           </h3>
 
@@ -149,75 +149,77 @@ export default function ProdutosGerais() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {produtosPaginados.length > 0 ? (
-              produtosPaginados.map((produto: Produto) => {
-                const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
-                  ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
-                  : 0;
+              produtosPaginados
+                .filter((produto) => produto.availableStock! > 0)
+                .map((produto: Produto) => {
+                  const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
+                    ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
+                    : 0;
 
-                return (
-                  <div
-                    key={produto.id}
-                    className="flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all hover:scale-[1.02]"
-                  >
+                  return (
                     <div
-
-                      className="group relative flex flex-col border border-gray-50"
+                      key={produto.id}
+                      className="flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all hover:scale-[1.02]"
                     >
-                      <Link href={`/produtos/${produto.id}`} className="relative flex aspect-[300/300] items-center justify-center">
-                        <Image
-                          alt={produto.name}
-                          src={produto.imagePrimary}
-                          fill
-                          priority
-                          quality={100}
-                          className="object-contain"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-                      </Link>
-                      <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
-                        <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
-                          <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
-                            {produto.name}
-                          </h3>
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 flex-wrap">
-                            <p className="text-xl font-bold text-pink-600 flex-wrap">
-                              {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.price)}
-                            </p>
-                            {produto.priceOld && (
-                              <p className="text-md font-bold text-pink-700 line-through flex-wrap">
-                                {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.priceOld)}
-                              </p>
-                            )}
-                          </div>
-                          <p className="text-xs truncate font-medium text-neutral-700 sm:text-sm">
-                            {produto.description}
-                          </p>
-                          <div
-                            className={`mt-2 text-xs font-semibold text-white ${produto.stock.quantity > 0
-                              ? "bg-green-700"
-                              : "bg-red-700 text-white"
-                              } px-2 py-1 rounded-md w-max`}
-                          >
-                            {produto.stock.quantity > 0
-                              ? produto.stock.quantity > 1
-                                ? `${produto.stock.quantity} Disponíveis`
-                                : "Última Unidade"
-                              : "Indisponível"}
-                          </div>
+                      <div
+
+                        className="group relative flex flex-col border border-gray-50"
+                      >
+                        <Link href={`/produtos/${produto.id}`} className="relative flex aspect-[300/300] items-center justify-center">
+                          <Image
+                            alt={produto.name}
+                            src={produto.imagePrimary}
+                            fill
+                            priority
+                            quality={100}
+                            className="object-contain"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          />
                         </Link>
-                        <div className="mt-3">
-                          <AddToCartButton produto={produto} />
+                        <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
+                          <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
+                            <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
+                              {produto.name}
+                            </h3>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 flex-wrap">
+                              <p className="text-xl font-bold text-pink-600 flex-wrap">
+                                {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.price)}
+                              </p>
+                              {produto.priceOld && (
+                                <p className="text-md font-bold text-pink-700 line-through flex-wrap">
+                                  {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.priceOld)}
+                                </p>
+                              )}
+                            </div>
+                            <p className="text-xs truncate font-medium text-neutral-700 sm:text-sm">
+                              {produto.description}
+                            </p>
+                            <div
+                              className={`mt-2 text-xs font-semibold text-white ${produto.stock.quantity > 0
+                                ? "bg-green-700"
+                                : "bg-red-700 text-white"
+                                } px-2 py-1 rounded-md w-max`}
+                            >
+                              {produto.availableStock! > 0
+                                ? produto.availableStock! > 1
+                                  ? `${produto.availableStock!} Disponíveis`
+                                  : "Última Unidade"
+                                : "Indisponível"}
+                            </div>
+                          </Link>
+                          <div className="mt-3">
+                            <AddToCartButton produto={produto} />
+                          </div>
                         </div>
+                        {produto.onSale && percentualDesconto > 0 && (
+                          <p className="absolute top-2 right-2 bg-pink-700 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                            {percentualDesconto}% OFF
+                          </p>
+                        )}
                       </div>
-                      {produto.onSale && percentualDesconto > 0 && (
-                        <p className="absolute top-2 right-2 bg-pink-700 text-white text-xs font-semibold px-2 py-1 rounded-full">
-                          {percentualDesconto}% OFF
-                        </p>
-                      )}
                     </div>
-                  </div>
-                );
-              })
+                  );
+                })
             ) : (
               <div className="col-span-5 text-center py-8">
                 <p className="text-lg text-neutral-600">Nenhum produto encontrado</p>

@@ -79,6 +79,15 @@ export async function PUT(request: Request) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }
 
+                await prisma.user.update({
+            where: { id: userID },
+            data: {
+                name,  
+                email, 
+                telefone 
+            }
+        });
+
         if (user.enderecos && user.enderecos.length > 0) {
             const updatedAddress = await prisma.endereco.update({
                 where: { id: user.enderecos[0].id }, 

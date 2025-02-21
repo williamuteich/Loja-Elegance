@@ -13,7 +13,6 @@ export default function OrdersPage() {
                 
                 <div className="w-full bg-white border border-gray-300 rounded-xl shadow-lg p-6">
                     <div className="space-y-6">
-                        {/* Pedido 1 */}
                         <div className="border border-gray-300 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-all duration-300">
                             <div className="flex justify-between items-center mb-2">
                                 <p className="text-xl text-pink-700 font-semibold">Pedido #12345</p>
@@ -30,7 +29,6 @@ export default function OrdersPage() {
                             </div>
                         </div>
 
-                        {/* Pedido 2 */}
                         <div className="border border-gray-300 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-all duration-300">
                             <div className="flex justify-between items-center mb-2">
                                 <p className="text-xl text-pink-700 font-semibold">Pedido #12346</p>
@@ -47,7 +45,6 @@ export default function OrdersPage() {
                             </div>
                         </div>
 
-                        {/* Pedido 3 */}
                         <div className="border border-gray-300 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-all duration-300">
                             <div className="flex justify-between items-center mb-2">
                                 <p className="text-xl text-pink-700 font-semibold">Pedido #12347</p>

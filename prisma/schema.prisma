@@ -22,8 +22,6 @@ model User {
   active    Boolean    @default(true)
   telefone  String?
   enderecos Endereco[] @relation("UserEnderecos")
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
 }
 
 model Product {
@@ -44,6 +42,7 @@ model Product {
   imagePrimary    String?
   imagesSecondary String[]
   features        String?
+  reservations    Reservation[]
 }
 
 model Brand {
@@ -81,6 +80,21 @@ model Stock {
   updatedAt DateTime @updatedAt
 
   product Product @relation("ProductStock", fields: [productId], references: [id])
+}
+
+model Reservation {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String   @db.ObjectId
+  quantity  Int
+  expiresAt DateTime
+  sessionId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id]) 
+
+  @@unique([id, sessionId])
+  @@index([expiresAt])
+  @@index([productId])
 }
 
 model config {
