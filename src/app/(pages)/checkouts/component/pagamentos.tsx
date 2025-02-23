@@ -54,7 +54,7 @@ export default function PagamentoBrick({ publicKey, preferenceId }: PagamentoBri
           maxInstallments: 12,
         },
       },
-      
+       
       callbacks: {
         onReady: () => {},
         onSubmit: ({ selectedPaymentMethod, formData }: { selectedPaymentMethod: any; formData: any }) => {
