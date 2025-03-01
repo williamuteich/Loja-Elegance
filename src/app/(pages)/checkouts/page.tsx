@@ -5,6 +5,7 @@ import { useCart } from "@/context/cartContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { IMaskInput } from "react-imask";
@@ -44,6 +45,9 @@ const MaskedInput = ({ mask, name, register, errors, placeholder, validation }: 
 
 export default function CheckoutProduto() {
   const { cart, clearCart } = useCart();
+  const [loading, setLoading] = useState(false);
+  const [orderCompleted, setOrderCompleted] = useState(false);
+  const [orderNumber, setOrderNumber] = useState<string>("");
   const [isMounted, setIsMounted] = useState(false);
 
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -63,17 +67,36 @@ export default function CheckoutProduto() {
   };
 
   const onSubmit = async (data: FormData) => {
+    setLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
+      
       const newOrderNumber = generateOrderNumber();
+      setOrderNumber(newOrderNumber);
       clearCart();
+      setOrderCompleted(true);
     } catch (error) {
       console.error("Erro no checkout:", error);
       alert("Erro ao processar pedido");
-    } 
+    } finally {
+      setLoading(false);
+    }
   };
 
-
+  if (orderCompleted) {
+    return (
+      <div className="max-w-4xl mx-auto p-6 text-center">
+        <h1 className="text-3xl font-bold text-green-600 mb-4">Pedido Confirmado!</h1>
+        <p className="text-lg mb-4">Seu número de pedido é: {orderNumber}</p>
+        <p className="mb-4">Você receberá um e-mail de confirmação em breve.</p>
+        <Link href="/produtos">
+          <Button className="bg-pink-600 hover:bg-pink-700">
+            Continuar Comprando
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
   if (cart.length === 0) {
     return (
@@ -175,11 +198,75 @@ export default function CheckoutProduto() {
                 </div>
               </div>
             </div>
+
             <PagamentoBrick publicKey={"TEST-767d0973-fd90-4fda-8773-6af0531356e7"} preferenceId={""} />
           </form>
         </CardContent>
       </Card>
+
+      <div className="space-y-6">
+        <Card className="sticky top-6">
+          <CardHeader>
+            <CardTitle className="text-pink-600">Resumo do Pedido</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {cart.map((item) => (
+                <div key={item.id} className="flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={item.imagePrimary}
+                      alt={item.name}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                    <div>
+                      <p className="font-medium">{item.name}</p>
+                      <p className="text-sm text-gray-500">
+                        {item.quantity} x{" "}
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(item.price)}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="font-medium">
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(item.price * item.quantity)}
+                  </p>
+                </div>
+              ))}
+
+              <div className="space-y-2 pt-4 border-t">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span>
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(subtotal)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Frete</span>
+                  <span className="text-green-600">Grátis</span>
+                </div>
+                <div className="flex justify-between font-bold">
+                  <span>Total</span>
+                  <span>
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(subtotal)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
-

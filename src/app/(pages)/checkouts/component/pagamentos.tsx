@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 declare global {
   interface Window {
     MercadoPago: any;
-    paymentBrickController: any;
   }
 }
 
@@ -15,68 +14,78 @@ interface PagamentoBrickProps {
 }
 
 export default function PagamentoBrick({ publicKey, preferenceId }: PagamentoBrickProps) {
+  const scriptAdded = useRef(false);
+  const brickController = useRef<any>(null);
+
   useEffect(() => {
-    if (!window.MercadoPago) {
+    const initializeBrick = async () => {
+      const mp = new window.MercadoPago(publicKey, { locale: "es" });
+      const bricksBuilder = mp.bricks();
+
+      const settings = {
+        initialization: {
+          amount: 10000,
+          preferenceId,
+          payer: {
+            firstName: "william",
+            lastName: "uteich",
+            email: "williamuteich14@gmail.com",
+          },
+        },
+        customization: {
+          visual: { style: { theme: "default" } },
+          paymentMethods: {
+            creditCard: "all",
+            atm: "all",
+            bankTransfer: "all",
+            maxInstallments: 12,
+          },
+        },
+        callbacks: {
+          onReady: () => {},
+          onSubmit: ({ formData }: { formData: any }) => {
+            console.log("Dados enviados:", formData);
+            
+            return fetch("/process_payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(formData),
+            })
+            
+              .then((response) => response.json())
+              .catch(() => {});
+          },
+          onError: (error: any) => console.error(error),
+        },
+      };
+
+      brickController.current = await bricksBuilder.create(
+        "payment",
+        "paymentBrick_container",
+        settings
+      );
+    };
+
+    if (!window.MercadoPago && !scriptAdded.current) {
       const script = document.createElement("script");
       script.src = "https://sdk.mercadopago.com/js/v2";
       script.async = true;
-      script.onload = () => initializeBrick();
-      document.body.appendChild(script);
-
-      return () => {
-        document.body.removeChild(script);
+      script.onload = () => {
+        initializeBrick();
       };
-    } else {
+      document.body.appendChild(script);
+      scriptAdded.current = true;
+    } else if (window.MercadoPago && !brickController.current) {
       initializeBrick();
     }
-  }, []);
 
-  const initializeBrick = async () => {
-    const mp = new window.MercadoPago(publicKey || "YOUR_PUBLIC_KEY", { locale: "es" });
-    const bricksBuilder = mp.bricks();
-
-    const settings = {
-      initialization: {
-        amount: 10000,
-        preferenceId,
-        payer: {
-          firstName: "william",
-          lastName: "uteich",
-          email: "williamuteich14@gmail.com",
-        },
-      },
-      customization: {
-        visual: { style: { theme: "default" } },
-        paymentMethods: {
-          creditCard: "all",
-          atm: "all",
-          bankTransfer: "all",
-          maxInstallments: 12,
-        },
-      },
-       
-      callbacks: {
-        onReady: () => {},
-        onSubmit: ({ selectedPaymentMethod, formData }: { selectedPaymentMethod: any; formData: any }) => {
-          return fetch("/process_payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-          })
-            .then((response) => response.json())
-            .then(() => {})
-            .catch(() => {});
-        },
-        onError: (error: any) => console.error(error),
-      },
+    return () => {
+      if (brickController.current) {
+        brickController.current.unmount();
+        brickController.current = null;
+      }
     };
+  }, [publicKey, preferenceId]);
 
-    window.paymentBrickController = await bricksBuilder.create(
-      "payment",
-      "paymentBrick_container",
-      settings
-    );
-  };
-
-  return <div className="p-0" id="paymentBrick_container"></div>;
+  return <div id="paymentBrick_container" className="p-0"></div>;
 }
