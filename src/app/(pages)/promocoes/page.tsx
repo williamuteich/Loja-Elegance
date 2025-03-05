@@ -5,7 +5,7 @@ import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
 import AddToCartButton from "@/app/components/addTocartButton";
-import { FaSlidersH  } from 'react-icons/fa';
+import { FaSlidersH } from 'react-icons/fa';
 
 export default function Promocoes() {
     const [produtos, setProdutos] = React.useState<Produto[]>([]);
@@ -19,8 +19,8 @@ export default function Promocoes() {
     React.useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await await fetch(`/api/product?fetchAll=true`);
-                if (!response.ok) throw new Error("Erro ao buscar produtos");
+                const response = await fetch(`/api/product?fetchAll=true`);
+                if (!response.ok) throw new Error("Error al buscar productos");
                 const { produtos } = await response.json();
 
                 const emPromocao = produtos.filter((p: Produto) => p.priceOld && p.priceOld > p.price && p.availableStock! > 0);
@@ -29,7 +29,7 @@ export default function Promocoes() {
                 setProdutosFiltrados(emPromocao);
                 setLoading(false);
             } catch (error) {
-                console.error("Erro:", error);
+                console.error("Error:", error);
                 setLoading(false);
             }
         };
@@ -40,7 +40,7 @@ export default function Promocoes() {
                 const categoriesData = await categoriesRes.json();
                 setCategorias(categoriesData.category);
             } catch (error) {
-                console.error("Erro ao carregar categorias:", error);
+                console.error("Error al cargar categorías:", error);
             }
         };
 
@@ -79,10 +79,10 @@ export default function Promocoes() {
             <div className="w-1/4 p-4 bg-neutral-100 border-r">
                 <div className="sticky top-16 max-h-screen overflow-y-auto p-4">
                     <h3 className="text-lg font-semibold text-pink-700 mb-4 flex gap-2 border-b-[1px] border-gray-400 pb-2 items-center">
-                        <FaSlidersH  size={16} /> Filtros de Promoções
+                        <FaSlidersH size={16} /> Filtros de Promociones
                     </h3>
                     <div className="mb-6">
-                        <h4 className="text-sm font-medium text-neutral-700">Categoria</h4>
+                        <h4 className="text-sm font-medium text-neutral-700">Categoría</h4>
                         <select
                             className="w-full p-2 mt-2 border rounded-md bg-neutral-200"
                             value={search}
@@ -98,18 +98,18 @@ export default function Promocoes() {
                     </div>
 
                     <div className="mb-6">
-                        <h4 className="text-sm font-medium text-neutral-700">Faixa de Preço</h4>
+                        <h4 className="text-sm font-medium text-neutral-700">Rango de Precio</h4>
                         <input
                             type="number"
                             className="w-full p-2 mt-2 border rounded-md bg-neutral-200"
-                            placeholder="Preço mínimo"
+                            placeholder="Precio mínimo"
                             value={precoMinimo}
                             onChange={(e) => setPrecoMinimo(e.target.value)}
                         />
                         <input
                             type="number"
                             className="w-full p-2 mt-2 border rounded-md bg-neutral-200"
-                            placeholder="Preço máximo"
+                            placeholder="Precio máximo"
                             value={precoMaximo}
                             onChange={(e) => setPrecoMaximo(e.target.value)}
                         />
@@ -119,12 +119,12 @@ export default function Promocoes() {
 
             <div className="w-3/4 pl-6">
                 <h2 className="text-2xl uppercase font-extrabold text-pink-700 mb-6 text-start">
-                    Produtos em Promoção
+                    Productos en Promoción
                 </h2>
 
                 {loading ? (
                     <div className="text-center py-8">
-                        <p className="text-lg text-pink-800 font-bold">Carregando promoções...</p>
+                        <p className="text-lg text-pink-800 font-bold">Cargando promociones...</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -180,7 +180,7 @@ export default function Promocoes() {
                             })
                         ) : (
                             <div className="col-span-5 text-center py-8">
-                                <p className="text-lg text-neutral-600">Nenhuma promoção encontrada com esses filtros</p>
+                                <p className="text-lg text-neutral-600">No se encontraron promociones con estos filtros</p>
                             </div>
                         )}
                     </div>

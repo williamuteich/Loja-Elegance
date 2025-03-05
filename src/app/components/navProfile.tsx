@@ -49,14 +49,14 @@ export default function NavProfile() {
                         className={`flex items-center gap-3 text-sm text-pink-700 ${isActive('/order') ? 'bg-gray-100 ' : 'hover:bg-gray-100 '} cursor-pointer px-2 py-1 rounded-md`}
                     >
                         <FaListAlt size={20} className="text-pink-700" />
-                        <span>Meus Pedidos</span>
+                        <span>Mis Pedidos</span>
                     </Link>
                     <Link
                         href="/reset-password"
                         className={`flex items-center gap-3 text-sm text-pink-700 ${isActive('/reset-password') ? 'bg-gray-100 ' : 'hover:bg-gray-100 '} cursor-pointer px-2 py-1 rounded-md`}
                     >
                         <FaKey size={20} className="text-pink-700" />
-                        <span>Minha Senha</span>
+                        <span>Mi Contraseña</span>
                     </Link>
 
                     <LogoutButton />

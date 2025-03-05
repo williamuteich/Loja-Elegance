@@ -19,7 +19,7 @@ export default function CheckoutHeader() {
     <Sheet open={cartOpen} onOpenChange={setCartOpen}>
       <SheetTrigger asChild>
         <button
-          aria-label="Meu Carrinho"
+          aria-label="Mi Carrito"
           className="relative w-6 h-6 cursor-pointer hover:text-pink-600 transition-colors"
           onClick={() => setCartOpen(true)}
         >
@@ -32,10 +32,10 @@ export default function CheckoutHeader() {
         </button>
       </SheetTrigger>
 
-      <SheetContent side="right" className="bg-white p-6 w-96" aria-label="Conteúdo do carrinho">
+      <SheetContent side="right" className="bg-white p-6 w-96" aria-label="Contenido del carrito">
         <SheetTitle className="text-center">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-xl font-bold text-pink-800">MEU CARRINHO</h1>
+            <h1 className="text-xl font-bold text-pink-800">MI CARRITO</h1>
           </div>
         </SheetTitle>
         <div className="border-b mb-4" />
@@ -43,7 +43,7 @@ export default function CheckoutHeader() {
         {cart.length === 0 ? (
           <p className="flex items-center justify-center gap-2 text-pink-800 font-bold text-lg">
             <ShoppingCart size={24} className="mb-2 text-pink-800" />
-            Seu carrinho está vazio.
+            Tu carrito está vacío.
           </p>
         ) : (
           <div className="space-y-6">
@@ -62,7 +62,7 @@ export default function CheckoutHeader() {
                   <div className="flex-1">
                     <Link href={`/produtos/${item.id}`} className="cursor-pointer">
                       <h2 className="text-sm font-semibold text-pink-800">{item.name}</h2>
-                      <p className="text-xs text-gray-700">Quantidade: {item.quantity}</p>
+                      <p className="text-xs text-gray-700">Cantidad: {item.quantity}</p>
                       <p className="font-semibold text-sm mt-2">
                         {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
@@ -124,8 +124,8 @@ export default function CheckoutHeader() {
                 </p>
               </div>
               <div className="flex justify-between">
-                <p className="text-sm">Frete</p>
-                <p className="font-semibold text-sm text-green-500">GRÁTIS</p>
+                <p className="text-sm">Envío</p>
+                <p className="font-extrabold text-sm text-gray-500">-</p>
               </div>
               <div className="flex justify-between font-semibold text-base">
                 <p>Total</p>
@@ -144,7 +144,7 @@ export default function CheckoutHeader() {
         )}
       </SheetContent>
       <SheetDescription className="sr-only">
-        Este é o seu carrinho de compras. Aqui você pode ver os itens que você adicionou, incluindo suas quantidades e preços. Você pode remover itens ou ajustar a quantidade. O total da compra e o frete grátis também estão sendo exibidos. Finalize sua compra clicando no botão "Finalizar Compra".
+        Este es tu carrito de compras. Aquí puedes ver los productos que agregaste, incluyendo sus cantidades y precios. Puedes eliminar artículos o ajustar las cantidades. El total de la compra y el envío gratuito también se muestran. Finaliza tu compra haciendo clic en el botón "Finalizar Compra".
       </SheetDescription>
     </Sheet>
   );

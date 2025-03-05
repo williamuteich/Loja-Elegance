@@ -35,7 +35,7 @@ export default function Formulario() {
         });
 
         if (!sessionResponse.ok) {
-            toast.error("Email ou Senha Incorreto.", {
+            toast.error("Correo electrónico o contraseña incorrectos.", {
                 position: "top-right",
                 autoClose: 3000,
             })
@@ -56,16 +56,16 @@ export default function Formulario() {
         return (
             <div className="flex flex-col items-center justify-center p-8 bg-white border border-pink-900 rounded-lg shadow-lg mt-6">
                 <h2 className="text-2xl font-semibold text-pink-900 mb-4 text-center">
-                    Verifique seu E-mail para Acessar sua Conta!
+                    ¡Verifica tu correo electrónico para acceder a tu cuenta!
                 </h2>
                 <p className="text-lg text-gray-700 mb-4 text-center">
-                    Para concluir o processo de criação de conta, por favor, verifique o seu e-mail e confirme sua identidade.
+                    Para completar el proceso de creación de cuenta, por favor, verifica tu correo electrónico y confirma tu identidad.
                 </p>
                 <p className="font-semibold text-pink-900 text-lg text-center">
-                    Enviamos um e-mail de confirmação. Não se esqueça de verificar a sua caixa de entrada.
+                    Hemos enviado un correo electrónico de confirmación. No olvides verificar tu bandeja de entrada.
                 </p>
                 <div className="mt-6 text-center">
-                    <p className="text-sm text-gray-500">Se você não recebeu o e-mail, verifique sua pasta de spam.</p>
+                    <p className="text-sm text-gray-500">Si no has recibido el correo electrónico, revisa tu carpeta de spam.</p>
                 </div>
             </div>
         )
@@ -73,14 +73,14 @@ export default function Formulario() {
 
     return (
         <>
-            <h1 className="text-2xl font-bold text-center text-pink-700 mb-6 uppercase">Bem Vindo De Volta!</h1>
+            <h1 className="text-2xl font-bold text-center text-pink-700 mb-6 uppercase">¡Bienvenido de nuevo!</h1>
             <ToastContainer />
             <form onSubmit={login} className="relative">
                 <div className="mb-6">
                     <input
                         type="email"
                         name="email"
-                        placeholder="E-mail"
+                        placeholder="Correo electrónico"
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
                     />
@@ -90,7 +90,7 @@ export default function Formulario() {
                         <input
                             type="password"
                             name="password"
-                            placeholder="Senha"
+                            placeholder="Contraseña"
                             required
                             className="w-full px-4 py-3 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
                         />
@@ -101,19 +101,19 @@ export default function Formulario() {
                     type="submit"
                     className="w-full py-3 bg-pink-700 text-white font-semibold uppercase rounded-md hover:bg-pink-600"
                 >
-                    Entrar
+                    Iniciar sesión
                 </button>
             </form>
             <div className="mt-4 text-center">
                 <Link href="/resetPwd" className="text-sm text-gray-600 hover:text-black font-medium">
-                    Esqueci minha senha
+                    Olvidé mi contraseña
                 </Link>
             </div>
             <div className="mt-6 border-t border-gray-300 pt-6 text-center">
                 <p className="text-sm text-gray-600">
-                    Não tem uma conta?{' '}
+                    ¿No tienes una cuenta?{' '}
                     <Link href="/cadastro" className="text-black font-semibold hover:underline">
-                        Crie uma agora
+                        Crea una ahora
                     </Link>
                 </p>
             </div>

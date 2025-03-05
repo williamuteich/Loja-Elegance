@@ -92,35 +92,34 @@ export default function DataProfile({
     });
 
     if (!response.ok) {
-      toast.error("Erro ao salvar informações do usuário");
+      toast.error("Error al guardar la información del usuario");
       setIsLoading(false);
       return;
     }
 
-    toast.success("Informações salvas com sucesso");
+    toast.success("Información guardada con éxito");
     setIsLoading(false);
   };
 
   if (!data || !endereco) {
-    return <div>Carregando dados...</div>;
+    return <div>Cargando datos...</div>;
   }
 
   return (
     <div className="space-y-12 w-full mt-6 lg:mt-0">
       <div>
         <ToastContainer />
-           
-                <h2 className="text-2xl font-semibold mb-6 text-pink-700 flex gap-3 items-center">
-                <FaUser size={28} />
-                Informações do Usuário
-                </h2>
-           
+        
+        <h2 className="text-2xl font-semibold mb-6 text-pink-700 flex gap-3 items-center">
+          <FaUser size={28} />
+          Información del Usuario
+        </h2>
 
         <div className="bg-white p-6 border rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold text-pink-700 mb-6">Dados Pessoais</h3>
+          <h3 className="text-xl font-semibold text-pink-700 mb-6">Datos Personales</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Nome</label>
+              <label className="block text-sm font-medium text-gray-700">Nombre</label>
               <input
                 type="text"
                 name="name"
@@ -131,7 +130,7 @@ export default function DataProfile({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <label className="block text-sm font-medium text-gray-700">Correo Electrónico</label>
               <input
                 type="email"
                 name="email"
@@ -158,10 +157,10 @@ export default function DataProfile({
 
       <div>
         <div className="bg-white p-6 border rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold text-pink-700 mb-6">Endereço</h3>
+          <h3 className="text-xl font-semibold text-pink-700 mb-6">Dirección</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Endereço</label>
+              <label className="block text-sm font-medium text-gray-700">Dirección</label>
               <input
                 type="text"
                 name="logradouro"
@@ -194,7 +193,7 @@ export default function DataProfile({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Bairro</label>
+              <label className="block text-sm font-medium text-gray-700">Barrio</label>
               <input
                 type="text"
                 name="bairro"
@@ -205,7 +204,7 @@ export default function DataProfile({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Cidade</label>
+              <label className="block text-sm font-medium text-gray-700">Ciudad</label>
               <input
                 type="text"
                 name="cidade"
@@ -238,7 +237,7 @@ export default function DataProfile({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">CEP</label>
+              <label className="block text-sm font-medium text-gray-700">Código Postal (CEP)</label>
               <input
                 type="text"
                 name="cep"
@@ -268,7 +267,7 @@ export default function DataProfile({
               onClick={handleSubmit}
               disabled={isLoading}
             >
-              {isLoading ? "Carregando..." : "Salvar"}
+              {isLoading ? "Cargando..." : "Guardar"}
             </button>
             <button
               className="bg-red-500 text-white px-6 py-2 rounded-md font-medium hover:bg-red-600"

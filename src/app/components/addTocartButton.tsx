@@ -17,7 +17,7 @@ export default function AddToCartButton({ produto }: AddToCartButtonProps) {
       }}
       className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all"
     >
-      Adicionar ao Carrinho
+      Agregar al Carrito
     </button>
   );
 }

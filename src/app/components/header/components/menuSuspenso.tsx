@@ -47,7 +47,7 @@ export default function MenuSuspenso() {
         <>
             <div className="bg-pink-700 frete-gratuito">
                 <div className="max-w-[1400px] py-1 mx-auto px-4 font-medium text-center text-sm sm:text-base sm:px-6 lg:px-8 text-white">
-                    Ofertas imperdíveis, aproveite!
+                    ¡Ofertas imperdibles, aproveche!
                 </div>
             </div>
             <div
@@ -62,7 +62,7 @@ export default function MenuSuspenso() {
                                 className="text-3xl font-bold text-pink-700 hover:text-pink-800 transition-all flex flex-col relative"
                             >
                                 <h1 className="z-50">Elegance</h1>
-                                <span className="text-xs text-end z-50">Acessórios</span>
+                                <span className="text-xs text-end z-50">Accesorios</span>
                                 <Image
                                     className="absolute -left-4 top-0 -rotate-45 w-[60] h-[60]"
                                     src="/fundoLogo.png"
@@ -85,24 +85,24 @@ export default function MenuSuspenso() {
                             </Link>
                             <Link
                                 href="/produtos"
-                                title="Produtos"
+                                title="Productos"
                                 className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                             >
-                                Produtos
+                                Productos
                             </Link>
                             <Link
                                 href="/promocoes"
-                                title="Promoções"
+                                title="Promociones"
                                 className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                             >
-                                Promoções
+                                Promociones
                             </Link>
                             <Link
                                 href="/contato"
-                                title="Contato"
+                                title="Contacto"
                                 className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                             >
-                                Contato
+                                Contacto
                             </Link>
                             <Link
                                 href="/faq"
@@ -113,14 +113,13 @@ export default function MenuSuspenso() {
                             </Link>
                         </nav>
 
-
                         <div className="flex gap-4 text-gray-600">
                             <SearchHeaderItems />
 
                             <Link
                                 href={session ? "/profile" : "/login"}
                                 className="hover:text-pink-600 transition-colors duration-300"
-                                aria-label={session ? "Perfil" : "Fazer login"}
+                                aria-label={session ? "Perfil" : "Iniciar sesión"}
                             >
                                 <User className="w-6 h-6" />
                             </Link>
@@ -141,7 +140,7 @@ export default function MenuSuspenso() {
 
                                 <button
                                     type="button"
-                                    aria-label="Menu Mobile"
+                                    aria-label="Menú móvil"
                                     className="cursor-pointer hover:text-pink-600 transition-colors"
                                 >
                                     <AlignJustify className="w-6 h-6 text-gray-700" />
@@ -159,45 +158,45 @@ export default function MenuSuspenso() {
 
                                 <div className="grid gap-6 py-4 border-t-[1px] border-gray-300 mt-6">
                                     <nav className="flex flex-col gap-6">
-                                        <span className="font-medium text-xl">Explore</span>
+                                        <span className="font-medium text-xl">Explorar</span>
                                         <Link
                                             href="/"
-                                            title="Início"
-                                            aria-label="Início"
+                                            title="Inicio"
+                                            aria-label="Inicio"
                                             className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                                         >
                                             <Home className="w-6 h-6" aria-hidden="true" />
-                                            <span>Início</span>
+                                            <span>Inicio</span>
                                         </Link>
 
                                         <Link
                                             href="/produtos"
-                                            title="Produtos"
-                                            aria-label="Produtos"
+                                            title="Productos"
+                                            aria-label="Productos"
                                             className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                                         >
                                             <Package className="w-6 h-6" aria-hidden="true" />
-                                            <span>Produtos</span>
+                                            <span>Productos</span>
                                         </Link>
 
                                         <Link
                                             href="/promocoes"
-                                            title="Promoções"
-                                            aria-label="Promoções"
+                                            title="Promociones"
+                                            aria-label="Promociones"
                                             className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                                         >
                                             <Tag className="w-6 h-6" aria-hidden="true" />
-                                            <span>Promoções</span>
+                                            <span>Promociones</span>
                                         </Link>
 
                                         <Link
                                             href="/contato"
-                                            title="Contato"
-                                            aria-label="Contato"
+                                            title="Contacto"
+                                            aria-label="Contacto"
                                             className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                                         >
                                             <Phone className="w-6 h-6" aria-hidden="true" />
-                                            <span>Contato</span>
+                                            <span>Contacto</span>
                                         </Link>
 
                                         <Link
@@ -227,7 +226,7 @@ export default function MenuSuspenso() {
                         <Link
                             href="/login"
                             className="hover:text-pink-600 transition-colors duration-300"
-                            aria-label="Fazer login"
+                            aria-label="Iniciar sesión"
                         >
                             <User className="w-6 h-6" />
                         </Link>

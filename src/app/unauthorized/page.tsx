@@ -33,18 +33,18 @@ export default function Unauthorized() {
                         403
                     </h1>
                     <h2 className="text-3xl font-semibold text-red-600 mb-4">
-                        Acesso Negado
+                        Acceso Denegado
                     </h2>
                     <p className="text-lg text-gray-500 mb-8">
-                        Você não tem permissão para acessar esta página. Se achar que isso é um erro, entre em contato com o administrador.
+                        No tienes permiso para acceder a esta página. Si crees que esto es un error, contacta al administrador.
                     </p>
                     <div className="flex flex-col gap-4 justify-center items-center">
-                        <p className="mt-4 text-md text-gray-700 font-medium">Redirecionando: <span className="text-blue-700 text-base font-bold">{timing}</span></p>
+                        <p className="mt-4 text-md text-gray-700 font-medium">Redirigiendo: <span className="text-blue-700 text-base font-bold">{timing}</span></p>
                         <Button
                             onClick={handleRedirect}
                             className="bg-pink-700 w-1/4 text-white text-lg px-6 py-4 hover:bg-pink-600 transition duration-300 ease-in-out"
                         >
-                            Voltar para Login
+                            Volver al Login
                         </Button>
                     </div>
                 </div>

@@ -72,42 +72,42 @@ export default function Footer() {
 
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-10">
             <div>
-              <h3 className="font-semibold mb-4">Explore a Loja</h3>
+              <h3 className="font-semibold mb-4">Explorar la tienda</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="/" className="hover:underline">Início</Link>
+                  <Link href="/" className="hover:underline">Inicio</Link>
                 </li>
                 <li>
-                  <Link href="/produtos" className="hover:underline">Produtos</Link>
+                  <Link href="/produtos" className="hover:underline">Productos</Link>
                 </li>
                 <li>
-                  <Link href="/promocoes" className="hover:underline">Promoções</Link>
+                  <Link href="/promocoes" className="hover:underline">Promociones</Link>
                 </li>
                 <li>
-                  <Link href="/sobre" className="hover:underline">Sobre nós</Link>
+                  <Link href="/sobre" className="hover:underline">Sobre nosotros</Link>
                 </li>
                 <li>
-                  <Link href="/contato" className="hover:underline">Entre em Contato</Link>
+                  <Link href="/contato" className="hover:underline">Contáctanos</Link>
                 </li>
                 <li>
-                  <Link href="/faq" className="hover:underline">Perguntas Frequentes</Link>
+                  <Link href="/faq" className="hover:underline">Preguntas frecuentes</Link>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Nossa Qualidade</h3>
+              <h3 className="font-semibold mb-4">Nuestra calidad</h3>
               <p className="text-sm">
-                Trabalhamos com os melhores fornecedores para garantir produtos de alta qualidade e durabilidade, sempre focados na satisfação do cliente.
+                Trabajamos con los mejores proveedores para garantizar productos de alta calidad y durabilidad, siempre enfocados en la satisfacción del cliente.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Minha conta</h3>
+              <h3 className="font-semibold mb-4">Mi cuenta</h3>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link href={session?.user ? '/profile' : '/login'} className="hover:underline">
-                    {session?.user ? 'Meu perfil' : 'Entrar'}
+                    {session?.user ? 'Mi perfil' : 'Ingresar'}
                   </Link>
                 </li>
                 {session?.user ? (
@@ -121,10 +121,10 @@ export default function Footer() {
                 ) : (
                   <>
                     <li>
-                      <Link href="/cadastro" className="hover:underline">Criar conta</Link>
+                      <Link href="/cadastro" className="hover:underline">Crear cuenta</Link>
                     </li>
                     <li>
-                      <Link href="/resetPwd" className="hover:underline">Esqueci minha senha</Link>
+                      <Link href="/resetPwd" className="hover:underline">Olvidé mi contraseña</Link>
                     </li>
                   </>
                 )}
@@ -132,19 +132,19 @@ export default function Footer() {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Contato</h3>
+              <h3 className="font-semibold mb-4">Contacto</h3>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link href="mailto:contato@elegance.com.br" className="hover:underline">
-                    contato@elegance.com.br
+                    contacto@elegance.com.br
                   </Link>
                 </li>
-                <li>Atendimento das 8h às 17h</li>
+                <li>Atención de 8 a 17 horas</li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Formas de Pagamento</h3>
+              <h3 className="font-semibold mb-4">Formas de pago</h3>
               <div className="flex flex-wrap gap-4">
                 <Image src="/visa.svg" alt="Visa" width={16} height={16} className="h-8 w-auto" />
                 <Image src="/mastercard.svg" alt="Mastercard" width={16} height={16} className="h-8 w-auto" />
@@ -156,7 +156,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 border-t border-gray-700 pt-6 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-sm">© 2024 | Elegance | Todos os direitos reservados.</p>
+          <p className="text-sm">© 2024 | Elegance | Todos los derechos reservados.</p>
           <Link href="https://wa.me/5196615024" target="_blank" rel="noopener noreferrer" className="text-sm hover:underline">
             &lt;/&gt; William Uteich
           </Link>

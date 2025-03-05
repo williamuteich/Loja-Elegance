@@ -8,18 +8,14 @@ declare global {
   }
 }
 
-interface PagamentoBrickProps {
-  publicKey: string;
-  preferenceId: string;
-}
-
-export default function PagamentoBrick({ publicKey, preferenceId }: PagamentoBrickProps) {
+export default function PagamentoBrick({ preferenceId }: { preferenceId: string }) {
+  const publicKey = process.env.NEXT_PUBLIC_MERCADOPAGO;
   const scriptAdded = useRef(false);
   const brickController = useRef<any>(null);
 
   useEffect(() => {
     const initializeBrick = async () => {
-      const mp = new window.MercadoPago(publicKey, { locale: "es" });
+      const mp = new window.MercadoPago(publicKey, { locale: "es-CO" });
       const bricksBuilder = mp.bricks();
 
       const settings = {
@@ -30,15 +26,15 @@ export default function PagamentoBrick({ publicKey, preferenceId }: PagamentoBri
             firstName: "william",
             lastName: "uteich",
             email: "williamuteich14@gmail.com",
+            entityType: "individual",
           },
         },
         customization: {
           visual: { style: { theme: "default" } },
           paymentMethods: {
             creditCard: "all",
-            atm: "all",
-            bankTransfer: "all",
-            maxInstallments: 12,
+            //atm: "all",
+            maxInstallments: 12
           },
         },
         callbacks: {

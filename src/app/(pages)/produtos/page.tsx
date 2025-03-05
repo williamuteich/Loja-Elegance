@@ -26,7 +26,7 @@ export default function ProdutosGerais() {
       const response = await fetch(`/api/product?fetchAll=true`);
 
       if (!response.ok) {
-        throw new Error("Erro ao buscar produtos");
+        throw new Error("Error al buscar productos");
       }
 
       const { produtos, totalRecords }: { produtos: Produto[], totalRecords: number } = await response.json();
@@ -45,7 +45,7 @@ export default function ProdutosGerais() {
         const categoriesData = await categoriesRes.json();
         setCategorias(categoriesData.category);
       } catch (error) {
-        alert("Erro ao carregar categorias");
+        alert("Error al cargar categorías");
       }
     };
 
@@ -102,7 +102,7 @@ export default function ProdutosGerais() {
           </h3>
 
           <div className="mb-6">
-            <h4 className="text-sm font-medium text-neutral-700">Categoria</h4>
+            <h4 className="text-sm font-medium text-neutral-700">Categoría</h4>
             <select
               className="w-full p-2 mt-2 border rounded-md bg-neutral-200"
               value={search}
@@ -118,18 +118,18 @@ export default function ProdutosGerais() {
           </div>
 
           <div className="mb-6">
-            <h4 className="text-sm font-medium text-neutral-700">Faixa de Preço</h4>
+            <h4 className="text-sm font-medium text-neutral-700">Rango de Precio</h4>
             <input
               type="number"
               className="w-full p-2 mt-2 border rounded-md bg-neutral-200"
-              placeholder="Preço mínimo"
+              placeholder="Precio mínimo"
               value={precoMinimo}
               onChange={(e) => setPrecoMinimo(e.target.value)}
             />
             <input
               type="number"
               className="w-full p-2 mt-2 border rounded-md bg-neutral-200"
-              placeholder="Preço máximo"
+              placeholder="Precio máximo"
               value={precoMaximo}
               onChange={(e) => setPrecoMaximo(e.target.value)}
             />
@@ -139,12 +139,12 @@ export default function ProdutosGerais() {
 
       <div className="w-3/4 pl-6">
         <h2 className="text-2xl relative uppercase font-extrabold text-pink-700 mb-6 text-start">
-          Catálogo de Produtos
+          Catálogo de Productos
         </h2>
 
         {loading ? (
           <div className="text-center py-8">
-            <p className="text-lg text-pink-800 font-bold ">Carregando produtos...</p>
+            <p className="text-lg text-pink-800 font-bold ">Cargando productos...</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -202,9 +202,9 @@ export default function ProdutosGerais() {
                             >
                               {produto.availableStock! > 0
                                 ? produto.availableStock! > 1
-                                  ? `${produto.availableStock!} Disponíveis`
-                                  : "Última Unidade"
-                                : "Indisponível"}
+                                  ? `${produto.availableStock!} Disponibles`
+                                  : "Última Unidad"
+                                : "No Disponible"}
                             </div>
                           </Link>
                           <div className="mt-3">
@@ -222,7 +222,7 @@ export default function ProdutosGerais() {
                 })
             ) : (
               <div className="col-span-5 text-center py-8">
-                <p className="text-lg text-neutral-600">Nenhum produto encontrado</p>
+                <p className="text-lg text-neutral-600">No se encontraron productos</p>
               </div>
             )}
           </div>
@@ -248,7 +248,7 @@ export default function ProdutosGerais() {
             onClick={() => mudarPagina(paginaAtual + 1)}
             disabled={paginaAtual === totalPaginas}
           >
-            Próxima
+            Siguiente
           </button>
         </div>
       </div>

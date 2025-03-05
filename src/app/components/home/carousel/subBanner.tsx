@@ -18,22 +18,22 @@ export default function SubBannerHeader() {
               <FaUnlockAlt size={28} className="text-white text-2xl" />
               <div className="flex flex-col">
                 <span className="text-base font-semibold text-white">100% Seguro</span>
-                <span className="text-sm text-zinc-100">Faça suas compras com segurança</span>
+                <span className="text-sm text-zinc-100">Realiza tus compras con seguridad</span>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <FaCreditCard size={28} className="text-white text-2xl" />
               <div className="flex flex-col">
-                <span className="text-base font-semibold text-white">Aceitamos Cartões</span>
-                <span className="text-sm text-zinc-100">Pague em até 12x ou 2x sem juros</span>
+                <span className="text-base font-semibold text-white">Aceptamos Tarjetas</span>
+                <span className="text-sm text-zinc-100">Paga hasta en 12x cuotas</span>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <a href="https://wa.me/51998682733" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4">
                 <FaWhatsapp size={28} className="text-green-500 text-2xl" />
                 <div className="flex flex-col items-start leading-3">
-                  <span className="text-base font-semibold text-white">Dúvidas?</span>
-                  <span className="text-sm text-zinc-100">Nos chame no WhatsApp</span>
+                  <span className="text-base font-semibold text-white">¿Dudas?</span>
+                  <span className="text-sm text-zinc-100">Contáctanos por WhatsApp</span>
                 </div>
               </a>
             </div>
@@ -56,8 +56,8 @@ export default function SubBannerHeader() {
           <CarouselItem className="p-3 justify-center w-full bg-gradient-to-r from-pink-700 via-pink-600 to-pink-500 flex items-center gap-4">
             <FaWhatsapp size={28} className="text-green-500 text-2xl" />
             <div className="flex flex-col items-start">
-              <span className="text-base font-semibold text-white">Dúvidas?</span>
-              <span className="text-sm text-zinc-100">Nos chame no WhatsApp</span>
+              <span className="text-base font-semibold text-white">¿Dudas?</span>
+              <span className="text-sm text-zinc-100">Contáctanos por WhatsApp</span>
             </div>
           </CarouselItem>
 
@@ -65,15 +65,15 @@ export default function SubBannerHeader() {
             <FaUnlockAlt size={28} className="text-white text-2xl" />
             <div className="flex flex-col">
               <span className="text-base font-semibold text-white">100% Seguro</span>
-              <span className="text-sm text-zinc-100">Faça suas compras com segurança</span>
+              <span className="text-sm text-zinc-100">Realiza tus compras con seguridad</span>
             </div>
           </CarouselItem>
 
           <CarouselItem className="p-3 justify-center w-full bg-gradient-to-r from-pink-700 via-pink-600 to-pink-500 flex items-center gap-4">
             <FaCreditCard size={28} className="text-white text-2xl" />
             <div className="flex flex-col">
-              <span className="text-base font-semibold text-white">Aceitamos Cartões</span>
-              <span className="text-sm text-zinc-100">Pague em até 12x ou 2x sem juros</span>
+              <span className="text-base font-semibold text-white">Aceptamos Tarjetas</span>
+              <span className="text-sm text-zinc-100">Paga hasta en 12x cuotas</span>
             </div>
           </CarouselItem>
         </CarouselContent>

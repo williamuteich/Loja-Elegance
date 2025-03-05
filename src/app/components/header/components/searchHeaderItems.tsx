@@ -48,7 +48,7 @@ export default function SearchHeaderItems() {
       );
 
       if (!response.ok) {
-        throw new Error("Erro ao buscar produtos");
+        throw new Error("Error al buscar productos");
       }
 
       const { produtos } = await response.json();
@@ -68,7 +68,7 @@ export default function SearchHeaderItems() {
       <DialogTrigger asChild>
         <button
           type="button"
-          aria-label="Pesquisar em Nossa Loja"
+          aria-label="Buscar en nuestra tienda"
           className="cursor-pointer hover:text-pink-600 transition-colors"
         >
           <Search className="w-6 h-6" />
@@ -80,9 +80,9 @@ export default function SearchHeaderItems() {
         style={{ borderRadius: "8px" }}
       >
         <DialogHeader className="sr-only">
-          <DialogTitle className="sr-only">Pesquisar em Nossa Loja</DialogTitle>
+          <DialogTitle className="sr-only">Buscar en nuestra tienda</DialogTitle>
           <DialogDescription className="sr-only">
-            Encontre os produtos que você deseja em nossa loja. Utilize a barra de pesquisa para buscar.
+            Encuentra los productos que deseas en nuestra tienda. Usa la barra de búsqueda para buscar.
           </DialogDescription>
         </DialogHeader>
         <div className="flex relative items-start justify-start py-0 gap-4 text-2xl">
@@ -93,7 +93,7 @@ export default function SearchHeaderItems() {
                 type="search"
                 className="w-full mx-8 p-4 font-normal rounded-lg bg-background border-none shadow-none outline-none focus:outline-none focus:ring-0 hover:outline-none placeholder:text-gray-800 placeholder:text-sm"
                 style={{ fontSize: "1.0rem" }}
-                placeholder="Pesquisar em nossa loja"
+                placeholder="Buscar en nuestra tienda"
                 onChange={handleChange}
               />
               {loading && (
@@ -115,7 +115,7 @@ export default function SearchHeaderItems() {
                         fill="currentFill"
                       />
                     </svg>
-                    <span className="sr-only">Loading...</span>
+                    <span className="sr-only">Cargando...</span>
                   </div>
                 </div>
               )}

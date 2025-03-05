@@ -7,13 +7,13 @@ import {
 } from "@/components/ui/accordion";
 import Paginacao from "@/app/components/Paginacao";
 
-async function getFaq({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
+async function obtenerFaq({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
     const { search, page, status } = await searchParams;
 
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/faq?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}, {cache: "no-store"}`);
 
     if (!response.ok) {
-        throw new Error("Erro ao buscar as perguntas frequentes");
+        throw new Error("Error al buscar las preguntas frecuentes");
     }
 
     const { faq, totalRecords } = await response.json();
@@ -37,7 +37,7 @@ async function getFaq({ searchParams }: { searchParams: Promise<{ search: string
     );
 }
 
-export default async function FaqPage({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
+export default async function PaginaFaq({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
 
     const defaultSearchParams = await searchParams;
 
@@ -45,10 +45,10 @@ export default async function FaqPage({ searchParams }: { searchParams: Promise<
         <div className="py-10">
             <div className="mx-auto min-h-screen">
                 <h2 className="text-2xl uppercase font-extrabold text-pink-700 mb-6 text-start">
-                    Perguntas Frequentes
+                    Preguntas Frecuentes
                 </h2>
-                <Suspense fallback={<div>Carregando...</div>}>
-                    {await getFaq({ searchParams: Promise.resolve(defaultSearchParams) })}
+                <Suspense fallback={<div>Cargando...</div>}>
+                    {await obtenerFaq({ searchParams: Promise.resolve(defaultSearchParams) })}
                 </Suspense>
             </div>
         </div>
