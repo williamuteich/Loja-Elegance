@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { IMaskInput } from "react-imask";
-import PagamentoBrick from "./component/pagamentos";
 
 type FormData = {
   name: string;
@@ -138,6 +137,8 @@ export default function CheckoutProduto() {
             </div>
           </form>
         </CardContent>
+
+        <button className="bg-blue-900 text-white text-sm rounded-lg p-2 m-4">Fazer pagamento</button>
       </Card>
 
       <div className="space-y-6">
