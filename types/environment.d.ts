@@ -10,6 +10,6 @@ namespace NodeJS {
         SMTP_NAME: string
         NEXT_PUBLIC_SUPABASE_URL: string
         NEXT_PUBLIC_SUPABASE_ANON_KEY: string
-        NEXT_PUBLIC_MERCADOPAGO: string
+        NEXT_TOKEN_MERCADO_PAGO: string
     }
 }
