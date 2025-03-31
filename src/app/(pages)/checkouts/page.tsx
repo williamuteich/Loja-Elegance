@@ -40,7 +40,7 @@ export default function CheckoutProduto() {
             picture_url: item.imagePrimary,
             category_id: item.categories[0]?.id || 'default-category-id',
             quantity: item.quantity,
-            currency_id: 'BRL',
+            currency_id: 'UYU',
             unit_price: item.price,
           })),
           payer: {
