@@ -130,7 +130,7 @@ export default function SearchHeaderItems() {
                         <Image src={item.imagePrimary} alt={item.name} width={75} height={75} quality={100} />
                         <div className="flex flex-col gap-1">
                           <h2 className="text-base uppercase font-bold">{item.name}</h2>
-                          <span className="text-base font-medium uppercase">R$ {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(item.price)}</span>
+                          <span className="text-base font-medium uppercase">R$ {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(item.price)}</span>
                         </div>
                       </Link>
                     ))}

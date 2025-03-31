@@ -35,17 +35,17 @@ export default function ResumoPedido({ cart }: ResumoPedidoProps) {
                       <p className="font-medium">{item.name}</p>
                       <p className="text-sm text-gray-500">
                         {item.quantity} x{" "}
-                        {new Intl.NumberFormat("pt-BR", {
+                        {new Intl.NumberFormat("es-UY", {
                           style: "currency",
-                          currency: "BRL",
+                          currency: "UYU",
                         }).format(item.price)}
                       </p>
                     </div>
                   </div>
                   <p className="font-medium">
-                    {new Intl.NumberFormat("pt-BR", {
+                    {new Intl.NumberFormat("es-UY", {
                       style: "currency",
-                      currency: "BRL",
+                      currency: "UYU",
                     }).format(item.price * item.quantity)}
                   </p>
                 </div>
@@ -54,9 +54,9 @@ export default function ResumoPedido({ cart }: ResumoPedidoProps) {
                 <div className="flex justify-between">
                   <span>Subtotal</span>
                   <span>
-                    {new Intl.NumberFormat("pt-BR", {
+                    {new Intl.NumberFormat("es-UY", {
                       style: "currency",
-                      currency: "BRL",
+                      currency: "UYU",
                     }).format(subtotal)}
                   </span>
                 </div>
@@ -67,9 +67,9 @@ export default function ResumoPedido({ cart }: ResumoPedidoProps) {
                 <div className="flex justify-between font-bold">
                   <span>Total</span>
                   <span>
-                    {new Intl.NumberFormat("pt-BR", {
+                    {new Intl.NumberFormat("es-UY", {
                       style: "currency",
-                      currency: "BRL",
+                      currency: "UYU",
                     }).format(subtotal)}
                   </span>
                 </div>

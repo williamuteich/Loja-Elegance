@@ -136,7 +136,7 @@ export default function Promocoes() {
 
                                 return (
                                     <div key={produto.id} className="flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all hover:scale-[1.02]">
-                                        <div className="group relative flex flex-col border border-gray-50">
+                                        <div className="group relative flex flex-col border border-gray-50 flex-1"> 
                                             <Link href={`/produtos/${produto.id}`} className="relative flex aspect-[300/300] items-center justify-center">
                                                 <Image
                                                     alt={produto.name}
@@ -148,18 +148,18 @@ export default function Promocoes() {
                                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                 />
                                             </Link>
-                                            <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
+                                            <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm flex-1"> {/* Flex-1 para garantir que o conteúdo principal ocupe o espaço disponível */}
                                                 <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
                                                     <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
                                                         {produto.name}
                                                     </h3>
                                                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 flex-wrap">
                                                         <p className="text-xl font-bold text-pink-600">
-                                                            {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.price)}
+                                                            {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(produto.price)}
                                                         </p>
                                                         {produto.priceOld && (
                                                             <p className="text-md font-bold text-pink-700 line-through flex-wrap">
-                                                                {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.priceOld)}
+                                                                {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(produto.priceOld)}
                                                             </p>
                                                         )}
                                                     </div>

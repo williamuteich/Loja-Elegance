@@ -44,16 +44,16 @@ export default async function ProdutoSlug({
                 
                 <div className="flex gap-1 flex-wrap mb-1">
                   <p className="text-3xl text-pink-700 font-bold">
-                    {new Intl.NumberFormat("pt-BR", { 
+                    {new Intl.NumberFormat("es-UY", { 
                       style: "currency", 
-                      currency: "BRL" 
+                      currency: "UYU" 
                     }).format(produtos.price)}
                   </p>
                   {produtos.priceOld && (
                     <p className="text-xl text-gray-500 line-through">
-                      {new Intl.NumberFormat("pt-BR", {
+                      {new Intl.NumberFormat("es-UY", {
                         style: "currency",
-                        currency: "BRL"
+                        currency: "UYU"
                       }).format(produtos.priceOld)}
                     </p>
                   )}
