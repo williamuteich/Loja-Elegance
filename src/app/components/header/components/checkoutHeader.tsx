@@ -7,11 +7,13 @@ import { useCart } from "@/context/cartContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 export default function CheckoutHeader() {
   const { cart, removeFromCart, addToCart, cartOpen, setCartOpen } = useCart();
   const [loadingId, setLoadingId] = useState<string | null>(null);
-  const [removingId, setRemovingId] = useState<string | null>(null); 
+  const [removingId, setRemovingId] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
@@ -74,14 +76,14 @@ export default function CheckoutHeader() {
                       <button
                         className={`w-6 h-6 flex justify-center items-center bg-gray-200 rounded-full ${removingId === item.id ? 'opacity-50' : ''}`}
                         onClick={async () => {
-                          setRemovingId(item.id); 
+                          setRemovingId(item.id);
                           try {
                             await removeFromCart(item.id);
                           } finally {
-                            setRemovingId(null); 
+                            setRemovingId(null);
                           }
                         }}
-                        disabled={removingId === item.id} 
+                        disabled={removingId === item.id}
                       >
                         {removingId === item.id ? (
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-pink-600"></div>
@@ -137,9 +139,39 @@ export default function CheckoutHeader() {
                 </p>
               </div>
             </div>
-            <Link href={`/checkouts`} >
-              <Button className="w-full mt-4 py-2 bg-pink-700 text-white font-semibold text-sm text-center rounded-md hover:bg-pink-600 hover:">Finalizar Compra</Button>
-            </Link>
+            {session ? (
+              <Link href={`/checkouts`} >
+                <Button
+                  className="w-full mt-4 py-2 bg-pink-700 text-white font-semibold text-sm text-center rounded-md hover:bg-pink-600"
+                  onClick={() => setCartOpen(false)}
+                >
+                  Confirmar Compra
+                </Button>
+              </Link>
+            ) : (
+              <div>
+                <p className="text-center text-sm text-red-500 font-semibold mb-4">
+                  Para completar tu compra, necesitas <strong>iniciar sesión</strong> o <strong>crear una cuenta</strong>.
+                </p>
+
+                <Link href={`/login`} >
+                  <Button
+                    className="w-full mt-1 py-2 bg-pink-700 text-white font-semibold text-sm text-center rounded-md hover:bg-pink-600"
+                    onClick={() => setCartOpen(false)}
+                  >
+                    Iniciar Sesión
+                  </Button>
+                </Link>
+                <Link href={`/cadastro`}>
+                  <Button
+                    className="w-full mt-1 py-2 bg-green-600 text-white font-semibold text-sm text-center rounded-md hover:bg-green-500"
+                    onClick={() => setCartOpen(false)}
+                  >
+                    Crear Cuenta
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </SheetContent>

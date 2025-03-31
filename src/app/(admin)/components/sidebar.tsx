@@ -1,5 +1,5 @@
 "use client";
-import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage, FaGift  } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage, FaGift, FaShippingFast   } from 'react-icons/fa';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogoutDashboard } from '@/app/components/logoutAccount';
@@ -126,19 +126,19 @@ export default function Sidebar() {
                                     </div>
                                 </Link>
                             </li>
-                            {/* 
+                            {
                             <li>
-                                <Link href="/dashboard/cupom">
+                                <Link href="/dashboard/envio">
                                     <div
-                                        className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/cupom') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
-                                        title='cupom'
+                                        className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/envio') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                                        title='envio'
                                     >
-                                        <FaGift size={24} />
-                                        <span className='hidden xl:block'>Cupom</span>
+                                        <FaShippingFast  size={24} />
+                                        <span className='hidden xl:block'>Envio</span>
                                     </div>
                                 </Link>
                             </li>
-                            */}
+                            }
                         </ul>
                     </div>
 
