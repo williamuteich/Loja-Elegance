@@ -24,7 +24,7 @@ export default function CheckoutProduto() {
 
     const endereco = localStorage.getItem("selectedPickupLocation");
     setLocalEndereco(endereco);
-  }, []); 
+  }, []);
 
   const isButtonEnabled = selectedPickupLocation !== null;
 
@@ -54,14 +54,15 @@ export default function CheckoutProduto() {
         <LocalRetirada setSelectedPickupLocation={setSelectedPickupLocation} />
       </Card>
       <ResumoPedido cart={cart} />
-      <button
-        className={`${
-          isButtonEnabled ? 'bg-blue-900 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'
-        } text-white text-sm rounded-lg p-2`}
-        disabled={!isButtonEnabled}
+      <Link
+        href="/checkouts/pagamento"
+        className={`${isButtonEnabled
+            ? 'bg-blue-900 hover:bg-blue-800'
+            : 'bg-gray-400 cursor-not-allowed'
+          } text-white text-sm rounded-lg p-2 block text-center`}
       >
         Elegir método de pago
-      </button>
+      </Link>
     </div>
   );
 }

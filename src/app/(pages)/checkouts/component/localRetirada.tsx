@@ -8,16 +8,21 @@ interface LocalRetiradaProps {
 }
 
 export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetiradaProps) {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null); // Armazenando o nome, não o ID
   const [pickupLocations, setPickupLocations] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    // Recupera o nome salvo no localStorage quando o componente é carregado
+    const savedOption = localStorage.getItem("selectedPickupLocation");
+    if (savedOption) {
+      setSelectedOption(savedOption);
+    }
+
     const fetchPickupLocations = async () => {
       try {
         const response = await fetch("/api/delivery");
         const data = await response.json();
-        console.log("Dados recebidos:", data);
         setPickupLocations(data.pickupLocations || []);
       } catch (error) {
         console.error("Erro ao buscar as opções de retirada", error);
@@ -30,7 +35,11 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
   }, []);
 
   useEffect(() => {
-    setSelectedPickupLocation(selectedOption);  
+    if (selectedOption) {
+      localStorage.setItem("selectedPickupLocation", selectedOption); // Salvando o nome no localStorage
+    }
+
+    setSelectedPickupLocation(selectedOption);
   }, [selectedOption, setSelectedPickupLocation]);
 
   if (loading) {
@@ -57,15 +66,15 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
               <div
                 key={location.id}
                 className={`flex items-start space-x-2 p-2 rounded-lg transition-colors
-                  ${selectedOption === location.id
+                  ${selectedOption === location.title
                     ? 'bg-pink-50 border border-pink-200'
                     : 'hover:bg-gray-50'}`}
               >
                 <Checkbox
                   id={location.id}
-                  checked={selectedOption === location.id}
+                  checked={selectedOption === location.title} // Compara o nome, não o id
                   onCheckedChange={(checked) => {
-                    setSelectedOption(checked ? location.id : null);
+                    setSelectedOption(checked ? location.title : null); // Salvando o nome
                   }}
                   className="mt-1 w-4 h-4 border-2 border-gray-300 rounded-lg checked:bg-pink-600 checked:border-pink-600"
                 />
@@ -96,15 +105,15 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
                 <div
                   key={location.id}
                   className={`flex items-start space-x-3 p-1 rounded-lg transition-colors
-                    ${selectedOption === location.id
+                    ${selectedOption === location.title
                       ? 'bg-pink-50 border border-pink-200'
                       : 'hover:bg-gray-50'}`}
                 >
                   <Checkbox
                     id={location.id}
-                    checked={selectedOption === location.id}
+                    checked={selectedOption === location.title} // Compara o nome, não o id
                     onCheckedChange={(checked) => {
-                      setSelectedOption(checked ? location.id : null);
+                      setSelectedOption(checked ? location.title : null); // Salvando o nome
                     }}
                     className="mt-1 w-4 h-4 border-2 border-gray-300 rounded-lg checked:bg-pink-600 checked:border-pink-600"
                   />
