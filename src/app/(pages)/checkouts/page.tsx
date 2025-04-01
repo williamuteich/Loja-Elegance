@@ -12,6 +12,8 @@ import LocalRetirada from "./component/localRetirada";
 export default function CheckoutProduto() {
   const { cart } = useCart();
   const [isMounted, setIsMounted] = useState(false);
+  const [localEndereco, setLocalEndereco] = useState<string | null>(null);
+  const [selectedPickupLocation, setSelectedPickupLocation] = useState<string | null>(null);
 
   const {
     formState: { errors },
@@ -19,7 +21,12 @@ export default function CheckoutProduto() {
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+
+    const endereco = localStorage.getItem("selectedPickupLocation");
+    setLocalEndereco(endereco);
+  }, []); 
+
+  const isButtonEnabled = selectedPickupLocation !== null;
 
   if (!isMounted) {
     return null;
@@ -27,11 +34,13 @@ export default function CheckoutProduto() {
 
   if (cart.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto p-6 text-center">
-        <h1 className="text-2xl font-bold text-pink-600 mb-4">Tu carrito está vacío</h1>
-        <Link href="/produtos">
-          <Button className="bg-pink-600 hover:bg-pink-700">Volver a la tienda</Button>
-        </Link>
+      <div className="min-h-screen flex justify-center p-6 text-center">
+        <div className="max-w-full sm:max-w-md md:max-w-lg lg:max-w-4xl mx-auto">
+          <h1 className="text-2xl font-bold text-pink-600 mb-4">Tu carrito está vacío</h1>
+          <Link href="/produtos">
+            <Button className="bg-pink-600 hover:bg-pink-700 text-white">Volver a la tienda</Button>
+          </Link>
+        </div>
       </div>
     );
   }
@@ -42,10 +51,15 @@ export default function CheckoutProduto() {
         <CardHeader>
           <CardTitle className="text-pink-600 text-xl">Información de Pago</CardTitle>
         </CardHeader>
-        <LocalRetirada />
+        <LocalRetirada setSelectedPickupLocation={setSelectedPickupLocation} />
       </Card>
       <ResumoPedido cart={cart} />
-      <button className="bg-blue-900 text-white text-sm rounded-lg p-2">
+      <button
+        className={`${
+          isButtonEnabled ? 'bg-blue-900 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'
+        } text-white text-sm rounded-lg p-2`}
+        disabled={!isButtonEnabled}
+      >
         Elegir método de pago
       </button>
     </div>
