@@ -134,7 +134,7 @@ export default function Sidebar() {
                                         title='envio'
                                     >
                                         <FaShippingFast  size={24} />
-                                        <span className='hidden xl:block'>Envio</span>
+                                        <span className='hidden xl:block'>Endereços</span>
                                     </div>
                                 </Link>
                             </li>
