@@ -58,7 +58,7 @@ export default function Galeria() {
 
         try {
             for (const imageName of imagesToDelete) {
-                const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/elegance_image/${imageName}`;
+                const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/elegance/${imageName}`;
                 const { error } = await deleteImage(imageUrl);
                 if (error) {
                     console.error("Erro ao excluir a imagem:", error);
