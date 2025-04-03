@@ -20,7 +20,7 @@ export default function Galeria() {
         async function fetchImages() {
             setLoadingImages(true);
             try {
-                const data: SupabaseImgList = await listImages("elegance_image");
+                const data: SupabaseImgList = await listImages("elegance");
                 setImages(data);
             } catch (error) {
                 console.error("Erro ao buscar as imagens:", error);
@@ -115,7 +115,7 @@ export default function Galeria() {
                         >
                             <Image
                                 className="object-cover w-full h-full rounded-md"
-                                src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/elegance_image/${img.name}`}
+                                src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${img.name}`}
                                 priority
                                 width={300}
                                 height={300}

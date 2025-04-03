@@ -60,10 +60,10 @@ export default function ResumoPedido({ cart }: ResumoPedidoProps) {
                     }).format(subtotal)}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                {/*<div className="flex justify-between">
                   <span>Envío</span>
                   <span className="text-green-600">Gratis</span>
-                </div>
+                </div>*/}
                 <div className="flex justify-between font-bold">
                   <span>Total</span>
                   <span>

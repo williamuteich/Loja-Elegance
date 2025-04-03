@@ -7,9 +7,6 @@ export default withAuth(
   async function middleware(req: NextRequest) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-    const cookieStore = await cookies()
-    const nextAuth = cookieStore.get('next-auth.session-token')
-
     if (req.nextUrl.pathname.startsWith('/dashboard') && (!token?.role || token.role !== 'admin')) {
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
@@ -26,5 +23,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/profile/:path*', '/order/:path*', '/reset-password/:path*'],
+  matcher: ['/dashboard/:path*', '/profile/:path*', '/order/:path*', '/reset-password/:path*', '/checkouts/pagamento/:path*' ,'/unauthorized',],
 };

@@ -1,20 +1,26 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/cartContext";
+import { redirect } from "next/navigation";
+import PaymentSelection from "./component/paymentSelection";
 import ResumoPedido from "../component/resumoPedido";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wallet, CreditCard, Check } from "lucide-react";
-import { redirect } from 'next/navigation'
+import PaymentModal from "./component/paymentModal";
 import CashModal from "./component/cashModal";
+import { CardTitle } from "@/components/ui/card";
 
 export default function CheckoutPagamento() {
   const [pagamento, setPagamento] = useState("");
   const [troco, setTroco] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const { cart } = useCart();
+  const [pagamentoDetalhado, setPagamentoDetalhado] = useState("");
+  
+  // Estado para controlar o novo layout final (após confirmação)
+  const [finalLayout, setFinalLayout] = useState(false);
+  // Estado para armazenar as informações do CashModal
+  const [finalCashInfo, setFinalCashInfo] = useState({ cashInHand: "", change: 0 });
+  const [pickupLocation, setPickupLocation] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -22,6 +28,7 @@ export default function CheckoutPagamento() {
       if (!endereco || endereco === "") {
         redirect("/checkouts");
       }
+      setPickupLocation(endereco || "");
     }
   }, []);
 
@@ -29,74 +36,95 @@ export default function CheckoutPagamento() {
     setModalOpen(pagamento === "dinheiro" || pagamento === "outros");
   }, [pagamento]);
 
+  if (finalLayout) {
+    return (
+      <div className="flex flex-col md:flex-row gap-8 max-w-4xl mx-auto p-6">
+        <div className="flex-1 p-6 border rounded-lg shadow-lg bg-white">
+        <CardTitle className="text-pink-600 text-xl">Confirmar Dados</CardTitle>
+  
+          <div className="space-y-4">
+            <p className="text-lg font-medium text-gray-800">
+              <span className="font-medium">Método de Pagamento: </span>
+              {pagamento === "dinheiro" ? "Dinheiro" : pagamentoDetalhado}
+            </p>
+  
+            {/* Pagamento em dinheiro */}
+            {pagamento === "dinheiro" && finalCashInfo.cashInHand ? (
+              <div className="space-y-4 mt-4">
+                <div className="flex gap-2">
+                  <span className="font-medium">Valor Total: </span>
+                  <span className="font-bold">
+                    {new Intl.NumberFormat("es-UY", {
+                      style: "currency",
+                      currency: "UYU",
+                    }).format(cart.reduce((total, item) => total + item.price * item.quantity, 0))}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-medium">Valor Entregue: </span>
+                  <span className="font-bold">{finalCashInfo.cashInHand}</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-medium">Troco: </span>
+                  <span className="font-bold">
+                    {new Intl.NumberFormat("es-UY", {
+                      style: "currency",
+                      currency: "UYU",
+                    }).format(finalCashInfo.change || 0)}
+                  </span>
+                </div>
+              </div>
+            ) : pagamento === "dinheiro" ? (
+              <p className="mt-4 text-sm text-gray-600">Pagamento em dinheiro sem troco solicitado.</p>
+            ) : null}
+          </div>
+  
+          <div className="mt-6">
+            <p className="text-lg font-medium text-gray-800">
+              <span className="font-semibold">Local de Retirada: </span>
+              {pickupLocation}
+            </p>
+          </div>
+        </div>
+  
+        <div className="flex-1">
+          <ResumoPedido cart={cart} />
+        </div>
+      </div>
+    );
+  }
+  
+  
   return (
     <div className="flex flex-col md:flex-row gap-6 max-w-4xl mx-auto p-6">
       <div className="w-full md:w-1/2">
-        <Card className="mb-6 border border-gray-200 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-pink-600 text-xl font-bold">Forma de Pagamento</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {["dinheiro", "outros"].map((tipo) => (
-                <label
-                  key={tipo}
-                  className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                    pagamento === tipo
-                      ? "border-pink-600 bg-pink-50"
-                      : "border-gray-200 hover:border-pink-200"
-                  }`}
-                  onClick={() => setPagamento(tipo)}
-                >
-                  <div className={`w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center ${
-                    pagamento === tipo ? "border-pink-600 bg-pink-600" : "border-gray-400"
-                  }`}>
-                    {pagamento === tipo && <Check className="w-4 h-4 text-white" />}
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {tipo === "dinheiro" ? <Wallet className="w-6 h-6 text-pink-600" /> : <CreditCard className="w-6 h-6 text-pink-600" />}
-                    <span className="text-lg font-medium">{tipo === "dinheiro" ? "Dinheiro" : "Outras Formas"}</span>
-                  </div>
-                </label>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
+        <PaymentSelection pagamento={pagamento} setPagamento={setPagamento} />
       </div>
-
       <div className="w-full md:w-1/2">
         <ResumoPedido cart={cart} />
       </div>
-
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="rounded-lg max-w-md p-6 bg-white">
-          <DialogHeader>
-            <DialogTitle className="text-pink-600 font-bold text-xl">
-              {pagamento === "dinheiro" ? "Precisa de Troco?" : "Métodos de Pagamento"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 mt-4">
-            {pagamento === "dinheiro" && (
-              <div className="flex gap-4">
-                <Button 
-                  className="w-1/2 bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg"
-                  onClick={() => setTroco("sim")}
-                >
-                  Sim
-                </Button>
-                <Button 
-                  className="w-1/2 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg"
-                  onClick={() => setTroco("nao")}
-                >
-                  Não
-                </Button>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
-      {troco === "sim" && <CashModal isOpen={true} onClose={() => setTroco("")} orderAmount={cart.reduce((total, item) => total + item.price * item.quantity, 0)} products={cart} />}
+      <PaymentModal
+        pagamento={pagamento}
+        setPagamentoDetalhado={setPagamentoDetalhado}
+        setTroco={setTroco}
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        setFinalLayout={setFinalLayout}
+        setFinalCashInfo={setFinalCashInfo}
+      />
+      {troco === "sim" && (
+        <CashModal
+          isOpen={true}
+          onClose={() => setTroco("")}
+          orderAmount={cart.reduce((total, item) => total + item.price * item.quantity, 0)}
+          onConfirm={(info) => {
+            setFinalCashInfo(info);
+            setFinalLayout(true);
+            setModalOpen(false);
+            setTroco("");
+          }}
+        />
+      )}
     </div>
   );
 }
