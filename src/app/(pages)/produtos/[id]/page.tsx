@@ -26,7 +26,7 @@ export default async function ProdutoSlug({
   }
 
   const { produtos } = await response.json();
-  const availableStock = produtos.availableStock;
+  const availableStock = produtos.availableStock && produtos.active;
   const categorias = produtos.categories.map((prodctCategory: Produto) => prodctCategory);
 
   return (

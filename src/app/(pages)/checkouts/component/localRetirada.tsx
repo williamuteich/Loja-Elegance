@@ -8,12 +8,12 @@ interface LocalRetiradaProps {
 }
 
 export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetiradaProps) {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null); // Armazenando o nome, não o ID
+  const [selectedOption, setSelectedOption] = useState<string | null>(null); 
   const [pickupLocations, setPickupLocations] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Recupera o nome salvo no localStorage quando o componente é carregado
+
     const savedOption = localStorage.getItem("selectedPickupLocation");
     if (savedOption) {
       setSelectedOption(savedOption);
@@ -36,7 +36,7 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
 
   useEffect(() => {
     if (selectedOption) {
-      localStorage.setItem("selectedPickupLocation", selectedOption); // Salvando o nome no localStorage
+      localStorage.setItem("selectedPickupLocation", selectedOption); 
     }
 
     setSelectedPickupLocation(selectedOption);
@@ -72,9 +72,9 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
               >
                 <Checkbox
                   id={location.id}
-                  checked={selectedOption === location.title} // Compara o nome, não o id
+                  checked={selectedOption === location.title} 
                   onCheckedChange={(checked) => {
-                    setSelectedOption(checked ? location.title : null); // Salvando o nome
+                    setSelectedOption(checked ? location.title : null); 
                   }}
                   className="mt-1 w-4 h-4 border-2 border-gray-300 rounded-lg checked:bg-pink-600 checked:border-pink-600"
                 />
@@ -111,9 +111,9 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
                 >
                   <Checkbox
                     id={location.id}
-                    checked={selectedOption === location.title} // Compara o nome, não o id
+                    checked={selectedOption === location.title}
                     onCheckedChange={(checked) => {
-                      setSelectedOption(checked ? location.title : null); // Salvando o nome
+                      setSelectedOption(checked ? location.title : null); 
                     }}
                     className="mt-1 w-4 h-4 border-2 border-gray-300 rounded-lg checked:bg-pink-600 checked:border-pink-600"
                   />

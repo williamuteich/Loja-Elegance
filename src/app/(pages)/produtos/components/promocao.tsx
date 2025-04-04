@@ -17,7 +17,8 @@ export function Promocao({ produtos }: ProdutoProps) {
     produto.onSale &&
     produto.availableStock! > 0 &&
     produto.priceOld &&
-    produto.price < produto.priceOld
+    produto.price < produto.priceOld && 
+    produto.active 
   );
 
   return (

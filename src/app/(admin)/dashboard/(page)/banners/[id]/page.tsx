@@ -44,7 +44,7 @@ export default function BannerEdit({ params }: { params: Promise<{ id: string }>
     if (primaryImage) {
       const { imageUrl: uploadedPrimaryImageUrl, error } = await uploadImage({
         file: primaryImage,
-        bucket: "elegance",
+        bucket: "elegance_image",
       });
       if (!error) uploadedImageUrls.push(uploadedPrimaryImageUrl);
     } else if (banner.imageUrl) {

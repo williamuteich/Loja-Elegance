@@ -13,7 +13,7 @@ export default async function ListAllProdutos() {
 
     const { produtos }: { produtos: Produto[] } = await response.json();
 
-    const produtosAleatorios = produtos.sort(() => Math.random() - 0.5).filter(produto => produto.availableStock! > 0);
+    const produtosAleatorios = produtos.sort(() => Math.random() - 0.5).filter(produto => produto.availableStock! > 0 && produto.active);
 
     return (
         <div className="mx-auto py-10 sm:px-0">

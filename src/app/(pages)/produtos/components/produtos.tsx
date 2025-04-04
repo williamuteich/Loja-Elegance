@@ -49,8 +49,8 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
 
   } else {
     produtosFiltrados = isDestaque
-      ? produtos.filter((produto: Produto) => produto.destaque === true && produto.availableStock! > 0)
-      : produtos.filter((produto: Produto) => produto.availableStock! > 0);
+      ? produtos.filter((produto: Produto) => produto.destaque === true && produto.availableStock! > 0 && produto.active)
+      : produtos.filter((produto: Produto) => produto.availableStock! > 0 && produto.active);
   }
 
   return (
