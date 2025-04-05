@@ -44,14 +44,14 @@ export default function BannerEdit({ params }: { params: Promise<{ id: string }>
     if (primaryImage) {
       const { imageUrl: uploadedPrimaryImageUrl, error } = await uploadImage({
         file: primaryImage,
-        bucket: "elegance_image",
+        bucket: "elegance",
       });
       if (!error) uploadedImageUrls.push(uploadedPrimaryImageUrl);
     } else if (banner.imageUrl) {
       uploadedImageUrls.push(banner.imageUrl);
     }
 
-    const alt = event.target.alt.value; // Campo 'alt' em vez de 'time'
+    const alt = event.target.alt.value; 
     const active = event.target.status.value === "true";
     const link = event.target.link.value;
 
