@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -9,34 +9,50 @@ export async function GET(request: Request) {
         const search = url.searchParams.get('search');
         const page = url.searchParams.get('page') ? parseInt(url.searchParams.get('page')!, 10) : 1;
         const pageSize = 10;
+        const fetchAll = url.searchParams.get("fetchAll") === "true";
 
-        const skip = (page - 1) * pageSize;
+        const where: Prisma.BrandWhereInput = search
+            ? {
+                OR: [
+                    { 
+                        name: { 
+                            contains: search,
+                            mode: 'insensitive' as Prisma.QueryMode
+                        }
+                    },
+                    { 
+                        description: { 
+                            contains: search,
+                            mode: 'insensitive' as Prisma.QueryMode
+                        }
+                    }
+                ]
+            }
+            : {};
 
-        const brands = await prisma.brand.findMany({
-            skip,
-            take: pageSize,
-            where: search
-                ? {
-                    OR: [
-                        { name: { contains: search, mode: 'insensitive' } },
-                        { description: { contains: search, mode: 'insensitive' } }
-                    ]
-                }
-                : {},
-        });
+        let brands;
+        
+        if (fetchAll) {
+            brands = await prisma.brand.findMany({
+                where,
+                orderBy: { createdAt: 'desc' }
+            });
+        } else {
+            const skip = (page - 1) * pageSize;
+            brands = await prisma.brand.findMany({
+                where,
+                skip,
+                take: pageSize,
+            });
+        }
 
-        const totalRecords = await prisma.brand.count({
-            where: search
-                ? {
-                    OR: [
-                        { name: { contains: search, mode: 'insensitive' } },
-                        { description: { contains: search, mode: 'insensitive' } }
-                    ]
-                }
-                : {},
-        });
+        const totalRecords = await prisma.brand.count({ where });
 
-        return NextResponse.json({ marcas: brands, totalRecords }, { status: 200 });
+        return NextResponse.json({ 
+            marcas: brands,
+            totalRecords: fetchAll ? brands.length : totalRecords
+        }, { status: 200 });
+
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: 'Failed to fetch brands' }, { status: 500 });

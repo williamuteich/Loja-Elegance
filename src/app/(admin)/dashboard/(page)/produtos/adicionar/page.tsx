@@ -23,8 +23,8 @@ export default function AdicionarProduto() {
     async function fetchData() {
       try {
         const [brandsRes, categoriesRes] = await Promise.all([
-          fetch("http://localhost:3000/api/brand"),
-          fetch("http://localhost:3000/api/category"),
+          fetch("http://localhost:3000/api/brand?fetchAll=true"),
+          fetch("http://localhost:3000/api/category?fetchAll=true"),
         ]);
         const [brandsData, categoriesData] = await Promise.all([
           brandsRes.json(),
@@ -38,6 +38,7 @@ export default function AdicionarProduto() {
     }
     fetchData();
   }, []);
+  console.log("Marcas", marcas.length);
 
   const handleCategoryChange = (selected: any) => setSelectedCategories(selected);
   const handlePrimaryImageSelection = (file: File) => setPrimaryImage(file);
@@ -52,7 +53,7 @@ export default function AdicionarProduto() {
     if (primaryImage) {
       const { imageUrl: uploadedPrimaryImageUrl, error } = await uploadImage({
         file: primaryImage,
-        bucket: "elegance_image",
+        bucket: "elegance",
       });
       if (!error) uploadedImageUrls.push(uploadedPrimaryImageUrl);
     }
@@ -60,7 +61,7 @@ export default function AdicionarProduto() {
     for (const image of secondaryImages) {
       const { imageUrl: uploadedImageUrl, error } = await uploadImage({
         file: image,
-        bucket: "elegance_image",
+        bucket: "elegance",
       });
       if (!error) uploadedImageUrls.push(uploadedImageUrl);
     }
