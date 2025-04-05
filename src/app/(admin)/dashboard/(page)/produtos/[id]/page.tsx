@@ -64,7 +64,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
     if (primaryImage) {
       const { imageUrl: uploadedPrimaryImageUrl, error } = await uploadImage({
         file: primaryImage,
-        bucket: "elegance",
+        bucket: "elegance_image",
       });
       if (!error) uploadedImageUrls.push(uploadedPrimaryImageUrl);
     } else if (produto.imagePrimary) {
@@ -74,7 +74,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
     for (const image of secondaryImages) {
       const { imageUrl: uploadedImageUrl, error } = await uploadImage({
         file: image,
-        bucket: "elegance",
+        bucket: "elegance_image",
       });
       if (!error) uploadedImageUrls.push(uploadedImageUrl);
     }

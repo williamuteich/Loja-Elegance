@@ -4,19 +4,28 @@ import { useState, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface LocalRetiradaProps {
-  setSelectedPickupLocation: (location: string | null) => void;
+  setSelectedPickupLocation: (location: { id: string; title: string } | null) => void;
+}
+
+interface SelectedPickupLocation {
+  id: string;
+  title: string;
 }
 
 export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetiradaProps) {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null); 
+  const [selectedOption, setSelectedOption] = useState<SelectedPickupLocation | null>(null);
   const [pickupLocations, setPickupLocations] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-
-    const savedOption = localStorage.getItem("selectedPickupLocation");
-    if (savedOption) {
-      setSelectedOption(savedOption);
+    const savedOptionStr = localStorage.getItem("selectedPickupLocation");
+    if (savedOptionStr) {
+      try {
+        const savedOption: SelectedPickupLocation = JSON.parse(savedOptionStr);
+        setSelectedOption(savedOption);
+      } catch (error) {
+        console.error("Erro ao parsear selectedPickupLocation", error);
+      }
     }
 
     const fetchPickupLocations = async () => {
@@ -36,9 +45,10 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
 
   useEffect(() => {
     if (selectedOption) {
-      localStorage.setItem("selectedPickupLocation", selectedOption); 
+      localStorage.setItem("selectedPickupLocation", JSON.stringify(selectedOption));
+    } else {
+      localStorage.removeItem("selectedPickupLocation");
     }
-
     setSelectedPickupLocation(selectedOption);
   }, [selectedOption, setSelectedPickupLocation]);
 
@@ -46,7 +56,7 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
     return (
       <div className="px-4 sm:px-6 pb-4 flex flex-col gap-4 max-w-3xl mx-auto">
         <div className="text-center py-8">
-          <h2 className="text-lg font-semibold text-gray-600">Cargando opciones...</h2>
+          <h2 className="text-lg font-semibold text-gray-600">Cargando opções...</h2>
         </div>
       </div>
     );
@@ -59,22 +69,23 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
           <h2 className="text-xl font-semibold text-gray-900 border-b pb-3 mb-2">
             Retiro en tienda
           </h2>
-
           {pickupLocations
             .filter((loc) => loc.category === "Retiro en tienda")
             .map((location) => (
               <div
                 key={location.id}
                 className={`flex items-start space-x-2 p-2 rounded-lg transition-colors
-                  ${selectedOption === location.title
-                    ? 'bg-pink-50 border border-pink-200'
-                    : 'hover:bg-gray-50'}`}
+                  ${
+                    selectedOption && selectedOption.id === location.id
+                      ? "bg-pink-50 border border-pink-200"
+                      : "hover:bg-gray-50"
+                  }`}
               >
                 <Checkbox
                   id={location.id}
-                  checked={selectedOption === location.title} 
+                  checked={selectedOption ? selectedOption.id === location.id : false}
                   onCheckedChange={(checked) => {
-                    setSelectedOption(checked ? location.title : null); 
+                    setSelectedOption(checked ? { id: location.id, title: location.title } : null);
                   }}
                   className="mt-1 w-4 h-4 border-2 border-gray-300 rounded-lg checked:bg-pink-600 checked:border-pink-600"
                 />
@@ -82,7 +93,7 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
                   htmlFor={location.id}
                   className="flex-1 text-base leading-tight text-gray-800 font-bold cursor-pointer"
                 >
-                  {location.title} 
+                  {location.title}
                   <span className="block mt-1 text-sm text-gray-500 font-normal">
                     {location.description}
                   </span>
@@ -97,7 +108,6 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
           <h2 className="text-xl font-semibold text-gray-900 border-b pb-3 mb-2">
             Selecciona una opción de entrega
           </h2>
-
           <div className="space-y-3 max-h-[205px] overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
             {pickupLocations
               .filter((loc) => loc.category === "Otras opciones")
@@ -105,15 +115,17 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
                 <div
                   key={location.id}
                   className={`flex items-start space-x-3 p-1 rounded-lg transition-colors
-                    ${selectedOption === location.title
-                      ? 'bg-pink-50 border border-pink-200'
-                      : 'hover:bg-gray-50'}`}
+                    ${
+                      selectedOption && selectedOption.id === location.id
+                        ? "bg-pink-50 border border-pink-200"
+                        : "hover:bg-gray-50"
+                    }`}
                 >
                   <Checkbox
                     id={location.id}
-                    checked={selectedOption === location.title}
+                    checked={selectedOption ? selectedOption.id === location.id : false}
                     onCheckedChange={(checked) => {
-                      setSelectedOption(checked ? location.title : null); 
+                      setSelectedOption(checked ? { id: location.id, title: location.title } : null);
                     }}
                     className="mt-1 w-4 h-4 border-2 border-gray-300 rounded-lg checked:bg-pink-600 checked:border-pink-600"
                   />
@@ -121,7 +133,7 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
                     htmlFor={location.id}
                     className="flex-1 text-base leading-tight text-gray-800 font-bold cursor-pointer"
                   >
-                    {location.title} 
+                    {location.title}
                     <span className="block mt-1 text-sm text-gray-500 font-normal">
                       {location.description}
                     </span>

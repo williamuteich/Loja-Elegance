@@ -41,18 +41,31 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addToCart = (produto: Produto) => {
     const existingItem = cart.find(item => item.id === produto.id);
+  
+    const maxQuantity = produto.availableStock ?? produto.stock?.quantity ?? 0;
+  
     if (existingItem) {
+      if (existingItem.quantity >= maxQuantity) {
+        toast.warning("Quantidade máxima disponível atingida.");
+        return;
+      }
+  
       const updatedCart = cart.map(item =>
         item.id === produto.id ? { ...item, quantity: item.quantity + 1 } : item
       );
       setCart(updatedCart);
       updateLocalStorage(updatedCart);
     } else {
+      if (maxQuantity <= 0) {
+        toast.warning("Produto esgotado.");
+        return;
+      }
+  
       const newCart = [...cart, { ...produto, quantity: 1 }];
       setCart(newCart);
       updateLocalStorage(newCart);
     }
-
+  
     setCartOpen(true);
   };
 

@@ -26,7 +26,8 @@ export default async function ProdutoSlug({
   }
 
   const { produtos } = await response.json();
-  const availableStock = produtos.availableStock && produtos.active;
+  const availableStock = produtos.availableStock;
+  const isActive = produtos.active;
   const categorias = produtos.categories.map((prodctCategory: Produto) => prodctCategory);
 
   return (
@@ -35,18 +36,18 @@ export default async function ProdutoSlug({
         <div className="bg-white w-full">
           <div className="lg:flex lg:flex-row flex-col gap-4">
             <ViewImages produtos={produtos} />
-            
+
             <div className="lg:w-96 w-full p-4 space-y-6 border border-gray-300 rounded-lg">
               <div className="w-full">
                 <h2 className="text-xl uppercase font-extrabold text-pink-700 mb-4">
                   {produtos.name}
                 </h2>
-                
+
                 <div className="flex gap-1 flex-wrap mb-1">
                   <p className="text-3xl text-pink-700 font-bold">
-                    {new Intl.NumberFormat("es-UY", { 
-                      style: "currency", 
-                      currency: "UYU" 
+                    {new Intl.NumberFormat("es-UY", {
+                      style: "currency",
+                      currency: "UYU"
                     }).format(produtos.price)}
                   </p>
                   {produtos.priceOld && (
@@ -67,7 +68,7 @@ export default async function ProdutoSlug({
                     <div className="flex items-center gap-2 bg-gray-100 p-3 rounded shadow-sm">
                       <FaBox size={20} className="text-pink-700" />
                       <p className="text-md font-bold text-pink-700">
-                        {availableStock > 0 
+                        {isActive && availableStock > 0
                           ? `${availableStock} ${availableStock > 1 ? 'Disponíveis' : 'Disponível'}`
                           : 'Indisponível'}
                       </p>
@@ -129,11 +130,11 @@ export default async function ProdutoSlug({
             </div>
           </div>
 
-          <Produtos 
-            titulo="Produtos Relacionados" 
-            isDestaque={false} 
-            categoriaProduct={categorias} 
-            produtos={[]} 
+          <Produtos
+            titulo="Produtos Relacionados"
+            isDestaque={false}
+            categoriaProduct={categorias}
+            produtos={[]}
           />
         </div>
       </div>

@@ -66,9 +66,9 @@ export default function CheckoutHeader() {
                       <h2 className="text-sm font-semibold text-pink-800">{item.name}</h2>
                       <p className="text-xs text-gray-700">Cantidad: {item.quantity}</p>
                       <p className="font-semibold text-sm mt-2">
-                        {new Intl.NumberFormat("es-UY", {
+                        {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
-                          currency: "UYU",
+                          currency: "BRL",
                         }).format(item.price * item.quantity)}
                       </p>
                     </Link>
@@ -119,9 +119,9 @@ export default function CheckoutHeader() {
               <div className="flex justify-between">
                 <p className="text-sm">Subtotal</p>
                 <p className="font-semibold text-sm">
-                  {new Intl.NumberFormat("es-UY", {
+                  {new Intl.NumberFormat("pt-BR", {
                     style: "currency",
-                    currency: "UYU",
+                    currency: "BRL",
                   }).format(subtotal)}
                 </p>
               </div>
@@ -132,21 +132,46 @@ export default function CheckoutHeader() {
               <div className="flex justify-between font-semibold text-base">
                 <p>Total</p>
                 <p>
-                  {new Intl.NumberFormat("es-UY", {
+                  {new Intl.NumberFormat("pt-BR", {
                     style: "currency",
-                    currency: "UYU",
+                    currency: "BRL",
                   }).format(subtotal)}
                 </p>
               </div>
             </div>
-            <Link href={`/checkouts`} >
-              <Button
-                className="w-full mt-4 py-2 bg-pink-700 text-white font-semibold text-sm text-center rounded-md hover:bg-pink-600"
-                onClick={() => setCartOpen(false)}
-              >
-                Confirmar Compra
-              </Button>
-            </Link>
+            {session ? (
+              <Link href={`/checkouts`} >
+                <Button
+                  className="w-full mt-4 py-2 bg-pink-700 text-white font-semibold text-sm text-center rounded-md hover:bg-pink-600"
+                  onClick={() => setCartOpen(false)}
+                >
+                  Confirmar Compra
+                </Button>
+              </Link>
+            ) : (
+              <div>
+                <p className="text-center text-sm text-red-500 font-semibold mb-4">
+                  Para completar tu compra, necesitas <strong>iniciar sesión</strong> o <strong>crear una cuenta</strong>.
+                </p>
+
+                <Link href={`/login`} >
+                  <Button
+                    className="w-full mt-1 py-2 bg-pink-700 text-white font-semibold text-sm text-center rounded-md hover:bg-pink-600"
+                    onClick={() => setCartOpen(false)}
+                  >
+                    Iniciar Sesión
+                  </Button>
+                </Link>
+                <Link href={`/cadastro`}>
+                  <Button
+                    className="w-full mt-1 py-2 bg-green-600 text-white font-semibold text-sm text-center rounded-md hover:bg-green-500"
+                    onClick={() => setCartOpen(false)}
+                  >
+                    Crear Cuenta
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </SheetContent>

@@ -46,7 +46,7 @@ export default function AdicionarBanner() {
 
           const { imageUrl, error } = await uploadImage({
             file: banner.imageFile,
-            bucket: "elegance",
+            bucket: "elegance_image",
           });
 
           if (error) {

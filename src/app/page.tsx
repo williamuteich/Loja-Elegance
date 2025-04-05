@@ -14,7 +14,7 @@ export default async function Home() {
       <Banners/>
       <Promocao produtos={res.produtos} /> 
       <Container >
-        <Produtos produtos={res.produtos} titulo="Produtos Destaques" isDestaque={true}/>
+        <Produtos produtos={res.produtos} titulo="Productos Destacados" isDestaque={true}/>
         <BannerHome />
         <ListAllProdutos />
       </Container>

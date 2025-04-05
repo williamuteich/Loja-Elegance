@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useCart } from "@/context/cartContext";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import PaymentSelection from "./component/paymentSelection";
 import ResumoPedido from "../component/resumoPedido";
 import PaymentModal from "./component/paymentModal";
@@ -27,8 +28,16 @@ export default function CheckoutPagamento() {
       const endereco = localStorage.getItem("selectedPickupLocation");
       if (!endereco || endereco === "") {
         redirect("/checkouts");
+      } else {
+        try {
+          // Tenta fazer o parse do JSON para extrair apenas o title
+          const parsed = JSON.parse(endereco);
+          setPickupLocation(parsed.title);
+        } catch (error) {
+          // Caso não seja um JSON, utiliza o valor como está
+          setPickupLocation(endereco);
+        }
       }
-      setPickupLocation(endereco || "");
     }
   }, []);
 
@@ -40,33 +49,33 @@ export default function CheckoutPagamento() {
     return (
       <div className="flex flex-col md:flex-row gap-8 max-w-4xl mx-auto p-6">
         <div className="flex-1 p-6 border rounded-lg shadow-lg bg-white">
-        <CardTitle className="text-pink-600 text-xl">Confirmar Dados</CardTitle>
+          <CardTitle className="text-pink-600 text-2xl mb-4">Confirmar Dados</CardTitle>
   
           <div className="space-y-4">
-            <p className="text-lg font-medium text-gray-800">
-              <span className="font-medium">Método de Pagamento: </span>
+            <p className="text-xl font-semibold text-indigo-700">
+              <span className="font-bold">Método de Pagamento: </span>
               {pagamento === "dinheiro" ? "Dinheiro" : pagamentoDetalhado}
             </p>
   
             {/* Pagamento em dinheiro */}
             {pagamento === "dinheiro" && finalCashInfo.cashInHand ? (
-              <div className="space-y-4 mt-4">
-                <div className="flex gap-2">
-                  <span className="font-medium">Valor Total: </span>
-                  <span className="font-bold">
+              <div className="space-y-3 mt-4">
+                <div className="flex justify-between">
+                  <span className="text-lg font-medium text-gray-700">Valor Total:</span>
+                  <span className="text-lg font-bold text-gray-900">
                     {new Intl.NumberFormat("es-UY", {
                       style: "currency",
                       currency: "UYU",
                     }).format(cart.reduce((total, item) => total + item.price * item.quantity, 0))}
                   </span>
                 </div>
-                <div className="flex gap-2">
-                  <span className="font-medium">Valor Entregue: </span>
-                  <span className="font-bold">{finalCashInfo.cashInHand}</span>
+                <div className="flex justify-between">
+                  <span className="text-lg font-medium text-gray-700">Valor Entregue:</span>
+                  <span className="text-lg font-bold text-gray-900">{finalCashInfo.cashInHand}</span>
                 </div>
-                <div className="flex gap-2">
-                  <span className="font-medium">Troco: </span>
-                  <span className="font-bold">
+                <div className="flex justify-between">
+                  <span className="text-lg font-medium text-gray-700">Troco:</span>
+                  <span className="text-lg font-bold text-gray-900">
                     {new Intl.NumberFormat("es-UY", {
                       style: "currency",
                       currency: "UYU",
@@ -75,15 +84,31 @@ export default function CheckoutPagamento() {
                 </div>
               </div>
             ) : pagamento === "dinheiro" ? (
-              <p className="mt-4 text-sm text-gray-600">Pagamento em dinheiro sem troco solicitado.</p>
+              <p className="mt-2 text-sm text-gray-600">Pagamento em dinheiro sem troco solicitado.</p>
             ) : null}
           </div>
   
           <div className="mt-6">
-            <p className="text-lg font-medium text-gray-800">
-              <span className="font-semibold">Local de Retirada: </span>
+            <p className="text-xl font-semibold text-indigo-700">
+              <span className="font-bold">Local de Retirada: </span>
               {pickupLocation}
             </p>
+          </div>
+
+          <div className="mt-6 flex gap-4">
+            <Link href="/checkouts">
+              <button className="bg-gray-700 hover:bg-gray-800 transition text-white py-2 px-4 rounded shadow">
+                Ajustar Pedido
+              </button>
+            </Link>
+            <button
+              className="bg-green-700 hover:bg-green-800 transition text-white py-2 px-4 rounded shadow"
+              onClick={() => {
+                console.log("Pedido confirmado");
+              }}
+            >
+              Confirmar Pedido
+            </button>
           </div>
         </div>
   
@@ -93,7 +118,6 @@ export default function CheckoutPagamento() {
       </div>
     );
   }
-  
   
   return (
     <div className="flex flex-col md:flex-row gap-6 max-w-4xl mx-auto p-6">

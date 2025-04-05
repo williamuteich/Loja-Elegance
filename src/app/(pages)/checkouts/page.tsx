@@ -51,7 +51,11 @@ export default function CheckoutProduto() {
         <CardHeader>
           <CardTitle className="text-pink-600 text-xl">Información de Pago</CardTitle>
         </CardHeader>
-        <LocalRetirada setSelectedPickupLocation={setSelectedPickupLocation} />
+        <LocalRetirada
+          setSelectedPickupLocation={(location) =>
+            setSelectedPickupLocation(location ? location.id : null)
+          }
+        />
       </Card>
       <ResumoPedido cart={cart} />
       <Link

@@ -52,7 +52,7 @@ export default function AdicionarProduto() {
     if (primaryImage) {
       const { imageUrl: uploadedPrimaryImageUrl, error } = await uploadImage({
         file: primaryImage,
-        bucket: "elegance",
+        bucket: "elegance_image",
       });
       if (!error) uploadedImageUrls.push(uploadedPrimaryImageUrl);
     }
@@ -60,7 +60,7 @@ export default function AdicionarProduto() {
     for (const image of secondaryImages) {
       const { imageUrl: uploadedImageUrl, error } = await uploadImage({
         file: image,
-        bucket: "elegance",
+        bucket: "elegance_image",
       });
       if (!error) uploadedImageUrls.push(uploadedImageUrl);
     }

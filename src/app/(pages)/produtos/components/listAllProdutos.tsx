@@ -18,7 +18,7 @@ export default async function ListAllProdutos() {
     return (
         <div className="mx-auto py-10 sm:px-0">
             <h2 className="text-2xl relative uppercase font-extrabold text-pink-700 mb-6 text-start">
-                Nossos Produtos
+                Nuestros Productos
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {produtosAleatorios.length > 0 ? (
