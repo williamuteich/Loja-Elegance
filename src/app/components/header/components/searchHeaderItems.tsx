@@ -44,7 +44,7 @@ export default function SearchHeaderItems() {
       params.set("search", searchString);
 
       const response = await fetch(
-        `http://localhost:3000/api/product?${searchString ? `search=${searchString}&` : ""}`
+        `/api/product?${searchString ? `search=${searchString}&` : ""}`
       );
 
       if (!response.ok) {

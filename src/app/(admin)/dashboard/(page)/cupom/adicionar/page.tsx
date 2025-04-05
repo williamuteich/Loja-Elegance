@@ -23,7 +23,7 @@ export default function AdicionarCupom() {
    // useEffect(() => {
    //     async function fetchData() {
    //         try {
-   //             const categoriesRes = await fetch("http://localhost:3000/api/category");
+   //             const categoriesRes = await fetch("/api/category");
    //             const categoriesData = await categoriesRes.json();
    //             setCategorias(categoriesData.category);
    //         } catch (error) {
@@ -50,7 +50,7 @@ export default function AdicionarCupom() {
             active: form.get("active"),
         };
 
-        const response = await fetch("http://localhost:3000/api/cupom", {
+        const response = await fetch("/api/cupom", {
             method: "POST",
             body: JSON.stringify(data),
             headers: {

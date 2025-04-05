@@ -23,8 +23,8 @@ export default function AdicionarProduto() {
     async function fetchData() {
       try {
         const [brandsRes, categoriesRes] = await Promise.all([
-          fetch("http://localhost:3000/api/brand?fetchAll=true"),
-          fetch("http://localhost:3000/api/category?fetchAll=true"),
+          fetch("/api/brand?fetchAll=true"),
+          fetch("/api/category?fetchAll=true"),
         ]);
         const [brandsData, categoriesData] = await Promise.all([
           brandsRes.json(),
@@ -79,7 +79,7 @@ export default function AdicionarProduto() {
     const categoryIds = selectedCategories.map((category: any) => category.value);
 
     try {
-      const response = await fetch("http://localhost:3000/api/product", {
+      const response = await fetch("/api/product", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

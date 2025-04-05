@@ -21,7 +21,7 @@ export default function Contato() {
         setLoading(true);
 
         try {
-            const response = await fetch(`http://localhost:3000/api/formContact`, {
+            const response = await fetch(`/api/formContact`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

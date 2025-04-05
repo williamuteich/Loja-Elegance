@@ -36,8 +36,8 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
     setProduto(productData.produtos);
 
     const [brandsRes, categoriesRes] = await Promise.all([
-      fetch("/api/brand"),
-      fetch("/api/category"),
+      fetch("/api/brand?fetchAll=true"),
+      fetch("/api/category?fetchAll=true"),
     ]);
     const [brandsData, categoriesData] = await Promise.all([
       brandsRes.json(),
@@ -151,7 +151,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
       </Link>
       <h2 className="text-4xl font-semibold mt-8 mb-6 text-gray-900">Editar Produto</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2 w-1/6">
+        <div className="space-y-2" style={{ width: "300px" }}>
           <label htmlFor="primaryImage" className="block text-lg font-medium text-gray-700">
             Imagem Principal
           </label>
@@ -161,10 +161,11 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
                 <Image
                   src={primaryImage ? URL.createObjectURL(primaryImage) : imagePrimaryUrl}
                   alt="Imagem do Produto"
-                  width={400}
-                  height={400}
+                  width={300}
+                  height={300}
                   priority
                   className="object-cover rounded-lg"
+                  style={{ minWidth: 250, minHeight: 250, maxWidth: 300, maxHeight: 300 }}
                 />
                 <button
                   type="button"
@@ -294,10 +295,11 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
                   <Image
                     src={url}
                     alt={`Imagem Secundária ${index + 1}`}
-                    width={100}
-                    height={100}
+                    width={300}
+                    height={300}
                     priority={false}
                     className="object-cover rounded-lg"
+                    style={{ minWidth: 250, minHeight: 250, maxWidth: 300, maxHeight: 300 }}
                   />
                   <button
                     type="button"

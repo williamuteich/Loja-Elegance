@@ -10,7 +10,7 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
   let produtosFiltrados = produtos;
 
   if (categoriaProduct) {
-    const response = await fetch("http://localhost:3000/api/product?fetchAll=true");
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?fetchAll=true`);
 
     if (!response.ok) {
       throw new Error("Erro ao buscar produtos");

@@ -41,7 +41,7 @@ export default function ProdutosGerais() {
   React.useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const categoriesRes = await fetch("http://localhost:3000/api/category");
+        const categoriesRes = await fetch("/api/category");
         const categoriesData = await categoriesRes.json();
         setCategorias(categoriesData.category);
       } catch (error) {
