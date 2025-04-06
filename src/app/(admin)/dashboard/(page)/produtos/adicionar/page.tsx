@@ -17,7 +17,7 @@ export default function AdicionarProduto() {
   const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
   const [primaryImage, setPrimaryImage] = useState<File | null>(null);
   const [secondaryImages, setSecondaryImages] = useState<File[]>([]);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -46,7 +46,7 @@ export default function AdicionarProduto() {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    setIsLoading(true); 
+    setIsLoading(true);
 
     const uploadedImageUrls: string[] = [];
 
@@ -105,7 +105,7 @@ export default function AdicionarProduto() {
         autoClose: 3000,
       });
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
@@ -129,9 +129,8 @@ export default function AdicionarProduto() {
                 <img
                   src={URL.createObjectURL(primaryImage)}
                   alt="Imagem do Produto"
-                  width={400}
-                  height={400}
-                  className="object-cover rounded-lg"
+                  className="object-contain rounded-lg"
+                  style={{ maxWidth: 300, maxHeight: 300 }}
                 />
                 <button
                   type="button"

@@ -64,15 +64,16 @@ const UploadImage: React.FC<UploadImageProps> = ({ onImagesSelected, limit = Inf
           <div key={index} className="relative w-45 h-45">
             <Image
               src={url}
-              width={200}
-              height={200}
               alt={`img-${index}`}
-              className="rounded-lg object-cover"
+              className="max-w-[300px] max-h-[300px] object-contain rounded-lg"
+              style={{ maxWidth: 300, maxHeight: 300 }}
+              width={300}
+              height={300}
             />
             <button
               onClick={(e) => {
-                e.preventDefault();  
-                handleRemoveImage(index); 
+                e.preventDefault();
+                handleRemoveImage(index);
               }}
               className="absolute text-xs top-0 right-0 bg-red-700 text-white px-2 py-1 rounded-full"
             >

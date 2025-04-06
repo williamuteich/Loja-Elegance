@@ -14,7 +14,6 @@ import UploadImage from "@/app/components/upload-Image/uploadImage";
 import Image from "next/image";
 
 export default function EditarProduto({ params }: { params: Promise<{ id: string }> }) {
-
   const [produto, setProduto] = useState<any>(null);
   const [marcas, setMarcas] = useState<any[]>([]);
   const [categorias, setCategorias] = useState<any[]>([]);
@@ -55,32 +54,38 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
   const handlePrimaryImageSelection = (file: File) => setPrimaryImage(file);
   const handleSecondaryImageSelection = (files: File[]) => setSecondaryImages(files);
 
+  const handleRemoveSecondaryImage = (url: string) => {
+    const updatedImages = produto.imagesSecondary.filter((img: string) => img !== url);
+    setProduto((prevProduto: any) => ({
+      ...prevProduto,
+      imagesSecondary: updatedImages,
+    }));
+  };
+
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     setIsLoading(true);
 
-    const uploadedImageUrls: string[] = [];
+    let uploadedPrimaryImageUrl = produto.imagePrimary;
 
     if (primaryImage) {
-      const { imageUrl: uploadedPrimaryImageUrl, error } = await uploadImage({
+      const { imageUrl, error } = await uploadImage({
         file: primaryImage,
         bucket: "elegance",
       });
-      if (!error) uploadedImageUrls.push(uploadedPrimaryImageUrl);
-    } else if (produto.imagePrimary) {
-      uploadedImageUrls.push(produto.imagePrimary);
+      if (!error) {
+        uploadedPrimaryImageUrl = imageUrl;
+      }
     }
 
     for (const image of secondaryImages) {
-      const { imageUrl: uploadedImageUrl, error } = await uploadImage({
+      const { imageUrl, error } = await uploadImage({
         file: image,
         bucket: "elegance",
       });
-      if (!error) uploadedImageUrls.push(uploadedImageUrl);
+      if (!error) produto.imagesSecondary.push(imageUrl);
     }
-    
-    const allSecondaryImages = [...produto.imagesSecondary, ...uploadedImageUrls];
-    
+
     const name = event.target.name.value;
     const description = event.target.description.value;
     const features = event.target.features.value;
@@ -110,8 +115,8 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
           brandId,
           categoryIds,
           quantity,
-          uploadedImageUrls,
-          imagesSecondary: allSecondaryImages,  
+          imagePrimary: uploadedPrimaryImageUrl,
+          imagesSecondary: produto.imagesSecondary,
         }),
       });
 
@@ -150,69 +155,94 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
         </Button>
       </Link>
       <h2 className="text-4xl font-semibold mt-8 mb-6 text-gray-900">Editar Produto</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
+
+      <div className="space-y-6 mb-8">
         <div className="space-y-2" style={{ width: "300px" }}>
-          <label htmlFor="primaryImage" className="block text-lg font-medium text-gray-700">
-            Imagem Principal
-          </label>
-          <div>
-            {primaryImage || imagePrimaryUrl ? (
-              <div className="flex flex-col items-center">
+          <label className="block text-lg font-medium text-gray-700">Imagem Principal</label>
+          {primaryImage || imagePrimaryUrl ? (
+            <div className="flex flex-col items-center">
+              <Image
+                src={primaryImage ? URL.createObjectURL(primaryImage) : imagePrimaryUrl}
+                alt="Imagem do Produto"
+                width={270}
+                height={270}
+                priority
+                className="object-contain rounded-lg"
+                style={{ maxWidth: 300, maxHeight: 300 }}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setPrimaryImage(null);
+                  setProduto((prevProduto: any) => ({
+                    ...prevProduto,
+                    imagePrimary: '',
+                  }));
+                }}
+                className="w-full px-4 py-2 bg-red-700 text-white rounded-lg mt-2"
+              >
+                Remover Imagem
+              </button>
+            </div>
+          ) : (
+            <div className="p-4 bg-gray-200 flex items-center justify-center rounded-lg">
+              <FaImage className="text-gray-500" size={110} />
+            </div>
+          )}
+          {!primaryImage && !imagePrimaryUrl && (
+            <UploadImage onImagesSelected={(files) => handlePrimaryImageSelection(files[0])} limit={1} />
+          )}
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-lg font-medium text-gray-700 mb-2">Imagens Secundárias</label>
+          <UploadImage onImagesSelected={handleSecondaryImageSelection} />
+        </div>
+
+        {imagesSecondaryUrls.length > 0 && (
+          <div className="flex gap-4 flex-wrap">
+            {imagesSecondaryUrls.map((url: string, index: number) => (
+              <div key={index} className="flex flex-col items-center">
                 <Image
-                  src={primaryImage ? URL.createObjectURL(primaryImage) : imagePrimaryUrl}
-                  alt="Imagem do Produto"
-                  width={300}
-                  height={300}
-                  priority
-                  className="object-cover rounded-lg"
-                  style={{ minWidth: 250, minHeight: 250, maxWidth: 300, maxHeight: 300 }}
+                  src={url}
+                  alt={`Imagem Secundária ${index + 1}`}
+                  width={270}
+                  height={270}
+                  className="object-contain rounded-lg"
+                  style={{ maxWidth: 300, maxHeight: 300 }}
                 />
                 <button
                   type="button"
-                  onClick={() => {
-                    setPrimaryImage(null);
-                    setProduto((prevProduto: any) => ({
-                      ...prevProduto,
-                      imagePrimary: '',
-                    }));
-                  }}
-                  className="w-full px-4 py-2 bg-red-700 text-white rounded-lg"
+                  onClick={() => handleRemoveSecondaryImage(url)}
+                  className="mt-1 w-full px-4 py-1 bg-red-700 text-white rounded-lg"
                 >
                   Remover Imagem
                 </button>
               </div>
-            ) : (
-              <div className="p-4 bg-gray-200 flex items-center justify-center rounded-lg">
-                <FaImage className="text-gray-500" size={110} />
-              </div>
-            )}
-
-            {!primaryImage && !imagePrimaryUrl && (
-              <UploadImage onImagesSelected={(files) => handlePrimaryImageSelection(files[0])} limit={1} />
-            )}
+            ))}
           </div>
-        </div>
+        )}
+      </div>
 
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nome do Produto</label>
-            <input id="name" name="name" type="text" defaultValue={produto.name} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input id="name" name="name" type="text" defaultValue={produto.name} className="w-full p-3 border border-gray-300 rounded-lg" />
           </div>
 
           <div className="space-y-2">
             <label htmlFor="price" className="block text-sm font-medium text-gray-700">Preço</label>
-            <NumericFormat id="price" name="price" defaultValue={produto.price} placeholder="Digite o preço do produto" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
+            <NumericFormat id="price" name="price" defaultValue={produto.price} className="w-full p-3 border border-gray-300 rounded-lg" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
           </div>
 
           <div className="space-y-2">
             <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700">Preço Anterior</label>
-            <NumericFormat id="priceOld" name="priceOld" defaultValue={produto.priceOld} placeholder="Digite o preço anterior" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
+            <NumericFormat id="priceOld" name="priceOld" defaultValue={produto.priceOld} className="w-full p-3 border border-gray-300 rounded-lg" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-              Categoria
-            </label>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700">Categoria</label>
             <Select
               id="category"
               name="category"
@@ -223,10 +253,6 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
                 value: category.categoryId,
               })) || []}
               onChange={handleCategoryChange}
-              placeholder="Selecione a(s) categoria(s)"
-              className="react-select-container"
-              instanceId="category-select"
-              aria-labelledby="category" 
             />
           </div>
 
@@ -237,7 +263,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
               name="brand"
               value={produto?.brand?.id || ""}
               onChange={(e) => setProduto({ ...produto, brand: { id: e.target.value } })}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-lg"
             >
               <option value="">Selecione a marca</option>
               {marcas.map((marca) => (
@@ -248,19 +274,12 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
 
           <div className="space-y-2">
             <label htmlFor="stock" className="block text-sm font-medium text-gray-700">Quantidade em Estoque</label>
-            <input
-              id="stock"
-              name="stock"
-              type="number"
-              value={produto?.stock?.quantity || 0}
-              onChange={(e) => setProduto({ ...produto, stock: { quantity: Number(e.target.value) } })}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <input id="stock" name="stock" type="number" value={produto?.stock?.quantity || 0} onChange={(e) => setProduto({ ...produto, stock: { quantity: Number(e.target.value) } })} className="w-full p-3 border border-gray-300 rounded-lg" />
           </div>
 
           <div className="space-y-2">
             <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
-            <select id="status" name="status" defaultValue={produto.active ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select id="status" name="status" defaultValue={produto.active ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg">
               <option value="true">Ativo</option>
               <option value="false">Inativo</option>
             </select>
@@ -268,7 +287,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
 
           <div className="space-y-2">
             <label htmlFor="destaque" className="block text-sm font-medium text-gray-700">Destaque</label>
-            <select id="destaque" name="destaque" defaultValue={produto.destaque ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select id="destaque" name="destaque" defaultValue={produto.destaque ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg">
               <option value="true">Ativo</option>
               <option value="false">Inativo</option>
             </select>
@@ -276,64 +295,27 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
 
           <div className="space-y-2">
             <label htmlFor="onSale" className="block text-sm font-medium text-gray-700">Promoção</label>
-            <select id="onSale" name="onSale" defaultValue={produto.onSale ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select id="onSale" name="onSale" defaultValue={produto.onSale ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg">
               <option value="true">Ativo</option>
               <option value="false">Inativo</option>
             </select>
           </div>
         </div>
 
-        <div className="mb-4">
-          <UploadImage onImagesSelected={handleSecondaryImageSelection} />
-        </div>
-
-        <div>
-          {imagesSecondaryUrls && imagesSecondaryUrls.length > 0 && (
-            <div className="flex gap-4 items-end">
-              {imagesSecondaryUrls.map((url: string, index: number) => (
-                <div key={index} className="flex flex-col items-center">
-                  <Image
-                    src={url}
-                    alt={`Imagem Secundária ${index + 1}`}
-                    width={300}
-                    height={300}
-                    priority={false}
-                    className="object-cover rounded-lg"
-                    style={{ minWidth: 250, minHeight: 250, maxWidth: 300, maxHeight: 300 }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const updatedImages = imagesSecondaryUrls.filter((_: any, i: number) => i !== index);
-                      setSecondaryImages(updatedImages);
-                      const updatedProduct = { ...produto };
-                      updatedProduct.imagesSecondary = updatedImages;
-                      setProduto(updatedProduct);
-                    }}
-                    className="mt-1 w-full px-4 py-1 bg-red-700 text-white rounded-lg"
-                  >
-                    Remover Imagem
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
         <div className="space-y-6">
           <div className="space-y-2">
             <label htmlFor="description" className="block text-sm font-medium text-gray-700">Descrição</label>
-            <textarea id="description" name="description" defaultValue={produto.description} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows={6}></textarea>
+            <textarea id="description" name="description" defaultValue={produto.description} className="w-full p-3 border border-gray-300 rounded-lg" rows={6}></textarea>
           </div>
 
           <div className="space-y-2">
             <label htmlFor="features" className="block text-sm font-medium text-gray-700">Características</label>
-            <textarea id="features" name="features" defaultValue={produto.features} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows={6}></textarea>
+            <textarea id="features" name="features" defaultValue={produto.features} className="w-full p-3 border border-gray-300 rounded-lg" rows={6}></textarea>
           </div>
         </div>
 
         <div className="flex justify-end mt-6">
-          <Button type="submit" className="py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500" disabled={isLoading}>
+          <Button type="submit" className="py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700" disabled={isLoading}>
             {isLoading ? (
               <svg className="animate-spin w-5 h-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <circle cx="12" cy="12" r="10" strokeWidth="4" />
