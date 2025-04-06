@@ -3,6 +3,7 @@ import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
 import AddToCartButton from "@/app/components/addTocartButton";
+import { FaShoppingBag } from "react-icons/fa";
 
 export default async function ListAllProdutos() {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product`);
@@ -37,15 +38,23 @@ export default async function ListAllProdutos() {
                                     className="group relative flex flex-col border border-gray-50 flex-1"
                                 >
                                     <div className="relative flex aspect-[300/300] items-center justify-center">
-                                        <Image
-                                            alt={produto.name}
-                                            src={produto.imagePrimary}
-                                            fill
-                                            priority
-                                            quality={100}
-                                            className="object-contain"
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                        />
+                                        {produto.imagePrimary ? (
+                                            <Image
+                                                alt={produto.name}
+                                                src={produto.imagePrimary}
+                                                width={270}
+                                                height={270}
+                                                priority
+                                                quality={100}
+                                                className="object-contain rounded-lg"
+                                                style={{ maxWidth: 300, maxHeight: 300 }}
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                            />
+                                        ) : (
+                                            <div className="flex items-center justify-center bg-gray-100 rounded-lg" style={{ width: 270, height: 270 }}>
+                                                <FaShoppingBag className="text-gray-400" size={110} />
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm flex-1">
                                         <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">

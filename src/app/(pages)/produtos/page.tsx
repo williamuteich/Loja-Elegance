@@ -5,7 +5,7 @@ import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
 import AddToCartButton from "@/app/components/addTocartButton";
-import { FaSlidersH } from "react-icons/fa";
+import { FaSlidersH, FaShoppingBag } from "react-icons/fa";
 
 export default function ProdutosGerais() {
   const [produtos, setProdutos] = React.useState<Produto[]>([]);
@@ -166,15 +166,20 @@ export default function ProdutosGerais() {
                         className="group relative flex flex-col border border-gray-50 flex-1"
                       >
                         <Link href={`/produtos/${produto.id}`} className="relative flex aspect-[300/300] items-center justify-center">
-                          <Image
-                            alt={produto.name}
-                            src={produto.imagePrimary}
-                            fill
-                            priority
-                            quality={100}
-                            className="object-contain"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          />
+                          {produto.imagePrimary ? (
+                            <Image
+                              src={produto.imagePrimary}
+                              alt="Imagem do Produto"
+                              width={270}
+                              height={270}
+                              className="object-contain rounded-lg"
+                              style={{ maxWidth: 300, maxHeight: 300 }}
+                            />
+                          ) : (
+                            <div className="p-4 bg-gray-100 rounded-lg flex items-center justify-center" style={{ width: 270, height: 270 }}>
+                              <FaShoppingBag className="text-gray-400" size={110} />
+                            </div>
+                          )}
                         </Link>
                         <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm flex-1">
                           <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">

@@ -37,7 +37,7 @@ export default async function ProdutoSlug({
           <div className="lg:flex lg:flex-row flex-col gap-4">
             <ViewImages produtos={produtos} />
 
-            <div className="lg:w-96 w-full p-4 space-y-6 border border-gray-300 rounded-lg">
+            <div className="lg:w-[900px] w-full p-4 space-y-6 border border-gray-300 rounded-lg">
               <div className="w-full">
                 <h2 className="text-xl uppercase font-extrabold text-pink-700 mb-4">
                   {produtos.name}
@@ -100,7 +100,7 @@ export default async function ProdutoSlug({
                 </div>
 
                 <div className="mt-6 space-y-4 text-md">
-                  <Accordion type="single" collapsible>
+                  <Accordion type="single" collapsible className="flex flex-col gap-2">
                     <AccordionItem value="item-1" className="border border-gray-200 rounded">
                       <AccordionTrigger className="px-4">
                         <div className="flex items-center gap-2">

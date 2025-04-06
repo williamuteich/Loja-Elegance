@@ -156,97 +156,66 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
       </Link>
       <h2 className="text-4xl font-semibold mt-8 mb-6 text-gray-900">Editar Produto</h2>
 
-      <div className="space-y-6 mb-8">
-        <div className="space-y-2" style={{ width: "300px" }}>
-          <label className="block text-lg font-medium text-gray-700">Imagem Principal</label>
-          {primaryImage || imagePrimaryUrl ? (
-            <div className="flex flex-col items-center">
-              <Image
-                src={primaryImage ? URL.createObjectURL(primaryImage) : imagePrimaryUrl}
-                alt="Imagem do Produto"
-                width={270}
-                height={270}
-                priority
-                className="object-contain rounded-lg"
-                style={{ maxWidth: 300, maxHeight: 300 }}
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  setPrimaryImage(null);
-                  setProduto((prevProduto: any) => ({
-                    ...prevProduto,
-                    imagePrimary: '',
-                  }));
-                }}
-                className="w-full px-4 py-2 bg-red-700 text-white rounded-lg mt-2"
-              >
-                Remover Imagem
-              </button>
-            </div>
-          ) : (
-            <div className="p-4 bg-gray-200 flex items-center justify-center rounded-lg">
-              <FaImage className="text-gray-500" size={110} />
-            </div>
-          )}
-          {!primaryImage && !imagePrimaryUrl && (
-            <UploadImage onImagesSelected={(files) => handlePrimaryImageSelection(files[0])} limit={1} />
-          )}
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-lg font-medium text-gray-700 mb-2">Imagens Secundárias</label>
-          <UploadImage onImagesSelected={handleSecondaryImageSelection} />
-        </div>
-
-        {imagesSecondaryUrls.length > 0 && (
-          <div className="flex gap-4 flex-wrap">
-            {imagesSecondaryUrls.map((url: string, index: number) => (
-              <div key={index} className="flex flex-col items-center">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-2 gap-6">
+          <div className="col-span-2 space-y-2 w-1/6">
+            <label className="block text-lg font-medium text-gray-700">Imagem Principal</label>
+            {primaryImage || imagePrimaryUrl ? (
+              <div className="flex flex-col items-center">
                 <Image
-                  src={url}
-                  alt={`Imagem Secundária ${index + 1}`}
-                  width={270}
-                  height={270}
+                  src={primaryImage ? URL.createObjectURL(primaryImage) : imagePrimaryUrl}
+                  alt="Imagem do Produto"
+                  width={300}
+                  height={300}
+                  priority
                   className="object-contain rounded-lg"
-                  style={{ maxWidth: 300, maxHeight: 300 }}
                 />
                 <button
                   type="button"
-                  onClick={() => handleRemoveSecondaryImage(url)}
-                  className="mt-1 w-full px-4 py-1 bg-red-700 text-white rounded-lg"
+                  onClick={() => {
+                    setPrimaryImage(null);
+                    setProduto((prevProduto: any) => ({
+                      ...prevProduto,
+                      imagePrimary: '',
+                    }));
+                  }}
+                  className="w-full px-4 py-2 bg-red-700 text-white rounded-lg mt-2"
                 >
                   Remover Imagem
                 </button>
               </div>
-            ))}
+            ) : (
+              <div className="p-4 bg-gray-200 flex items-center justify-center rounded-lg">
+                <FaImage className="text-gray-500" size={110} />
+              </div>
+            )}
+            {!primaryImage && !imagePrimaryUrl && (
+              <UploadImage onImagesSelected={(files) => handlePrimaryImageSelection(files[0])} limit={1} />
+            )}
           </div>
-        )}
-      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-2 gap-6">
-          <div className="space-y-2">
+          <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nome do Produto</label>
-            <input id="name" name="name" type="text" defaultValue={produto.name} className="w-full p-3 border border-gray-300 rounded-lg" />
+            <input id="name" name="name" type="text" defaultValue={produto.name} placeholder="Digite o nome do produto" className="w-full p-3 border border-gray-300 rounded-lg" />
           </div>
 
-          <div className="space-y-2">
+          <div>
             <label htmlFor="price" className="block text-sm font-medium text-gray-700">Preço</label>
-            <NumericFormat id="price" name="price" defaultValue={produto.price} className="w-full p-3 border border-gray-300 rounded-lg" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
+            <NumericFormat id="price" name="price" defaultValue={produto.price} placeholder="Digite o preço atual" className="w-full p-3 border border-gray-300 rounded-lg" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
           </div>
 
-          <div className="space-y-2">
+          <div>
             <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700">Preço Anterior</label>
-            <NumericFormat id="priceOld" name="priceOld" defaultValue={produto.priceOld} className="w-full p-3 border border-gray-300 rounded-lg" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
+            <NumericFormat id="priceOld" name="priceOld" defaultValue={produto.priceOld} placeholder="Digite o preço anterior" className="w-full p-3 border border-gray-300 rounded-lg" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
           </div>
 
-          <div className="space-y-2">
+          <div>
             <label htmlFor="category" className="block text-sm font-medium text-gray-700">Categoria</label>
             <Select
               id="category"
               name="category"
               isMulti
+              placeholder="Selecione uma ou mais categorias"
               options={categorias.map((categoria) => ({ label: categoria.name, value: categoria.id }))}
               value={selectedCategories.length > 0 ? selectedCategories : produto?.categories?.map((category: any) => ({
                 label: category.category.name,
@@ -256,7 +225,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
             />
           </div>
 
-          <div className="space-y-2">
+          <div>
             <label htmlFor="brand" className="block text-sm font-medium text-gray-700">Marca</label>
             <select
               id="brand"
@@ -272,12 +241,12 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
             </select>
           </div>
 
-          <div className="space-y-2">
+          <div>
             <label htmlFor="stock" className="block text-sm font-medium text-gray-700">Quantidade em Estoque</label>
-            <input id="stock" name="stock" type="number" value={produto?.stock?.quantity || 0} onChange={(e) => setProduto({ ...produto, stock: { quantity: Number(e.target.value) } })} className="w-full p-3 border border-gray-300 rounded-lg" />
+            <input id="stock" name="stock" type="number" value={produto?.stock?.quantity || 0} onChange={(e) => setProduto({ ...produto, stock: { quantity: Number(e.target.value) } })} placeholder="Digite a quantidade" className="w-full p-3 border border-gray-300 rounded-lg" />
           </div>
 
-          <div className="space-y-2">
+          <div>
             <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
             <select id="status" name="status" defaultValue={produto.active ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg">
               <option value="true">Ativo</option>
@@ -285,7 +254,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
             </select>
           </div>
 
-          <div className="space-y-2">
+          <div>
             <label htmlFor="destaque" className="block text-sm font-medium text-gray-700">Destaque</label>
             <select id="destaque" name="destaque" defaultValue={produto.destaque ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg">
               <option value="true">Ativo</option>
@@ -293,7 +262,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
             </select>
           </div>
 
-          <div className="space-y-2">
+          <div>
             <label htmlFor="onSale" className="block text-sm font-medium text-gray-700">Promoção</label>
             <select id="onSale" name="onSale" defaultValue={produto.onSale ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg">
               <option value="true">Ativo</option>
@@ -304,13 +273,42 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
 
         <div className="space-y-6">
           <div className="space-y-2">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Descrição</label>
-            <textarea id="description" name="description" defaultValue={produto.description} className="w-full p-3 border border-gray-300 rounded-lg" rows={6}></textarea>
+            <label className="block text-lg font-medium text-gray-700">Imagens Secundárias</label>
+            <UploadImage onImagesSelected={handleSecondaryImageSelection} />
+            {imagesSecondaryUrls.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-6 gap-1 mt-4">
+                {imagesSecondaryUrls.map((url: string, index: number) => (
+                  <div key={index} className="relative border rounded-lg p-2 bg-white shadow-sm max-w-[250px] max-h-[250px]">
+                    <Image
+                      src={url}
+                      alt={`Imagem Secundária ${index + 1}`}
+                      width={300}
+                      height={300}
+                      className="object-contain max-w-[200px] max-h-[200px] w-full h-auto mx-auto rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSecondaryImage(url)}
+                      className="mt-2 w-full px-3 py-1 bg-red-700 text-white rounded"
+                    >
+                      Remover
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="features" className="block text-sm font-medium text-gray-700">Características</label>
-            <textarea id="features" name="features" defaultValue={produto.features} className="w-full p-3 border border-gray-300 rounded-lg" rows={6}></textarea>
+          <div className="flex flex-col gap-4 ">
+            <div className="space-y-2">
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700">Descrição</label>
+              <textarea id="description" name="description" defaultValue={produto.description} placeholder="Digite a descrição do produto" className="w-full p-3 border border-gray-300 rounded-lg" rows={6}></textarea>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="features" className="block text-sm font-medium text-gray-700">Características</label>
+              <textarea id="features" name="features" defaultValue={produto.features} placeholder="Liste as principais características" className="w-full p-3 border border-gray-300 rounded-lg" rows={6}></textarea>
+            </div>
           </div>
         </div>
 
