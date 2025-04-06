@@ -11,7 +11,6 @@ import Link from "next/link";
 import { Container } from "@/app/components/container";
 import { ProdutoProps } from "@/utils/types/produto";
 import AddToCartButton from "@/app/components/addTocartButton";
-import { FaShoppingBag } from "react-icons/fa";
 
 export function Promocao({ produtos }: ProdutoProps) {
   const produtosEmPromocao = produtos.filter(produto =>
@@ -64,24 +63,15 @@ export function Promocao({ produtos }: ProdutoProps) {
                       className="flex-shrink-0 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/4 xl:basis-1/4"
                     >
                       <div className="group relative flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all">
-                        <Link href={`/produtos/${produto.id}`} className="relative aspect-square w-full flex items-center justify-center overflow-hidden bg-white">
-                          {produto.imagePrimary ? (
-                            <Image
-                              alt={produto.name}
-                              src={produto.imagePrimary}
-                              width={270}
-                              height={270}
-                              priority
-                              quality={100}
-                              className="object-contain rounded-lg"
-                              style={{ maxWidth: 300, maxHeight: 300 }}
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            />
-                          ) : (
-                            <div className="p-4 bg-gray-100 rounded-lg flex items-center justify-center w-full h-full" style={{ width: 270, height: 270 }}>
-                              <FaShoppingBag className="text-gray-400" size={110} />
-                            </div>
-                          )}
+                        <Link href={`/produtos/${produto.id}`} className="relative flex aspect-[300/300] items-center justify-center">
+                          <Image
+                            alt={produto.name}
+                            src={produto.imagePrimary}
+                            className="object-contain"
+                            width={300}
+                            height={300}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          />
                         </Link>
                         <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
                           <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
@@ -115,9 +105,13 @@ export function Promocao({ produtos }: ProdutoProps) {
                             </div>
                           </Link>
                           <div className="mt-3">
-                            <AddToCartButton
-                              produto={produto}
-                            />
+                            <Link href={`/produtos/${produto.id}`}>
+                              <button
+                                className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all"
+                              >
+                                Ver detalles
+                              </button>
+                            </Link>
                           </div>
                         </div>
                         {percentualDesconto > 0 && (

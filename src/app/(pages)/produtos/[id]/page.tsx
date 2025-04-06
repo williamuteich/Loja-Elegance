@@ -89,13 +89,13 @@ export default async function ProdutoSlug({
 
                 <div className="mt-6 space-y-2">
                   <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">
-                    <h3 className="font-bold text-base text-gray-800">Frete Grátis</h3>
-                    <p className="text-gray-900">Todos os Produtos possuem frete grátis</p>
+                    <h3 className="font-bold text-base text-gray-800">Envío Gratis</h3>
+                    <p className="text-gray-900">Envío gratis en compras superiores a <strong>$600</strong> pesos</p>
                   </div>
 
                   <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">
-                    <h3 className="font-bold text-base text-gray-800">Troca e Devolução</h3>
-                    <p className="text-gray-900">Garantia de 7 dias para troca ou reembolso</p>
+                    <h3 className="font-bold text-base text-gray-800">Calidad Garantizada</h3>
+                    <p className="text-gray-900">Productos seleccionados con alto estándar de calidad</p>
                   </div>
                 </div>
 

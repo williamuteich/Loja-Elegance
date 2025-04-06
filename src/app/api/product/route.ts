@@ -132,7 +132,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-
+ 
     if (
       !body.name ||
       !body.description ||
@@ -210,7 +210,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-
+    console.log("body", body);
     if (
       !body.id ||
       !body.name ||
@@ -263,6 +263,7 @@ export async function PUT(request: Request) {
         priceOld: body.priceOld || null,
         onSale: body.onSale ?? true,
         active: body.active ?? true,
+        destaque: body.destaque ?? false,
         brand: { connect: { id: body.brandId } },
         stock: {
           update: { quantity: body.quantity }

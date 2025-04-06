@@ -4,7 +4,6 @@ import * as React from "react";
 import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
-import AddToCartButton from "@/app/components/addTocartButton";
 import { FaShoppingBag, FaSlidersH } from 'react-icons/fa';
 
 export default function Promocoes() {
@@ -171,7 +170,13 @@ export default function Promocoes() {
                                                     </p>
                                                 </Link>
                                                 <div className="mt-3">
-                                                    <AddToCartButton produto={produto} />
+                                                    <Link href={`/produtos/${produto.id}`}>
+                                                        <button
+                                                            className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all"
+                                                        >
+                                                            Ver detalles
+                                                        </button>
+                                                    </Link>
                                                 </div>
                                             </div>
                                             <p className="absolute left-3 top-3 z-20 flex items-center bg-pink-700 px-3 py-1 text-sm font-semibold text-white">

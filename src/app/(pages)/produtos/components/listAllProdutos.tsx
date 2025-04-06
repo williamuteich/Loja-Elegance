@@ -2,7 +2,6 @@ import * as React from "react";
 import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
-import AddToCartButton from "@/app/components/addTocartButton";
 import { FaShoppingBag } from "react-icons/fa";
 
 export default async function ListAllProdutos() {
@@ -31,7 +30,7 @@ export default async function ListAllProdutos() {
                         return (
                             <div
                                 key={produto.id}
-                                className="flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all hover:scale-[1.02]"
+                                className="flex flex-col border-neutral-300 hover:bg-pink-100 transition-all hover:scale-[1.02]"
                             >
                                 <div
 
@@ -88,7 +87,13 @@ export default async function ListAllProdutos() {
                                             </div>
                                         </Link>
                                         <div className="mt-3">
-                                            <AddToCartButton produto={produto} />
+                                            <Link href={`/produtos/${produto.id}`}>
+                                                <button
+                                                    className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all"
+                                                >
+                                                    Ver detalles
+                                                </button>
+                                            </Link>
                                         </div>
                                     </div>
                                     {produto.onSale && percentualDesconto > 0 && (

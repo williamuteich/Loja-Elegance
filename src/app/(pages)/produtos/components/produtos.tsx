@@ -139,7 +139,13 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
                         </div>
                       </Link>
                       <div className="mt-3">
-                        <AddToCartButton produto={produto} />
+                        <Link href={`/produtos/${produto.id}`}>
+                          <button
+                            className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all"
+                          >
+                            Ver detalles
+                          </button>
+                        </Link>
                       </div>
                     </div>
                     {produto.onSale && percentualDesconto > 0 && (
