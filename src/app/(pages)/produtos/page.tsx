@@ -41,7 +41,7 @@ export default function ProdutosGerais() {
   React.useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const categoriesRes = await fetch("/api/category");
+        const categoriesRes = await fetch("/api/category?fetchAll=true");
         const categoriesData = await categoriesRes.json();
         setCategorias(categoriesData.category);
       } catch (error) {
@@ -165,18 +165,16 @@ export default function ProdutosGerais() {
 
                         className="group relative flex flex-col border border-gray-50 flex-1"
                       >
-                        <Link href={`/produtos/${produto.id}`} className="relative flex aspect-[300/300] items-center justify-center">
+                        <Link href={`/produtos/${produto.id}`} className="relative aspect-square w-full flex items-center justify-center overflow-hidden bg-white">
                           {produto.imagePrimary ? (
                             <Image
                               src={produto.imagePrimary}
                               alt="Imagem do Produto"
-                              width={270}
-                              height={270}
-                              className="object-contain rounded-lg"
-                              style={{ maxWidth: 300, maxHeight: 300 }}
+                              fill
+                              className="object-contain"
                             />
                           ) : (
-                            <div className="p-4 bg-gray-100 rounded-lg flex items-center justify-center" style={{ width: 270, height: 270 }}>
+                            <div className="p-4 bg-gray-100 rounded-lg flex items-center justify-center w-full h-full">
                               <FaShoppingBag className="text-gray-400" size={110} />
                             </div>
                           )}

@@ -88,7 +88,7 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
 
                     className="group relative flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all"
                   >
-                    <Link href={`/produtos/${produto.id}`} className="relative flex aspect-[300/300] items-center justify-center">
+                    <Link href={`/produtos/${produto.id}`} className="relative aspect-square w-full flex items-center justify-center overflow-hidden bg-white">
                       {produto.imagePrimary ? (
                         <Image
                           alt={produto.name}
@@ -102,7 +102,7 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                       ) : (
-                        <div className="flex items-center justify-center bg-gray-100 rounded-lg" style={{ width: 270, height: 270 }}>
+                        <div className="p-4 bg-gray-100 rounded-lg flex items-center justify-center w-full h-full" style={{ width: 270, height: 270 }}>
                           <FaShoppingBag className="text-gray-400" size={110} />
                         </div>
                       )}

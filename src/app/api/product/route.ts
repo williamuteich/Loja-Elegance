@@ -14,6 +14,14 @@ export async function GET(request: Request) {
     const pageSize = 10;
     const fetchAll = url.searchParams.get("fetchAll") === "true";
 
+    const shuffleArray = (array: any[]) => {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    };
+
     let products;
     const baseInclude = {
       brand: true,
@@ -61,16 +69,23 @@ export async function GET(request: Request) {
             createdAt: "desc",
           },
         });
+      } 
+
+      if (fetchAll) {
+        products = await prisma.product.findMany({
+          where,
+          include: baseInclude,
+        });
+        
+        products = shuffleArray(products);
       } else {
         products = await prisma.product.findMany({
           where,
           skip: (page - 1) * pageSize,
           take: pageSize,
           include: baseInclude,
-          orderBy: {
-            createdAt: "desc",
-          },
         });
+        products = shuffleArray(products);
       }
     }
 

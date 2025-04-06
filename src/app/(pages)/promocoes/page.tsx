@@ -5,7 +5,7 @@ import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
 import AddToCartButton from "@/app/components/addTocartButton";
-import { FaSlidersH } from 'react-icons/fa';
+import { FaShoppingBag, FaSlidersH } from 'react-icons/fa';
 
 export default function Promocoes() {
     const [produtos, setProdutos] = React.useState<Produto[]>([]);
@@ -36,7 +36,7 @@ export default function Promocoes() {
 
         const fetchCategories = async () => {
             try {
-                const categoriesRes = await fetch("/api/category");
+                const categoriesRes = await fetch("/api/category?fetchAll=true");
                 const categoriesData = await categoriesRes.json();
                 setCategorias(categoriesData.category);
             } catch (error) {
@@ -136,17 +136,20 @@ export default function Promocoes() {
 
                                 return (
                                     <div key={produto.id} className="flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all hover:scale-[1.02]">
-                                        <div className="group relative flex flex-col border border-gray-50 flex-1"> 
-                                            <Link href={`/produtos/${produto.id}`} className="relative flex aspect-[300/300] items-center justify-center">
-                                                <Image
-                                                    alt={produto.name}
-                                                    src={produto.imagePrimary}
-                                                    fill
-                                                    priority
-                                                    quality={100}
-                                                    className="object-contain"
-                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                                />
+                                        <div className="group relative flex flex-col border border-gray-50 flex-1">
+                                            <Link href={`/produtos/${produto.id}`} className="relative aspect-square w-full flex items-center justify-center overflow-hidden bg-white">
+                                                {produto.imagePrimary ? (
+                                                    <Image
+                                                        src={produto.imagePrimary}
+                                                        alt="Imagem do Produto"
+                                                        fill
+                                                        className="object-contain"
+                                                    />
+                                                ) : (
+                                                    <div className="p-4 bg-gray-100 rounded-lg flex items-center justify-center w-full h-full">
+                                                        <FaShoppingBag className="text-gray-400" size={110} />
+                                                    </div>
+                                                )}
                                             </Link>
                                             <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm flex-1"> {/* Flex-1 para garantir que o conteúdo principal ocupe o espaço disponível */}
                                                 <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
