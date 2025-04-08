@@ -29,11 +29,16 @@ export default function SearchHeaderItems() {
     name: string;
     imagePrimary: string;
     price: number;
+    variants: {
+      stock: {
+        quantity: number;
+      };
+    }[];
   }
 
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false); 
+  const [open, setOpen] = useState(false);
 
   const handleChange = useDebouncedCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const params = new URLSearchParams(searchParams);
@@ -128,9 +133,25 @@ export default function SearchHeaderItems() {
                     {filteredProducts.map((item) => (
                       <Link href={`/produtos/${item.id}`} key={item.name} onClick={() => setOpen(false)} className="flex gap-4 items-start border-t-[1px] border-gray-300 pt-3">
                         <Image src={item.imagePrimary} alt={item.name} width={75} height={75} quality={100} />
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-0 w-full px-4">
                           <h2 className="text-base uppercase font-bold">{item.name}</h2>
-                          <span className="text-base font-medium uppercase">R$ {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(item.price)}</span>
+                          <span className="text-base font-medium uppercase flex items-end gap-2 mb-2 w-full">
+                            R$ {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(item.price)}
+                            <div
+                              className={`mt-2 text-xs font-semibold text-white ${item.variants.some((variant: any) => variant.stock.quantity > 0)
+                                ? item.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0) > 1
+                                  ? "bg-green-700"
+                                  : "bg-yellow-700"
+                                : "bg-red-700 text-white"
+                                } px-2 py-1 rounded-md w-max`}
+                            >
+                              {item.variants.some((variant: any) => variant.stock.quantity > 0)
+                                ? item.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0) > 1
+                                  ? `${item.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0)} Disponíveis`
+                                  : "Última Unidade"
+                                : "Indisponível"}
+                            </div>
+                          </span>
                         </div>
                       </Link>
                     ))}
