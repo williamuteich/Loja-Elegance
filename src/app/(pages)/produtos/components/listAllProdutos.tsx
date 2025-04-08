@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FaShoppingBag } from "react-icons/fa";
 
 export default async function ListAllProdutos() {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product`);
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product`, { cache: 'no-store' });
 
     if (!response.ok) {
         throw new Error("Erro ao buscar produtos");

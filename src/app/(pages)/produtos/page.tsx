@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import * as React from "react";
 import { Produto } from "@/utils/types/produto";
@@ -23,7 +23,7 @@ export default function ProdutosGerais() {
     const fetchData = async () => {
       setLoading(true);
 
-      const response = await fetch(`/api/product?fetchAll=true`);
+      const response = await fetch(`/api/product?fetchAll=true`, { cache: 'no-store' });
 
       if (!response.ok) {
         throw new Error("Error al buscar productos");
@@ -54,26 +54,33 @@ export default function ProdutosGerais() {
 
   const aplicarFiltros = () => {
     let filteredProdutos = produtos;
-
+  
+    filteredProdutos = filteredProdutos.filter((produto) => produto.active === true);
+  
     if (search) {
       filteredProdutos = filteredProdutos.filter((produto) =>
         produto.categories.some((categoria) => categoria.category.name === search)
       );
     }
-
+  
     if (precoMinimo) {
       filteredProdutos = filteredProdutos.filter((produto) => produto.price >= Number(precoMinimo));
     }
-
+  
     if (precoMaximo) {
       filteredProdutos = filteredProdutos.filter((produto) => produto.price <= Number(precoMaximo));
     }
-
+  
+    filteredProdutos = filteredProdutos.filter((produto) =>
+      produto.variants.some((variant: VariantProps) => variant.stock?.quantity > 0)
+    );
+  
     setProdutosFiltrados(filteredProdutos);
     setTotalRecords(filteredProdutos.length);
-
+  
     setPaginaAtual(1);
   };
+  
 
   React.useEffect(() => {
     aplicarFiltros();
@@ -150,7 +157,6 @@ export default function ProdutosGerais() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {produtosPaginados.length > 0 ? (
               produtosPaginados.map((produto: Produto) => {
-                // Somando o estoque de todas as variantes
                 const quantidadeDisponivel = produto.variants.reduce(
                   (total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0),
                   0
@@ -200,7 +206,6 @@ export default function ProdutosGerais() {
                           </p>
                         </Link>
                         
-                        {/* Exibe a etiqueta de disponibilidade */}
                         <div
                           className={`mt-2 text-xs font-semibold text-white ${quantidadeDisponivel > 0
                             ? quantidadeDisponivel > 1
@@ -242,6 +247,7 @@ export default function ProdutosGerais() {
           </div>
         )}
 
+        {/* Paginação */}
         <div className="flex justify-center mt-6">
           <button
             className="px-4 py-2 bg-pink-600 text-white rounded-md mr-2"

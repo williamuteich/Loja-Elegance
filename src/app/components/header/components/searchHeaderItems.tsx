@@ -29,6 +29,7 @@ export default function SearchHeaderItems() {
     name: string;
     imagePrimary: string;
     price: number;
+    active: boolean; // Campo para verificar se o produto está ativo
     variants: {
       stock: {
         quantity: number;
@@ -58,7 +59,13 @@ export default function SearchHeaderItems() {
 
       const { produtos } = await response.json();
 
-      setFilteredProducts(produtos);
+      // Filtrando produtos ativos e com estoque disponível (quantidade > 0)
+      const produtosFiltrados = produtos.filter((produto: Product) => 
+        produto.active && 
+        produto.variants.some((variant: any) => variant.stock.quantity >= 1)
+      );
+
+      setFilteredProducts(produtosFiltrados);
       setLoading(false);
     } else {
       setFilteredProducts([]);

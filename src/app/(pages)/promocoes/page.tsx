@@ -22,11 +22,13 @@ export default function Promocoes() {
                 if (!response.ok) throw new Error("Error al buscar productos");
                 const { produtos } = await response.json();
                 
-                const produtosComEstoque = produtos.filter((p: Produto) =>
-                    p.variants.some((variant: VariantProps) => variant.stock.quantity > 0) 
+                // Filtra os produtos ativos e com estoque disponível
+                const produtosAtivosComEstoque = produtos.filter((p: Produto) =>
+                    p.active && p.variants.some((variant: VariantProps) => variant.stock.quantity > 0) 
                 );
 
-                const emPromocao = produtosComEstoque.filter((p: Produto) => p.priceOld && p.priceOld > p.price);
+                // Filtra os produtos em promoção
+                const emPromocao = produtosAtivosComEstoque.filter((p: Produto) => p.priceOld && p.priceOld > p.price);
 
                 setProdutos(emPromocao);
                 setProdutosFiltrados(emPromocao);
@@ -57,15 +59,17 @@ export default function Promocoes() {
 
     const aplicarFiltros = () => {
         let filtrados = produtos.filter((p) =>
-            p.priceOld && p.priceOld > p.price 
+            p.priceOld && p.priceOld > p.price // Filtra apenas produtos com desconto
         );
 
+        // Aplica filtro por categoria, se existir
         if (search) {
             filtrados = filtrados.filter((p) =>
                 p.categories.some((c) => c.category.name === search)
             );
         }
 
+        // Aplica filtro por preço
         if (precoMinimo) {
             filtrados = filtrados.filter((p) => p.price >= Number(precoMinimo));
         }
@@ -73,6 +77,9 @@ export default function Promocoes() {
         if (precoMaximo) {
             filtrados = filtrados.filter((p) => p.price <= Number(precoMaximo));
         }
+
+        // Aplica novamente o filtro para garantir que produtos inativos não sejam exibidos
+        filtrados = filtrados.filter((p) => p.active);
 
         setProdutosFiltrados(filtrados);
     };
