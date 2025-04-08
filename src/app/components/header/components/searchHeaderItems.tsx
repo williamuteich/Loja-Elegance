@@ -131,7 +131,12 @@ export default function SearchHeaderItems() {
                 <CommandList>
                   <CommandGroup>
                     {filteredProducts.map((item) => (
-                      <Link href={`/produtos/${item.id}`} key={item.name} onClick={() => setOpen(false)} className="flex gap-4 items-start border-t-[1px] border-gray-300 pt-3">
+                      <Link
+                        href={`/produtos/${item.id}`}
+                        key={item.id} // Usando item.id como chave única
+                        onClick={() => setOpen(false)}
+                        className="flex gap-4 items-start border-t-[1px] border-gray-300 pt-3"
+                      >
                         <Image src={item.imagePrimary} alt={item.name} width={75} height={75} quality={100} />
                         <div className="flex flex-col gap-0 w-full px-4">
                           <h2 className="text-base uppercase font-bold">{item.name}</h2>
