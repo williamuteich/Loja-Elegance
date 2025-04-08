@@ -5,6 +5,7 @@ import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
 import { FaSlidersH, FaShoppingBag } from "react-icons/fa";
+import { VariantProps } from "@/utils/types/produto";
 
 export default function ProdutosGerais() {
   const [produtos, setProdutos] = React.useState<Produto[]>([]);
@@ -51,7 +52,6 @@ export default function ProdutosGerais() {
     fetchCategories();
   }, []);
 
-  console.log("produtos", produtos);
   const aplicarFiltros = () => {
     let filteredProdutos = produtos;
 
@@ -150,6 +150,12 @@ export default function ProdutosGerais() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {produtosPaginados.length > 0 ? (
               produtosPaginados.map((produto: Produto) => {
+                // Somando o estoque de todas as variantes
+                const quantidadeDisponivel = produto.variants.reduce(
+                  (total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0),
+                  0
+                );
+
                 const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
                   ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
                   : 0;
@@ -193,6 +199,22 @@ export default function ProdutosGerais() {
                             {produto.description}
                           </p>
                         </Link>
+                        
+                        {/* Exibe a etiqueta de disponibilidade */}
+                        <div
+                          className={`mt-2 text-xs font-semibold text-white ${quantidadeDisponivel > 0
+                            ? quantidadeDisponivel > 1
+                              ? "bg-green-700"
+                              : "bg-yellow-700"
+                            : "bg-red-700"} px-2 py-1 rounded-md w-max`}
+                        >
+                          {quantidadeDisponivel > 0
+                            ? quantidadeDisponivel > 1
+                              ? `${quantidadeDisponivel} Disponibles`
+                              : "Última Unidad"
+                            : "Indisponible"}
+                        </div>
+
                         <div className="mt-3">
                           <Link href={`/produtos/${produto.id}`}>
                             <button

@@ -21,7 +21,7 @@ export default async function Produtos({
 
   if (categoriaProduct) {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?fetchAll=true`);
- 
+
     if (!response.ok) {
       throw new Error("Erro ao buscar produtos");
     }
@@ -127,13 +127,15 @@ export default async function Produtos({
                         </p>
                         <div
                           className={`mt-2 text-xs font-semibold text-white ${produto.variants.some((variant: any) => variant.stock.quantity > 0)
-                            ? "bg-green-700"
+                            ? produto.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0) > 1
+                              ? "bg-green-700"
+                              : "bg-yellow-700"
                             : "bg-red-700 text-white"
                             } px-2 py-1 rounded-md w-max`}
                         >
                           {produto.variants.some((variant: any) => variant.stock.quantity > 0)
-                            ? produto.variants[0].stock.quantity > 1
-                              ? `${produto.variants[0].stock.quantity} Disponíveis`
+                            ? produto.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0) > 1
+                              ? `${produto.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0)} Disponíveis`
                               : "Última Unidade"
                             : "Indisponível"}
                         </div>

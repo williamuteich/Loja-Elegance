@@ -20,7 +20,7 @@ export function Promocao({ produtos }: ProdutoProps) {
     produto.active &&
     produto.variants.some((variant: VariantProps) => variant.stock?.quantity > 0)
   );
-
+  
   return (
     <div className="py-10 lg:pt-24 w-full mx-auto bg-gray-100 flex justify-center items-center">
       <Container>
@@ -66,7 +66,7 @@ export function Promocao({ produtos }: ProdutoProps) {
                           {produto.imagePrimary ? (
                             <Image
                               alt={produto.name}
-                              src={produto.imagePrimary}  // A URL da imagem só é passada se estiver definida
+                              src={produto.imagePrimary}
                               className="object-contain"
                               width={300}
                               height={300}
@@ -98,17 +98,16 @@ export function Promocao({ produtos }: ProdutoProps) {
                             </p>
                           </Link>
 
-                          {/* Quantidade Disponível com Estilo */}
                           <div
                             className={`mt-2 text-xs font-semibold text-white ${produto.variants.some((variant: VariantProps) => variant.stock?.quantity > 0)
-                              ? produto.variants[0].stock?.quantity > 1
+                              ? produto.variants.reduce((total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0), 0) > 1
                                 ? "bg-green-700"
                                 : "bg-yellow-700"
                               : "bg-red-700"} px-2 py-1 rounded-md w-max`}
                           >
                             {produto.variants.some((variant: VariantProps) => variant.stock?.quantity > 0)
-                              ? produto.variants[0].stock?.quantity > 1
-                                ? `${produto.variants[0].stock?.quantity} Disponibles`
+                              ? produto.variants.reduce((total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0), 0) > 1
+                                ? `${produto.variants.reduce((total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0), 0)} Disponibles`
                                 : "Última Unidad"
                               : "Indisponible"}
                           </div>

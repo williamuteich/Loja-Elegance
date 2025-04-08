@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Produto } from "@/utils/types/produto";
+import { Produto, VariantProps } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
 import { FaShoppingBag } from "react-icons/fa";
@@ -17,8 +17,8 @@ export default async function ListAllProdutos() {
         .filter(produto =>
             produto.variants.some((variant: { stock: { quantity: number; }; }) => variant.stock?.quantity > 0)
         )
-        .sort(() => Math.random() - 0.5); // Aleatoriza os produtos
-  
+        .sort(() => Math.random() - 0.5); 
+
     return (
         <div className="mx-auto py-10 sm:px-0">
             <h2 className="text-2xl relative uppercase font-extrabold text-pink-700 mb-6 text-start">
@@ -27,9 +27,8 @@ export default async function ListAllProdutos() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {produtosAleatorios.length > 0 ? (
                     produtosAleatorios.map((produto: Produto) => {
-                        // Calculando a quantidade total disponível do produto
                         const totalEstoque = produto.variants.reduce(
-                            (total, variant) => total + (variant.stock?.quantity || 0), 0
+                            (total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0), 0
                         );
 
                         const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
@@ -80,16 +79,22 @@ export default async function ListAllProdutos() {
                                                 {produto.description}
                                             </p>
                                         </Link>
-                                        {/* Exibindo a disponibilidade do estoque abaixo da descrição */}
+                                        
                                         <div
-                                            className={`mt-2 text-xs font-semibold text-white ${totalEstoque > 0 ? "bg-green-700" : "bg-red-700"} px-2 py-1 rounded-md w-max`}
+                                            className={`mt-2 text-xs font-semibold text-white ${totalEstoque > 1
+                                                ? "bg-green-700"   // Cor para disponível
+                                                : totalEstoque === 1
+                                                ? "bg-yellow-600"  // Cor para última unidade
+                                                : "bg-red-700"}    // Cor para indisponível
+                                            px-2 py-1 rounded-md w-max`}
                                         >
-                                            {totalEstoque > 0
-                                                ? totalEstoque > 1
-                                                    ? `${totalEstoque} Disponibles`
-                                                    : "Última Unidad"
+                                            {totalEstoque > 1
+                                                ? `${totalEstoque} Disponibles`
+                                                : totalEstoque === 1
+                                                ? "Última Unidad"
                                                 : "Indisponible"}
                                         </div>
+
                                         <div className="mt-3">
                                             <Link href={`/produtos/${produto.id}`}>
                                                 <button

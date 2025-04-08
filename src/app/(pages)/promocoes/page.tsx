@@ -137,6 +137,10 @@ export default function Promocoes() {
                                     ? Math.round((produto.priceOld - produto.price) / produto.priceOld * 100)
                                     : 0;
 
+                                const totalEstoque = produto.variants.reduce(
+                                    (total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0), 0
+                                );
+
                                 return (
                                     <div key={produto.id} className="flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all hover:scale-[1.02]">
                                         <div className="group relative flex flex-col border border-gray-50 flex-1">
@@ -173,6 +177,22 @@ export default function Promocoes() {
                                                         {produto.description}
                                                     </p>
                                                 </Link>
+                                                
+                                                <div
+                                                    className={`mt-2 text-xs font-semibold text-white ${totalEstoque > 1
+                                                        ? "bg-green-700"   // Cor para disponível
+                                                        : totalEstoque === 1
+                                                        ? "bg-yellow-600"  // Cor para última unidade
+                                                        : "bg-red-700"}    // Cor para indisponível
+                                                    px-2 py-1 rounded-md w-max`}
+                                                >
+                                                    {totalEstoque > 1
+                                                        ? `${totalEstoque} Disponibles`
+                                                        : totalEstoque === 1
+                                                        ? "Última Unidad"
+                                                        : "Indisponible"}
+                                                </div>
+
                                                 <div className="mt-3">
                                                     <Link href={`/produtos/${produto.id}`}>
                                                         <button
@@ -183,9 +203,11 @@ export default function Promocoes() {
                                                     </Link>
                                                 </div>
                                             </div>
-                                            <p className="absolute left-3 top-3 z-20 flex items-center bg-pink-700 px-3 py-1 text-sm font-semibold text-white">
-                                                {percentualDesconto}% OFF
-                                            </p>
+                                            {percentualDesconto > 0 && (
+                                                <p className="absolute left-3 top-3 z-20 flex items-center bg-pink-700 px-3 py-1 text-sm font-semibold text-white">
+                                                    {percentualDesconto}% OFF
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                 );
