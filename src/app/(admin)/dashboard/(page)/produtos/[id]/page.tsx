@@ -31,17 +31,17 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
 
   const fetchData = async () => {
     const { id } = await params;
-
     const productRes = await fetch(`/api/product?id=${id}`);
+
     if (!productRes.ok) {
       toast.error("Produto não encontrado");
       return;
     }
 
     const productData = await productRes.json();
+    console.log(productData)
     setProduto(productData.produtos);
 
-    // Converter variantes da API para o formato esperado
     const formattedVariants = productData.produtos.variants.map((v: any) => ({
       name: v.color.name,
       hexCode: v.color.hexCode,
@@ -53,17 +53,35 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
       fetch("/api/brand?fetchAll=true"),
       fetch("/api/category?fetchAll=true"),
     ]);
+
     const [brandsData, categoriesData] = await Promise.all([
       brandsRes.json(),
       categoriesRes.json(),
     ]);
+
     setMarcas(brandsData.marcas);
     setCategorias(categoriesData.category);
+
+    const formattedCategories = productData.produtos.categories.map((c: any) => ({
+      label: c.category.name,
+      value: c.category.id
+    }));
+    setSelectedCategories(formattedCategories);
   };
 
   useEffect(() => {
     fetchData();
   }, [params]);
+
+  useEffect(() => {
+    if (produto?.categories) {
+      const formatted = produto.categories.map((c: any) => ({
+        label: c.category.name,
+        value: c.category.id
+      }));
+      setSelectedCategories(formatted);
+    }
+  }, [produto]);
 
   const handleCategoryChange = (selected: any) => setSelectedCategories(selected);
   const handlePrimaryImageSelection = (file: File) => setPrimaryImage(file);
@@ -109,7 +127,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
       if (primaryImage) {
         const { imageUrl, error } = await uploadImage({
           file: primaryImage,
-          bucket: "elegance_image",
+          bucket: "elegance",
         });
         if (!error) uploadedPrimaryImageUrl = imageUrl;
       }
@@ -117,7 +135,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
       for (const image of secondaryImages) {
         const { imageUrl, error } = await uploadImage({
           file: image,
-          bucket: "elegance_image",
+          bucket: "elegance",
         });
         if (!error) newSecondaryImages.push(imageUrl);
       }
@@ -146,20 +164,13 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
       });
 
       if (!response.ok) throw new Error();
-      
-      toast.success("Produto atualizado com sucesso!", {
-        position: "top-center",
-        autoClose: 3000,
-      });
-      
+
+      toast.success("Produto atualizado com sucesso!", { position: "top-center", autoClose: 3000 });
       const updatedProduct = await response.json();
       setProduto(updatedProduct.data);
 
     } catch (error) {
-      toast.error("Erro ao atualizar produto", {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.error("Erro ao atualizar produto", { position: "top-center", autoClose: 3000 });
     } finally {
       setIsLoading(false);
     }
@@ -185,7 +196,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
         <div className="space-y-8 mb-10">
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Imagens do Produto</h3>
-            
+
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">Imagem Principal</label>
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-6">
@@ -329,7 +340,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
             <h3 className="text-xl font-semibold text-gray-800 mb-8">Informações do Produto</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Nome do Produto</label>
@@ -342,23 +353,24 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
                   required
                 />
               </div>
-
               <div>
                 <label htmlFor="brand" className="block text-sm font-medium text-gray-700 mb-2">Marca</label>
                 <select
                   id="brand"
                   name="brand"
-                  defaultValue={produto.brandId}
+                  value={produto?.brandId || ""}
+                  onChange={(e) => setProduto((prev: typeof produto) => ({ ...prev, brandId: e.target.value }))}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   required
                 >
                   <option value="">Selecione a marca</option>
                   {marcas.map(marca => (
-                    <option key={marca.id} value={marca.id}>{marca.name}</option>
+                    <option key={marca.id} value={marca.id}>
+                      {marca.name}
+                    </option>
                   ))}
                 </select>
               </div>
-
               <div>
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">Preço Atual</label>
                 <NumericFormat
@@ -367,7 +379,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
                   defaultValue={produto.price}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   thousandSeparator="."
-                  decimalSeparator=","  
+                  decimalSeparator=","
                   prefix="R$ "
                   decimalScale={2}
                 />
@@ -391,11 +403,8 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Categorias</label>
                 <Select
                   isMulti
-                  options={categorias.map(c => ({ label: c.name, value: c.id }))} 
-                  defaultValue={produto.categories?.map((c: any) => ({ 
-                    label: c.category.name, 
-                    value: c.categoryId 
-                  }))}
+                  options={categorias.map(c => ({ label: c.name, value: c.id }))}
+                  value={selectedCategories}
                   onChange={handleCategoryChange}
                   className="react-select-container"
                   classNamePrefix="react-select"
