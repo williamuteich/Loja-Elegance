@@ -106,7 +106,7 @@ export default async function ProdutoSlug({
                       <AccordionTrigger className="px-4">
                         <div className="flex items-center gap-2">
                           <FaFileAlt size={18} />
-                          Descrição do produto
+                          Descripción del producto
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="px-4 max-h-44 overflow-y-auto">

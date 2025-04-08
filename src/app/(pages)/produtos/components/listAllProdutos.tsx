@@ -13,11 +13,11 @@ export default async function ListAllProdutos() {
 
     const { produtos }: { produtos: Produto[] } = await response.json();
     const produtosAleatorios = produtos
-    .filter(produto => produto.active) 
-    .filter(produto => 
-      produto.variants.some((variant: { stock: { quantity: number; }; }) => variant.stock?.quantity > 0)
-    )
-    .sort(() => Math.random() - 0.5); 
+        .filter(produto => produto.active)
+        .filter(produto =>
+            produto.variants.some((variant: { stock: { quantity: number; }; }) => variant.stock?.quantity > 0)
+        )
+        .sort(() => Math.random() - 0.5); // Aleatoriza os produtos
   
     return (
         <div className="mx-auto py-10 sm:px-0">
@@ -27,6 +27,11 @@ export default async function ListAllProdutos() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {produtosAleatorios.length > 0 ? (
                     produtosAleatorios.map((produto: Produto) => {
+                        // Calculando a quantidade total disponível do produto
+                        const totalEstoque = produto.variants.reduce(
+                            (total, variant) => total + (variant.stock?.quantity || 0), 0
+                        );
+
                         const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
                             ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
                             : 0;
@@ -75,6 +80,16 @@ export default async function ListAllProdutos() {
                                                 {produto.description}
                                             </p>
                                         </Link>
+                                        {/* Exibindo a disponibilidade do estoque abaixo da descrição */}
+                                        <div
+                                            className={`mt-2 text-xs font-semibold text-white ${totalEstoque > 0 ? "bg-green-700" : "bg-red-700"} px-2 py-1 rounded-md w-max`}
+                                        >
+                                            {totalEstoque > 0
+                                                ? totalEstoque > 1
+                                                    ? `${totalEstoque} Disponibles`
+                                                    : "Última Unidad"
+                                                : "Indisponible"}
+                                        </div>
                                         <div className="mt-3">
                                             <Link href={`/produtos/${produto.id}`}>
                                                 <button
@@ -85,6 +100,7 @@ export default async function ListAllProdutos() {
                                             </Link>
                                         </div>
                                     </div>
+
                                     {produto.onSale && percentualDesconto > 0 && (
                                         <p className="absolute left-3 top-3 z-20 flex items-center bg-pink-700 px-3 py-1 text-sm font-semibold text-white">
                                             {percentualDesconto}% OFF
@@ -106,7 +122,6 @@ export default async function ListAllProdutos() {
                     </button>
                 </Link>
             </div>
-
         </div>
     );
 }

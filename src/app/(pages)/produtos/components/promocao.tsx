@@ -13,7 +13,6 @@ import { ProdutoProps, VariantProps } from "@/utils/types/produto";
 import { FaShoppingBag } from "react-icons/fa";
 
 export function Promocao({ produtos }: ProdutoProps) {
-
   const produtosEmPromocao = produtos.filter(produto =>
     produto.onSale &&
     produto.priceOld &&
@@ -34,7 +33,7 @@ export function Promocao({ produtos }: ProdutoProps) {
               <p className="text-gray-700 text-sm text-center font-normal">
                 ¡No te pierdas las ofertas especiales que preparamos para ti! Aprovecha descuentos exclusivos en productos seleccionados, con envío gratis en compras superiores a $1500. Oferta por tiempo limitado.
               </p>
-              <Link href="/promociones" className="w-full">
+              <Link href="/promocoes" className="w-full">
                 <Button className="uppercase text-xs lg:text-sm text-white bg-pink-800 hover:bg-pink-600 focus:bg-pink-600 w-full">
                   ¡Aprovechá Ahora!
                 </Button>
@@ -98,6 +97,22 @@ export function Promocao({ produtos }: ProdutoProps) {
                               {produto.description}
                             </p>
                           </Link>
+
+                          {/* Quantidade Disponível com Estilo */}
+                          <div
+                            className={`mt-2 text-xs font-semibold text-white ${produto.variants.some((variant: VariantProps) => variant.stock?.quantity > 0)
+                              ? produto.variants[0].stock?.quantity > 1
+                                ? "bg-green-700"
+                                : "bg-yellow-700"
+                              : "bg-red-700"} px-2 py-1 rounded-md w-max`}
+                          >
+                            {produto.variants.some((variant: VariantProps) => variant.stock?.quantity > 0)
+                              ? produto.variants[0].stock?.quantity > 1
+                                ? `${produto.variants[0].stock?.quantity} Disponibles`
+                                : "Última Unidad"
+                              : "Indisponible"}
+                          </div>
+
                           <div className="mt-3">
                             <Link href={`/produtos/${produto.id}`}>
                               <button
@@ -117,7 +132,6 @@ export function Promocao({ produtos }: ProdutoProps) {
                     </CarouselItem>
                   );
                 })}
-
               </CarouselContent>
             </Carousel>
           </div>

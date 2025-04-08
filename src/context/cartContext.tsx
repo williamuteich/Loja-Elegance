@@ -41,8 +41,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addToCart = (produto: Produto) => {
     const existingItem = cart.find(item => item.id === produto.id);
-  
-    const maxQuantity = produto.availableStock ?? produto.stock?.quantity ?? 0;
+    const maxQuantity = produto.variants.map((item: { availableStock: number }) => item.availableStock).reduce((a: number, b: number) => a + b, 0)
   
     if (existingItem) {
       if (existingItem.quantity >= maxQuantity) {
@@ -56,11 +55,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setCart(updatedCart);
       updateLocalStorage(updatedCart);
     } else {
-      if (maxQuantity <= 0) {
-        toast.warning("Produto esgotado.");
-        return;
-      }
-  
       const newCart = [...cart, { ...produto, quantity: 1 }];
       setCart(newCart);
       updateLocalStorage(newCart);
