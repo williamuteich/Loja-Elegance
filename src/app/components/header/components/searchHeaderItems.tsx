@@ -29,7 +29,7 @@ export default function SearchHeaderItems() {
     name: string;
     imagePrimary: string;
     price: number;
-    active: boolean; // Campo para verificar se o produto está ativo
+    active: boolean; 
     variants: {
       stock: {
         quantity: number;
@@ -59,7 +59,6 @@ export default function SearchHeaderItems() {
 
       const { produtos } = await response.json();
 
-      // Filtrando produtos ativos e com estoque disponível (quantidade > 0)
       const produtosFiltrados = produtos.filter((produto: Product) => 
         produto.active && 
         produto.variants.some((variant: any) => variant.stock.quantity >= 1)
@@ -140,7 +139,7 @@ export default function SearchHeaderItems() {
                     {filteredProducts.map((item) => (
                       <Link
                         href={`/produtos/${item.id}`}
-                        key={item.id} // Usando item.id como chave única
+                        key={item.id} 
                         onClick={() => setOpen(false)}
                         className="flex gap-4 items-start border-t-[1px] border-gray-300 pt-3"
                       >
