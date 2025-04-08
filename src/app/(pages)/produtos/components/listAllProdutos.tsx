@@ -12,9 +12,13 @@ export default async function ListAllProdutos() {
     }
 
     const { produtos }: { produtos: Produto[] } = await response.json();
-
-    const produtosAleatorios = produtos.sort(() => Math.random() - 0.5).filter(produto => produto.availableStock! > 0 && produto.active);
-
+    const produtosAleatorios = produtos
+    .filter(produto => produto.active) 
+    .filter(produto => 
+      produto.variants.some((variant: { stock: { quantity: number; }; }) => variant.stock?.quantity > 0)
+    )
+    .sort(() => Math.random() - 0.5); 
+  
     return (
         <div className="mx-auto py-10 sm:px-0">
             <h2 className="text-2xl relative uppercase font-extrabold text-pink-700 mb-6 text-start">
@@ -32,10 +36,7 @@ export default async function ListAllProdutos() {
                                 key={produto.id}
                                 className="flex flex-col border-neutral-300 hover:bg-pink-100 transition-all hover:scale-[1.02]"
                             >
-                                <div
-
-                                    className="group relative flex flex-col border border-gray-50 flex-1"
-                                >
+                                <div className="group relative flex flex-col border border-gray-50 flex-1">
                                     <div className="relative flex aspect-[300/300] items-center justify-center">
                                         {produto.imagePrimary ? (
                                             <Image
@@ -73,18 +74,6 @@ export default async function ListAllProdutos() {
                                             <p className="text-xs truncate font-medium text-neutral-700 sm:text-sm">
                                                 {produto.description}
                                             </p>
-                                            <div
-                                                className={`mt-2 text-xs font-semibold text-white ${produto.availableStock! > 0
-                                                    ? "bg-green-700"
-                                                    : "bg-red-700 text-white"
-                                                    } px-2 py-1 rounded-md w-max`}
-                                            >
-                                                {produto.availableStock! > 0
-                                                    ? produto.availableStock! > 1
-                                                        ? `${produto.availableStock!} Disponíveis`
-                                                        : "Última Unidade"
-                                                    : "Indisponível"}
-                                            </div>
                                         </Link>
                                         <div className="mt-3">
                                             <Link href={`/produtos/${produto.id}`}>

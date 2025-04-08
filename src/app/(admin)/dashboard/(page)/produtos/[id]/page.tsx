@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { FaArrowLeft, FaImage } from "react-icons/fa";
+import { FaArrowLeft, FaImage, FaPlus, FaTrash } from "react-icons/fa";
 import Container from "../../components/Container";
 import Link from "next/link";
 import { NumericFormat } from "react-number-format";
@@ -13,6 +13,12 @@ import "react-toastify/dist/ReactToastify.css";
 import UploadImage from "@/app/components/upload-Image/uploadImage";
 import Image from "next/image";
 
+type Variant = {
+  name: string;
+  hexCode: string;
+  quantity: number;
+};
+
 export default function EditarProduto({ params }: { params: Promise<{ id: string }> }) {
   const [produto, setProduto] = useState<any>(null);
   const [marcas, setMarcas] = useState<any[]>([]);
@@ -20,6 +26,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
   const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
   const [primaryImage, setPrimaryImage] = useState<File | null>(null);
   const [secondaryImages, setSecondaryImages] = useState<File[]>([]);
+  const [variants, setVariants] = useState<Variant[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = async () => {
@@ -33,6 +40,14 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
 
     const productData = await productRes.json();
     setProduto(productData.produtos);
+
+    // Converter variantes da API para o formato esperado
+    const formattedVariants = productData.produtos.variants.map((v: any) => ({
+      name: v.color.name,
+      hexCode: v.color.hexCode,
+      quantity: v.stock.quantity
+    }));
+    setVariants(formattedVariants);
 
     const [brandsRes, categoriesRes] = await Promise.all([
       fetch("/api/brand?fetchAll=true"),
@@ -54,6 +69,21 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
   const handlePrimaryImageSelection = (file: File) => setPrimaryImage(file);
   const handleSecondaryImageSelection = (files: File[]) => setSecondaryImages(files);
 
+  const handleVariantChange = (index: number, field: keyof Variant, value: string | number) => {
+    const newVariants = [...variants];
+    newVariants[index][field] = value as never;
+    setVariants(newVariants);
+  };
+
+  const addVariant = () => {
+    setVariants([...variants, { name: "", hexCode: "#000000", quantity: 0 }]);
+  };
+
+  const removeVariant = (index: number) => {
+    const newVariants = variants.filter((_, i) => i !== index);
+    setVariants(newVariants);
+  };
+
   const handleRemoveSecondaryImage = (url: string) => {
     const updatedImages = produto.imagesSecondary.filter((img: string) => img !== url);
     setProduto((prevProduto: any) => ({
@@ -66,73 +96,67 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
     event.preventDefault();
     setIsLoading(true);
 
+    if (variants.some(v => !v.name || !v.hexCode || v.quantity < 0)) {
+      toast.error("Preencha todos os campos das variantes corretamente");
+      setIsLoading(false);
+      return;
+    }
+
     let uploadedPrimaryImageUrl = produto.imagePrimary;
-
-    if (primaryImage) {
-      const { imageUrl, error } = await uploadImage({
-        file: primaryImage,
-        bucket: "elegance",
-      });
-      if (!error) {
-        uploadedPrimaryImageUrl = imageUrl;
-      }
-    }
-
-    for (const image of secondaryImages) {
-      const { imageUrl, error } = await uploadImage({
-        file: image,
-        bucket: "elegance",
-      });
-      if (!error) produto.imagesSecondary.push(imageUrl);
-    }
-
-    const name = event.target.name.value;
-    const description = event.target.description.value;
-    const features = event.target.features.value;
-    const price = parseFloat(event.target.price.value.replace("R$", "").replace(".", "").replace(",", "."));
-    const priceOld = parseFloat(event.target.priceOld.value.replace("R$", "").replace(".", "").replace(",", "."));
-    const brandId = event.target.brand.value;
-    const quantity = parseInt(event.target.stock.value, 10);
-    const active = event.target.status.value === "true";
-    const onSale = event.target.onSale.value === "true";
-    const destaque = event.target.destaque.value === "true";
-    const categoryIds = selectedCategories.map((category: any) => category.value);
+    const newSecondaryImages = [...produto.imagesSecondary];
 
     try {
+      if (primaryImage) {
+        const { imageUrl, error } = await uploadImage({
+          file: primaryImage,
+          bucket: "elegance_image",
+        });
+        if (!error) uploadedPrimaryImageUrl = imageUrl;
+      }
+
+      for (const image of secondaryImages) {
+        const { imageUrl, error } = await uploadImage({
+          file: image,
+          bucket: "elegance_image",
+        });
+        if (!error) newSecondaryImages.push(imageUrl);
+      }
+
+      const formData = {
+        id: produto.id,
+        name: event.target.name.value,
+        description: event.target.description.value,
+        features: event.target.features.value,
+        price: parseFloat(event.target.price.value.replace("R$", "").replace(".", "").replace(",", ".")),
+        priceOld: parseFloat(event.target.priceOld.value.replace("R$", "").replace(".", "").replace(",", ".")),
+        brandId: event.target.brand.value,
+        categoryIds: selectedCategories.map((c: any) => c.value),
+        imagePrimary: uploadedPrimaryImageUrl,
+        imagesSecondary: newSecondaryImages,
+        active: event.target.status.value === "true",
+        onSale: event.target.onSale.value === "true",
+        destaque: event.target.destaque.value === "true",
+        variants: variants
+      };
+
       const response = await fetch("/api/product", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: produto.id,
-          name,
-          description,
-          priceOld,
-          price,
-          onSale,
-          destaque,
-          features,
-          active,
-          brandId,
-          categoryIds,
-          quantity,
-          imagePrimary: uploadedPrimaryImageUrl,
-          imagesSecondary: produto.imagesSecondary,
-        }),
+        body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        toast.error("Erro ao editar produto", {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      } else {
-        toast.success("Produto editado com sucesso!", {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      }
+      if (!response.ok) throw new Error();
+      
+      toast.success("Produto atualizado com sucesso!", {
+        position: "top-center",
+        autoClose: 3000,
+      });
+      
+      const updatedProduct = await response.json();
+      setProduto(updatedProduct.data);
+
     } catch (error) {
-      toast.error("Erro ao editar produto", {
+      toast.error("Erro ao atualizar produto", {
         position: "top-center",
         autoClose: 3000,
       });
@@ -141,7 +165,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
     }
   };
 
-  if (!produto) return <Container>Produto não encontrado</Container>;
+  if (!produto) return <Container>Carregando...</Container>;
 
   const imagePrimaryUrl = produto?.imagePrimary || '';
   const imagesSecondaryUrls = produto?.imagesSecondary || [];
@@ -149,182 +173,315 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
   return (
     <Container>
       <ToastContainer />
-      <Link href="/dashboard/produtos">
-        <Button variant="outline" className="text-gray-700 border-gray-300 hover:bg-gray-200 flex items-center">
-          <FaArrowLeft size={14} className="mr-2" /> Voltar
-        </Button>
-      </Link>
-      <h2 className="text-4xl font-semibold mt-8 mb-6 text-gray-900">Editar Produto</h2>
+      <div className="mx-auto px-4">
+        <Link href="/dashboard/produtos">
+          <Button variant="outline" className="mb-6 gap-2">
+            <FaArrowLeft size={14} /> Voltar
+          </Button>
+        </Link>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-2 gap-6">
-          <div className="col-span-2 space-y-2 w-1/6">
-            <label className="block text-lg font-medium text-gray-700">Imagem Principal</label>
-            {primaryImage || imagePrimaryUrl ? (
-              <div className="flex flex-col items-center">
-                <Image
-                  src={primaryImage ? URL.createObjectURL(primaryImage) : imagePrimaryUrl}
-                  alt="Imagem do Produto"
-                  width={300}
-                  height={300}
-                  priority
-                  className="object-contain rounded-lg"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPrimaryImage(null);
-                    setProduto((prevProduto: any) => ({
-                      ...prevProduto,
-                      imagePrimary: '',
-                    }));
-                  }}
-                  className="w-full px-4 py-2 bg-red-700 text-white rounded-lg mt-2"
-                >
-                  Remover Imagem
-                </button>
-              </div>
-            ) : (
-              <div className="p-4 bg-gray-200 flex items-center justify-center rounded-lg">
-                <FaImage className="text-gray-500" size={110} />
-              </div>
-            )}
-            {!primaryImage && !imagePrimaryUrl && (
-              <UploadImage onImagesSelected={(files) => handlePrimaryImageSelection(files[0])} limit={1} />
-            )}
-          </div>
+        <h2 className="text-3xl font-bold text-gray-900 mb-8">Editar Produto</h2>
 
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nome do Produto</label>
-            <input id="name" name="name" type="text" defaultValue={produto.name} placeholder="Digite o nome do produto" className="w-full p-3 border border-gray-300 rounded-lg" />
-          </div>
-
-          <div>
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700">Preço</label>
-            <NumericFormat id="price" name="price" defaultValue={produto.price} placeholder="Digite o preço atual" className="w-full p-3 border border-gray-300 rounded-lg" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
-          </div>
-
-          <div>
-            <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700">Preço Anterior</label>
-            <NumericFormat id="priceOld" name="priceOld" defaultValue={produto.priceOld} placeholder="Digite o preço anterior" className="w-full p-3 border border-gray-300 rounded-lg" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
-          </div>
-
-          <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">Categoria</label>
-            <Select
-              id="category"
-              name="category"
-              isMulti
-              placeholder="Selecione uma ou mais categorias"
-              options={categorias.map((categoria) => ({ label: categoria.name, value: categoria.id }))}
-              value={selectedCategories.length > 0 ? selectedCategories : produto?.categories?.map((category: any) => ({
-                label: category.category.name,
-                value: category.categoryId,
-              })) || []}
-              onChange={handleCategoryChange}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="brand" className="block text-sm font-medium text-gray-700">Marca</label>
-            <select
-              id="brand"
-              name="brand"
-              value={produto?.brand?.id || ""}
-              onChange={(e) => setProduto({ ...produto, brand: { id: e.target.value } })}
-              className="w-full p-3 border border-gray-300 rounded-lg"
-            >
-              <option value="">Selecione a marca</option>
-              {marcas.map((marca) => (
-                <option key={marca.id} value={marca.id}>{marca.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="stock" className="block text-sm font-medium text-gray-700">Quantidade em Estoque</label>
-            <input id="stock" name="stock" type="number" value={produto?.stock?.quantity || 0} onChange={(e) => setProduto({ ...produto, stock: { quantity: Number(e.target.value) } })} placeholder="Digite a quantidade" className="w-full p-3 border border-gray-300 rounded-lg" />
-          </div>
-
-          <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
-            <select id="status" name="status" defaultValue={produto.active ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg">
-              <option value="true">Ativo</option>
-              <option value="false">Inativo</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="destaque" className="block text-sm font-medium text-gray-700">Destaque</label>
-            <select id="destaque" name="destaque" defaultValue={produto.destaque ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg">
-              <option value="true">Ativo</option>
-              <option value="false">Inativo</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="onSale" className="block text-sm font-medium text-gray-700">Promoção</label>
-            <select id="onSale" name="onSale" defaultValue={produto.onSale ? "true" : "false"} className="w-full p-3 border border-gray-300 rounded-lg">
-              <option value="true">Ativo</option>
-              <option value="false">Inativo</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="block text-lg font-medium text-gray-700">Imagens Secundárias</label>
-            <UploadImage onImagesSelected={handleSecondaryImageSelection} />
-            {imagesSecondaryUrls.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-6 gap-1 mt-4">
-                {imagesSecondaryUrls.map((url: string, index: number) => (
-                  <div key={index} className="relative border rounded-lg p-2 bg-white shadow-sm max-w-[250px] max-h-[250px]">
+        <div className="space-y-8 mb-10">
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Imagens do Produto</h3>
+            
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Imagem Principal</label>
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-6">
+                {primaryImage || imagePrimaryUrl ? (
+                  <div className="relative group">
                     <Image
-                      src={url}
-                      alt={`Imagem Secundária ${index + 1}`}
+                      src={primaryImage ? URL.createObjectURL(primaryImage) : imagePrimaryUrl}
+                      alt="Imagem principal"
                       width={300}
                       height={300}
-                      className="object-contain max-w-[200px] max-h-[200px] w-full h-auto mx-auto rounded"
+                      className="w-full h-64 object-contain rounded-lg"
                     />
                     <button
                       type="button"
-                      onClick={() => handleRemoveSecondaryImage(url)}
-                      className="mt-2 w-full px-3 py-1 bg-red-700 text-white rounded"
+                      onClick={() => {
+                        setPrimaryImage(null);
+                        setProduto((prev: any) => ({ ...prev, imagePrimary: '' }));
+                      }}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
                     >
-                      Remover
+                      <FaTrash size={14} />
                     </button>
                   </div>
-                ))}
+                ) : (
+                  <UploadImage
+                    onImagesSelected={(files) => handlePrimaryImageSelection(files[0])}
+                    limit={1}
+                  />
+                )}
               </div>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-4 ">
-            <div className="space-y-2">
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">Descrição</label>
-              <textarea id="description" name="description" defaultValue={produto.description} placeholder="Digite a descrição do produto" className="w-full p-3 border border-gray-300 rounded-lg" rows={6}></textarea>
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="features" className="block text-sm font-medium text-gray-700">Características</label>
-              <textarea id="features" name="features" defaultValue={produto.features} placeholder="Liste as principais características" className="w-full p-3 border border-gray-300 rounded-lg" rows={6}></textarea>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Imagens Secundárias</label>
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-6">
+                <UploadImage onImagesSelected={handleSecondaryImageSelection} />
+                {imagesSecondaryUrls.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-6 gap-1 mt-4">
+                    {imagesSecondaryUrls.map((url: string, index: number) => (
+                      <div key={index} className="relative border rounded-lg p-2 bg-white shadow-sm">
+                        <Image
+                          src={url}
+                          alt={`Imagem Secundária ${index + 1}`}
+                          width={200}
+                          height={200}
+                          className="object-contain w-full h-auto mx-auto rounded"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSecondaryImage(url)}
+                          className="mt-2 w-full px-3 py-1 bg-red-700 text-white rounded"
+                        >
+                          Remover
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end mt-6">
-          <Button type="submit" className="py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700" disabled={isLoading}>
-            {isLoading ? (
-              <svg className="animate-spin w-5 h-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <circle cx="12" cy="12" r="10" strokeWidth="4" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 12a8 8 0 1 1 16 0A8 8 0 0 1 4 12z" />
-              </svg>
-            ) : (
-              "Editar Produto"
-            )}
-          </Button>
+        <div className="space-y-8 mb-10">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-semibold text-gray-800">Variantes de Cor e Estoque</h3>
+              <Button
+                type="button"
+                onClick={addVariant}
+                className="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 gap-2"
+              >
+                <FaPlus /> Adicionar Variante
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {variants.map((variant, index) => (
+                <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="font-medium text-gray-700">Variante #{index + 1}</span>
+                    {variants.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeVariant(index)}
+                        className="text-red-500 hover:text-red-600"
+                      >
+                        <FaTrash size={16} />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-2">Nome da Cor</label>
+                      <input
+                        value={variant.name}
+                        onChange={(e) => handleVariantChange(index, 'name', e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-2">Cor</label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="color"
+                          value={variant.hexCode}
+                          onChange={(e) => handleVariantChange(index, 'hexCode', e.target.value)}
+                          className="w-12 h-12 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={variant.hexCode}
+                          onChange={(e) => handleVariantChange(index, 'hexCode', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-2">Quantidade em Estoque</label>
+                      <input
+                        type="number"
+                        value={variant.quantity}
+                        onChange={(e) => handleVariantChange(index, 'quantity', parseInt(e.target.value))}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        min="0"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </form>
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+            <h3 className="text-xl font-semibold text-gray-800 mb-8">Informações do Produto</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Nome do Produto</label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  defaultValue={produto.name}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="brand" className="block text-sm font-medium text-gray-700 mb-2">Marca</label>
+                <select
+                  id="brand"
+                  name="brand"
+                  defaultValue={produto.brandId}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  required
+                >
+                  <option value="">Selecione a marca</option>
+                  {marcas.map(marca => (
+                    <option key={marca.id} value={marca.id}>{marca.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">Preço Atual</label>
+                <NumericFormat
+                  id="price"
+                  name="price"
+                  defaultValue={produto.price}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  thousandSeparator="."
+                  decimalSeparator=","  
+                  prefix="R$ "
+                  decimalScale={2}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700 mb-2">Preço Anterior</label>
+                <NumericFormat
+                  id="priceOld"
+                  name="priceOld"
+                  defaultValue={produto.priceOld}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  prefix="R$ "
+                  decimalScale={2}
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Categorias</label>
+                <Select
+                  isMulti
+                  options={categorias.map(c => ({ label: c.name, value: c.id }))} 
+                  defaultValue={produto.categories?.map((c: any) => ({ 
+                    label: c.category.name, 
+                    value: c.categoryId 
+                  }))}
+                  onChange={handleCategoryChange}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  defaultValue={produto.description}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  rows={4}
+                  required
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label htmlFor="features" className="block text-sm font-medium text-gray-700 mb-2">Características</label>
+                <textarea
+                  id="features"
+                  name="features"
+                  defaultValue={produto.features}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  rows={4}
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                <select
+                  id="status"
+                  name="status"
+                  defaultValue={produto.active ? "true" : "false"}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="true">Ativo</option>
+                  <option value="false">Inativo</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="destaque" className="block text-sm font-medium text-gray-700 mb-2">Destaque</label>
+                <select
+                  id="destaque"
+                  name="destaque"
+                  defaultValue={produto.destaque ? "true" : "false"}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="false">Não</option>
+                  <option value="true">Sim</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="onSale" className="block text-sm font-medium text-gray-700 mb-2">Promoção</label>
+                <select
+                  id="onSale"
+                  name="onSale"
+                  defaultValue={produto.onSale ? "true" : "false"}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="false">Não</option>
+                  <option value="true">Sim</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 px-8 py-4 text-lg text-white gap-2"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+              ) : (
+                "Atualizar Produto"
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
     </Container>
   );
 }

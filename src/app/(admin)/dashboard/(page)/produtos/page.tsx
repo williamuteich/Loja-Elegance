@@ -6,11 +6,11 @@ import SearchItems from "../components/searchItems";
 import ModalDeletar from "../components/ModalDeletar";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 import Image from "next/image";
-import { Produto } from "@/utils/types/produto";
+
 import { FaBox } from 'react-icons/fa';
+import { Produto, VariantProps } from "@/utils/types/produto";
 
 export default async function Produtos({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
-
     const { search, page, status } = await searchParams;
 
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
@@ -61,7 +61,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
             <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
                 <thead className="bg-gray-800 text-white">
                     <tr>
-                        {['ID', 'Nome', 'Categoria', 'Marca', 'Preço', 'Quantidade', 'Status', ''].map((header, idx) => (
+                        {['ID', 'Nome', 'Categoria', 'Marca', 'Preço', 'Quantidade', 'Variantes', 'Status', ''].map((header, idx) => (
                             <th key={idx} className="py-3 px-4 text-left text-sm font-medium text-white">
                                 {header}
                             </th>
@@ -87,7 +87,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                                                     height={40}
                                                     src={produto.imagePrimary}
                                                     alt={produto.id}
-                                                    className="object-cover w-auto h-auto" 
+                                                    className="object-cover w-auto h-auto"
                                                 />
                                             ) : (
                                                 <div className="flex justify-center items-center">
@@ -118,11 +118,28 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                                     R$ {produto.price}
                                 </Link>
                             </td>
+
+                            {/* Exibindo a quantidade total do produto */}
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <Link href={`/dashboard/produtos/${produto.id}`} className="block">
-                                    {produto.stock.quantity}
+                                    {/* Exibindo a soma das quantidades de todas as variantes */}
+                                    {produto.variants.reduce((total: number, variant: VariantProps) => total + variant.stock.quantity, 0)} unidades
                                 </Link>
                             </td>
+
+                            {/* Exibindo as variantes */}
+                            <td className="py-3 px-4 font-medium text-sm text-gray-700">
+                                <Link href={`/dashboard/produtos/${produto.id}`} className="block">
+                                    {produto.variants.map((variant: VariantProps, idx: number) => (
+                                        <div key={idx} className="flex items-center space-x-2">
+                                            <span className="w-4 h-4" style={{ backgroundColor: variant.color.hexCode }}></span>
+                                            <span>{variant.color.name}</span>
+                                            <span>- {variant.availableStock} em estoque</span>
+                                        </div>
+                                    ))}
+                                </Link>
+                            </td>
+
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <Link href={`/dashboard/produtos/${produto.id}`} className="block">
                                     <span
@@ -136,6 +153,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                                     </span>
                                 </Link>
                             </td>
+
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <div className="flex justify-end items-center space-x-3">
                                     <Link href={`/dashboard/produtos/${produto.id}`}>
@@ -159,6 +177,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                     ))}
                 </tbody>
             </table>
+
             <div className="mt-5 w-full flex justify-end">
                 <Link href={`/dashboard/produtos/adicionar`}>
                     <Button variant="outline" className="bg-green-800 text-white hover:bg-green-600 font-semibold py-1 px-4 rounded-md transition duration-300 ease-in-out">
@@ -166,6 +185,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                     </Button>
                 </Link>
             </div>
+
             <Paginacao data={produtos} totalRecords={totalRecords} />
         </Container>
     );

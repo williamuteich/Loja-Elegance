@@ -3,16 +3,25 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Link from "next/link";
 import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
-import AddToCartButton from "@/app/components/addTocartButton";
 import { FaShoppingBag } from "react-icons/fa";
 
-export default async function Produtos({ titulo, isDestaque, categoriaProduct, produtos }: { titulo: string; isDestaque: boolean; categoriaProduct?: Produto[]; produtos: Produto[] }) {
+export default async function Produtos({
+  titulo,
+  isDestaque,
+  categoriaProduct,
+  produtos,
+}: {
+  titulo: string;
+  isDestaque: boolean;
+  categoriaProduct?: Produto[];
+  produtos: Produto[];
+}) {
 
   let produtosFiltrados = produtos;
 
   if (categoriaProduct) {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?fetchAll=true`);
-
+ 
     if (!response.ok) {
       throw new Error("Erro ao buscar produtos");
     }
@@ -34,15 +43,16 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
 
       const productIdCorrespondente = !categoriaProduct.some((itemCategory: any) => itemCategory.productId === produto.id);
 
-      return categoriaCorrespondente && productIdCorrespondente && produto.availableStock! > 0;
+      const estoqueDisponivel = produto.variants.some((variant: any) => variant.stock.quantity > 0);
+
+      return categoriaCorrespondente && productIdCorrespondente && estoqueDisponivel;
     });
 
     if (produtosFiltrados.length === 0) {
       produtosFiltrados = produtos
         .filter((produto: Produto) => {
           const produtoAtualId = categoriaProduct[0]?.category?.id;
-
-          return produto.id !== produtoAtualId && produto.availableStock! > 0;
+          return produto.id !== produtoAtualId && produto.variants.some((variant: any) => variant.stock.quantity > 0);
         })
         .sort(() => Math.random() - 0.5)
         .slice(0, 10);
@@ -50,21 +60,14 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
 
   } else {
     produtosFiltrados = isDestaque
-      ? produtos.filter((produto: Produto) => produto.destaque === true && produto.availableStock! > 0 && produto.active)
-      : produtos.filter((produto: Produto) => produto.availableStock! > 0 && produto.active);
+      ? produtos.filter((produto: Produto) => produto.destaque === true && produto.variants.some((variant: any) => variant.stock.quantity > 0) && produto.active)
+      : produtos.filter((produto: Produto) => produto.variants.some((variant: any) => variant.stock.quantity > 0) && produto.active);
   }
 
   return (
     <div className="mx-auto py-10 sm:px-0">
-      <h2 className="text-2xl relative uppercase font-extrabold text-pink-700 mb-6 text-start">
-        {titulo}
-      </h2>
-      <Carousel
-        opts={{
-          align: "start",
-        }}
-        className="w-full relative"
-      >
+      <h2 className="text-2xl relative uppercase font-extrabold text-pink-700 mb-6 text-start">{titulo}</h2>
+      <Carousel opts={{ align: "start" }} className="w-full relative">
         <div className="absolute right-12 -top-12 hidden sm:flex">
           <p className="text-pink-700 font-extrabold mr-10">Ver Todos</p>
           <div>
@@ -84,10 +87,7 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
                   key={produto.id}
                   className="flex-shrink-0 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/4 xl:basis-1/4"
                 >
-                  <div
-
-                    className="group relative flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all"
-                  >
+                  <div className="group relative flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all">
                     <Link href={`/produtos/${produto.id}`} className="relative aspect-square w-full flex items-center justify-center overflow-hidden bg-white">
                       {produto.imagePrimary ? (
                         <Image
@@ -126,14 +126,14 @@ export default async function Produtos({ titulo, isDestaque, categoriaProduct, p
                           {produto.description}
                         </p>
                         <div
-                          className={`mt-2 text-xs font-semibold text-white ${produto.availableStock! > 0
+                          className={`mt-2 text-xs font-semibold text-white ${produto.variants.some((variant: any) => variant.stock.quantity > 0)
                             ? "bg-green-700"
                             : "bg-red-700 text-white"
                             } px-2 py-1 rounded-md w-max`}
                         >
-                          {produto.availableStock! > 0
-                            ? produto.availableStock! > 1
-                              ? `${produto.availableStock!} Disponíveis`
+                          {produto.variants.some((variant: any) => variant.stock.quantity > 0)
+                            ? produto.variants[0].stock.quantity > 1
+                              ? `${produto.variants[0].stock.quantity} Disponíveis`
                               : "Última Unidade"
                             : "Indisponível"}
                         </div>

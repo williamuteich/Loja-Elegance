@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
 
 const prisma = new PrismaClient();
@@ -14,15 +14,6 @@ export async function GET(request: Request) {
     const pageSize = 10;
     const fetchAll = url.searchParams.get("fetchAll") === "true";
 
-    const shuffleArray = (array: any[]) => {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    };
-
-    let products;
     const baseInclude = {
       brand: true,
       categories: {
@@ -30,14 +21,15 @@ export async function GET(request: Request) {
           category: true,
         },
       },
-      stock: true,
-      reservations: {
-        where: {
-          expiresAt: { gt: new Date() }
-        }
+      variants: {
+        include: {
+          color: true,
+          stock: true,
+        },
       },
     };
 
+    let products;
     if (id) {
       products = await prisma.product.findUnique({
         where: { id },
@@ -61,47 +53,38 @@ export async function GET(request: Request) {
         where.active = status === "true";
       }
 
-      if (fetchAll) {
-        products = await prisma.product.findMany({
-          where,
-          include: baseInclude,
-          orderBy: {
-            createdAt: "desc",
-          },
-        });
-      } 
+      const findOptions = {
+        where,
+        include: baseInclude,
+        orderBy: { createdAt: "desc" } as const,
+      };
 
       if (fetchAll) {
-        products = await prisma.product.findMany({
-          where,
-          include: baseInclude,
-        });
-        
-        products = shuffleArray(products);
+        products = await prisma.product.findMany(findOptions);
       } else {
         products = await prisma.product.findMany({
-          where,
+          ...findOptions,
           skip: (page - 1) * pageSize,
           take: pageSize,
-          include: baseInclude,
         });
-        products = shuffleArray(products);
       }
     }
 
-    const processProductStock = (product: any) => ({
+    const processProduct = (product: any) => ({
       ...product,
-      availableStock: Math.max(
-        (product.stock?.quantity || 0) -
-        product.reservations.reduce((sum: number, r: any) => sum + r.quantity, 0),
-        0
-      )
+      variants: product.variants.map((variant: any) => ({
+        ...variant,
+        availableStock: Math.max(
+          (variant.stock?.quantity || 0) - 0,
+          0
+        ),
+      })),
     });
 
     const processedProducts = products
       ? Array.isArray(products)
-        ? products.map(processProductStock)
-        : processProductStock(products)
+        ? products.map(processProduct)
+        : processProduct(products)
       : null;
 
     const totalRecords = await prisma.product.count({
@@ -129,226 +112,180 @@ export async function GET(request: Request) {
   }
 }
 
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
- 
-    if (
-      !body.name ||
-      !body.description ||
-      !body.brandId ||
-      !body.features ||
-      !body.categoryIds ||
-      typeof body.quantity !== "number"
-    ) {
+
+    const requiredFields = [
+      'name',
+      'description',
+      'price',
+      'brandId',
+      'features',
+      'categoryIds',
+      'variants'
+    ];
+
+    const missingFields = requiredFields.filter(field => !body[field]);
+    if (missingFields.length > 0) {
       return NextResponse.json(
-        { error: "name, description, price, brandId, categoryIds, features and quantity are required" },
+        {
+          error: `Campos obrigatórios faltando: ${missingFields.join(', ')}`,
+          required: {
+            name: "string",
+            description: "string",
+            price: "number",
+            brandId: "string (ObjectId)",
+            features: "string",
+            categoryIds: "string[] (ObjectIds)",
+            variants: "Array<{ name: string, hexCode: string, quantity: number }>"
+          }
+        },
         { status: 400 }
       );
     }
 
-    const brandExists = await prisma.brand.findUnique({
-      where: { id: body.brandId },
-    });
+    if (!Array.isArray(body.variants) || body.variants.length === 0) {
+      return NextResponse.json(
+        { error: "Deve haver pelo menos uma variante" },
+        { status: 400 }
+      );
+    }
+
+    const hexCodes = body.variants.map((v: any) => v.hexCode);
+    const uniqueHexCodes = [...new Set(hexCodes)];
+    if (hexCodes.length !== uniqueHexCodes.length) {
+      return NextResponse.json(
+        { error: "Hex codes duplicados nas variantes" },
+        { status: 400 }
+      );
+    }
+
+    const [brandExists, categoriesExist] = await Promise.all([
+      prisma.brand.findUnique({ where: { id: body.brandId } }),
+      prisma.category.findMany({
+        where: { id: { in: body.categoryIds } },
+        select: { id: true }
+      })
+    ]);
 
     if (!brandExists) {
-      return NextResponse.json({ error: "Invalid brandId" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Marca não encontrada" },
+        { status: 404 }
+      );
     }
-
-    const categoriesExist = await prisma.category.findMany({
-      where: {
-        id: { in: body.categoryIds },
-      },
-    });
 
     if (categoriesExist.length !== body.categoryIds.length) {
-      return NextResponse.json({ error: "One or more categoryIds are invalid" }, { status: 400 });
+      const invalidIds = body.categoryIds.filter(
+        (id: string) => !categoriesExist.some(c => c.id === id)
+      );
+      return NextResponse.json(
+        {
+          error: "Categorias inválidas",
+          invalidCategoryIds: invalidIds
+        },
+        { status: 400 }
+      );
     }
 
-    const imagePrimary = body.uploadedImageUrls[0];
-    const imagesSecondary = body.uploadedImageUrls.slice(1);
-
-    const newProduct = await prisma.product.create({
-      data: {
-        name: body.name,
-        description: body.description,
-        features: body.features,
-        price: body.price,
-        priceOld: body.priceOld || null,
-        onSale: body.onSale ?? false,
-        destaque: body.destaque ?? false,
-        active: body.active ?? false,
-        brand: { connect: { id: body.brandId } },
-        stock: {
+    const newProduct = await prisma.$transaction(async (tx) => {
+      const colorOperations = body.variants.map((variant: any) =>
+        tx.color.upsert({
+          where: { hexCode: variant.hexCode },
           create: {
-            quantity: body.quantity,
+            name: variant.name,
+            hexCode: variant.hexCode
           },
-        },
-        imagePrimary: imagePrimary,
-        imagesSecondary: imagesSecondary,
-      },
-      include: {
-        stock: true,
-      },
-    });
-
-    await prisma.productCategory.createMany({
-      data: body.categoryIds.map((categoryId: string) => ({
-        productId: newProduct.id,
-        categoryId: categoryId,
-      })),
-    });
-
-    return NextResponse.json({ message: "Product created", data: newProduct }, { status: 201 });
-
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
-
-export async function PUT(request: Request) {
-  try {
-    const body = await request.json();
-    console.log("body", body);
-    if (
-      !body.id ||
-      !body.name ||
-      !body.description ||
-      !body.brandId ||
-      !body.features ||
-      !body.categoryIds ||
-      typeof body.quantity !== 'number' ||
-      typeof body.price !== 'number'
-    ) {
-      return NextResponse.json(
-        { error: "Campos obrigatórios: id, name, description, price, brandId, categoryIds, features e quantity" },
-        { status: 400 }
-      );
-    }
-
-    const productExists = await prisma.product.findUnique({
-      where: { id: body.id },
-      include: { stock: true },
-    });
-
-    if (!productExists) {
-      return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
-    }
-
-    const brandExists = await prisma.brand.findUnique({
-      where: { id: body.brandId },
-    });
-    if (!brandExists) {
-      return NextResponse.json({ error: "Marca inválida" }, { status: 400 });
-    }
-
-    const categoriesExist = await prisma.category.findMany({
-      where: { id: { in: body.categoryIds } },
-    });
-    if (categoriesExist.length !== body.categoryIds.length) {
-      return NextResponse.json({ error: "Categorias inválidas" }, { status: 400 });
-    }
-
-    const newImagePrimary = body.imagePrimary || null;
-    const newImagesSecondary = Array.isArray(body.imagesSecondary) ? body.imagesSecondary : [];
-
-    const updatedProduct = await prisma.product.update({
-      where: { id: body.id },
-      data: {
-        name: body.name,
-        description: body.description,
-        features: body.features,
-        price: body.price,
-        priceOld: body.priceOld || null,
-        onSale: body.onSale ?? true,
-        active: body.active ?? true,
-        destaque: body.destaque ?? false,
-        brand: { connect: { id: body.brandId } },
-        stock: {
-          update: { quantity: body.quantity }
-        },
-        imagePrimary: newImagePrimary,
-        imagesSecondary: newImagesSecondary,
-      },
-      include: { stock: true },
-    });
-
-    const existingImages = [
-      productExists.imagePrimary,
-      ...productExists.imagesSecondary
-    ].filter(Boolean);
-
-    const newImages = [
-      newImagePrimary,
-      ...newImagesSecondary
-    ].filter(Boolean);
-
-    const imagesToDelete = existingImages.filter(img => !newImages.includes(img));
-
-    if (imagesToDelete.length > 0) {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+          update: {}
+        })
       );
 
-      for (const imageUrl of imagesToDelete) {
-        const pathParts = imageUrl ? imageUrl.split('/public/') : [];
-        if (pathParts.length === 2) {
-          const [bucket, ...imagePath] = pathParts[1].split('/');
-          const fileName = imagePath.join('/');
+      const colors = await Promise.all(colorOperations);
 
-          const { error } = await supabase.storage
-            .from(bucket)
-            .remove([fileName]);
-
-          if (error) {
-            console.error(`Erro ao excluir ${fileName}:`, error);
+      const product = await tx.product.create({
+        data: {
+          name: body.name,
+          description: body.description,
+          price: body.price,
+          priceOld: body.priceOld,
+          features: body.features,
+          active: body.active ?? true,
+          onSale: body.onSale ?? false,
+          destaque: body.destaque ?? false,
+          imagePrimary: body.imagePrimary,
+          imagesSecondary: body.imagesSecondary || [],
+          brandId: body.brandId,
+          variants: {
+            create: body.variants.map((variant: any, index: number) => ({
+              colorId: colors[index].id,
+              stock: {
+                create: {
+                  quantity: variant.quantity
+                }
+              }
+            }))
+          }
+        },
+        include: {
+          variants: {
+            include: {
+              color: true,
+              stock: true
+            }
           }
         }
-      }
-    }
-
-    const existingCategories = await prisma.productCategory.findMany({
-      where: { productId: body.id },
-    });
-
-    const existingCategoryIds = existingCategories.map(c => c.categoryId);
-    const categoriesToAdd = body.categoryIds.filter((id: string) => !existingCategoryIds.includes(id));
-    const categoriesToRemove = existingCategoryIds.filter(id => !body.categoryIds.includes(id));
-
-    if (categoriesToRemove.length > 0) {
-      await prisma.productCategory.deleteMany({
-        where: {
-          productId: body.id,
-          categoryId: { in: categoriesToRemove }
-        }
       });
-    }
 
-    if (categoriesToAdd.length > 0) {
-      await prisma.productCategory.createMany({
-        data: categoriesToAdd.map((categoryId: string) => ({
-          productId: body.id,
-          categoryId
+      await tx.productCategory.createMany({
+        data: body.categoryIds.map((categoryId: string) => ({
+          productId: product.id,
+          categoryId: categoryId
         }))
       });
-    }
+
+      return tx.product.findUnique({
+        where: { id: product.id },
+        include: {
+          variants: {
+            include: {
+              color: true,
+              stock: true
+            }
+          },
+          categories: {
+            include: {
+              category: true
+            }
+          },
+          brand: true
+        }
+      });
+    });
 
     return NextResponse.json(
-      { message: "Produto atualizado", data: updatedProduct },
-      { status: 200 }
+      {
+        message: "Produto criado com cores automaticamente",
+        data: newProduct
+      },
+      { status: 201 }
     );
 
-  } catch (err) {
-    console.error("Erro ao atualizar produto:", err);
+  } catch (error) {
+    console.error("Erro na criação:", error);
     return NextResponse.json(
-      { error: "Erro interno do servidor" },
+      {
+        error: "Erro interno",
+        details: error instanceof Error ? error.message : "Erro desconhecido",
+        ...(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002')
+          ? { solution: "Hex code já existe para outra cor. Use um valor único." }
+          : {}
+      },
       { status: 500 }
     );
   }
 }
-
 
 export async function DELETE(request: Request) {
   try {
@@ -356,18 +293,21 @@ export async function DELETE(request: Request) {
     const { id } = body;
 
     if (!id) {
-      return NextResponse.json({ error: "ID is required" }, { status: 400 });
+      return NextResponse.json({ error: "ID é obrigatório" }, { status: 400 });
     }
 
     const productExists = await prisma.product.findUnique({
-      where: { id }
+      where: { id },
+      select: {
+        imagePrimary: true,
+        imagesSecondary: true
+      }
     });
 
     if (!productExists) {
       return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
-    // Excluir imagens do Supabase
     const images = [productExists.imagePrimary, ...productExists.imagesSecondary];
 
     const supabase = createClient(
@@ -389,11 +329,16 @@ export async function DELETE(request: Request) {
       }
     }
 
-    // Remover relacionamentos
     await prisma.productCategory.deleteMany({ where: { productId: id } });
-    await prisma.stock.deleteMany({ where: { productId: id } });
+    await prisma.stock.deleteMany({
+      where: {
+        variant: {
+          productId: id
+        }
+      }
+    });
+    await prisma.productVariant.deleteMany({ where: { productId: id } });
 
-    // Excluir produto
     await prisma.product.delete({ where: { id } });
 
     return NextResponse.json(
@@ -406,5 +351,121 @@ export async function DELETE(request: Request) {
       { error: "Erro interno do servidor" },
       { status: 500 }
     );
+  }
+}
+
+async function deleteImageFromSupabase(imageUrl: string): Promise<void> {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  const pathStart = imageUrl.indexOf('/storage/v1/object/public/');
+  if (pathStart === -1) return;
+
+  const path = imageUrl.substring(pathStart + '/storage/v1/object/public/'.length);
+  const [bucket, ...rest] = path.split('/');
+  const fileName = rest.join('/');
+
+  const { error } = await supabase.storage.from(bucket).remove([fileName]);
+  if (error) console.error(`Erro ao excluir ${fileName}:`, error);
+}
+
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+
+    if (!body.id || !body.name || !body.description || !body.price || !body.brandId || !body.categoryIds || !body.features) {
+      return NextResponse.json(
+        { error: "Campos obrigatórios: id, name, description, price, brandId, categoryIds, features" },
+        { status: 400 }
+      );
+    }
+
+    const updatedProduct = await prisma.$transaction(async (tx): Promise<any> => {
+      const originalProduct = await tx.product.findUnique({
+        where: { id: body.id },
+        select: { imagePrimary: true, imagesSecondary: true }
+      });
+
+      if (!originalProduct) throw new Error("Produto não encontrado");
+
+      const colorOperations = body.variants.map((variant: any) =>
+        tx.color.upsert({
+          where: { hexCode: variant.hexCode },
+          create: { name: variant.name, hexCode: variant.hexCode },
+          update: { name: variant.name }
+        })
+      );
+      const colors = await Promise.all(colorOperations);
+
+      await tx.stock.deleteMany({ where: { variant: { productId: body.id } } });
+      await tx.productVariant.deleteMany({ where: { productId: body.id } });
+
+      const updatedProd = await tx.product.update({
+        where: { id: body.id },
+        data: {
+          name: body.name,
+          description: body.description,
+          price: body.price,
+          priceOld: body.priceOld || null,
+          features: body.features,
+          onSale: body.onSale ?? false,
+          active: body.active ?? true,
+          destaque: body.destaque ?? false,
+          imagePrimary: body.imagePrimary || null,
+          imagesSecondary: Array.isArray(body.imagesSecondary) ? body.imagesSecondary : [],
+          brand: { connect: { id: body.brandId } },
+        },
+        include: { variants: { include: { color: true, stock: true } }, categories: { include: { category: true } } }
+      });
+
+      for (const [index, variant] of body.variants.entries()) {
+        const color = colors[index];
+        const createdVariant = await tx.productVariant.create({ data: { colorId: color.id, productId: body.id } });
+        await tx.stock.create({ data: { variantId: createdVariant.id, quantity: variant.quantity } });
+      }
+
+      const existingCategories = await tx.productCategory.findMany({ where: { productId: body.id } });
+      const existingCategoryIds = existingCategories.map(c => c.categoryId);
+      const categoriesToAdd = body.categoryIds.filter((id: string) => !existingCategoryIds.includes(id));
+      const categoriesToRemove = existingCategoryIds.filter(id => !body.categoryIds.includes(id));
+
+      if (categoriesToRemove.length > 0) {
+        await tx.productCategory.deleteMany({ where: { productId: body.id, categoryId: { in: categoriesToRemove } } });
+      }
+
+      if (categoriesToAdd.length > 0) {
+        await tx.productCategory.createMany({
+          data: categoriesToAdd.map((categoryId: string) => ({ productId: body.id, categoryId }))
+        });
+      }
+
+      const originalImages = [
+        originalProduct.imagePrimary,
+        ...originalProduct.imagesSecondary
+      ].filter(Boolean) as string[];
+
+      const newImages = [
+        body.imagePrimary,
+        ...(Array.isArray(body.imagesSecondary) ? body.imagesSecondary : [])
+      ].filter(Boolean) as string[];
+
+      const imagesToDelete = originalImages.filter(img => !newImages.includes(img));
+
+      for (const imgUrl of imagesToDelete) {
+        await deleteImageFromSupabase(imgUrl);
+      }
+
+      return tx.product.findUnique({
+        where: { id: body.id },
+        include: { variants: { include: { color: true, stock: true } }, categories: { include: { category: true } } }
+      });
+    });
+
+    return NextResponse.json({ message: "Produto atualizado", data: updatedProduct }, { status: 200 });
+  } catch (err) {
+    console.error("Erro ao atualizar produto:", err);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
   }
 }

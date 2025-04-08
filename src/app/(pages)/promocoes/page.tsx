@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Produto } from "@/utils/types/produto";
+import { Produto, VariantProps } from "@/utils/types/produto";
 import Image from "next/image";
 import Link from "next/link";
 import { FaShoppingBag, FaSlidersH } from 'react-icons/fa';
@@ -21,8 +21,12 @@ export default function Promocoes() {
                 const response = await fetch(`/api/product?fetchAll=true`);
                 if (!response.ok) throw new Error("Error al buscar productos");
                 const { produtos } = await response.json();
+                
+                const produtosComEstoque = produtos.filter((p: Produto) =>
+                    p.variants.some((variant: VariantProps) => variant.stock.quantity > 0) 
+                );
 
-                const emPromocao = produtos.filter((p: Produto) => p.priceOld && p.priceOld > p.price && p.availableStock! > 0);
+                const emPromocao = produtosComEstoque.filter((p: Produto) => p.priceOld && p.priceOld > p.price);
 
                 setProdutos(emPromocao);
                 setProdutosFiltrados(emPromocao);
@@ -52,22 +56,22 @@ export default function Promocoes() {
     }, [search, precoMinimo, precoMaximo, produtos]);
 
     const aplicarFiltros = () => {
-        let filtrados = produtos.filter(p =>
-            p.priceOld && p.priceOld > p.price && p.availableStock! > 0
+        let filtrados = produtos.filter((p) =>
+            p.priceOld && p.priceOld > p.price 
         );
 
         if (search) {
-            filtrados = filtrados.filter(p =>
-                p.categories.some(c => c.category.name === search && p.availableStock! > 0)
+            filtrados = filtrados.filter((p) =>
+                p.categories.some((c) => c.category.name === search)
             );
         }
 
         if (precoMinimo) {
-            filtrados = filtrados.filter(p => p.price >= Number(precoMinimo) && p.availableStock! > 0);
+            filtrados = filtrados.filter((p) => p.price >= Number(precoMinimo));
         }
 
         if (precoMaximo) {
-            filtrados = filtrados.filter(p => p.price <= Number(precoMaximo) && p.availableStock! > 0);
+            filtrados = filtrados.filter((p) => p.price <= Number(precoMaximo));
         }
 
         setProdutosFiltrados(filtrados);
@@ -150,7 +154,7 @@ export default function Promocoes() {
                                                     </div>
                                                 )}
                                             </Link>
-                                            <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm flex-1"> {/* Flex-1 para garantir que o conteúdo principal ocupe o espaço disponível */}
+                                            <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm flex-1">
                                                 <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
                                                     <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
                                                         {produto.name}

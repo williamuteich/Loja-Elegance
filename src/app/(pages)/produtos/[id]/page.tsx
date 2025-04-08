@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/accordion"
 import ViewImages from "../components/viewImages";
 import Produtos from "../components/produtos";
-import { Produto } from "@/utils/types/produto";
+import { Produto, VariantProps } from "@/utils/types/produto";
 import AddToCartButton from "@/app/components/addTocartButton";
 
 export default async function ProdutoSlug({
@@ -26,7 +26,8 @@ export default async function ProdutoSlug({
   }
 
   const { produtos } = await response.json();
-  const availableStock = produtos.availableStock;
+  const availableStock = produtos.variants.map((variants: VariantProps) => variants.availableStock).reduce((acc: number, stock: number) => acc + stock, 0);
+ 
   const isActive = produtos.active;
   const categorias = produtos.categories.map((prodctCategory: Produto) => prodctCategory);
 

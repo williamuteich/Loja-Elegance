@@ -9,16 +9,17 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/app/components/container";
-import { ProdutoProps } from "@/utils/types/produto";
-import AddToCartButton from "@/app/components/addTocartButton";
+import { ProdutoProps, VariantProps } from "@/utils/types/produto";
+import { FaShoppingBag } from "react-icons/fa";
 
 export function Promocao({ produtos }: ProdutoProps) {
+
   const produtosEmPromocao = produtos.filter(produto =>
     produto.onSale &&
-    produto.availableStock! > 0 &&
     produto.priceOld &&
     produto.price < produto.priceOld &&
-    produto.active
+    produto.active &&
+    produto.variants.some((variant: VariantProps) => variant.stock?.quantity > 0)
   );
 
   return (
@@ -39,7 +40,6 @@ export function Promocao({ produtos }: ProdutoProps) {
                 </Button>
               </Link>
             </div>
-
           </div>
 
           <div className="w-full lg:w-[75%] xl:w-[70%] relative">
@@ -64,14 +64,20 @@ export function Promocao({ produtos }: ProdutoProps) {
                     >
                       <div className="group relative flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all">
                         <Link href={`/produtos/${produto.id}`} className="relative flex aspect-[300/300] items-center justify-center">
-                          <Image
-                            alt={produto.name}
-                            src={produto.imagePrimary}
-                            className="object-contain"
-                            width={300}
-                            height={300}
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          />
+                          {produto.imagePrimary ? (
+                            <Image
+                              alt={produto.name}
+                              src={produto.imagePrimary}  // A URL da imagem só é passada se estiver definida
+                              className="object-contain"
+                              width={300}
+                              height={300}
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center bg-gray-100 rounded-lg" style={{ width: 300, height: 300 }}>
+                              <FaShoppingBag className="text-gray-400" size={110} />
+                            </div>
+                          )}
                         </Link>
                         <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
                           <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
@@ -91,18 +97,6 @@ export function Promocao({ produtos }: ProdutoProps) {
                             <p className="text-xs font-medium text-neutral-700 sm:text-sm truncate">
                               {produto.description}
                             </p>
-                            <div
-                              className={`mt-2 text-xs font-semibold text-white ${(produto.availableStock ?? 0) > 0
-                                ? "bg-green-700"
-                                : "bg-red-700"
-                                } px-2 py-1 rounded-md w-max`}
-                            >
-                              {(produto.availableStock ?? 0) > 0
-                                ? (produto.availableStock ?? 0) > 1
-                                  ? `${produto.availableStock} Disponibles`
-                                  : "Última Unidad"
-                                : "Indisponible"}
-                            </div>
                           </Link>
                           <div className="mt-3">
                             <Link href={`/produtos/${produto.id}`}>
@@ -123,6 +117,7 @@ export function Promocao({ produtos }: ProdutoProps) {
                     </CarouselItem>
                   );
                 })}
+
               </CarouselContent>
             </Carousel>
           </div>

@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { FaArrowLeft, FaImage } from "react-icons/fa";
+import { FaArrowLeft, FaImage, FaPlus, FaTrash } from "react-icons/fa";
 import Container from "../../components/Container";
 import Link from "next/link";
 import { NumericFormat } from "react-number-format";
@@ -11,12 +11,19 @@ import { uploadImage } from "@/supabase/storage/client";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+type Variant = {
+  name: string;
+  hexCode: string;
+  quantity: number;
+};
+
 export default function AdicionarProduto() {
   const [marcas, setMarcas] = useState<any[]>([]);
   const [categorias, setCategorias] = useState<any[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
   const [primaryImage, setPrimaryImage] = useState<File | null>(null);
   const [secondaryImages, setSecondaryImages] = useState<File[]>([]);
+  const [variants, setVariants] = useState<Variant[]>([{ name: "", hexCode: "#000000", quantity: 0 }]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -38,72 +45,87 @@ export default function AdicionarProduto() {
     }
     fetchData();
   }, []);
-  console.log("Marcas", marcas.length);
 
   const handleCategoryChange = (selected: any) => setSelectedCategories(selected);
   const handlePrimaryImageSelection = (file: File) => setPrimaryImage(file);
   const handleSecondaryImageSelection = (files: File[]) => setSecondaryImages(files);
 
+  const handleVariantChange = (index: number, field: keyof Variant, value: string | number) => {
+    const newVariants = [...variants];
+    newVariants[index][field] = value as never;
+    setVariants(newVariants);
+  };
+
+  const addVariant = () => {
+    setVariants([...variants, { name: "", hexCode: "#000000", quantity: 0 }]);
+  };
+
+  const removeVariant = (index: number) => {
+    const newVariants = variants.filter((_, i) => i !== index);
+    setVariants(newVariants);
+  };
+
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     setIsLoading(true);
 
+    if (variants.some(v => !v.name || !v.hexCode || v.quantity <= 0)) {
+      toast.error("Preencha todos os campos das variantes corretamente");
+      setIsLoading(false);
+      return;
+    }
+
     const uploadedImageUrls: string[] = [];
-
-    if (primaryImage) {
-      const { imageUrl: uploadedPrimaryImageUrl, error } = await uploadImage({
-        file: primaryImage,
-        bucket: "elegance",
-      });
-      if (!error) uploadedImageUrls.push(uploadedPrimaryImageUrl);
-    }
-
-    for (const image of secondaryImages) {
-      const { imageUrl: uploadedImageUrl, error } = await uploadImage({
-        file: image,
-        bucket: "elegance",
-      });
-      if (!error) uploadedImageUrls.push(uploadedImageUrl);
-    }
-
-    const name = event.target.name.value;
-    const description = event.target.description.value;
-    const features = event.target.features.value;
-    const price = parseFloat(event.target.price.value.replace("R$", "").replace(".", "").replace(",", "."));
-    const priceOld = parseFloat(event.target.priceOld.value.replace("R$", "").replace(".", "").replace(",", "."));
-    const brandId = event.target.brand.value;
-    const quantity = parseInt(event.target.stock.value, 10);
-    const active = event.target.status.value === "true";
-    const onSale = event.target.onSale.value === "true";
-    const destaque = event.target.destaque.value === "true";
-    const categoryIds = selectedCategories.map((category: any) => category.value);
-
+    
     try {
+      if (primaryImage) {
+        const { imageUrl, error } = await uploadImage({
+          file: primaryImage,
+          bucket: "elegance_image",
+        });
+        if (imageUrl) uploadedImageUrls.push(imageUrl);
+      }
+
+      for (const image of secondaryImages) {
+        const { imageUrl, error } = await uploadImage({
+          file: image,
+          bucket: "elegance_image",
+        });
+        if (imageUrl) uploadedImageUrls.push(imageUrl);
+      }
+
+      const formData = {
+        name: event.target.name.value,
+        description: event.target.description.value,
+        features: event.target.features.value,
+        price: parseFloat(event.target.price.value.replace("R$", "").replace(".", "").replace(",", ".")),
+        priceOld: parseFloat(event.target.priceOld.value.replace("R$", "").replace(".", "").replace(",", ".")),
+        brandId: event.target.brand.value,
+        categoryIds: selectedCategories.map((c: any) => c.value),
+        imagePrimary: uploadedImageUrls[0] || "",
+        imagesSecondary: uploadedImageUrls.slice(1),
+        active: event.target.status.value === "true",
+        onSale: event.target.onSale.value === "true",
+        destaque: event.target.destaque.value === "true",
+        variants: variants
+      };
+
       const response = await fetch("/api/product", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name, description, priceOld, price, onSale, destaque, features, active,
-          brandId, categoryIds, quantity, uploadedImageUrls,
-        }),
+        body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        toast.error("Erro ao adicionar produto", {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      } else {
-        toast.success("Produto adicionado com sucesso!", {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      }
+      if (!response.ok) throw new Error();
+      
+      toast.success("Produto adicionado com sucesso!");
+      setVariants([{ name: "", hexCode: "#000000", quantity: 0 }]);
+      event.target.reset();
+      setPrimaryImage(null);
+      setSecondaryImages([]);
+
     } catch (error) {
-      toast.error("Erro ao adicionar produto", {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.error("Erro ao adicionar produto");
     } finally {
       setIsLoading(false);
     }
@@ -112,134 +134,285 @@ export default function AdicionarProduto() {
   return (
     <Container>
       <ToastContainer />
-      <Link href="/dashboard/produtos">
-        <Button variant="outline" className="text-gray-700 border-gray-300 hover:bg-gray-200 flex items-center">
-          <FaArrowLeft size={14} className="mr-2" /> Voltar
-        </Button>
-      </Link>
-      <h2 className="text-2xl font-semibold mt-8 mb-6 text-gray-900">Adicionar Produto</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2 w-1/6">
-          <label htmlFor="primaryImage" className="block text-lg font-medium text-gray-700">
-            Imagem Principal
-          </label>
-          <div>
-            {primaryImage ? (
-              <div className="flex flex-col items-center">
-                <img
-                  src={URL.createObjectURL(primaryImage)}
-                  alt="Imagem do Produto"
-                  className="object-contain rounded-lg"
-                  style={{ maxWidth: 300, maxHeight: 300 }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setPrimaryImage(null)}
-                  className="w-full px-4 py-2 bg-red-500 text-white rounded-lg"
-                >
-                  Remover Imagem
-                </button>
-              </div>
-            ) : (
-              <div className="p-4 bg-gray-200 flex items-center justify-center rounded-lg">
-                <FaImage className="text-gray-500" size={110} />
-              </div>
-            )}
-            {!primaryImage && (
-              <UploadImage onImagesSelected={(files) => handlePrimaryImageSelection(files[0])} limit={1} />
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nome do Produto</label>
-            <input id="name" name="name" type="text" placeholder="Digite o nome do produto" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700">Preço</label>
-            <NumericFormat id="price" name="price" placeholder="Digite o preço do produto" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700">Preço Anterior</label>
-            <NumericFormat id="priceOld" name="priceOld" placeholder="Digite o preço anterior" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" thousandSeparator="." decimalSeparator="," prefix="R$ " decimalScale={2} fixedDecimalScale />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">Categoria</label>
-            <Select id="category" name="category" isMulti options={categorias.map((categoria) => ({ label: categoria.name, value: categoria.id }))} value={selectedCategories} onChange={handleCategoryChange} placeholder="Selecione a(s) categoria(s)" className="react-select-container" instanceId="category-select" />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="brand" className="block text-sm font-medium text-gray-700">Marca</label>
-            <select id="brand" name="brand" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Selecione a marca</option>
-              {marcas.map((marca) => <option key={marca.id} value={marca.id}>{marca.name}</option>)}
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="stock" className="block text-sm font-medium text-gray-700">Quantidade em Estoque</label>
-            <input id="stock" name="stock" type="number" placeholder="Digite a quantidade em estoque" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
-            <select id="status" name="status" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="true">Ativo</option>
-              <option value="false">Inativo</option>
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="destaque" className="block text-sm font-medium text-gray-700">Destaque</label>
-            <select id="destaque" name="destaque" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="false">Inativo</option>
-              <option value="true">Ativo</option>
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="onSale" className="block text-sm font-medium text-gray-700">Promoção</label>
-            <select id="onSale" name="onSale" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="true">Ativo</option>
-              <option value="false">Inativo</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="secondaryImages" className="block text-sm font-medium text-gray-700">Outras Imagens</label>
-          <UploadImage onImagesSelected={handleSecondaryImageSelection} />
-        </div>
-
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Descrição</label>
-            <textarea id="description" name="description" placeholder="Digite a descrição do produto" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows={6}></textarea>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="features" className="block text-sm font-medium text-gray-700">Características</label>
-            <textarea id="features" name="features" placeholder="Digite as características do produto" className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows={6}></textarea>
-          </div>
-        </div>
-
-        <div className="flex justify-end mt-6">
-          <Button type="submit" className="py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500" disabled={isLoading}>
-            {isLoading ? (
-              <svg className="animate-spin w-5 h-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <circle cx="12" cy="12" r="10" strokeWidth="4" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 12a8 8 0 1 1 16 0A8 8 0 0 1 4 12z" />
-              </svg>
-            ) : (
-              "Adicionar Produto"
-            )}
+      <div className=" mx-auto px-4">
+        <Link href="/dashboard/produtos">
+          <Button variant="outline" className="mb-6 gap-2">
+            <FaArrowLeft size={14} /> Voltar
           </Button>
+        </Link>
+
+        <h2 className="text-3xl font-bold text-gray-900 mb-8">Adicionar Novo Produto</h2>
+
+        <div className="space-y-8 mb-10">
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Imagens do Produto</h3>
+            
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Imagem Principal</label>
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-6">
+                {primaryImage ? (
+                  <div className="relative group">
+                    <img
+                      src={URL.createObjectURL(primaryImage)}
+                      alt="Imagem principal"
+                      className="w-full h-64 object-contain rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setPrimaryImage(null)}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+                    >
+                      <FaTrash size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <UploadImage
+                    onImagesSelected={(files) => handlePrimaryImageSelection(files[0])}
+                    limit={1}
+                   />
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Imagens Secundárias</label>
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-6">
+                  <UploadImage
+                    onImagesSelected={handleSecondaryImageSelection}
+                  />
+              </div>
+            </div>
+          </div>
         </div>
-      </form>
+
+        <div className="space-y-8 mb-10">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-semibold text-gray-800">Variantes de Cor e Estoque</h3>
+              <Button
+                type="button"
+                onClick={addVariant}
+                className="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 gap-2"
+              >
+                <FaPlus /> Adicionar Variante
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {variants.map((variant, index) => (
+                <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="font-medium text-gray-700">Variante #{index + 1}</span>
+                    {variants.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeVariant(index)}
+                        className="text-red-500 hover:text-red-600"
+                      >
+                        <FaTrash size={16} />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-2">Nome da Cor</label>
+                      <input
+                        value={variant.name}
+                        onChange={(e) => handleVariantChange(index, 'name', e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-2">Cor</label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="color"
+                          value={variant.hexCode}
+                          onChange={(e) => handleVariantChange(index, 'hexCode', e.target.value)}
+                          className="w-12 h-12 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={variant.hexCode}
+                          onChange={(e) => handleVariantChange(index, 'hexCode', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-2">Quantidade em Estoque</label>
+                      <input
+                        type="number"
+                        value={variant.quantity}
+                        onChange={(e) => handleVariantChange(index, 'quantity', parseInt(e.target.value))}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        min="0"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Formulário de Detalhes */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+            <h3 className="text-xl font-semibold text-gray-800 mb-8">Informações do Produto</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Nome do Produto</label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  required
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="brand" className="block text-sm font-medium text-gray-700 mb-2">Marca</label>
+                <select
+                  id="brand"
+                  name="brand"
+                  required
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Selecione a marca</option>
+                  {marcas.map(marca => (
+                    <option key={marca.id} value={marca.id}>{marca.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">Preço Atual</label>
+                <NumericFormat
+                  id="price"
+                  name="price"
+                  required
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  thousandSeparator="."
+                  decimalSeparator=","  
+                  prefix="R$ "
+                  decimalScale={2}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700 mb-2">Preço Anterior</label>
+                <NumericFormat
+                  id="priceOld"
+                  name="priceOld"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  prefix="R$ "
+                  decimalScale={2}
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Categorias</label>
+                <Select
+                  isMulti
+                  options={categorias.map(c => ({ label: c.name, value: c.id }))} 
+                  onChange={handleCategoryChange}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Selecione as categorias..."
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows={4}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label htmlFor="features" className="block text-sm font-medium text-gray-700 mb-2">Características</label>
+                <textarea
+                  id="features"
+                  name="features"
+                  rows={4}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                <select
+                  id="status"
+                  name="status"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  defaultValue="true"
+                >
+                  <option value="true">Ativo</option>
+                  <option value="false">Inativo</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="destaque" className="block text-sm font-medium text-gray-700 mb-2">Destaque</label>
+                <select
+                  id="destaque"
+                  name="destaque"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  defaultValue="false"
+                >
+                  <option value="false">Não</option>
+                  <option value="true">Sim</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="onSale" className="block text-sm font-medium text-gray-700 mb-2">Promoção</label>
+                <select
+                  id="onSale"
+                  name="onSale"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  defaultValue="false"
+                >
+                  <option value="false">Não</option>
+                  <option value="true">Sim</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 px-8 py-4 text-lg text-white gap-2"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+              ) : (
+                <>
+                  <FaPlus /> Cadastrar Produto
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
     </Container>
   );
 }

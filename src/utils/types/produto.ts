@@ -1,4 +1,5 @@
 export interface Produto {
+    variants: any;
     category: any;
     id: string;
     name: string;
@@ -18,6 +19,8 @@ export interface Produto {
     stock: StockProps;
     createdAt: string;
     updatedAt: string;
+    variant: string;
+    idx: string
   }
 
   export interface ProdutoProps {
@@ -46,3 +49,11 @@ interface StockProps {
     quantity: number;
 }
   
+export interface VariantProps {
+  color: {
+      name: string;
+      hexCode: string;
+  };
+  availableStock: number;
+  stock: StockProps;
+}
