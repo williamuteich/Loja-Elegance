@@ -22,7 +22,7 @@ interface CartItem {
 interface CartContextType {
   cart: CartItem[];
   addToCart: (produto: Produto & { selectedVariantId: string }) => void;
-  removeFromCart: (id: string) => void;
+  removeFromCart: (id: string, variantId: string) => void;
   clearCart: () => void;
   cartOpen: boolean;
   setCartOpen: (open: boolean) => void;
@@ -47,31 +47,31 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addToCart = (produto: Produto & { selectedVariantId: string }) => {
     let selectedVariant = produto.variants?.find(
-      (v: { id: string; color: { name: string; hexCode: string }; availableStock: number }) => v.id === produto.selectedVariantId
+      (v: Produto["variants"][number]) => v.id === produto.selectedVariantId
     );
-  
+
     if (!selectedVariant) {
       const existingItem = cart.find(
         (item) => item.id === produto.id && item.selectedVariantId === produto.selectedVariantId
       );
-  
+
       if (existingItem) {
         selectedVariant = {
+          id: existingItem.selectedVariantId,
           color: {
             name: existingItem.variantDetails.color,
             hexCode: existingItem.variantDetails.hexCode,
           },
           availableStock: existingItem.variantDetails.availableStock,
-          id: existingItem.selectedVariantId,
         };
       }
     }
-  
+
     if (!selectedVariant) {
       toast.error("Variante não encontrada.");
       return;
     }
-  
+
     const cartItem: CartItem = {
       id: produto.id,
       name: produto.name,
@@ -85,17 +85,17 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         availableStock: selectedVariant.availableStock,
       },
     };
-  
+
     const existingItemIndex = cart.findIndex(
       (item) => item.id === produto.id && item.selectedVariantId === produto.selectedVariantId
     );
-  
+
     if (existingItemIndex >= 0) {
       if (cart[existingItemIndex].quantity >= selectedVariant.availableStock) {
         toast.warning("Quantidade máxima disponível para esta variante atingida.");
         return;
       }
-  
+
       const updatedCart = [...cart];
       updatedCart[existingItemIndex].quantity += 1;
       setCart(updatedCart);
@@ -105,23 +105,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       setCart(newCart);
       updateLocalStorage(newCart);
     }
-  
+
     setCartOpen(true);
   };
-  
 
-  const removeFromCart = (productId: string) => {
-    const item = cart.find(i => i.id === productId);
+  const removeFromCart = (productId: string, variantId: string) => {
+    const item = cart.find(i => i.id === productId && i.selectedVariantId === variantId);
     if (!item) return;
 
     let updatedCart: CartItem[];
 
     if (item.quantity > 1) {
       updatedCart = cart.map(i =>
-        i.id === productId ? { ...i, quantity: i.quantity - 1 } : i
+        i.id === productId && i.selectedVariantId === variantId
+          ? { ...i, quantity: i.quantity - 1 }
+          : i
       );
     } else {
-      updatedCart = cart.filter(i => i.id !== productId);
+      updatedCart = cart.filter(i => !(i.id === productId && i.selectedVariantId === variantId));
     }
 
     setCart(updatedCart);
@@ -134,7 +135,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, cartOpen, setCartOpen }}>
+    <CartContext.Provider
+      value={{ cart, addToCart, removeFromCart, clearCart, cartOpen, setCartOpen }}
+    >
       <ToastContainer />
       {children}
     </CartContext.Provider>

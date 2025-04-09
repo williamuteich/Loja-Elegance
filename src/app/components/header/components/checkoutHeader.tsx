@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingCart, Trash2 } from "lucide-react";
@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { Produto } from "@/utils/types/produto";
 
 export default function CheckoutHeader() {
   const { cart, removeFromCart, addToCart, cartOpen, setCartOpen } = useCart();
@@ -34,7 +35,7 @@ export default function CheckoutHeader() {
         </button>
       </SheetTrigger>
 
-      <SheetContent side="right" className="bg-white p-6 w-96" aria-label="Contenido del carrito">
+      <SheetContent side="right" className="bg-white p-6 w-96">
         <SheetTitle className="text-center">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-xl font-bold text-pink-800">MI CARRITO</h1>
@@ -51,7 +52,7 @@ export default function CheckoutHeader() {
           <div className="space-y-6">
             <div className="overflow-y-auto max-h-[60vh]">
               {cart.map((item) => (
-                <div key={item.id} className="flex gap-4 border-b pb-4">
+                <div key={`${item.id}-${item.selectedVariantId}`} className="flex gap-4 border-b pb-4">
                   <Link href={`/produtos/${item.id}`} className="cursor-pointer">
                     <Image
                       src={item.imagePrimary}
@@ -61,10 +62,20 @@ export default function CheckoutHeader() {
                       className="object-cover rounded-md w-auto h-auto"
                     />
                   </Link>
+
                   <div className="flex-1">
                     <Link href={`/produtos/${item.id}`} className="cursor-pointer">
                       <h2 className="text-sm font-semibold text-pink-800">{item.name}</h2>
-                      <p className="text-xs text-gray-700">Cantidad: {item.quantity}</p>
+
+                      <div className="flex items-center gap-2 mt-1 mb-1">
+                        <span
+                          className="w-4 h-4 rounded-full border"
+                          style={{ backgroundColor: item.variantDetails.hexCode }}
+                        />
+                        <span className="text-xs text-gray-700 font-medium">{item.variantDetails.color}</span>
+                      </div>
+
+                      <p className="text-xs text-gray-700">Quantidade: {item.quantity}</p>
                       <p className="font-semibold text-sm mt-2">
                         {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
@@ -72,13 +83,16 @@ export default function CheckoutHeader() {
                         }).format(item.price * item.quantity)}
                       </p>
                     </Link>
+
                     <div className="flex items-center gap-2 mt-1">
                       <button
-                        className={`w-6 h-6 flex justify-center items-center bg-gray-200 rounded-full ${removingId === item.id ? 'opacity-50' : ''}`}
+                        className={`w-6 h-6 flex justify-center items-center bg-gray-200 rounded-full ${
+                          removingId === item.id ? "opacity-50" : ""
+                        }`}
                         onClick={async () => {
                           setRemovingId(item.id);
                           try {
-                            await removeFromCart(item.id);
+                            await removeFromCart(item.id, item.selectedVariantId);
                           } finally {
                             setRemovingId(null);
                           }
@@ -91,13 +105,31 @@ export default function CheckoutHeader() {
                           <Trash2 className="w-4 h-4 text-red-500" />
                         )}
                       </button>
+
                       <span className="text-sm font-medium">{item.quantity}</span>
+
                       <button
                         className="w-6 h-6 flex justify-center items-center bg-gray-200 rounded-full disabled:opacity-50"
                         onClick={async () => {
                           setLoadingId(item.id);
                           try {
-                            await addToCart(item);
+                            await addToCart({
+                              id: item.id,
+                              name: item.name,
+                              price: item.price,
+                              imagePrimary: item.imagePrimary,
+                              selectedVariantId: item.selectedVariantId,
+                              variants: [
+                                {
+                                  id: item.selectedVariantId,
+                                  color: {
+                                    name: item.variantDetails.color,
+                                    hexCode: item.variantDetails.hexCode,
+                                  },
+                                  availableStock: item.variantDetails.availableStock,
+                                },
+                              ],
+                            } as Produto & { selectedVariantId: string });
                           } finally {
                             setLoadingId(null);
                           }
@@ -107,7 +139,7 @@ export default function CheckoutHeader() {
                         {loadingId === item.id ? (
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-pink-600"></div>
                         ) : (
-                          '+'
+                          "+"
                         )}
                       </button>
                     </div>
@@ -115,6 +147,7 @@ export default function CheckoutHeader() {
                 </div>
               ))}
             </div>
+
             <div className="border-t pt-4 space-y-2">
               <div className="flex justify-between">
                 <p className="text-sm">Subtotal</p>
@@ -139,8 +172,9 @@ export default function CheckoutHeader() {
                 </p>
               </div>
             </div>
+
             {session ? (
-              <Link href={`/checkouts`} >
+              <Link href={`/checkouts`}>
                 <Button
                   className="w-full mt-4 py-2 bg-pink-700 text-white font-semibold text-sm text-center rounded-md hover:bg-pink-600"
                   onClick={() => setCartOpen(false)}
@@ -151,10 +185,11 @@ export default function CheckoutHeader() {
             ) : (
               <div>
                 <p className="text-center text-sm text-red-500 font-semibold mb-4">
-                  Para completar tu compra, necesitas <strong>iniciar sesión</strong> o <strong>crear una cuenta</strong>.
+                  Para completar tu compra, necesitas <strong>iniciar sesión</strong> o{" "}
+                  <strong>crear una cuenta</strong>.
                 </p>
 
-                <Link href={`/login`} >
+                <Link href={`/login`}>
                   <Button
                     className="w-full mt-1 py-2 bg-pink-700 text-white font-semibold text-sm text-center rounded-md hover:bg-pink-600"
                     onClick={() => setCartOpen(false)}
@@ -176,7 +211,9 @@ export default function CheckoutHeader() {
         )}
       </SheetContent>
       <SheetDescription className="sr-only">
-        Este es tu carrito de compras. Aquí puedes ver los productos que agregaste, incluyendo sus cantidades y precios. Puedes eliminar artículos o ajustar las cantidades. El total de la compra y el envío gratuito también se muestran. Finaliza tu compra haciendo clic en el botón "Finalizar Compra".
+        Este es tu carrito de compras. Aquí puedes ver los productos que agregaste, incluyendo sus cantidades y
+        precios. Puedes eliminar artículos o ajustar las cantidades. El total de la compra y el envío gratuito también
+        se muestran. Finaliza tu compra haciendo clic en el botón "Finalizar Compra".
       </SheetDescription>
     </Sheet>
   );
