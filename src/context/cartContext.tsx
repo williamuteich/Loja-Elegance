@@ -5,13 +5,23 @@ import { Produto } from "@/utils/types/produto";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-interface CartItem extends Produto {
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  imagePrimary: string;
   quantity: number;
+  selectedVariantId: string;
+  variantDetails: {
+    color: string;
+    hexCode: string;
+    availableStock: number;
+  };
 }
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (produto: Produto) => void;
+  addToCart: (produto: Produto & { selectedVariantId: string }) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
   cartOpen: boolean;
@@ -25,71 +35,98 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartOpen, setCartOpen] = useState(false);
 
   useEffect(() => {
-    const loadCart = () => {
-      const storedCart = localStorage.getItem("cart");
-      if (storedCart) {
-        setCart(JSON.parse(storedCart));
-      }
-    };
-
-    loadCart();
+    const storedCart = localStorage.getItem("cart");
+    if (storedCart) {
+      setCart(JSON.parse(storedCart));
+    }
   }, []);
 
   const updateLocalStorage = (newCart: CartItem[]) => {
     localStorage.setItem("cart", JSON.stringify(newCart));
   };
 
-  const addToCart = (produto: Produto) => {
-    const existingItem = cart.find(item => item.id === produto.id);
-    const maxQuantity = produto.variants.map((item: { availableStock: number }) => item.availableStock).reduce((a: number, b: number) => a + b, 0)
+  const addToCart = (produto: Produto & { selectedVariantId: string }) => {
+    let selectedVariant = produto.variants?.find(
+      (v: { id: string; color: { name: string; hexCode: string }; availableStock: number }) => v.id === produto.selectedVariantId
+    );
   
-    if (existingItem) {
-      if (existingItem.quantity >= maxQuantity) {
-        toast.warning("Quantidade máxima disponível atingida.");
+    if (!selectedVariant) {
+      const existingItem = cart.find(
+        (item) => item.id === produto.id && item.selectedVariantId === produto.selectedVariantId
+      );
+  
+      if (existingItem) {
+        selectedVariant = {
+          color: {
+            name: existingItem.variantDetails.color,
+            hexCode: existingItem.variantDetails.hexCode,
+          },
+          availableStock: existingItem.variantDetails.availableStock,
+          id: existingItem.selectedVariantId,
+        };
+      }
+    }
+  
+    if (!selectedVariant) {
+      toast.error("Variante não encontrada.");
+      return;
+    }
+  
+    const cartItem: CartItem = {
+      id: produto.id,
+      name: produto.name,
+      price: produto.price,
+      imagePrimary: produto.imagePrimary,
+      quantity: 1,
+      selectedVariantId: produto.selectedVariantId,
+      variantDetails: {
+        color: selectedVariant.color.name,
+        hexCode: selectedVariant.color.hexCode,
+        availableStock: selectedVariant.availableStock,
+      },
+    };
+  
+    const existingItemIndex = cart.findIndex(
+      (item) => item.id === produto.id && item.selectedVariantId === produto.selectedVariantId
+    );
+  
+    if (existingItemIndex >= 0) {
+      if (cart[existingItemIndex].quantity >= selectedVariant.availableStock) {
+        toast.warning("Quantidade máxima disponível para esta variante atingida.");
         return;
       }
   
-      const updatedCart = cart.map(item =>
-        item.id === produto.id ? { ...item, quantity: item.quantity + 1 } : item
-      );
+      const updatedCart = [...cart];
+      updatedCart[existingItemIndex].quantity += 1;
       setCart(updatedCart);
       updateLocalStorage(updatedCart);
     } else {
-      const newCart = [...cart, { ...produto, quantity: 1 }];
+      const newCart = [...cart, cartItem];
       setCart(newCart);
       updateLocalStorage(newCart);
     }
   
     setCartOpen(true);
   };
+  
 
-  const removeFromCart = async (productId: string) => {
-    try {
-      const item = cart.find(i => i.id === productId);
-      if (!item) return;
-  
-      let updatedCart: CartItem[];
-  
-      if (item.quantity > 1) {
-        updatedCart = cart.map(i =>
-          i.id === productId
-            ? { ...i, quantity: i.quantity - 1 }
-            : i
-        );
-      } else {
-        updatedCart = cart.filter(i => i.id !== productId);
-      }
-  
-      setCart(updatedCart);
-      updateLocalStorage(updatedCart);
-  
-    } catch (err) {
-      console.error('Erro ao remover item do carrinho:', err);
-      toast.error('Erro ao remover item do carrinho');
+  const removeFromCart = (productId: string) => {
+    const item = cart.find(i => i.id === productId);
+    if (!item) return;
+
+    let updatedCart: CartItem[];
+
+    if (item.quantity > 1) {
+      updatedCart = cart.map(i =>
+        i.id === productId ? { ...i, quantity: i.quantity - 1 } : i
+      );
+    } else {
+      updatedCart = cart.filter(i => i.id !== productId);
     }
+
+    setCart(updatedCart);
+    updateLocalStorage(updatedCart);
   };
-  
-  
 
   const clearCart = () => {
     setCart([]);

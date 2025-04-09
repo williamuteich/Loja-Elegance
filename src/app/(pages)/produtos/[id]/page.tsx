@@ -1,5 +1,5 @@
 import { Container } from "@/app/components/container";
-import { FaFileAlt, FaList, FaBox } from 'react-icons/fa'
+import { FaFileAlt, FaList } from 'react-icons/fa'
 import {
   Accordion,
   AccordionContent,
@@ -9,7 +9,7 @@ import {
 import ViewImages from "../components/viewImages";
 import Produtos from "../components/produtos";
 import { Produto, VariantProps } from "@/utils/types/produto";
-import AddToCartButton from "@/app/components/addTocartButton";
+import EstoqueProdutos from "../components/estoqueProdutos";
 
 export default async function ProdutoSlug({
   params
@@ -31,6 +31,16 @@ export default async function ProdutoSlug({
   const isActive = produtos.active;
   const categorias = produtos.categories.map((prodctCategory: Produto) => prodctCategory);
 
+  const { colors, stock, hex } = produtos.variants.reduce(
+    (acc: { colors: string[], stock: number[], hex: string[] }, item: VariantProps) => {
+      acc.colors.push(item.color.name); 
+      acc.hex.push(item.color.hexCode); 
+      acc.stock.push(item.stock.quantity); 
+      return acc;
+    },
+    { colors: [], stock: [], hex: [] } 
+  );
+  
   return (
     <Container>
       <div className="flex justify-center py-10">
@@ -62,30 +72,7 @@ export default async function ProdutoSlug({
                 </div>
 
                 <div className="space-y-4">
-                  <div className="space-y-0">
-                    <h3 className="text-sm text-gray-700 font-bold mb-1">
-                      Estoque Disponível
-                    </h3>
-                    <div className="flex items-center gap-2 bg-gray-100 p-3 rounded shadow-sm">
-                      <FaBox size={20} className="text-pink-700" />
-                      <p className="text-md font-bold text-pink-700">
-                        {isActive && availableStock > 0
-                          ? `${availableStock} ${availableStock > 1 ? 'Disponíveis' : 'Disponível'}`
-                          : 'Indisponível'}
-                      </p>
-                    </div>
-                  </div>
-
-                  {availableStock > 0 ? (
-                    <AddToCartButton produto={produtos} />
-                  ) : (
-                    <button
-                      className="uppercase text-white py-3 px-6 rounded mt-6 w-full bg-gray-500"
-                      disabled
-                    >
-                      Produto Indisponível
-                    </button>
-                  )}
+                  <EstoqueProdutos isActive={isActive} availableStock={availableStock} colors={colors} hex={hex} stock={stock} produtos={produtos} />
                 </div>
 
                 <div className="mt-6 space-y-2">

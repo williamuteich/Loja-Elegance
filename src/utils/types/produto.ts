@@ -50,6 +50,7 @@ interface StockProps {
 }
   
 export interface VariantProps {
+  id: string;
   color: {
       name: string;
       hexCode: string;
