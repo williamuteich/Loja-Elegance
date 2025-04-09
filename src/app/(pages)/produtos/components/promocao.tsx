@@ -62,7 +62,7 @@ export function Promocao({ produtos }: ProdutoProps) {
                       className="flex-shrink-0 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/4 xl:basis-1/4"
                     >
                       <div className="group relative flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all">
-                        <Link href={`/produtos/${produto.id}`} className="relative flex aspect-[300/300] items-center justify-center">
+                        <Link href={`/produtos/${produto.id}`} className="relative aspect-square w-full flex items-center justify-center overflow-hidden bg-white">
                           {produto.imagePrimary ? (
                             <Image
                               alt={produto.name}
