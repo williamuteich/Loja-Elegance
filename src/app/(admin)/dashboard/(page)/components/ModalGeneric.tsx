@@ -24,11 +24,15 @@ import { revalidatePath } from "next/cache";
 import Form from "@/components/Form";
 import Submit from "@/components/Submit";
 import { ButtonAdicionarProps } from "@/utils/types/modaGeneric";
+import { cookies } from "next/headers";
 
 export default function ButtonAdicionar({ config, params  }: ButtonAdicionarProps) {
 
     async function newUser(prevState: any, formData: FormData): Promise<{ success?: string; error?: string }> {
         "use server";
+
+        const cookieStore = await cookies();
+        const cookieHeader = cookieStore.toString();
 
         const data = Object.fromEntries(formData.entries());
 
@@ -47,6 +51,7 @@ export default function ButtonAdicionar({ config, params  }: ButtonAdicionarProp
                 method: config.method,
                 headers: {
                     "Content-Type": "application/json",
+                    Cookie: cookieHeader,
                 },
                 body: JSON.stringify(data),
             });

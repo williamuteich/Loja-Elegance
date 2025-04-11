@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from '@prisma/client';
+import { requireAdmin } from "@/utils/auth";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
+
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
     try {
         const url = new URL(request.url);
         const search = url.searchParams.get('search');
@@ -23,18 +30,18 @@ export async function GET(request: Request) {
             }
         } else {
             const where: any = search
-            ? {
-                OR: [
-                    { name: { contains: search, mode: 'insensitive' } },
-                    { assunto: { contains: search, mode: 'insensitive' } },
-                    { mensagem: { contains: search, mode: 'insensitive' } },
-                ],
-            }
-            : {};
+                ? {
+                    OR: [
+                        { name: { contains: search, mode: 'insensitive' } },
+                        { assunto: { contains: search, mode: 'insensitive' } },
+                        { mensagem: { contains: search, mode: 'insensitive' } },
+                    ],
+                }
+                : {};
 
-        if (status !== null) {
-            where.respondido = status === "true";
-        }
+            if (status !== null) {
+                where.respondido = status === "true";
+            }
             formContacts = await prisma.formulario.findMany({
                 skip,
                 take: pageSize,

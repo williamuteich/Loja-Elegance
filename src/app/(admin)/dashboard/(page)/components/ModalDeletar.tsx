@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 interface ButtonDeleteProps {
     config: {
@@ -28,10 +29,14 @@ export default function ButtonDelete({ config }: ButtonDeleteProps) {
     async function handleDelete(prevState: any, formData: FormData): Promise<{ success?: string; error?: string }>  {
         "use server"
 
+        const cookieStore = await cookies();
+        const cookieHeader = cookieStore.toString();
+
         const response = await fetch(`${config.apiEndpoint}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
+                Cookie: cookieHeader,
             },
             body: JSON.stringify({ id: config.id }),
         });

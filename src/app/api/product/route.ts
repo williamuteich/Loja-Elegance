@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { PrismaClient, Prisma } from "@prisma/client";
 import { createClient } from "@supabase/supabase-js";
+import { requireAdmin } from "@/utils/auth";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
+
   try {
     const url = new URL(request.url);
     const search = url.searchParams.get("search");
@@ -114,6 +116,12 @@ export async function GET(request: Request) {
 
 
 export async function POST(request: Request) {
+
+  const authError = await requireAdmin(request);
+  if (authError) {
+    return authError;
+  }
+
   try {
     const body = await request.json();
 
@@ -288,6 +296,12 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+
+  const authError = await requireAdmin(request);
+  if (authError) {
+    return authError;
+  }
+  
   try {
     const body = await request.json();
     const { id } = body;
@@ -372,6 +386,12 @@ async function deleteImageFromSupabase(imageUrl: string): Promise<void> {
 }
 
 export async function PUT(request: Request) {
+
+  const authError = await requireAdmin(request);
+  if (authError) {
+    return authError;
+  }
+
   try {
     const body = await request.json();
 

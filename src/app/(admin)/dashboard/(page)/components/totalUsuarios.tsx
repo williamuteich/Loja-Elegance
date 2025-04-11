@@ -1,7 +1,12 @@
-import { FaArrowUp, FaUsers } from "react-icons/fa";
+import { headers } from "next/headers";
+import { FaUsers } from "react-icons/fa";
 
 export default async function TotalUsuarios() {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user`);
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user`, 
+        {
+            headers: await headers()
+        }
+    );
     
     if (!response.ok) {
         console.log("Erro ao carregar os usuários.");

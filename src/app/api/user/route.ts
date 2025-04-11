@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
 import bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client';
+import { requireAdmin } from "@/utils/auth";
+import { auth as authOptions } from "@/lib/auth-config";
+import { getServerSession } from "next-auth";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
+
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
     try {
         const url = new URL(request.url);
         const search = url.searchParams.get('search');
@@ -53,6 +62,12 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
     try {
         const body = await request.json();
         const saltRounds = 10;
@@ -63,9 +78,9 @@ export async function POST(request: Request) {
             });
         }
 
-        body.role = body.role || 'user';  
+        body.role = body.role || 'user';
         body.active = body.active === 'true' ? true : false;
-        body.telefone = body.telefone || null;  
+        body.telefone = body.telefone || null;
 
         const emailVerify = await prisma.user.findUnique({
             where: {
@@ -87,10 +102,10 @@ export async function POST(request: Request) {
             data: {
                 name: body.name,
                 email: body.email,
-                role: body.role,  
+                role: body.role,
                 password: hashPassword,
                 active: body.active,
-                telefone: body.telefone, 
+                telefone: body.telefone,
             }
         });
 
@@ -105,76 +120,148 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
-    try {
-        const url = new URL(request.url);
-        const userID = url.searchParams.get('userID');  
+  const session = await getServerSession(authOptions);
 
-        const { id, name, email, role, password, active, currentPassword, newPassword, confirmPassword } = await request.json();
+  if (!session) {
+    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+  }
 
-        if (userID) {
-            if (!currentPassword || !newPassword || !confirmPassword) {
-                return NextResponse.json({ message: 'Current password, new password, and confirmation are required' }, { status: 400 });
-            }
+  try {
+    const url = new URL(request.url);
+    const userID = url.searchParams.get("userID");
 
-            if (newPassword !== confirmPassword) {
-                return NextResponse.json({ message: 'New password and confirmation do not match' }, { status: 400 });
-            }
+    const {
+      id,
+      name,
+      email,
+      role,
+      password,
+      active,
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    } = await request.json();
 
-            const user = await prisma.user.findUnique({
-                where: { id: userID },
-            });
+    if (userID) {
+      console.log("Comparando", session.user.userID, "==", userID);
 
-            if (!user) {
-                return NextResponse.json({ message: 'User not found' }, { status: 404 });
-            }
+      if (session.user.role !== "admin" && session.user.userID !== userID) {
+        return NextResponse.json(
+          { message: "Sem permissão para alterar outro usuário" },
+          { status: 403 }
+        );
+      }
 
-            const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password);
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        return NextResponse.json(
+          {
+            message:
+              "Current password, new password, and confirmation are required",
+          },
+          { status: 400 }
+        );
+      }
 
-            if (!isPasswordCorrect) {
-                return NextResponse.json({ message: 'Current password is incorrect' }, { status: 400 });
-            }
+      if (newPassword !== confirmPassword) {
+        return NextResponse.json(
+          { message: "New password and confirmation do not match" },
+          { status: 400 }
+        );
+      }
 
-            const saltRounds = 10;
-            const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+      const user = await prisma.user.findUnique({
+        where: { id: userID },
+      });
 
-            const updatedUser = await prisma.user.update({
-                where: { id: userID },
-                data: { password: hashedPassword },
-            });
+      if (!user) {
+        return NextResponse.json(
+          { message: "User not found" },
+          { status: 404 }
+        );
+      }
 
-            return NextResponse.json({ message: 'Password updated successfully', user: updatedUser }, { status: 200 });
-        }
+      const isPasswordCorrect = await bcrypt.compare(
+        currentPassword,
+        user.password
+      );
 
-        if (!id || !name || !email || !role || !password || active === undefined) {
-            return NextResponse.json({ message: 'ID, name, email, role and password are required' }, { status: 400 });
-        }
+      if (!isPasswordCorrect) {
+        return NextResponse.json(
+          { message: "Current password is incorrect" },
+          { status: 400 }
+        );
+      }
 
-        const updatedActive = active === "true" ? true : false;
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+      const updatedUser = await prisma.user.update({
+        where: { id: userID },
+        data: {
+          password: hashedPassword,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          active: user.active,
+        },
+      });
 
-        const user = await prisma.user.update({
-            where: { id },
-            data: {
-                name,
-                email,
-                role,
-                password: hashedPassword,
-                active: updatedActive,
-                //createdAt: new Date(),
-                //updatedAt: new Date(),
-            }
-        });
-
-        return NextResponse.json({ message: 'User updated successfully', user }, { status: 200 });
-    } catch (err) {
-        console.error(err);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+      return NextResponse.json(
+        {
+          message: "Senha atualizada com sucesso",
+          user: updatedUser,
+        },
+        { status: 200 }
+      );
     }
+
+    if (session.user.role !== "admin") {
+      return NextResponse.json(
+        { message: "Apenas administradores podem alterar dados de usuário" },
+        { status: 403 }
+      );
+    }
+
+    if (!id || !name || !email || !role || !password || active === undefined) {
+      return NextResponse.json(
+        { message: "ID, name, email, role and password are required" },
+        { status: 400 }
+      );
+    }
+
+    const updatedActive = active === "true" ? true : false;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await prisma.user.update({
+      where: { id },
+      data: {
+        name,
+        email,
+        role,
+        password: hashedPassword,
+        active: updatedActive,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Usuário atualizado com sucesso", user },
+      { status: 200 }
+    );
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      { error: "Erro interno no servidor" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function DELETE(request: Request) {
+
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
     try {
         const body = await request.json();
 

@@ -4,26 +4,32 @@ import Submit from "@/components/Submit";
 import { getServerSession } from "next-auth";
 import { auth as authOptions } from "@/lib/auth-config";
 import { FaKey } from "react-icons/fa";
+import { cookies } from "next/headers";
 
 export default async function ResetPassword() {
     const session = await getServerSession(authOptions);
 
     async function handlePassword(prevState: any, formData: FormData): Promise<{ success?: string; error?: string }> {
         "use server";
+
+        const cookieStore = await cookies();
+        const cookieHeader = cookieStore.toString();
+
         const data = Object.fromEntries(formData.entries());
-        
+
         const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user?userID=${session?.user.userID}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
+                Cookie: cookieHeader,
             },
             body: JSON.stringify(data),
         })
 
-        if(!response.ok) {
+        if (!response.ok) {
             return { error: "Error al restablecer la contraseña" };
         }
-        
+
         const result = await response.json();
         return { success: "Contraseña actualizada con éxito" };
     }
@@ -31,9 +37,9 @@ export default async function ResetPassword() {
         <div className="w-full mx-auto py-12 flex gap-4 flex-col lg:flex-row">
             <NavProfile />
             <div className="flex w-full flex-col bg-white p-8 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold mb-6 text-pink-700 flex gap-3 items-center">
+                <h2 className="text-2xl font-semibold mb-6 text-pink-700 flex gap-3 items-center">
                     <FaKey size={28} />
-                   Restablecer Contraseña
+                    Restablecer Contraseña
                 </h2>
                 <Form action={handlePassword} className="space-y-6">
                     <div className="flex flex-col">

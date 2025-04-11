@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from '@prisma/client';
+import { requireAdmin } from "@/utils/auth";
 
 const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
+
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
     try {
         const body = await request.json(); 
         const { title, description, category } = body;
@@ -48,24 +55,27 @@ export async function GET(request: Request) {
 }
 
 export async function PUT(request: Request) {
+
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
     try {
         const body = await request.json(); 
         const { id, title, description, category } = body;
 
-        // Verificar se todos os dados necessários foram fornecidos
         if (!id || !title || !description || !category) {
             return NextResponse.json({ message: 'ID, title, description, and category are required' }, { status: 400 });
         }
 
-        // Validar categoria
         const validCategories = ['Retiro en tienda', 'Otras opciones'];
         if (!validCategories.includes(category)) {
             return NextResponse.json({ message: 'Invalid category. Use "Retiro en tienda" or "Otras opciones"' }, { status: 400 });
         }
 
-        // Atualizar a opção de entrega no banco de dados (MongoDB)
         const updatedDeliveryOption = await prisma.deliveryOption.update({
-            where: { id: id },  // id é uma String (ObjectId)
+            where: { id: id },
             data: {
                 title: title,
                 description: description,
@@ -85,6 +95,12 @@ export async function PUT(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
     try {
         const body = await request.json(); 
         const { id } = body;

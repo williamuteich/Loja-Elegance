@@ -1,7 +1,14 @@
+import { requireAdmin } from "@/utils/auth";
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
 export async function POST(request: Request) {
+
+  const authError = await requireAdmin(request);
+  if (authError) {
+      return authError;
+  }
+  
   try {
     const { formulario, resposta } = await request.json();
 

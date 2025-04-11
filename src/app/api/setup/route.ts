@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from '@prisma/client';
+import { requireAdmin } from "@/utils/auth";
 
 const prisma = new PrismaClient();
 
@@ -50,6 +51,12 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
     try {
         const newConfig: dadosDataProps = await request.json();
 
@@ -69,6 +76,12 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
+
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
     try {
         const { id, name, value, url, type } = await request.json();
 
@@ -93,9 +106,15 @@ export async function PUT(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
     try {
         const body = await request.json();
-        
+
         const { id } = body;
 
         if (!id) {
@@ -107,9 +126,9 @@ export async function DELETE(request: Request) {
         });
 
         return NextResponse.json({ message: 'Deleted successfully' }, { status: 200 });
-        
+
     } catch (err) {
-        console.log(err); 
+        console.log(err);
         return NextResponse.json({ message: 'Internal server error' }, { status: 400 });
     }
 }
