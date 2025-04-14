@@ -118,7 +118,6 @@ export async function POST(request: Request) {
         return new Response(JSON.stringify({ error: 'Internal server error', details: errorMessage }), { status: 500 });
     }
 }
-
 export async function PUT(request: Request) {
   const session = await getServerSession(authOptions);
 
@@ -127,9 +126,6 @@ export async function PUT(request: Request) {
   }
 
   try {
-    const url = new URL(request.url);
-    const userID = url.searchParams.get("userID");
-
     const {
       id,
       name,
@@ -142,10 +138,12 @@ export async function PUT(request: Request) {
       confirmPassword,
     } = await request.json();
 
-    if (userID) {
-      console.log("Comparando", session.user.userID, "==", userID);
-
+ 
+    const userID = session.user.role === "admin" ? new URL(request.url).searchParams.get("userID") : session.user.userID;
+    // Verifica se o usuário está tentando alterar a senha
+    if (currentPassword || newPassword || confirmPassword) {
       if (session.user.role !== "admin" && session.user.userID !== userID) {
+        console.log("tipo de permissao do usuario", session.user.role);
         return NextResponse.json(
           { message: "Sem permissão para alterar outro usuário" },
           { status: 403 }
@@ -154,54 +152,50 @@ export async function PUT(request: Request) {
 
       if (!currentPassword || !newPassword || !confirmPassword) {
         return NextResponse.json(
-          {
-            message:
-              "Current password, new password, and confirmation are required",
-          },
+          { message: "Senha atual, nova senha e confirmação são obrigatórias" },
           { status: 400 }
         );
       }
 
       if (newPassword !== confirmPassword) {
         return NextResponse.json(
-          { message: "New password and confirmation do not match" },
+          { message: "Nova senha e confirmação não coincidem" },
           { status: 400 }
         );
       }
 
       const user = await prisma.user.findUnique({
-        where: { id: userID },
+        where: { id: userID || undefined },
       });
 
       if (!user) {
         return NextResponse.json(
-          { message: "User not found" },
+          { message: "Usuário não encontrado" },
           { status: 404 }
         );
       }
 
-      const isPasswordCorrect = await bcrypt.compare(
-        currentPassword,
-        user.password
-      );
-
-      if (!isPasswordCorrect) {
-        return NextResponse.json(
-          { message: "Current password is incorrect" },
-          { status: 400 }
+      if (session.user.role === "user") {
+        console.log("usuario comum")
+        const isPasswordCorrect = await bcrypt.compare(
+          currentPassword,
+          user.password
         );
+
+        if (!isPasswordCorrect) {
+          return NextResponse.json(
+            { message: "Senha atual incorreta" },
+            { status: 400 }
+          );
+        }
       }
 
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
       const updatedUser = await prisma.user.update({
-        where: { id: userID },
+        where: { id: userID || undefined },
         data: {
           password: hashedPassword,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          active: user.active,
         },
       });
 
@@ -216,19 +210,19 @@ export async function PUT(request: Request) {
 
     if (session.user.role !== "admin") {
       return NextResponse.json(
-        { message: "Apenas administradores podem alterar dados de usuário" },
+        { message: "Apenas administradores podem editar dados de usuários" },
         { status: 403 }
       );
     }
 
     if (!id || !name || !email || !role || !password || active === undefined) {
       return NextResponse.json(
-        { message: "ID, name, email, role and password are required" },
+        { message: "ID, nome, email, função, senha e status são obrigatórios" },
         { status: 400 }
       );
     }
 
-    const updatedActive = active === "true" ? true : false;
+    const updatedActive = active === "true" || active === true;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.update({
