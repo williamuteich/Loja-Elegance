@@ -10,7 +10,7 @@ export default function PaymentSelection({ pagamento, setPagamento }: PaymentSel
   return (
     <Card className="mb-6 border border-gray-200 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-pink-600 text-xl font-bold">Forma de Pagamento</CardTitle>
+        <CardTitle className="text-2xl font-bold text-pink-600 mb-6 border-b-2 border-pink-100 pb-4">Forma de Pago</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -31,7 +31,7 @@ export default function PaymentSelection({ pagamento, setPagamento }: PaymentSel
               </div>
               <div className="flex items-center gap-3">
                 {tipo === "dinheiro" ? <Wallet className="w-6 h-6 text-pink-600" /> : <CreditCard className="w-6 h-6 text-pink-600" />}
-                <span className="text-lg font-medium">{tipo === "dinheiro" ? "Dinheiro" : "Outras Formas"}</span>
+                <span className="text-lg font-medium">{tipo === "dinheiro" ? "Efectivo" : "Otras formas de pago"}</span>
               </div>
             </label>
           ))}

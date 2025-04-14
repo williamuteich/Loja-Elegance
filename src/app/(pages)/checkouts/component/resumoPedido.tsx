@@ -35,7 +35,7 @@ export default function ResumoPedido({ cart }: ResumoPedidoProps) {
     <div className="space-y-6">
       <Card className="sticky top-6">
         <CardHeader>
-          <CardTitle className="text-pink-600 text-xl">Resumen del Pedido</CardTitle>
+          <CardTitle className="text-2xl font-bold text-pink-600 mb-6 border-b-2 border-pink-100 pb-4">Resumen del Pedido</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">

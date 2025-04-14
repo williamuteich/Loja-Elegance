@@ -32,7 +32,7 @@ export default function PaymentModal({ pagamento, setPagamentoDetalhado, setTroc
       <DialogContent className="rounded-lg max-w-md p-6 bg-white">
         <DialogHeader>
           <DialogTitle className="text-pink-600 font-bold text-xl">
-            {pagamento === "dinheiro" ? "Precisa de Troco?" : "Métodos de Pagamento"}
+            {pagamento === "dinheiro" ? "¿Necesita cambio?" : "Otras formas de pago"}
           </DialogTitle>
         </DialogHeader>
         {pagamento === "dinheiro" && (
