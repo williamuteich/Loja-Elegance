@@ -39,7 +39,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
     }
 
     const productData = await productRes.json();
-    console.log(productData)
+
     setProduto(productData.produtos);
 
     const formattedVariants = productData.produtos.variants.map((v: any) => ({

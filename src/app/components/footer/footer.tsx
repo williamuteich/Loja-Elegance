@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaWhatsapp, FaFacebookF, FaInstagram } from 'react-icons/fa';
+import { FaWhatsapp, FaFacebookF, FaInstagram, FaTiktok, FaYoutube, FaLinkedinIn, FaTelegramPlane  } from 'react-icons/fa';
 import { useSession } from "next-auth/react";
 import { LogoutMenu } from "../logoutAccount";
 import { useEffect, useState } from "react";
@@ -16,12 +16,12 @@ export default function Footer() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/setup`, { next: { revalidate: 3600 } });
+        const response = await fetch(`/api/setup`, { next: { revalidate: 1000 } });
         if (!response.ok) throw new Error("Erro ao carregar as configurações.");
 
         const { config } = await response.json();
         if (config) {
-          const filteredSocialMedia = config.filter((item: { type: string; active: boolean }) => item.type === 'social' && item.active);
+          const filteredSocialMedia = config.filter((item: { type: string; active: boolean }) => item.type === 'social' );
           setSocialMedia(filteredSocialMedia);
         }
       } catch (error) {
@@ -40,6 +40,10 @@ export default function Footer() {
     whatsapp: { icon: FaWhatsapp, color: "text-green-500" },
     facebook: { icon: FaFacebookF, color: "text-blue-600" },
     instagram: { icon: FaInstagram, color: "text-pink-600" },
+    tiktok: { icon: FaTiktok, color: "text-white" },
+    youtube: { icon: FaYoutube, color: "text-red-600" },
+    telegram: { icon: FaTelegramPlane, color: "text-blue-400" },
+    linkedin: { icon: FaLinkedinIn, color: "text-blue-700" },
   };
 
   const whatsapp = socialMedia.find(({ name }) => name === "whatsapp");

@@ -19,8 +19,8 @@ const userFields: FieldConfig[] = [
     label: "Permissão",
     type: "select",
     options: [
+      { value: "user", label: "User" },
       { value: "admin", label: "Admin" },
-      { value: "", label: "User" },
     ],
   },
   {

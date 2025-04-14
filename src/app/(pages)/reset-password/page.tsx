@@ -17,7 +17,7 @@ export default async function ResetPassword() {
 
         const data = Object.fromEntries(formData.entries());
 
-        const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user?userID=${session?.user.userID}`, {
+        const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

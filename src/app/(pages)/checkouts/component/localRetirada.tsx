@@ -33,7 +33,7 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
       try {
         const response = await fetch("/api/delivery");
         const data = await response.json();
-        console.log("Dados recebidos:", data);
+ 
         setPickupLocations(data.pickupLocations || []);
       } catch (error) {
         console.error("Erro ao buscar as opções de retirada", error);

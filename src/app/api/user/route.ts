@@ -143,7 +143,7 @@ export async function PUT(request: Request) {
 
     if (currentPassword || newPassword || confirmPassword) {
       if (session.user.role !== "admin" && session.user.userID !== userID) {
-        console.log("tipo de permissao do usuario", session.user.role);
+
         return NextResponse.json(
           { message: "Sem permissão para alterar outro usuário" },
           { status: 403 }
@@ -176,7 +176,6 @@ export async function PUT(request: Request) {
       }
 
       if (session.user.role === "user") {
-        console.log("usuario comum")
         const isPasswordCorrect = await bcrypt.compare(
           currentPassword,
           user.password

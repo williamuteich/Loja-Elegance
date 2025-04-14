@@ -72,8 +72,6 @@ export async function POST(request: Request) {
 
     const response = await preference.create({ body });
 
-    console.log("FIM >>>>", response);
-
     return new NextResponse(JSON.stringify(response), { status: 200 });
 
   } catch (error) {
