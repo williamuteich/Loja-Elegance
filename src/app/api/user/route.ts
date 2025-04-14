@@ -140,7 +140,7 @@ export async function PUT(request: Request) {
 
  
     const userID = session.user.role === "admin" ? new URL(request.url).searchParams.get("userID") : session.user.userID;
-    // Verifica se o usuário está tentando alterar a senha
+
     if (currentPassword || newPassword || confirmPassword) {
       if (session.user.role !== "admin" && session.user.userID !== userID) {
         console.log("tipo de permissao do usuario", session.user.role);
