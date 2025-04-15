@@ -73,15 +73,14 @@ export async function GET(request: Request) {
 
     const processProduct = (product: any) => ({
       ...product,
-      variants: product.variants.map((variant: any) => {
-        const totalStock = variant.stock.reduce((total: number, stockItem: any) => total + (stockItem.quantity || 0), 0);
-        return {
-          ...variant,
-          availableStock: Math.max(totalStock, 0), 
-        };
-      }),
+      variants: product.variants.map((variant: any) => ({
+        ...variant,
+        availableStock: Math.max(
+          (variant.stock?.quantity || 0) - 0,
+          0
+        ),
+      })),
     });
-    
 
     const processedProducts = products
       ? Array.isArray(products)
