@@ -1,4 +1,3 @@
-// app/api/order/route.ts
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { auth as authOptions } from "@/lib/auth-config";
@@ -25,13 +24,51 @@ interface OrderRequest {
   };
 }
 
+export async function GET() {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.userID || session.user?.role !== "user") {
+      return NextResponse.json(
+        { message: "Usuário não autenticado ou sem permissão" },
+        { status: 401 }
+      );
+    }
+
+    const orders = await prisma.order.findMany({
+      where: {
+        userId: session.user.userID,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+        pickupLocation: true,
+      },
+    });
+
+    return NextResponse.json({ orders }, { status: 200 });
+  } catch (error) {
+    console.error("Erro ao buscar pedidos:", error);
+    return NextResponse.json(
+      { message: "Erro ao buscar pedidos" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.userID) {
+    if (!session?.user?.userID || session.user?.role !== "user") {
       return NextResponse.json(
-        { message: "Usuário não autenticado" },
+        { message: "Usuário não autenticado ou sem permissão:" },
         { status: 401 }
       );
     }
@@ -56,35 +93,40 @@ export async function POST(request: Request) {
     }
 
     const result = await prisma.$transaction(async (tx) => {
-      // 1) Verificar estoque e preparar items
       const itemsWithStock = await Promise.all(
         body.cart.map(async (item) => {
           const variant = await tx.productVariant.findUnique({
             where: { id: item.selectedVariantId },
-            include: { stock: true },
+            include: { stock: true, product: true },
           });
+
           if (!variant) {
             throw new Error(`Variante ${item.selectedVariantId} não encontrada`);
           }
-          // stock é um array: pegamos o primeiro registro
-          const stockRecord = variant.stock[0];
+
+          const stockRecord = variant.stock;
           if (!stockRecord) {
-            throw new Error(`Estoque não configurado para a variante ${item.selectedVariantId}`);
+            throw new Error(
+              `Estoque não configurado para a variante ${item.selectedVariantId}`
+            );
           }
+
+          console.log("porraaaa", stockRecord, item.quantity);
           if (stockRecord.quantity < item.quantity) {
             throw new Error(
               `Estoque insuficiente para a variante ${item.selectedVariantId}`
             );
           }
+
           return {
             variantId: variant.id,
+            productId: variant.product.id,
             quantity: item.quantity,
             price: item.price,
           };
         })
       );
 
-      // 2) Criar o pedido com nested write de items
       const order = await tx.order.create({
         data: {
           userId: session.user.userID,
@@ -95,12 +137,14 @@ export async function POST(request: Request) {
           paymentMethod: body.pagamento,
           paymentDetail: body.pagamentoDetalhado || null,
           pickupLocationId: body.pickupLocation.id,
-          status: "pending",
+          status: "pending", 
           items: {
             create: itemsWithStock.map((i) => ({
               variantId: i.variantId,
+              productId: i.productId,
               quantity: i.quantity,
               price: i.price,
+              total: i.price * i.quantity,
             })),
           },
         },
@@ -110,10 +154,9 @@ export async function POST(request: Request) {
         },
       });
 
-      // 3) Decrementar estoque para cada item
       await Promise.all(
         itemsWithStock.map((i) =>
-          tx.stock.updateMany({
+          tx.stock.update({
             where: { variantId: i.variantId },
             data: { quantity: { decrement: i.quantity } },
           })
@@ -123,7 +166,10 @@ export async function POST(request: Request) {
       return order;
     });
 
-    return NextResponse.json(result, { status: 201 });
+    return NextResponse.json(
+      { message: "Pedido realizado com sucesso. Está em análise.", order: result },
+      { status: 201 }
+    );
   } catch (error: any) {
     console.error("Erro no processamento do pedido:", error);
 
