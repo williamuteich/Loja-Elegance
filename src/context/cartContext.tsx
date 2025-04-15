@@ -5,7 +5,7 @@ import { Produto } from "@/utils/types/produto";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-interface CartItem {
+export interface CartItem {
   id: string;
   name: string;
   price: number;

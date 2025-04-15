@@ -9,18 +9,21 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/app/components/container";
-import { ProdutoProps, VariantProps } from "@/utils/types/produto";
+import { ProdutoProps } from "@/utils/types/produto";
 import { FaShoppingBag } from "react-icons/fa";
 
 export function Promocao({ produtos }: ProdutoProps) {
-  const produtosEmPromocao = produtos.filter(produto =>
-    produto.onSale &&
-    produto.priceOld &&
-    produto.price < produto.priceOld &&
-    produto.active &&
-    produto.variants.some((variant: VariantProps) => variant.stock?.quantity > 0)
-  );
-  
+  const produtosEmPromocao = produtos.filter((produto) => {
+    const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) => acc + (variant.availableStock || 0), 0);
+    return (
+      produto.onSale &&
+      produto.priceOld &&
+      produto.price < produto.priceOld &&
+      produto.active &&
+      totalEstoque > 0
+    );
+  });
+
   return (
     <div className="py-10 lg:pt-24 w-full mx-auto bg-gray-100 flex justify-center items-center">
       <Container>
@@ -55,6 +58,8 @@ export function Promocao({ produtos }: ProdutoProps) {
                   const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
                     ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
                     : 0;
+
+                  const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) => acc + (variant.availableStock || 0), 0);
 
                   return (
                     <CarouselItem
@@ -99,17 +104,19 @@ export function Promocao({ produtos }: ProdutoProps) {
                           </Link>
 
                           <div
-                            className={`mt-2 text-xs font-semibold text-white ${produto.variants.some((variant: VariantProps) => variant.stock?.quantity > 0)
-                              ? produto.variants.reduce((total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0), 0) > 1
+                            className={`mt-2 text-xs font-semibold text-white ${
+                              totalEstoque > 1
                                 ? "bg-green-700"
-                                : "bg-yellow-700"
-                              : "bg-red-700"} px-2 py-1 rounded-md w-max`}
+                                : totalEstoque === 1
+                                  ? "bg-yellow-700"
+                                  : "bg-red-700"
+                            } px-2 py-1 rounded-md w-max`}
                           >
-                            {produto.variants.some((variant: VariantProps) => variant.stock?.quantity > 0)
-                              ? produto.variants.reduce((total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0), 0) > 1
-                                ? `${produto.variants.reduce((total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0), 0)} Disponibles`
-                                : "Última Unidad"
-                              : "Indisponible"}
+                            {totalEstoque > 1
+                              ? `${totalEstoque} Disponibles`
+                              : totalEstoque === 1
+                                ? "Última Unidad"
+                                : "Indisponible"}
                           </div>
 
                           <div className="mt-3">

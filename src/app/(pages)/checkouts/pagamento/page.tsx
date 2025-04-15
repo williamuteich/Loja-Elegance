@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { useCart } from "@/context/cartContext";
+import { useCart, CartItem } from "@/context/cartContext";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import PaymentSelection from "./component/paymentSelection";
@@ -49,7 +49,38 @@ export default function CheckoutPagamento() {
     setModalOpen(pagamento === "dinheiro" || pagamento === "outros");
   }, [pagamento]);
 
+  
+
   if (finalLayout) {
+    function handleSubmitOrder(
+      cart: CartItem[],
+      pagamento: string,
+      finalCashInfo: { cashInHand: string; change: number; },
+      pagamentoDetalhado: string
+    ): void {
+      const body: any = {
+        cart,
+        pagamento,
+        pickupLocation,
+      };
+  
+      if (pagamentoDetalhado) {
+        body.pagamentoDetalhado = pagamentoDetalhado;
+      } else {
+        body.finalCashInfo = finalCashInfo;
+      }
+  
+      fetch("http://localhost:3000/api/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+  
+      console.log("confirmando pedido", body);
+    }
+
     return (
       <div className="flex flex-col md:flex-row gap-8 max-w-6xl mx-auto p-4 md:p-8">
         <div className="flex-1 bg-white rounded-xl shadow-lg p-2 md:p-8 border border-gray-100">
@@ -128,10 +159,10 @@ export default function CheckoutPagamento() {
             </Link>
             <button
               className="flex-1 bg-pink-600 hover:bg-pink-700 text-white py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
-              onClick={() => console.log("Pedido confirmado")}
+              onClick={() => handleSubmitOrder(cart, pagamento, finalCashInfo, pagamentoDetalhado)}
             >
               <CheckCircleIcon className="w-5 h-5" />
-              Confirmar la Orden
+                Confirmar la Orden
             </button>
           </div>
         </div>

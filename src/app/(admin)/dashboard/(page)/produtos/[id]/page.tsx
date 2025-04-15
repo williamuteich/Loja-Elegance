@@ -45,9 +45,10 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
     const formattedVariants = productData.produtos.variants.map((v: any) => ({
       name: v.color.name,
       hexCode: v.color.hexCode,
-      quantity: v.stock.quantity
+      quantity: v.availableStock
     }));
     setVariants(formattedVariants);
+
 
     const [brandsRes, categoriesRes] = await Promise.all([
       fetch("/api/brand?fetchAll=true"),

@@ -72,7 +72,7 @@ export default function ProdutosGerais() {
     }
   
     filteredProdutos = filteredProdutos.filter((produto) =>
-      produto.variants.some((variant: VariantProps) => variant.stock?.quantity > 0)
+      produto.variants.some((variant: VariantProps) => variant.availableStock > 0)
     );
   
     setProdutosFiltrados(filteredProdutos);
@@ -158,7 +158,7 @@ export default function ProdutosGerais() {
             {produtosPaginados.length > 0 ? (
               produtosPaginados.map((produto: Produto) => {
                 const quantidadeDisponivel = produto.variants.reduce(
-                  (total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0),
+                  (total: number, variant: VariantProps) => total + (variant.availableStock || 0),
                   0
                 );
 

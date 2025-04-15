@@ -41,7 +41,7 @@ export default function PaymentModal({ pagamento, setPagamentoDetalhado, setTroc
               className="w-1/2 bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg"
               onClick={() => setTroco("sim")}
             >
-              Sim
+              Si
             </Button>
             <Button
               className="w-1/2 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg"
@@ -52,7 +52,7 @@ export default function PaymentModal({ pagamento, setPagamentoDetalhado, setTroc
                 setFinalCashInfo({ cashInHand: "0.00", change: 0 });
               }}
             >
-              Não
+              No
             </Button>
           </div>
         )}

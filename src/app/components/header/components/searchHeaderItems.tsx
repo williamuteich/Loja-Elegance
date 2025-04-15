@@ -61,7 +61,7 @@ export default function SearchHeaderItems() {
 
       const produtosFiltrados = produtos.filter((produto: Product) => 
         produto.active && 
-        produto.variants.some((variant: any) => variant.stock.quantity >= 1)
+        produto.variants.some((variant: any) => variant.availableStock >= 1)
       );
 
       setFilteredProducts(produtosFiltrados);
@@ -149,16 +149,16 @@ export default function SearchHeaderItems() {
                           <span className="text-base font-medium uppercase flex items-end gap-2 mb-2 w-full">
                             R$ {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(item.price)}
                             <div
-                              className={`mt-2 text-xs font-semibold text-white ${item.variants.some((variant: any) => variant.stock.quantity > 0)
-                                ? item.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0) > 1
+                              className={`mt-2 text-xs font-semibold text-white ${item.variants.some((variant: any) => variant.availableStock > 0)
+                                ? item.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0) > 1
                                   ? "bg-green-700"
                                   : "bg-yellow-700"
                                 : "bg-red-700 text-white"
                                 } px-2 py-1 rounded-md w-max`}
                             >
-                              {item.variants.some((variant: any) => variant.stock.quantity > 0)
-                                ? item.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0) > 1
-                                  ? `${item.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0)} Disponíveis`
+                              {item.variants.some((variant: any) => variant.availableStock > 0)
+                                ? item.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0) > 1
+                                  ? `${item.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0)} Disponíveis`
                                   : "Última Unidade"
                                 : "Indisponível"}
                             </div>

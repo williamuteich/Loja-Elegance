@@ -6,7 +6,6 @@ import { requireAdmin } from "@/utils/auth";
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
-
   try {
     const url = new URL(request.url);
     const search = url.searchParams.get("search");
@@ -44,11 +43,11 @@ export async function GET(request: Request) {
     } else {
       const where: any = search
         ? {
-          OR: [
-            { name: { contains: search, mode: "insensitive" } },
-            { description: { contains: search, mode: "insensitive" } },
-          ],
-        }
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { description: { contains: search, mode: "insensitive" } },
+            ],
+          }
         : {};
 
       if (status !== null) {
@@ -74,14 +73,15 @@ export async function GET(request: Request) {
 
     const processProduct = (product: any) => ({
       ...product,
-      variants: product.variants.map((variant: any) => ({
-        ...variant,
-        availableStock: Math.max(
-          (variant.stock?.quantity || 0) - 0,
-          0
-        ),
-      })),
+      variants: product.variants.map((variant: any) => {
+        const totalStock = variant.stock.reduce((total: number, stockItem: any) => total + (stockItem.quantity || 0), 0);
+        return {
+          ...variant,
+          availableStock: Math.max(totalStock, 0), 
+        };
+      }),
     });
+    
 
     const processedProducts = products
       ? Array.isArray(products)
@@ -92,17 +92,17 @@ export async function GET(request: Request) {
     const totalRecords = await prisma.product.count({
       where: search
         ? {
-          OR: [
-            { name: { contains: search, mode: "insensitive" } },
-            { description: { contains: search, mode: "insensitive" } },
-          ],
-        }
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { description: { contains: search, mode: "insensitive" } },
+            ],
+          }
         : {},
     });
 
     return NextResponse.json({
       produtos: processedProducts,
-      totalRecords
+      totalRecords,
     }, { status: 200 });
 
   } catch (err) {
@@ -113,6 +113,7 @@ export async function GET(request: Request) {
     );
   }
 }
+
 
 
 export async function POST(request: Request) {

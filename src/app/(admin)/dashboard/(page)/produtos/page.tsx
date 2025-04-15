@@ -119,15 +119,12 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                                 </Link>
                             </td>
 
-                            {/* Exibindo a quantidade total do produto */}
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <Link href={`/dashboard/produtos/${produto.id}`} className="block">
-                                    {/* Exibindo a soma das quantidades de todas as variantes */}
-                                    {produto.variants.reduce((total: number, variant: VariantProps) => total + variant.stock.quantity, 0)} unidades
+                                    {produto.variants.reduce((total: number, variant: VariantProps) => total + variant.availableStock, 0)} unidades
                                 </Link>
                             </td>
 
-                            {/* Exibindo as variantes */}
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <Link href={`/dashboard/produtos/${produto.id}`} className="block">
                                     {produto.variants.map((variant: VariantProps, idx: number) => (

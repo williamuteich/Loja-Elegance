@@ -43,7 +43,7 @@ export default async function Produtos({
 
       const productIdCorrespondente = !categoriaProduct.some((itemCategory: any) => itemCategory.productId === produto.id);
 
-      const estoqueDisponivel = produto.variants.some((variant: any) => variant.stock.quantity > 0);
+      const estoqueDisponivel = produto.variants.some((variant: any) => variant.availableStock > 0);
 
       return categoriaCorrespondente && productIdCorrespondente && estoqueDisponivel;
     });
@@ -52,7 +52,7 @@ export default async function Produtos({
       produtosFiltrados = produtos
         .filter((produto: Produto) => {
           const produtoAtualId = categoriaProduct[0]?.category?.id;
-          return produto.id !== produtoAtualId && produto.variants.some((variant: any) => variant.stock.quantity > 0);
+          return produto.id !== produtoAtualId && produto.variants.some((variant: any) => variant.availableStock > 0);
         })
         .sort(() => Math.random() - 0.5)
         .slice(0, 10);
@@ -60,8 +60,8 @@ export default async function Produtos({
 
   } else {
     produtosFiltrados = isDestaque
-      ? produtos.filter((produto: Produto) => produto.destaque === true && produto.variants.some((variant: any) => variant.stock.quantity > 0) && produto.active)
-      : produtos.filter((produto: Produto) => produto.variants.some((variant: any) => variant.stock.quantity > 0) && produto.active);
+      ? produtos.filter((produto: Produto) => produto.destaque === true && produto.variants.some((variant: any) => variant.availableStock > 0) && produto.active)
+      : produtos.filter((produto: Produto) => produto.variants.some((variant: any) => variant.availableStock > 0) && produto.active);
   }
 
   return (
@@ -126,16 +126,16 @@ export default async function Produtos({
                           {produto.description}
                         </p>
                         <div
-                          className={`mt-2 text-xs font-semibold text-white ${produto.variants.some((variant: any) => variant.stock.quantity > 0)
-                            ? produto.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0) > 1
+                          className={`mt-2 text-xs font-semibold text-white ${produto.variants.some((variant: any) => variant.availableStock > 0)
+                            ? produto.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0) > 1
                               ? "bg-green-700"
                               : "bg-yellow-700"
                             : "bg-red-700 text-white"
                             } px-2 py-1 rounded-md w-max`}
                         >
-                          {produto.variants.some((variant: any) => variant.stock.quantity > 0)
-                            ? produto.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0) > 1
-                              ? `${produto.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0)} Disponíveis`
+                          {produto.variants.some((variant: any) => variant.availableStock > 0)
+                            ? produto.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0) > 1
+                              ? `${produto.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0)} Disponíveis`
                               : "Última Unidade"
                             : "Indisponível"}
                         </div>

@@ -15,9 +15,11 @@ export default async function ListAllProdutos() {
     const produtosAleatorios = produtos
         .filter(produto => produto.active)
         .filter(produto =>
-            produto.variants.some((variant: { stock: { quantity: number; }; }) => variant.stock?.quantity > 0)
+            produto.variants.some((variant: {
+                availableStock: number; stock: { quantity: number; };
+            }) => variant.availableStock > 0)
         )
-        .sort(() => Math.random() - 0.5); 
+        .sort(() => Math.random() - 0.5);
 
     return (
         <div className="mx-auto py-10 sm:px-0">
@@ -28,7 +30,7 @@ export default async function ListAllProdutos() {
                 {produtosAleatorios.length > 0 ? (
                     produtosAleatorios.map((produto: Produto) => {
                         const totalEstoque = produto.variants.reduce(
-                            (total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0), 0
+                            (total: number, variant: VariantProps) => total + (variant.availableStock || 0), 0
                         );
 
                         const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
@@ -79,20 +81,20 @@ export default async function ListAllProdutos() {
                                                 {produto.description}
                                             </p>
                                         </Link>
-                                        
+
                                         <div
                                             className={`mt-2 text-xs font-semibold text-white ${totalEstoque > 1
                                                 ? "bg-green-700"   // Cor para disponível
                                                 : totalEstoque === 1
-                                                ? "bg-yellow-600"  // Cor para última unidade
-                                                : "bg-red-700"}    // Cor para indisponível
+                                                    ? "bg-yellow-600"  // Cor para última unidade
+                                                    : "bg-red-700"}    // Cor para indisponível
                                             px-2 py-1 rounded-md w-max`}
                                         >
                                             {totalEstoque > 1
                                                 ? `${totalEstoque} Disponibles`
                                                 : totalEstoque === 1
-                                                ? "Última Unidad"
-                                                : "Indisponible"}
+                                                    ? "Última Unidad"
+                                                    : "Indisponible"}
                                         </div>
 
                                         <div className="mt-3">

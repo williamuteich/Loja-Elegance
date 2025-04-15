@@ -1,5 +1,5 @@
 "use client";
-import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage, FaGift, FaShippingFast   } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage, FaGift, FaShippingFast, FaClipboardList } from 'react-icons/fa';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogoutDashboard } from '@/app/components/logoutAccount';
@@ -121,23 +121,36 @@ export default function Sidebar() {
                                         className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/banners') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
                                         title='banners'
                                     >
-                                        <FaRegImage  size={24} />
+                                        <FaRegImage size={24} />
                                         <span className='hidden xl:block'>Banners</span>
                                     </div>
                                 </Link>
                             </li>
                             {
-                            <li>
-                                <Link href="/dashboard/envio">
-                                    <div
-                                        className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/envio') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
-                                        title='envio'
-                                    >
-                                        <FaShippingFast  size={24} />
-                                        <span className='hidden xl:block'>Endereços</span>
-                                    </div>
-                                </Link>
-                            </li>
+                                <li>
+                                    <Link href="/dashboard/envio">
+                                        <div
+                                            className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/envio') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                                            title='envio'
+                                        >
+                                            <FaShippingFast size={24} />
+                                            <span className='hidden xl:block'>Endereços</span>
+                                        </div>
+                                    </Link>
+                                </li>
+                            }
+                            {
+                                <li>
+                                    <Link href="/dashboard/pedidos">
+                                        <div
+                                            className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/pedidos') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                                            title='pedidos'
+                                        >
+                                            <FaClipboardList size={24} />
+                                            <span className='hidden xl:block'>Pedidos</span>
+                                        </div>
+                                    </Link>
+                                </li>
                             }
                         </ul>
                     </div>

@@ -22,12 +22,10 @@ export default function Promocoes() {
                 if (!response.ok) throw new Error("Error al buscar productos");
                 const { produtos } = await response.json();
                 
-                // Filtra os produtos ativos e com estoque disponível
                 const produtosAtivosComEstoque = produtos.filter((p: Produto) =>
-                    p.active && p.variants.some((variant: VariantProps) => variant.stock.quantity > 0) 
+                    p.active && p.variants.some((variant: VariantProps) => variant.availableStock > 0) 
                 );
 
-                // Filtra os produtos em promoção
                 const emPromocao = produtosAtivosComEstoque.filter((p: Produto) => p.priceOld && p.priceOld > p.price);
 
                 setProdutos(emPromocao);
@@ -59,17 +57,15 @@ export default function Promocoes() {
 
     const aplicarFiltros = () => {
         let filtrados = produtos.filter((p) =>
-            p.priceOld && p.priceOld > p.price // Filtra apenas produtos com desconto
+            p.priceOld && p.priceOld > p.price 
         );
 
-        // Aplica filtro por categoria, se existir
         if (search) {
             filtrados = filtrados.filter((p) =>
                 p.categories.some((c) => c.category.name === search)
             );
         }
 
-        // Aplica filtro por preço
         if (precoMinimo) {
             filtrados = filtrados.filter((p) => p.price >= Number(precoMinimo));
         }
@@ -78,7 +74,6 @@ export default function Promocoes() {
             filtrados = filtrados.filter((p) => p.price <= Number(precoMaximo));
         }
 
-        // Aplica novamente o filtro para garantir que produtos inativos não sejam exibidos
         filtrados = filtrados.filter((p) => p.active);
 
         setProdutosFiltrados(filtrados);
@@ -145,7 +140,7 @@ export default function Promocoes() {
                                     : 0;
 
                                 const totalEstoque = produto.variants.reduce(
-                                    (total: number, variant: VariantProps) => total + (variant.stock?.quantity || 0), 0
+                                    (total: number, variant: VariantProps) => total + (variant.availableStock || 0), 0
                                 );
 
                                 return (
