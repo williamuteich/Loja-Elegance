@@ -296,12 +296,9 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-
   const authError = await requireAdmin(request);
-  if (authError) {
-    return authError;
-  }
-  
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const { id } = body;
@@ -310,59 +307,91 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "ID é obrigatório" }, { status: 400 });
     }
 
-    const productExists = await prisma.product.findUnique({
+    // 1. Verificar existência do produto
+    const product = await prisma.product.findUnique({
       where: { id },
       select: {
         imagePrimary: true,
-        imagesSecondary: true
+        imagesSecondary: true,
+        variants: { select: { id: true } }
       }
     });
 
-    if (!productExists) {
+    if (!product) {
       return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
-    const images = [productExists.imagePrimary, ...productExists.imagesSecondary];
-
+    // 2. Excluir imagens do Supabase
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    for (const imageUrl of images) {
-      if (!imageUrl) continue;
+    const allImages = [
+      product.imagePrimary,
+      ...(product.imagesSecondary || [])
+    ].filter(Boolean) as string[];
+
+    for (const imageUrl of allImages) {
       const pathParts = imageUrl.split('/public/');
       if (pathParts.length === 2) {
         const [bucket, ...imagePath] = pathParts[1].split('/');
         const fileName = imagePath.join('/');
-        const { error } = await supabase.storage.from(bucket).remove([fileName]);
-
-        if (error) {
-          console.error(`Erro ao excluir ${fileName}:`, error);
-        }
+        const { error } = await supabase.storage
+          .from(bucket)
+          .remove([fileName]);
+        
+        if (error) console.error(`Erro ao excluir ${fileName}:`, error);
       }
     }
 
-    await prisma.productCategory.deleteMany({ where: { productId: id } });
-    await prisma.stock.deleteMany({
-      where: {
-        variant: {
-          productId: id
+    // 3. Excluir todas as dependências em transação
+    await prisma.$transaction([
+      // 3.1. Excluir itens de pedidos relacionados
+      prisma.orderItem.deleteMany({
+        where: { 
+          OR: [
+            { productId: id },
+            { productVariant: { productId: id } }
+          ]
         }
-      }
-    });
-    await prisma.productVariant.deleteMany({ where: { productId: id } });
+      }),
+      
+      // 3.2. Excluir categorias do produto
+      prisma.productCategory.deleteMany({ where: { productId: id } }),
+      
+      // 3.3. Excluir estoque das variantes
+      prisma.stock.deleteMany({
+        where: { variantId: { in: product.variants.map(v => v.id) } }
+      }),
+      
+      // 3.4. Excluir variantes do produto
+      prisma.productVariant.deleteMany({ where: { productId: id } }),
+      
+      // 3.5. Excluir o produto principal
+      prisma.product.delete({ where: { id } })
+    ]);
 
-    await prisma.product.delete({ where: { id } });
+    // 4. Verificar e limpar pedidos órfãos
+    const emptyOrders = await prisma.order.findMany({
+      where: { items: { none: {} } }
+    });
+
+    if (emptyOrders.length > 0) {
+      await prisma.order.deleteMany({
+        where: { id: { in: emptyOrders.map(o => o.id) } }
+      });
+    }
 
     return NextResponse.json(
-      { message: "Produto e dados relacionados excluídos com sucesso" },
+      { message: "Produto e todas as dependências excluídas com sucesso" },
       { status: 200 }
     );
+
   } catch (err) {
-    console.error("Erro ao excluir produto:", err);
+    console.error("Erro na exclusão completa:", err);
     return NextResponse.json(
-      { error: "Erro interno do servidor" },
+      { error: "Erro interno durante a exclusão total" },
       { status: 500 }
     );
   }
