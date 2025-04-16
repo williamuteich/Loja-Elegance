@@ -69,6 +69,8 @@ export default function ConfirmOrderLayout({
 
   if (showSuccessLayout) return <ConfirmPayment />;
 
+  const totalPedido = cart.reduce((total, item) => total + item.price * item.quantity, 0)
+
   return (
     <div className="flex flex-col md:flex-row gap-8 max-w-6xl mx-auto p-4 md:p-8">
       <div className="flex-1 bg-white rounded-xl shadow-lg p-2 md:p-8 border border-gray-100">
@@ -100,20 +102,35 @@ export default function ConfirmOrderLayout({
                         {new Intl.NumberFormat("es-UY", {
                           style: "currency",
                           currency: "UYU",
-                        }).format(cart.reduce((total, item) => total + item.price * item.quantity, 0))}
+                        }).format(totalPedido)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Monto Entregado:</span>
-                      <span className="font-medium">{finalCashInfo.cashInHand}</span>
+                      <span className="font-medium">
+                        {totalPedido < Number(finalCashInfo.cashInHand) ? 
+                          new Intl.NumberFormat("es-UY", {
+                            style: "currency",
+                            currency: "UYU",
+                          }).format(Number(finalCashInfo.cashInHand)) : 
+                          new Intl.NumberFormat("es-UY", {
+                            style: "currency",
+                            currency: "UYU",
+                          }).format(totalPedido)}
+                      </span>
                     </div>
                     <div className="flex justify-between text-green-600">
                       <span>Vuelto:</span>
                       <span className="font-semibold">
-                        {new Intl.NumberFormat("es-UY", {
-                          style: "currency",
-                          currency: "UYU",
-                        }).format(finalCashInfo.change || 0)}
+                        {totalPedido > Number(finalCashInfo.cashInHand || 0) ? 
+                          new Intl.NumberFormat("es-UY", {
+                            style: "currency",
+                            currency: "UYU",
+                          }).format(0) : 
+                          new Intl.NumberFormat("es-UY", {
+                            style: "currency",
+                            currency: "UYU",
+                          }).format(Number(finalCashInfo.change || 0))}
                       </span>
                     </div>
                   </>
