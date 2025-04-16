@@ -10,7 +10,6 @@ const prisma = new PrismaClient();
 export default async function OrdersPage() {
   const session = await getServerSession(authOptions);
 
-  // Verifique se o userID está disponível em vez do email
   if (!session?.user?.userID) {
     return (
       <div className="w-full text-center py-16 text-gray-600">
@@ -19,19 +18,30 @@ export default async function OrdersPage() {
     );
   }
 
-  const orders = await prisma.order.findMany({
-    where: { userId: session.user.userID },  // Usando userID aqui
-    include: {
-      items: {
-        include: {
-          product: true,
-          productVariant: { include: { color: true } }
+  const orders = (await prisma.order.findMany({
+      where: { userId: session.user.userID },  
+      include: {
+        items: {
+          include: {
+            product: true,
+            productVariant: { include: { color: true } }
+          },
         },
+        pickupLocation: true,
       },
-      pickupLocation: true,
-    },
-    orderBy: { createdAt: "desc" },
-  }) as Order[];
+      orderBy: { createdAt: "desc" },
+    })).map(order => ({
+      ...order,
+      items: order.items.map(item => ({
+        ...item,
+        variant: {
+          color: {
+            name: item.productVariant?.color?.name || "",
+            hexCode: item.productVariant?.color?.hexCode || "",
+          },
+        },
+      })),
+    })) as Order[];
 
   const getStatus = (s: string) => {
     switch (s) {
@@ -95,8 +105,8 @@ export default async function OrdersPage() {
                     acc[pid] = { product: item.product, variants: [] };
                   }
                   acc[pid].variants.push({
-                    colorName: "",  // Defina a cor correta, se necessário
-                    hex: "",
+                    colorName: item.variant.color.name,
+                    hex: item.variant.color.hexCode,
                     qty: item.quantity,
                   });
                   return acc;

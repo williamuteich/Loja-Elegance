@@ -62,11 +62,14 @@ export default async function Pedidos() {
         <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
           <thead className="bg-gray-800 text-white">
             <tr>
-              {["ID", "Cliente", "Telefone", "Data", "Status", "Total", "Produtos", ""].map((header, idx) => (
-                <th key={idx} className="py-3 px-4 text-left text-sm font-medium text-white">
-                  {header}
-                </th>
-              ))}
+              <th className="py-3 px-4 text-left text-sm font-medium text-white">ID</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-white">Cliente</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-white">Telefone</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-white">Data</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-white">Status</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-white">Total</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-white">Produtos</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-white"></th>
             </tr>
           </thead>
 
@@ -75,22 +78,17 @@ export default async function Pedidos() {
               <tr key={pedido.id} className="hover:bg-gray-50 transition-colors">
                 <td className="py-3 px-4 font-medium text-sm text-blue-600">
                   <Link href={`/admin/pedidos/${pedido.id}`} className="hover:underline">
-                    {pedido.id.slice(-6).toUpperCase()}
+                    #{pedido.id.slice(-6).toUpperCase()}
                   </Link>
                 </td>
 
                 <td className="py-3 px-4 font-medium text-sm text-gray-700">
-                  <div className="flex items-center space-x-2">
-                    <FaShoppingCart size={18} className="text-gray-500" />
-                    <Link href={`/admin/pedidos/${pedido.id}`} className="hover:underline">
-                      {pedido.user?.name || "Cliente"}
-                    </Link>
-                  </div>
+                  {pedido.user?.name || "Cliente"}
                 </td>
 
                 <td className="py-3 px-4 font-medium text-sm text-gray-700">
                   <Link href={`/admin/pedidos/${pedido.id}`} className="hover:underline">
-                    {pedido.user?.phone || "Não informado"}
+                    {pedido.user?.telefone || "Não informado"}
                   </Link>
                 </td>
 
@@ -111,10 +109,21 @@ export default async function Pedidos() {
 
                 <td className="py-3 px-4 font-medium text-sm text-gray-700">
                   {pedido.items?.length > 0 ? (
-                    <ul className="list-disc pl-4 space-y-1">
+                    <ul className="space-y-2">
                       {pedido.items.map((item: any, index: number) => (
                         <li key={index}>
-                          {item.name} x{item.quantity}
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-800">{item.name} x{item.quantity}</span>
+                            {item.productVariant?.color && (
+                              <div className="flex items-center gap-1 text-sm">
+                                <span
+                                  className="w-3 h-3 rounded-full border"
+                                  style={{ backgroundColor: item.productVariant.color.hexCode }}
+                                />
+                                <span className="text-gray-600">{item.productVariant.color.name}</span>
+                              </div>
+                            )}
+                          </div>
                         </li>
                       ))}
                     </ul>

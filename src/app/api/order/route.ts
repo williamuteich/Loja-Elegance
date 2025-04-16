@@ -46,6 +46,7 @@ export async function GET() {
         createdAt: "desc",
       },
       include: {
+        user: true,
         items: {
           include: {
             product: true,
@@ -120,7 +121,6 @@ export async function POST(request: Request) {
             );
           }
 
-          console.log("porraaaa", stockRecord, item.quantity);
           if (stockRecord.quantity < item.quantity) {
             throw new Error(
               `Estoque insuficiente para a variante ${item.selectedVariantId}`
