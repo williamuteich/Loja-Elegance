@@ -62,7 +62,7 @@ export default async function Pedidos() {
         <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
           <thead className="bg-gray-800 text-white">
             <tr>
-              {["ID", "Cliente", "Telefone", "Data", "Status", "Total", ""].map((header, idx) => (
+              {["ID", "Cliente", "Telefone", "Data", "Status", "Total", "Produtos", ""].map((header, idx) => (
                 <th key={idx} className="py-3 px-4 text-left text-sm font-medium text-white">
                   {header}
                 </th>
@@ -107,6 +107,20 @@ export default async function Pedidos() {
                     style: "currency",
                     currency: "BRL",
                   })}
+                </td>
+
+                <td className="py-3 px-4 font-medium text-sm text-gray-700">
+                  {pedido.items?.length > 0 ? (
+                    <ul className="list-disc pl-4 space-y-1">
+                      {pedido.items.map((item: any, index: number) => (
+                        <li key={index}>
+                          {item.name} x{item.quantity}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-400 italic">Sem itens</span>
+                  )}
                 </td>
 
                 <td className="py-3 px-4 font-medium text-sm text-gray-700">

@@ -8,6 +8,7 @@ import ResumoPedido from "../component/resumoPedido";
 import PaymentModal from "./component/paymentModal";
 import CashModal from "./component/cashModal";
 import ConfirmOrderLayout from "./component/confirmOrderLayout";
+import CarrinhoVazio from "../component/carrinhoVazio";
 
 type PickupLocation = {
   id: string;
@@ -57,7 +58,13 @@ export default function CheckoutPagamento() {
       />
     );
   }
-  
+
+  if (cart.length === 0) {
+    return (
+      <CarrinhoVazio />
+    );
+  }
+
   return (
     <div className="flex flex-col md:flex-row gap-6 max-w-4xl mx-auto p-6">
       <div className="w-full md:w-1/2">

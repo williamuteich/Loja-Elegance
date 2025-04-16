@@ -49,6 +49,11 @@ export async function GET() {
         items: {
           include: {
             product: true,
+            productVariant: {
+              include: {
+                color: true
+              }
+            }
           },
         },
         pickupLocation: true,
@@ -64,6 +69,7 @@ export async function GET() {
     );
   }
 }
+
 
 export async function POST(request: Request) {
   try {
@@ -143,7 +149,7 @@ export async function POST(request: Request) {
           status: "pending", 
           items: {
             create: itemsWithStock.map((i) => ({
-              variantId: i.variantId,
+              productVariantId: i.variantId,
               productId: i.productId,
               quantity: i.quantity,
               price: i.price,
@@ -156,7 +162,7 @@ export async function POST(request: Request) {
           pickupLocation: true,
         },
       });
-
+      
       await Promise.all(
         itemsWithStock.map((i) =>
           tx.stock.update({

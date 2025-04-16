@@ -386,29 +386,35 @@ async function deleteImageFromSupabase(imageUrl: string): Promise<void> {
 }
 
 export async function PUT(request: Request) {
-
   const authError = await requireAdmin(request);
-  if (authError) {
-    return authError;
-  }
+  if (authError) return authError;
 
   try {
     const body = await request.json();
 
-    if (!body.id || !body.name || !body.description || !body.price || !body.brandId || !body.categoryIds || !body.features) {
+    const requiredFields = ['id', 'name', 'description', 'price', 'brandId', 'categoryIds', 'features'];
+    if (requiredFields.some(field => !body[field])) {
       return NextResponse.json(
-        { error: "Campos obrigatórios: id, name, description, price, brandId, categoryIds, features" },
+        { error: `Campos obrigatórios: ${requiredFields.join(', ')}` },
         { status: 400 }
       );
     }
 
     const updatedProduct = await prisma.$transaction(async (tx): Promise<any> => {
-      const originalProduct = await tx.product.findUnique({
+      const existingProduct = await tx.product.findUnique({
         where: { id: body.id },
-        select: { imagePrimary: true, imagesSecondary: true }
+        include: {
+          variants: {
+            include: {
+              color: true,
+              stock: true
+            }
+          },
+          categories: true
+        }
       });
 
-      if (!originalProduct) throw new Error("Produto não encontrado");
+      if (!existingProduct) throw new Error("Produto não encontrado");
 
       const colorOperations = body.variants.map((variant: any) =>
         tx.color.upsert({
@@ -417,10 +423,55 @@ export async function PUT(request: Request) {
           update: { name: variant.name }
         })
       );
-      const colors = await Promise.all(colorOperations);
+      const updatedColors = await Promise.all(colorOperations);
 
-      await tx.stock.deleteMany({ where: { variant: { productId: body.id } } });
-      await tx.productVariant.deleteMany({ where: { productId: body.id } });
+      const existingVariantsMap = new Map(
+        existingProduct.variants.map(v => [v.color.hexCode, v])
+      );
+
+      for (const [index, variantData] of body.variants.entries()) {
+        const color = updatedColors[index];
+        const existingVariant = existingVariantsMap.get(color.hexCode);
+
+        if (existingVariant) {
+          await tx.stock.update({
+            where: { variantId: existingVariant.id },
+            data: { quantity: variantData.quantity }
+          });
+        } else {
+          const newVariant = await tx.productVariant.create({
+            data: {
+              colorId: color.id,
+              productId: body.id
+            }
+          });
+          await tx.stock.create({
+            data: {
+              variantId: newVariant.id,
+              quantity: variantData.quantity
+            }
+          });
+        }
+      }
+
+      const incomingHexCodes = new Set(body.variants.map((v: any) => v.hexCode));
+      
+      for (const existingVariant of existingProduct.variants) {
+        if (!incomingHexCodes.has(existingVariant.color.hexCode)) {
+          const hasAssociatedOrders = await tx.orderItem.count({
+            where: { productVariantId: existingVariant.id }
+          }) > 0;
+
+          if (!hasAssociatedOrders) {
+            await tx.stock.deleteMany({
+              where: { variantId: existingVariant.id }
+            });
+            await tx.productVariant.delete({
+              where: { id: existingVariant.id }
+            });
+          }
+        }
+      }
 
       const updatedProd = await tx.product.update({
         where: { id: body.id },
@@ -434,36 +485,46 @@ export async function PUT(request: Request) {
           active: body.active ?? true,
           destaque: body.destaque ?? false,
           imagePrimary: body.imagePrimary || null,
-          imagesSecondary: Array.isArray(body.imagesSecondary) ? body.imagesSecondary : [],
+          imagesSecondary: Array.isArray(body.imagesSecondary) 
+            ? body.imagesSecondary 
+            : [],
           brand: { connect: { id: body.brandId } },
         },
-        include: { variants: { include: { color: true, stock: true } }, categories: { include: { category: true } } }
+        include: { 
+          variants: { include: { color: true, stock: true } }, 
+          categories: { include: { category: true } } 
+        }
       });
 
-      for (const [index, variant] of body.variants.entries()) {
-        const color = colors[index];
-        const createdVariant = await tx.productVariant.create({ data: { colorId: color.id, productId: body.id } });
-        await tx.stock.create({ data: { variantId: createdVariant.id, quantity: variant.quantity } });
-      }
-
-      const existingCategories = await tx.productCategory.findMany({ where: { productId: body.id } });
-      const existingCategoryIds = existingCategories.map(c => c.categoryId);
-      const categoriesToAdd = body.categoryIds.filter((id: string) => !existingCategoryIds.includes(id));
-      const categoriesToRemove = existingCategoryIds.filter(id => !body.categoryIds.includes(id));
+      const existingCategoryIds = existingProduct.categories.map(c => c.categoryId);
+      const categoriesToAdd = body.categoryIds.filter((id: string) => 
+        !existingCategoryIds.includes(id)
+      );
+      const categoriesToRemove = existingCategoryIds.filter(id => 
+        !body.categoryIds.includes(id)
+      );
 
       if (categoriesToRemove.length > 0) {
-        await tx.productCategory.deleteMany({ where: { productId: body.id, categoryId: { in: categoriesToRemove } } });
+        await tx.productCategory.deleteMany({
+          where: { 
+            productId: body.id, 
+            categoryId: { in: categoriesToRemove } 
+          }
+        });
       }
 
       if (categoriesToAdd.length > 0) {
         await tx.productCategory.createMany({
-          data: categoriesToAdd.map((categoryId: string) => ({ productId: body.id, categoryId }))
+          data: categoriesToAdd.map((categoryId: string) => ({
+            productId: body.id,
+            categoryId
+          }))
         });
       }
 
       const originalImages = [
-        originalProduct.imagePrimary,
-        ...originalProduct.imagesSecondary
+        existingProduct.imagePrimary,
+        ...existingProduct.imagesSecondary
       ].filter(Boolean) as string[];
 
       const newImages = [
@@ -472,20 +533,29 @@ export async function PUT(request: Request) {
       ].filter(Boolean) as string[];
 
       const imagesToDelete = originalImages.filter(img => !newImages.includes(img));
-
       for (const imgUrl of imagesToDelete) {
         await deleteImageFromSupabase(imgUrl);
       }
 
       return tx.product.findUnique({
         where: { id: body.id },
-        include: { variants: { include: { color: true, stock: true } }, categories: { include: { category: true } } }
+        include: { 
+          variants: { include: { color: true, stock: true } }, 
+          categories: { include: { category: true } } 
+        }
       });
     });
 
-    return NextResponse.json({ message: "Produto atualizado", data: updatedProduct }, { status: 200 });
+    return NextResponse.json(
+      { message: "Produto atualizado com sucesso", data: updatedProduct },
+      { status: 200 }
+    );
+
   } catch (err) {
     console.error("Erro ao atualizar produto:", err);
-    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erro interno do servidor" }, 
+      { status: 500 }
+    );
   }
 }

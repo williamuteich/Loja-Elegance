@@ -1,11 +1,5 @@
 import NavProfile from "@/app/components/navProfile";
-import {
-  FaCheckCircle,
-  FaHourglassHalf,
-  FaBan,
-  FaListAlt,
-  FaMoneyBill,
-} from "react-icons/fa";
+import { FaCheckCircle, FaHourglassHalf, FaBan, FaListAlt, FaMoneyBill } from "react-icons/fa";
 import { getServerSession } from "next-auth";
 import { auth as authOptions } from "@/lib/auth-config";
 import { PrismaClient } from "@prisma/client";
@@ -15,7 +9,9 @@ const prisma = new PrismaClient();
 
 export default async function OrdersPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+
+  // Verifique se o userID está disponível em vez do email
+  if (!session?.user?.userID) {
     return (
       <div className="w-full text-center py-16 text-gray-600">
         Necesitas iniciar sesión para ver tus pedidos.
@@ -24,12 +20,12 @@ export default async function OrdersPage() {
   }
 
   const orders = await prisma.order.findMany({
-    where: { user: { email: session.user.email } },
+    where: { userId: session.user.userID },  // Usando userID aqui
     include: {
       items: {
         include: {
           product: true,
-          variant: { include: { color: true } },
+          productVariant: { include: { color: true } }
         },
       },
       pickupLocation: true,
@@ -99,8 +95,8 @@ export default async function OrdersPage() {
                     acc[pid] = { product: item.product, variants: [] };
                   }
                   acc[pid].variants.push({
-                    colorName: item.variant.color.name,
-                    hex: item.variant.color.hexCode,
+                    colorName: "",  // Defina a cor correta, se necessário
+                    hex: "",
                     qty: item.quantity,
                   });
                   return acc;

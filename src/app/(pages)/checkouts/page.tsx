@@ -2,12 +2,12 @@
 
 import { useForm } from "react-hook-form";
 import { useCart } from "@/context/cartContext";
-import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import ResumoPedido from "./component/resumoPedido";
 import LocalRetirada from "./component/localRetirada";
+import CarrinhoVazio from "./component/carrinhoVazio";
 
 export default function CheckoutProduto() {
   const { cart } = useCart();
@@ -34,14 +34,7 @@ export default function CheckoutProduto() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen flex justify-center p-6 text-center">
-        <div className="max-w-full sm:max-w-md md:max-w-lg lg:max-w-4xl mx-auto">
-          <h1 className="text-2xl font-bold text-pink-600 mb-4">Tu carrito está vacío</h1>
-          <Link href="/produtos">
-            <Button className="bg-pink-600 hover:bg-pink-700 text-white">Volver a la tienda</Button>
-          </Link>
-        </div>
-      </div>
+      <CarrinhoVazio/>
     );
   }
 
