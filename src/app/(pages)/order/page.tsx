@@ -18,7 +18,7 @@ export default async function OrdersPage() {
   if (!session?.user?.email) {
     return (
       <div className="w-full text-center py-16 text-gray-600">
-        Você precisa estar logado para ver seus pedidos.
+        Necesitas iniciar sesión para ver tus pedidos.
       </div>
     );
   }
@@ -42,13 +42,13 @@ export default async function OrdersPage() {
       case "pending":
         return {
           icon: FaHourglassHalf,
-          text: "Em Análise",
+          text: "En revisión",
           color: "text-yellow-500",
         };
       case "completed":
         return {
           icon: FaCheckCircle,
-          text: "Concluído",
+          text: "Completado",
           color: "text-green-500",
         };
       case "cancelled":
@@ -56,14 +56,14 @@ export default async function OrdersPage() {
       default:
         return {
           icon: FaHourglassHalf,
-          text: "Processando",
+          text: "Procesando",
           color: "text-gray-500",
         };
     }
   };
 
   const formatDate = (d: Date) =>
-    d.toLocaleDateString("pt-BR", {
+    d.toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -77,13 +77,13 @@ export default async function OrdersPage() {
         <NavProfile />
         <div className="flex-1">
           <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <FaListAlt className="text-pink-600" /> Meus Pedidos
+            <FaListAlt className="text-pink-600" /> Mis Pedidos
           </h1>
 
           {orders.length === 0 ? (
-            <p className="text-center text-gray-500">Nenhum pedido encontrado.</p>
+            <p className="text-center text-gray-500">No se encontraron pedidos.</p>
           ) : (
-            <div className="space-y-6">
+            <div className="lg:max-h-[600px] lg:overflow-y-auto space-y-6 pr-2">
               {orders.map((order) => {
                 const { icon: StatusIcon, text: statusText, color: statusColor } =
                   getStatus(order.status);
@@ -111,7 +111,6 @@ export default async function OrdersPage() {
                     key={order.id}
                     className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
                   >
-
                     <div className="flex justify-between items-center mb-4">
                       <div>
                         <h2 className="text-lg font-semibold">
@@ -155,16 +154,15 @@ export default async function OrdersPage() {
                       ))}
                     </div>
 
-                    {/* Endereço de Retirada */}
                     <div className="mt-4 p-4 bg-gray-50 rounded text-sm text-gray-700">
-                      <p className="font-semibold">Retirada:</p>
+                      <p className="font-semibold">Retiro en tienda:</p>
                       <p>{order.pickupLocation.title}</p>
                     </div>
 
                     <div className="mt-6 border-t pt-4 flex justify-between items-center">
                       <div className="flex items-center gap-2 text-gray-700">
-                        <FaMoneyBill className="text-green-500" />{" "}
-                        <span className="capitalize">{order.paymentMethod}</span>
+                        <FaMoneyBill className="text-green-500" />
+                        <span className="capitalize">{order.paymentMethod && order.paymentMethod !== "outros" && order.paymentMethod || order.paymentDetail}</span>
                       </div>
                       <p className="font-semibold">
                         Total: R$ {order.total.toFixed(2).replace(".", ",")}

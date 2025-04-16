@@ -28,17 +28,20 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.userID || session.user?.role !== "user") {
+    if (!session?.user?.userID || (session.user?.role !== "user" && session.user?.role !== "admin")) {
       return NextResponse.json(
         { message: "Usuário não autenticado ou sem permissão" },
         { status: 401 }
       );
     }
 
+    const whereCondition =
+      session.user?.role === "user"
+        ? { userId: session.user.userID }
+        : undefined;
+
     const orders = await prisma.order.findMany({
-      where: {
-        userId: session.user.userID,
-      },
+      where: whereCondition,
       orderBy: {
         createdAt: "desc",
       },

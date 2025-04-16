@@ -43,25 +43,24 @@ export default async function ListAllProdutos() {
                                 className="flex flex-col border-neutral-300 hover:bg-pink-100 transition-all hover:scale-[1.02]"
                             >
                                 <div className="group relative flex flex-col border border-gray-50 flex-1">
-                                    <div className="relative flex aspect-[300/300] items-center justify-center">
+                                    <div className="relative flex aspect-[1/1] w-full items-center justify-center overflow-hidden">
                                         {produto.imagePrimary ? (
                                             <Image
                                                 alt={produto.name}
                                                 src={produto.imagePrimary}
-                                                width={270}
-                                                height={270}
+                                                fill
                                                 priority
                                                 quality={100}
                                                 className="object-contain rounded-lg"
-                                                style={{ maxWidth: 300, maxHeight: 300 }}
-                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                sizes="100%"
                                             />
                                         ) : (
-                                            <div className="flex items-center justify-center bg-gray-100 rounded-lg" style={{ width: 270, height: 270 }}>
+                                            <div className="flex items-center justify-center w-full h-full bg-gray-100 rounded-lg">
                                                 <FaShoppingBag className="text-gray-400" size={110} />
                                             </div>
                                         )}
                                     </div>
+
                                     <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm flex-1">
                                         <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
                                             <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
