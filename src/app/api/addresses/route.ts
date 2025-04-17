@@ -48,92 +48,80 @@ export async function GET(request: Request) {
   }
 }
 
+
 export async function PUT(request: Request) {
   const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || session.user.role !== "user") {
+  if (!session?.user || session.user.role !== "user") {
     return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
   }
 
-  try {
-    const {
-      name,
-      email,
-      telefone,
-      cep,
-      logradouro,
-      numero,
-      complemento,
-      bairro,
-      cidade,
-      estado,
-      pais
-    } = await request.json();
+  const userID = session.user.userID!;
+  const body = await request.json();
 
-    const userID = session.user.userID;
-
-    if (!userID || !name || !email || !cep || !logradouro || !numero || !bairro || !cidade || !estado || !pais) {
-      return NextResponse.json({ message: 'Todos os campos obrigatórios devem ser preenchidos' }, { status: 400 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: userID },
-      select: {
-        id: true,
-        role: true,
-        active: true,
-        enderecos: true,
-        telefone: true
-      }
-    });
-
-    if (!user) {
-      return NextResponse.json({ message: 'Usuário não encontrado' }, { status: 404 });
-    }
-
-    await prisma.user.update({
-      where: { id: userID },
-      data: {
-        name,
-        email,
-        telefone
-      }
-    });
-
-    if (user.enderecos && user.enderecos.length > 0) {
-      const updatedAddress = await prisma.endereco.update({
-        where: { id: user.enderecos[0].id },
-        data: {
-          cep,
-          logradouro,
-          numero,
-          complemento,
-          bairro,
-          cidade,
-          estado,
-          pais
-        }
-      });
-      return NextResponse.json({ ...user, updatedAddress }, { status: 200 });
-    } else {
-      const newAddress = await prisma.endereco.create({
-        data: {
-          userId: user.id,
-          cep,
-          logradouro,
-          numero,
-          complemento,
-          bairro,
-          cidade,
-          estado,
-          pais
-        }
-      });
-      return NextResponse.json({ ...user, newAddress }, { status: 200 });
-    }
-
-  } catch (err) {
-    console.error("Erro ao atualizar endereço", err);
-    return NextResponse.json({ error: 'Erro interno no servidor' }, { status: 500 });
+  // Apenas nome e email são obrigatórios
+  if (!body.name || !body.email) {
+    return NextResponse.json(
+      { message: "Nome e email são obrigatórios" },
+      { status: 400 }
+    );
   }
+
+  // Preparar dados de atualização do usuário
+  const userUpdateData: any = {
+    name: body.name,
+    email: body.email,
+  };
+  if (body.telefone !== undefined) {
+    userUpdateData.telefone = body.telefone;
+  }
+
+  // Executa update de User
+  await prisma.user.update({
+    where: { id: userID },
+    data: userUpdateData,
+  });
+
+  // Campos opcionais de endereço
+  const addressData: any = {};
+  const addressFields = [
+    "cep",
+    "logradouro",
+    "numero",
+    "complemento",
+    "bairro",
+    "cidade",
+    "estado",
+    "pais",
+  ];
+  addressFields.forEach((field) => {
+    if (body[field] !== undefined) {
+      addressData[field] = body[field];
+    }
+  });
+
+  // Se houve algum campo de endereço, atualiza ou cria registro
+  if (Object.keys(addressData).length > 0) {
+    const existing = await prisma.endereco.findFirst({
+      where: { userId: userID },
+    });
+
+    if (existing) {
+      await prisma.endereco.update({
+        where: { id: existing.id },
+        data: addressData,
+      });
+    } else {
+      await prisma.endereco.create({
+        data: {
+          userId: userID,
+          ...addressData,
+        },
+      });
+    }
+  }
+
+  return NextResponse.json(
+    { message: "Dados atualizados com sucesso" },
+    { status: 200 }
+  );
 }

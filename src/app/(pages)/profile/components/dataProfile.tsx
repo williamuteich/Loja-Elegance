@@ -1,10 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EnderecoProps, UserProps } from "@/utils/types/user";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaUser } from 'react-icons/fa';
+import Flag from "react-world-flags";
+
+const COUNTRIES = [
+  { code: "BR", name: "Brasil", dial: "+55" },
+  { code: "UY", name: "Uruguai", dial: "+598" },
+  { code: "AR", name: "Argentina", dial: "+54" },
+];
 
 export default function DataProfile({
   data,
@@ -17,6 +24,8 @@ export default function DataProfile({
 }) {
   const [editInfo, setEditInfo] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [countryCode, setCountryCode] = useState("BR");
+  const [phone, setPhone] = useState("");
 
   const [originalUserData] = useState(data);
   const [originalAddressData] = useState(endereco);
@@ -24,7 +33,6 @@ export default function DataProfile({
   const [userInfo, setUserInfo] = useState({
     name: data.name,
     email: data.email,
-    telefone: data.telefone,
   });
 
   const [addressInfo, setAddressInfo] = useState({
@@ -37,6 +45,32 @@ export default function DataProfile({
     complemento: endereco.complemento || "",
     pais: endereco.pais || "",
   });
+
+  useEffect(() => {
+    if (data?.telefone) {
+      const tel = data.telefone.replace(/\s/g, '');
+      let foundCountry = null;
+      let maxLength = 0;
+
+      COUNTRIES.forEach((country) => {
+        if (tel.startsWith(country.dial.replace(/\s/g, ''))) {
+          if (country.dial.length > maxLength) {
+            maxLength = country.dial.length;
+            foundCountry = country;
+          }
+        }
+      });
+
+      if (foundCountry) {
+        const phoneNumber = tel.slice(foundCountry.dial.length);
+        setPhone(phoneNumber);
+        setCountryCode(foundCountry.code);
+      } else {
+        setPhone(tel);
+        setCountryCode("BR");
+      }
+    }
+  }, [data.telefone]);
 
   const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -52,7 +86,6 @@ export default function DataProfile({
     setUserInfo({
       name: originalUserData.name,
       email: originalUserData.email,
-      telefone: originalUserData.telefone,
     });
     setAddressInfo({
       logradouro: originalAddressData.logradouro,
@@ -64,13 +97,20 @@ export default function DataProfile({
       complemento: originalAddressData.complemento || "",
       pais: originalAddressData.pais || "",
     });
+    setPhone(originalUserData.telefone ? 
+      originalUserData.telefone.replace(/^\+\d+/, '') : '');
+    setCountryCode("BR");
     setEditInfo(false);
   };
 
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const response = await fetch(`/api/addresses?userID=${userID}`, {
+    const dial = COUNTRIES.find((c) => c.code === countryCode)!.dial.replace(/\s/g, '');
+    const cleanPhone = phone.replace(/\D/g, '');
+    const fullTelefone = `${dial}${cleanPhone}`;
+
+    const response = await fetch(`/api/addresses`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -79,7 +119,7 @@ export default function DataProfile({
         userID,
         name: userInfo.name,
         email: userInfo.email,
-        telefone: userInfo.telefone,
+        telefone: fullTelefone,
         cep: addressInfo.cep,
         logradouro: addressInfo.logradouro,
         numero: addressInfo.numero,
@@ -99,6 +139,7 @@ export default function DataProfile({
 
     toast.success("Información guardada con éxito");
     setIsLoading(false);
+    setEditInfo(false);
   };
 
   if (!data || !endereco) {
@@ -140,16 +181,43 @@ export default function DataProfile({
                 className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">Celular</label>
-              <input
-                type="text"
-                name="telefone"
-                value={userInfo.telefone || ""}
-                disabled={!editInfo}
-                onChange={handleUserChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
-              />
+              <div className="flex gap-2">
+                <div className="relative">
+                  <select
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    disabled={!editInfo}
+                    className={`pr-8 pl-10 py-3 border rounded-md ${
+                      editInfo ? "cursor-pointer bg-white" : "cursor-not-allowed bg-gray-100"
+                    }`}
+                  >
+                    {COUNTRIES.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.name} ({c.dial})
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute left-2 top-3">
+                    <Flag code={countryCode} className="w-6 h-4 rounded-sm border" />
+                  </div>
+                </div>
+                <div className="relative flex-1">
+                  <input
+                    type="tel"
+                    value={phone}
+                    disabled={!editInfo}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                    className={`w-full p-3 border rounded-md focus:outline-none ${
+                      editInfo 
+                        ? "border-pink-400 focus:ring-2 focus:ring-pink-500 bg-white"
+                        : "border-gray-300 bg-gray-100 cursor-not-allowed"
+                    }`}
+                    placeholder="Exemplo: 11987654321"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>

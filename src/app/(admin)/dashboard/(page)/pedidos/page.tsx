@@ -1,4 +1,3 @@
-import { FaShoppingCart } from "react-icons/fa";
 import Container from "../components/Container";
 import SearchItems from "../components/searchItems";
 import Paginacao from "@/app/components/Paginacao";
