@@ -40,7 +40,7 @@ export default function ResumoPedido({ cart }: ResumoPedidoProps) {
         <CardContent>
           <div className="space-y-4">
             {cart.map((item) => (
-              <div key={`${item.id}-${item.selectedVariantId}`} className="flex justify-between items-center">
+              <div key={`${item.id}-${item.selectedVariantId}`} className="flex justify-between items-start lg:items-center gap-3">
                 <div className="flex items-center gap-4">
                   <img
                     src={item.imagePrimary}

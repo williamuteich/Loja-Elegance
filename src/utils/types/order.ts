@@ -26,6 +26,7 @@ export interface OrderItem {
     updatedAt: Date;
     items: OrderItem[];
     pickupLocation: {
+      category: ReactNode;
       title: string;
       description: string;
     };

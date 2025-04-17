@@ -28,9 +28,9 @@ type Props = {
   pickupLocation: { id: string; title: string; description: string };
 };
 
-const COUNTRIES: { code: string; name: string; dial: string }[] = [
+const COUNTRIES = [
   { code: "BR", name: "Brasil", dial: "+55" },
-  { code: "UY", name: "Uruguai", dial: "+598" },
+  { code: "UY", name: "Uruguay", dial: "+598" },
   { code: "AR", name: "Argentina", dial: "+54" },
 ];
 
@@ -43,39 +43,31 @@ export default function ConfirmOrderLayout({
 }: Props) {
   const { data: session } = useSession();
   const [phone, setPhone] = useState("");
-  const [countryCode, setCountryCode] = useState("BR");
+  const [countryCode, setCountryCode] = useState("UY");
   const [editPhone, setEditPhone] = useState(false);
   const [savingPhone, setSavingPhone] = useState(false);
   const [orderStatus, setOrderStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessLayout, setShowSuccessLayout] = useState(false);
-  const [userData, setUserData] = useState<{ name: string; email: string }>({
-    name: "",
-    email: "",
-  });
+  const [userData, setUserData] = useState({ name: "", email: "" });
   const { clearCart } = useCart();
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("/api/addresses", {
-          credentials: "include",
-        });
+        const response = await fetch("/api/addresses", { credentials: "include" });
         const data = await response.json();
 
         if (data) {
-          setUserData({
-            name: data.name || "",
-            email: data.email || "",
-          });
+          setUserData({ name: data.name || "", email: data.email || "" });
 
           if (data.telefone) {
-            const tel = data.telefone.replace(/\s/g, '');
+            const tel = data.telefone.replace(/\s/g, "");
             let foundCountry = null;
             let maxLength = 0;
 
             COUNTRIES.forEach((country) => {
-              if (tel.startsWith(country.dial.replace(/\s/g, ''))) {
+              if (tel.startsWith(country.dial.replace(/\s/g, ""))) {
                 if (country.dial.length > maxLength) {
                   maxLength = country.dial.length;
                   foundCountry = country;
@@ -84,17 +76,16 @@ export default function ConfirmOrderLayout({
             });
 
             if (foundCountry) {
-              const phoneNumber = tel.slice(foundCountry.dial.length);
-              setPhone(phoneNumber);
+              setPhone(tel.slice(foundCountry.dial.length));
               setCountryCode(foundCountry.code);
             } else {
               setPhone(tel);
-              setCountryCode("BR");
+              setCountryCode("UY");
             }
           }
         }
       } catch (error) {
-        console.error("Erro ao cargar dados do usuário:", error);
+        console.error("Error al cargar los datos del usuario:", error);
       }
     };
 
@@ -105,8 +96,8 @@ export default function ConfirmOrderLayout({
     if (editPhone) {
       setSavingPhone(true);
       try {
-        const dial = COUNTRIES.find((c) => c.code === countryCode)!.dial.replace(/\s/g, '');
-        const cleanPhone = phone.replace(/\D/g, '');
+        const dial = COUNTRIES.find((c) => c.code === countryCode)!.dial.replace(/\s/g, "");
+        const cleanPhone = phone.replace(/\D/g, "");
         const full = `${dial}${cleanPhone}`;
 
         const response = await fetch("/api/addresses", {
@@ -116,19 +107,19 @@ export default function ConfirmOrderLayout({
           body: JSON.stringify({
             name: userData.name,
             email: userData.email,
-            telefone: full
+            telefone: full,
           }),
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || "Erro ao salvar telefone");
+          throw new Error(errorData.message || "Error al guardar número");
         }
 
-        toast.success("Número atualizado com sucesso!");
+        toast.success("¡Número actualizado con éxito!");
       } catch (error) {
-        console.error("Erro ao salvar telefone:", error);
-        toast.error((error as Error).message || "Erro ao salvar número");
+        console.error("Error al guardar número:", error);
+        toast.error((error as Error).message || "Error al guardar número");
       } finally {
         setSavingPhone(false);
       }
@@ -138,19 +129,17 @@ export default function ConfirmOrderLayout({
 
   const handleSubmitOrder = async () => {
     if (!phone) {
-      toast.error("Por favor, insira um número de telefone válido");
+      toast.error("Por favor, ingresa un número de teléfono válido");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      if (editPhone) {
-        await handleToggleEdit();
-      }
+      if (editPhone) await handleToggleEdit();
 
-      const dial = COUNTRIES.find((c) => c.code === countryCode)!.dial.replace(/\s/g, '');
-      const cleanPhone = phone.replace(/\D/g, '');
+      const dial = COUNTRIES.find((c) => c.code === countryCode)!.dial.replace(/\s/g, "");
+      const cleanPhone = phone.replace(/\D/g, "");
       const fullPhone = `${dial}${cleanPhone}`;
 
       const body: any = {
@@ -176,17 +165,16 @@ export default function ConfirmOrderLayout({
       const orderData = await orderResponse.json();
 
       if (!orderResponse.ok) {
-        throw new Error(orderData.message || "Erro ao processar pedido");
+        throw new Error(orderData.message || "Error al procesar el pedido");
       }
 
-      setOrderStatus("Pedido realizado com sucesso! Está em análise.");
+      setOrderStatus("¡Pedido confirmado! Está siendo procesado.");
       localStorage.removeItem("cart");
       clearCart();
       setShowSuccessLayout(true);
-
     } catch (error) {
-      console.error("Erro no pedido:", error);
-      setOrderStatus(`Erro: ${(error as Error).message}`);
+      console.error("Error en el pedido:", error);
+      setOrderStatus(`Error: ${(error as Error).message}`);
     } finally {
       setIsLoading(false);
     }
@@ -201,20 +189,20 @@ export default function ConfirmOrderLayout({
     <div className="flex flex-col md:flex-row gap-8 max-w-6xl mx-auto p-4 md:p-8">
       <div className="flex-1 bg-white rounded-xl shadow-lg p-6 border border-gray-100">
         <h2 className="text-2xl font-bold text-pink-600 mb-6 border-b pb-4">
-          Confirmação Final do Pedido
+          Confirmación Final del Pedido
         </h2>
 
         <div className="mb-6">
           <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-700 mb-2">
-            <PhoneIcon className="w-5 h-5 text-pink-600" /> Número de Celular
+            <PhoneIcon className="w-5 h-5 text-pink-600" /> Número de Teléfono
           </h3>
-          <div className="flex items-center gap-2">
-            <div className="relative">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <div className="relative w-full sm:w-2/2">
               <select
                 value={countryCode}
                 onChange={(e) => setCountryCode(e.target.value)}
                 disabled={!editPhone}
-                className={`pr-8 pl-10 py-2 border rounded-lg bg-white ${editPhone ? "cursor-pointer" : "cursor-not-allowed bg-gray-100"
+                className={`appearance-none pr-8 pl-10 py-2 border rounded-lg bg-white w-full ${editPhone ? "cursor-pointer" : "cursor-not-allowed bg-gray-100"
                   }`}
               >
                 {COUNTRIES.map((c) => (
@@ -223,29 +211,30 @@ export default function ConfirmOrderLayout({
                   </option>
                 ))}
               </select>
+
               <div className="pointer-events-none absolute left-2 top-2">
                 <Flag code={countryCode} className="w-6 h-4 rounded-sm border" />
               </div>
             </div>
-            <div className="relative flex-1">
+            <div className="relative w-full">
               <input
                 type="tel"
                 className={`w-full border rounded-lg px-4 py-2 focus:ring-2 ${editPhone
                     ? "border-pink-400 focus:ring-pink-400 bg-white"
                     : "border-gray-300 bg-gray-100 cursor-not-allowed"
                   }`}
-                placeholder="Exemplo: 11987654321"
+                placeholder="Ej: 099123456"
                 value={phone}
                 disabled={!editPhone || savingPhone}
                 onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '').slice(0, 15);
+                  const value = e.target.value.replace(/\D/g, "").slice(0, 15);
                   setPhone(value);
                 }}
               />
               <button
                 onClick={handleToggleEdit}
                 className="absolute right-3 top-2 text-gray-500 hover:text-gray-700"
-                title={editPhone ? "Salvar telefone" : "Editar telefone"}
+                title={editPhone ? "Guardar número" : "Editar número"}
               >
                 {savingPhone ? (
                   <span className="animate-spin">⌛</span>
@@ -261,13 +250,13 @@ export default function ConfirmOrderLayout({
 
         <div className="mb-8">
           <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-700 mb-2">
-            <CreditCardIcon className="w-5 h-5 text-pink-600" /> Método de Pagamento
+            <CreditCardIcon className="w-5 h-5 text-pink-600" /> Método de Pago
           </h3>
           <div className="bg-gray-50 rounded-lg p-4 space-y-3">
             <div className="flex justify-between">
               <span className="text-gray-600">Tipo:</span>
               <strong className="text-pink-700">
-                {pagamento === "dinheiro" ? "Dinheiro" : pagamentoDetalhado}
+                {pagamento === "dinheiro" ? "Efectivo" : pagamentoDetalhado}
               </strong>
             </div>
             {pagamento === "dinheiro" && (
@@ -275,28 +264,32 @@ export default function ConfirmOrderLayout({
                 <div className="flex justify-between">
                   <span>Total:</span>
                   <span className="font-medium">
-                    {totalPedido.toLocaleString("pt-BR", {
+                    {totalPedido.toLocaleString("es-UY", {
                       style: "currency",
-                      currency: "BRL",
+                      currency: "UYU",
                     })}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Entregue:</span>
+                  <span>Entregado:</span>
                   <span className="font-medium">
                     {Math.max(totalPedido, Number(finalCashInfo.cashInHand)).toLocaleString(
-                      "pt-BR",
-                      { style: "currency", currency: "BRL" }
+                      "es-UY",
+                      { style: "currency", currency: "UYU" }
                     )}
                   </span>
                 </div>
                 <div className="flex justify-between text-green-600">
-                  <span>Troco:</span>
+                  <span>Vuelto:</span>
                   <span className="font-semibold">
-                    {Math.max(0, Number(finalCashInfo.change || 0)).toLocaleString(
-                      "pt-BR",
-                      { style: "currency", currency: "BRL" }
-                    )}
+                  {totalPedido > Number(finalCashInfo.cashInHand) ? (
+                    <span>0</span>
+                  ) : (
+                    Math.max(0, Number(finalCashInfo.change || 0)).toLocaleString("es-UY", {
+                      style: "currency",
+                      currency: "UYU",
+                    })
+                  )}
                   </span>
                 </div>
               </div>
@@ -346,6 +339,7 @@ export default function ConfirmOrderLayout({
       <div className="md:sticky md:top-8 flex-1">
         <ResumoPedido cart={cart} />
       </div>
+
       <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
   );

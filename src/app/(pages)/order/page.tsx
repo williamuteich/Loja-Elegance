@@ -119,7 +119,7 @@ export default async function OrdersPage() {
                   >
                     <div className="flex justify-between items-center mb-4">
                       <div>
-                        <h2 className="text-lg font-semibold">
+                        <h2 className="text-lg font-semibold text-pink-700">
                           Pedido #{order.id.slice(-6).toUpperCase()}
                         </h2>
                         <p className="text-sm text-gray-500">
@@ -140,7 +140,7 @@ export default async function OrdersPage() {
                             className="w-16 h-16 rounded-lg object-cover"
                           />
                           <div className="flex-1">
-                            <p className="font-medium text-gray-800">{product.name}</p>
+                            <p className="font-medium text-pink-700">{product.name}</p>
                             <div className="flex flex-wrap gap-2 mt-1 text-sm">
                               {variants.map((v, i) => (
                                 <span
@@ -161,8 +161,9 @@ export default async function OrdersPage() {
                     </div>
 
                     <div className="mt-4 p-4 bg-gray-50 rounded text-sm text-gray-700">
-                      <p className="font-semibold">Retiro en tienda:</p>
-                      <p>{order.pickupLocation.title}</p>
+                      <p className="font-bold text-pink-700">{order.pickupLocation.category}</p>
+                      <p className="font-bold">{order.pickupLocation.title}</p>
+                      <span className="text-xs">{order.pickupLocation.description}</span>
                     </div>
 
                     <div className="mt-6 border-t pt-4 flex justify-between items-center">
@@ -170,7 +171,7 @@ export default async function OrdersPage() {
                         <FaMoneyBill className="text-green-500" />
                         <span className="capitalize">{order.paymentMethod && order.paymentMethod !== "outros" && order.paymentMethod || order.paymentDetail}</span>
                       </div>
-                      <p className="font-semibold">
+                      <p className="font-semibold text-pink-700">
                         Total: R$ {order.total.toFixed(2).replace(".", ",")}
                       </p>
                     </div>
