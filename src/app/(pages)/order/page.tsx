@@ -1,5 +1,5 @@
 import NavProfile from "@/app/components/navProfile";
-import { FaCheckCircle, FaHourglassHalf, FaBan, FaListAlt, FaMoneyBill } from "react-icons/fa";
+import { FaCheckCircle, FaHourglassHalf, FaBan, FaListAlt, FaMoneyBill, FaTruck, FaBoxOpen } from "react-icons/fa";
 import { getServerSession } from "next-auth";
 import { auth as authOptions } from "@/lib/auth-config";
 import { PrismaClient } from "@prisma/client";
@@ -19,55 +19,77 @@ export default async function OrdersPage() {
   }
 
   const orders = (await prisma.order.findMany({
-      where: { userId: session.user.userID },  
-      include: {
-        items: {
-          include: {
-            product: true,
-            productVariant: { include: { color: true } }
-          },
+    where: { userId: session.user.userID },
+    include: {
+      items: {
+        include: {
+          product: true,
+          productVariant: { include: { color: true } }
         },
-        pickupLocation: true,
       },
-      orderBy: { createdAt: "desc" },
-    })).map(order => ({
-      ...order,
-      items: order.items.map(item => ({
-        ...item,
-        variant: {
-          color: {
-            name: item.productVariant?.color?.name || "",
-            hexCode: item.productVariant?.color?.hexCode || "",
-          },
+      pickupLocation: true,
+    },
+    orderBy: { createdAt: "desc" },
+  })).map(order => ({
+    ...order,
+    items: order.items.map(item => ({
+      ...item,
+      variant: {
+        color: {
+          name: item.productVariant?.color?.name || "",
+          hexCode: item.productVariant?.color?.hexCode || "",
         },
-      })),
-    })) as Order[];
+      },
+    })),
+  })) as Order[];
 
   const getStatus = (s: string) => {
     switch (s) {
       case "pending":
         return {
           icon: FaHourglassHalf,
-          text: "En revisión",
-          color: "text-yellow-500",
+          text: "Pendiente",
+          color: "text-yellow-700",
+          bgColor: "bg-yellow-100",
         };
-      case "completed":
+      case "confirmed":
         return {
           icon: FaCheckCircle,
-          text: "Completado",
-          color: "text-green-500",
+          text: "Confirmado",
+          color: "text-green-700",
+          bgColor: "bg-green-100",
+        };
+      case "shipped":
+        return {
+          icon: FaTruck,
+          text: "Enviado",
+          color: "text-blue-700",
+          bgColor: "bg-blue-100",
+        };
+      case "delivered":
+        return {
+          icon: FaBoxOpen,
+          text: "Entregado",
+          color: "text-purple-700",
+          bgColor: "bg-purple-100",
         };
       case "cancelled":
-        return { icon: FaBan, text: "Cancelado", color: "text-red-500" };
+        return {
+          icon: FaBan,
+          text: "Cancelado",
+          color: "text-red-700",
+          bgColor: "bg-red-100",
+        };
       default:
         return {
           icon: FaHourglassHalf,
           text: "Procesando",
-          color: "text-gray-500",
+          color: "text-gray-600",
+          bgColor: "bg-gray-100",
         };
     }
   };
-
+  
   const formatDate = (d: Date) =>
     d.toLocaleDateString("es-ES", {
       day: "2-digit",
@@ -91,8 +113,12 @@ export default async function OrdersPage() {
           ) : (
             <div className="lg:max-h-[600px] lg:overflow-y-auto space-y-6 pr-2">
               {orders.map((order) => {
-                const { icon: StatusIcon, text: statusText, color: statusColor } =
-                  getStatus(order.status);
+                const {
+                  icon: StatusIcon,
+                  text: statusText,
+                  color: statusColor,
+                  bgColor: statusBgColor
+                } = getStatus(order.status);
 
                 const grouped = order.items.reduce<{
                   [pid: string]: {
