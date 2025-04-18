@@ -1,4 +1,3 @@
-// app/admin/orders/[id]/page.tsx
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { auth as authOptions } from "@/lib/auth-config";
