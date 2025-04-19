@@ -35,8 +35,10 @@ export default async function TotalVendidos() {
                 </div>
             </div>
             <div className="mt-1 flex gap-2 items-center">
-
-                <span className="text-gray-500 font-medium text-sm">Total de todos os pedidos feitos</span>
+                <div className="flex gap-2">
+                    <span className="bg-green-500 font-bold text-sm p-2 rounded-full"></span>
+                </div>
+                <span className="text-gray-500 font-medium text-sm">Total de Vendido</span>
             </div>
         </div>
     )
