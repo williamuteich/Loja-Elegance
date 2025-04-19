@@ -147,7 +147,7 @@ export default function SearchHeaderItems() {
                         <div className="flex flex-col gap-0 w-full px-4">
                           <h2 className="text-base uppercase font-bold">{item.name}</h2>
                           <span className="text-base font-medium uppercase flex items-end gap-2 mb-2 w-full">
-                            R$ {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(item.price)}
+                            $ {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(item.price)}
                             <div
                               className={`mt-2 text-xs font-semibold text-white ${item.variants.some((variant: any) => variant.availableStock > 0)
                                 ? item.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0) > 1

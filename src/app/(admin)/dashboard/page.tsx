@@ -26,8 +26,8 @@ export default async function Dashboard() {
       </div>
 
       <div className="mt-16 flex gap-6 justify-between">
-        <div className="p-8 rounded-xl border border-gray-200 shadow-lg bg-white">
-          <OrderDashboard />
+        <div className="p-8 rounded-xl border border-gray-200 shadow-lg bg-white w-full">
+          <OrderDashboard pedidos={pedidos} />
         </div>
         <div className="w-1/5 p-8 rounded-xl border border-gray-200 shadow-lg bg-white">
           <GraficoDashboard pedidos={pedidos} />

@@ -142,7 +142,7 @@ export default async function StatusPedido({ params }: { params: Promise<{ id: s
                         </div>
                         <div className="mt-2 flex items-center gap-4 text-sm">
                           <span className="text-gray-600">Qtd: {item.quantity}</span>
-                          <span className="text-gray-600">Preço: R$ {item.price.toFixed(2)}</span>
+                          <span className="text-gray-600">Preço: $ {item.price.toFixed(2)}</span>
                         </div>
                       </div>
                     </div>

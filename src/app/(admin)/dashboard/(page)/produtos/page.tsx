@@ -115,7 +115,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                             </td>
                             <td className="py-3 px-4 font-medium text-sm text-gray-700">
                                 <Link href={`/dashboard/produtos/${produto.id}`} className="block">
-                                    R$ {produto.price}
+                                    $ {produto.price}
                                 </Link>
                             </td>
 

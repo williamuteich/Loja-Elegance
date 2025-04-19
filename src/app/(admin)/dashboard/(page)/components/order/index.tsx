@@ -1,123 +1,102 @@
-import Paginacao from "@/app/components/Paginacao";
+"use client";
+import React from "react";
+import { Order } from "@/utils/types/order";
 import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import SearchItems from "../searchItems";
-import { FiltroBuscarItem } from "../FiltroBuscarItem";
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
-// Dados de exemplo
-const orders = [
-  {
-    product: "Produto 1",
-    orderId: "ORD001",
-    purchaseDate: "2025-02-19",
-    totalAmount: "$250.00",
-    status: "Pago",
-  },
-  {
-    product: "Produto 2",
-    orderId: "ORD002",
-    purchaseDate: "2025-02-18",
-    totalAmount: "$150.00",
-    status: "Pendente",
-  },
-  {
-    product: "Produto 3",
-    orderId: "ORD003",
-    purchaseDate: "2025-02-17",
-    totalAmount: "$350.00",
-    status: "Cancelado",
-  },
-  {
-    product: "Produto 4",
-    orderId: "ORD004",
-    purchaseDate: "2025-02-16",
-    totalAmount: "$450.00",
-    status: "Pago",
-  },
-  {
-    product: "Produto 5",
-    orderId: "ORD005",
-    purchaseDate: "2025-02-15",
-    totalAmount: "$550.00",
-    status: "Pago",
-  },
-  {
-    product: "Produto 6",
-    orderId: "ORD006",
-    purchaseDate: "2025-02-14",
-    totalAmount: "$200.00",
-    status: "Pendente",
-  },
-  {
-    product: "Produto 7",
-    orderId: "ORD007",
-    purchaseDate: "2025-02-13",
-    totalAmount: "$300.00",
-    status: "Cancelado",
-  },
+const dayOfWeekMap = [
+  "Domingo",
+  "Segunda",
+  "Terça",
+  "Quarta",
+  "Quinta",
+  "Sexta",
+  "Sábado",
 ];
 
-export default function OrderDashboard() {
+interface Props {
+  pedidos: Order[];
+}
 
-  const totalAmount = orders.reduce((total, order) => total + parseFloat(order.totalAmount.replace('$', '').replace(',', '')), 0);
+export default function OrderDashboard({ pedidos }: Props) {
+  const processData = () => {
+    const validOrders = pedidos.filter(
+      (order) => !["cancelled", "pending"].includes(order.status)
+    );
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Pendente":
-        return "text-yellow-500";
-      case "Cancelado":
-        return "text-red-500";
-      case "Pago":
-        return "text-green-500";
-      default:
-        return "text-gray-500";
-    }
+    const dailyData = validOrders.reduce((acc, order) => {
+      const dayIndex = new Date(order.createdAt).getDay();
+      const day = dayOfWeekMap[dayIndex];
+
+      if (!acc[day]) {
+        acc[day] = { total: 0, count: 0 };
+      }
+
+      acc[day].total += order.total;
+      acc[day].count += 1;
+
+      return acc;
+    }, {} as Record<string, { total: number; count: number }>);
+
+    // Garantir a ordem dos dias da semana
+    return dayOfWeekMap.map((day) => ({
+      name: day,
+      total: dailyData[day]?.total || 0,
+      orders: dailyData[day]?.count || 0,
+    }));
   };
 
-  return (
-    <>
-              <div className="flex justify-between">
-            <h2 className="text-lg font-bold text-gray-600">Vendas recentes</h2>
-            <div className="flex gap-4 items-center">
-              <SearchItems />
-              <FiltroBuscarItem />
-            </div>
-          </div>
-      <Table className="w-full mt-6 border border-gray-200 shadow-lg">
-        <TableCaption className="sr-only">Tabela de Ordens de Compra</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[350px] bg-gray-100 p-3 text-left text-sm font-bold text-gray-700 rounded-tl-lg">Produto</TableHead>
-            <TableHead className="w-[350px] bg-gray-100 p-3 text-left text-sm font-bold text-gray-700">ID da Ordem</TableHead>
-            <TableHead className="w-[250px] bg-gray-100 p-3 text-left text-sm font-bold text-gray-700">Data da Compra</TableHead>
-            <TableHead className="w-[200px] bg-gray-100 p-3 text-left text-sm font-bold text-gray-700">Valor</TableHead>
-            <TableHead className="w-[130px] bg-gray-100 p-3 text-left text-sm font-bold text-gray-700 rounded-tr-lg">Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {orders.map((order) => (
-            <TableRow key={order.orderId} className="border-b border-gray-200 hover:bg-gray-50">
-              <TableCell className="font-medium p-3 text-sm text-gray-800">{order.product}</TableCell>
-              <TableCell className="p-3 text-sm text-gray-800">{order.orderId}</TableCell>
-              <TableCell className="p-3 text-sm text-gray-800">{order.purchaseDate}</TableCell>
-              <TableCell className="p-3 text-sm text-gray-800">{order.totalAmount}</TableCell>
-              <TableCell className={`font-semibold px-2 py-1 ${getStatusColor(order.status)} rounded-full text-sm`}>
-                {order.status}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+  const data = processData();
 
-      <Paginacao data={orders.map(order => ({ id: order.orderId }))} totalRecords={orders.length} />
-    </>
+  return (
+    <div className="w-full">
+      <h2 className="text-lg font-bold text-gray-600 mb-4">Vendas por Dia da Semana</h2>
+
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart
+          data={data}
+          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+          <YAxis />
+          <Tooltip
+            formatter={(value: any, name: string) => {
+              if (name === "Valor Total") {
+                return [
+                  Number(value).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  }),
+                  name,
+                ];
+              }
+              return [value, name];
+            }}
+          />
+          <Area
+            type="monotone"
+            dataKey="total"
+            stroke="#82ca9d"
+            fill="#82ca9d"
+            name="Valor Total"
+          />
+          <Area
+            type="monotone"
+            dataKey="orders"
+            stroke="#8884d8"
+            fill="#8884d8"
+            name="Número de Pedidos"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
   );
 }

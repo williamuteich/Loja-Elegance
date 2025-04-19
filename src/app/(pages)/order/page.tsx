@@ -198,7 +198,7 @@ export default async function OrdersPage() {
                         <span className="capitalize">{order.paymentMethod && order.paymentMethod !== "outros" && order.paymentMethod || order.paymentDetail}</span>
                       </div>
                       <p className="font-semibold text-pink-700">
-                        Total: R$ {order.total.toFixed(2).replace(".", ",")}
+                        Total: $ {order.total.toFixed(2).replace(".", ",")}
                       </p>
                     </div>
                   </div>
