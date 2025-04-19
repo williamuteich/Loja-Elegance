@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 
 export interface OrderItem {
+    price: number;
     productId: string;
     product: {
       id: string;

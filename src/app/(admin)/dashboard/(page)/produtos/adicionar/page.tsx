@@ -98,8 +98,8 @@ export default function AdicionarProduto() {
         name: event.target.name.value,
         description: event.target.description.value,
         features: event.target.features.value,
-        price: parseFloat(event.target.price.value.replace("R$", "").replace(".", "").replace(",", ".")),
-        priceOld: parseFloat(event.target.priceOld.value.replace("R$", "").replace(".", "").replace(",", ".")),
+        price: parseFloat(event.target.price.value.replace("$", "").replace(".", "").replace(",", ".")),
+        priceOld: parseFloat(event.target.priceOld.value.replace("$", "").replace(".", "").replace(",", ".")),
         brandId: event.target.brand.value,
         categoryIds: selectedCategories.map((c: any) => c.value),
         imagePrimary: uploadedImageUrls[0] || "",
@@ -303,7 +303,7 @@ export default function AdicionarProduto() {
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   thousandSeparator="."
                   decimalSeparator=","  
-                  prefix="R$ "
+                  prefix="$ "
                   decimalScale={2}
                 />
               </div>
@@ -316,7 +316,7 @@ export default function AdicionarProduto() {
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   thousandSeparator="."
                   decimalSeparator=","
-                  prefix="R$ "
+                  prefix="$ "
                   decimalScale={2}
                 />
               </div>

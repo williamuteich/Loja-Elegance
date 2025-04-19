@@ -1,21 +1,14 @@
 import { Order, OrderItem } from "@/utils/types/order";
-import { headers } from "next/headers";
-import { FaArrowUp, FaDollarSign } from "react-icons/fa";
+import { FaDollarSign } from "react-icons/fa";
 
-export default async function TotalVendidos() {
-      const response = await fetch(`${process.env.NEXTAUTH_URL}/api/order`, {
-        method: "GET",
-        headers: await headers(),
-      });
-    
-      const result = await response.json();
-      const pedidos = result.orders;
+export default async function TotalVendidos({pedidos}: {pedidos: Order[]}) {
+
 
       const totalVendidos = pedidos
       .filter((pedido: Order) => pedido.status !== "cancelled" && pedido.status !== "pending")
       .flatMap((pedido: Order) => pedido.items)
       .reduce(
-        (acc: number, item: { price: number; quantity: number }) =>
+        (acc: number, item: OrderItem) =>
           acc + item.price * item.quantity,
         0
       );
