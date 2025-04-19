@@ -172,7 +172,7 @@ export default async function StatusPedido({ params }: { params: Promise<{ id: s
                     <div className="flex justify-between items-center">
                       <span className="text-base font-semibold text-gray-700">Total:</span>
                       <span className="text-xl font-bold text-green-600">
-                        R$ {order.total.toFixed(2)}
+                        $ {order.total.toFixed(2)}
                       </span>
                     </div>
                   </div>

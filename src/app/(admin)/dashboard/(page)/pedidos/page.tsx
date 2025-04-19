@@ -100,9 +100,9 @@ export default async function Pedidos() {
                 </td>
 
                 <td className="py-3 px-4 font-medium text-sm text-gray-700">
-                  {Number(pedido.total).toLocaleString("pt-BR", {
+                  {Number(pedido.total).toLocaleString("es-UY", {
                     style: "currency",
-                    currency: "BRL",
+                    currency: "UYU",
                   })}
                 </td>
 
