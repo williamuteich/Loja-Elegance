@@ -15,9 +15,15 @@ model User {
   role      String     @default("user")
   active    Boolean    @default(true)
   telefone  String?
+  verificationToken        String?
+  verificationTokenExpires DateTime?
+  resetToken         String?   @unique
+  resetTokenExpires  DateTime?
   enderecos Endereco[] @relation("UserEnderecos")
   orders    Order[]
+  passwordReset PasswordReset?
 }
+
 
 model Product {
   id              String            @id @default(auto()) @map("_id") @db.ObjectId
@@ -193,4 +199,14 @@ model DeliveryOption {
   updatedAt   DateTime @updatedAt
 
   Order Order[]
+}
+
+model PasswordReset {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @unique @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

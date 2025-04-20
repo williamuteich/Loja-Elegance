@@ -61,13 +61,12 @@ export async function GET(request: Request) {
     }
 }
 
+import { generateToken } from "@/utils/generateToken";
+import { SendEmail } from "@/infra/SendEmail";
+import { VerifyEmail } from "@/emails/VerifyEmail";
+import { render } from "@react-email/render";
+
 export async function POST(request: Request) {
-
-    const authError = await requireAdmin(request);
-    if (authError) {
-        return authError;
-    }
-
     try {
         const body = await request.json();
         const saltRounds = 10;
@@ -79,7 +78,7 @@ export async function POST(request: Request) {
         }
 
         body.role = body.role || 'user';
-        body.active = body.active === 'true' ? true : false;
+        body.active = false; 
         body.telefone = body.telefone || null;
 
         const emailVerify = await prisma.user.findUnique({
@@ -98,21 +97,37 @@ export async function POST(request: Request) {
 
         const hashPassword = await bcrypt.hash(body.password, saltRounds);
 
+        const verificationToken = generateToken(32);
+        const verificationTokenExpires = new Date(Date.now() + 60 * 60 * 1000);
+
         const newUser = await prisma.user.create({
             data: {
                 name: body.name,
                 email: body.email,
                 role: body.role,
                 password: hashPassword,
-                active: body.active,
+                active: false,
                 telefone: body.telefone,
+                verificationToken,
+                verificationTokenExpires,
             }
         });
 
-        return new Response(JSON.stringify({ message: 'User created successfully' }), { status: 201 });
+        const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+        const verifyUrl = `${baseUrl}/verify-email?token=${verificationToken}`;
+
+        const emailHtml = await render(VerifyEmail({ verifyUrl }));
+
+        const emailService = new SendEmail();
+        await emailService.sendEmail(
+            newUser.email,
+            "Confirme seu e-mail | Loja Elegance",
+            emailHtml
+        );
+
+        return new Response(JSON.stringify({ message: 'User created successfully. Please verify your email.' }), { status: 201 });
 
     } catch (err) {
-
         console.error("Erro ao criar usuário:", err);
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
         return new Response(JSON.stringify({ error: 'Internal server error', details: errorMessage }), { status: 500 });
@@ -214,9 +229,9 @@ export async function PUT(request: Request) {
       );
     }
 
-    if (!id || !name || !email || !role || !password || active === undefined) {
+    if (!id || !name || !email || !password || active === undefined) {
       return NextResponse.json(
-        { message: "ID, nome, email, função, senha e status são obrigatórios" },
+        { message: "ID, nome, email, senha e status são obrigatórios" },
         { status: 400 }
       );
     }
@@ -224,15 +239,19 @@ export async function PUT(request: Request) {
     const updatedActive = active === "true" || active === true;
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    let updateData: any = {
+      name,
+      email,
+      password: hashedPassword,
+      active: updatedActive,
+    };
+    if (session.user.role === "admin" && role) {
+      updateData.role = role;
+    }
+
     const user = await prisma.user.update({
       where: { id },
-      data: {
-        name,
-        email,
-        role,
-        password: hashedPassword,
-        active: updatedActive,
-      },
+      data: updateData,
     });
 
     return NextResponse.json(
