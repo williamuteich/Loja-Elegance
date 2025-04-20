@@ -117,7 +117,7 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
                         <li key={index}>
                           <div className="flex items-center gap-2">
                             <span className="text-gray-800">
-                              {(item.name || 'Produto sem nome')} x{item.quantity || 0}
+                               x{item.quantity || 0}
                             </span>
                             {item.productVariant?.color && (
                               <div className="flex items-center gap-1 text-sm">
