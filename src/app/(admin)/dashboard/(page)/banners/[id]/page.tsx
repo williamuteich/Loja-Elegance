@@ -62,7 +62,7 @@ export default function BannerEdit({ params }: { params: Promise<{ id: string }>
         body: JSON.stringify({
           id: banner.id,
           imageUrl: uploadedImageUrls[0],
-          alt, // Atualizando o campo 'alt'
+          alt, 
           active,
           link,
         }),

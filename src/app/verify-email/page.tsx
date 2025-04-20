@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -24,9 +23,9 @@ async function validateToken(token: string | null) {
 export default async function VerifyEmailPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
-  const token = searchParams.token;
+  const { token } = await searchParams;
   const status = await validateToken(token || null);
 
   return (
