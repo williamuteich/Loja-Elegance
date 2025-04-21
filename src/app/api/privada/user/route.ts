@@ -283,13 +283,17 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ message: 'Id not provided' }, { status: 400 });
         }
 
-        await prisma.endereco.deleteMany({
-            where: { userId: id }
-        })
+        await prisma.passwordReset.deleteMany({
+          where: { userId: id }
+      });
 
-        await prisma.user.delete({
-            where: { id }
-        });
+      await prisma.endereco.deleteMany({
+          where: { userId: id }
+      });
+
+      await prisma.user.delete({
+          where: { id }
+      });
 
         return NextResponse.json({ message: 'User deleted successfully' }, { status: 200 });
     } catch (err) {

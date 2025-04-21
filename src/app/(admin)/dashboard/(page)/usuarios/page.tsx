@@ -41,7 +41,7 @@ const createButtonConfig = (action: string, userId?: string, initialValues?: any
   description: `Preencha os campos para ${action.toLowerCase()} as informações do usuário.`,
   action,
   fields: userFields,
-  apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
+  apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/user`,
   urlRevalidate: "/dashboard/usuarios",
   method: action === "Adicionar" ? "POST" : "PUT",
   initialValues,
@@ -49,7 +49,7 @@ const createButtonConfig = (action: string, userId?: string, initialValues?: any
 
 const fetchUsuarios = async (search: string, page: string, status: string) => {
   const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/user?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`,
+    `${process.env.NEXTAUTH_URL}/api/privada/user?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`,
     {
       headers: await headers(),
     }
@@ -125,7 +125,7 @@ const UsuariosList = async ({ search, page, status }: { search: string, page: st
                         id: usuario.id,
                         title: "Tem certeza de que deseja excluir esse usuário?",
                         description: "Esta ação não pode ser desfeita. O usuário será excluído permanentemente.",
-                        apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
+                        apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/user`,
                         urlRevalidate: "/dashboard/usuarios",
                       }}
                     />

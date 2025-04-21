@@ -61,7 +61,7 @@ export default function ConfirmOrderLayout({
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("/api/addresses", { credentials: "include" });
+        const response = await fetch("/api/privada/addresses", { credentials: "include" });
         const data = await response.json();
 
         if (data) {
@@ -98,7 +98,7 @@ export default function ConfirmOrderLayout({
         const cleanPhone = phone.replace(/\D/g, "");
         const full = `${dial}${cleanPhone}`;
 
-        const response = await fetch("/api/addresses", {
+        const response = await fetch("/api/privada/addresses", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -153,7 +153,7 @@ export default function ConfirmOrderLayout({
         body.finalCashInfo = finalCashInfo;
       }
 
-      const orderResponse = await fetch("/api/order", {
+      const orderResponse = await fetch("/api/privada/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

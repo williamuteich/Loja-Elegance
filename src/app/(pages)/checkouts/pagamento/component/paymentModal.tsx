@@ -1,4 +1,3 @@
-// components/PaymentModal.tsx
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";

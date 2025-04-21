@@ -45,7 +45,6 @@ export default function OrderDashboard({ pedidos }: Props) {
       return acc;
     }, {} as Record<string, { total: number; count: number }>);
 
-    // Garantir a ordem dos dias da semana
     return dayOfWeekMap.map((day) => ({
       name: day,
       total: dailyData[day]?.total || 0,

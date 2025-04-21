@@ -102,7 +102,7 @@ export default function DataProfile({
     const cleanPhone = phone.replace(/\D/g, '');
     const fullTelefone = `${dial}${cleanPhone}`;
 
-    const response = await fetch(`/api/addresses`, {
+    const response = await fetch(`/api/privada/addresses`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

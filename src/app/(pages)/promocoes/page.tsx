@@ -18,7 +18,7 @@ export default function Promocoes() {
     React.useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`/api/product?fetchAll=true`);
+                const response = await fetch(`/api/publica/product?fetchAll=true`);
                 if (!response.ok) throw new Error("Error al buscar productos");
                 const { produtos } = await response.json();
                 
@@ -39,7 +39,7 @@ export default function Promocoes() {
 
         const fetchCategories = async () => {
             try {
-                const categoriesRes = await fetch("/api/category?fetchAll=true");
+                const categoriesRes = await fetch("/api/publica/category?fetchAll=true");
                 const categoriesData = await categoriesRes.json();
                 setCategorias(categoriesData.category);
             } catch (error) {
@@ -182,10 +182,10 @@ export default function Promocoes() {
                                                 
                                                 <div
                                                     className={`mt-2 text-xs font-semibold text-white ${totalEstoque > 1
-                                                        ? "bg-green-700"   // Cor para disponível
+                                                        ? "bg-green-700"   
                                                         : totalEstoque === 1
-                                                        ? "bg-yellow-600"  // Cor para última unidade
-                                                        : "bg-red-700"}    // Cor para indisponível
+                                                        ? "bg-yellow-600"  
+                                                        : "bg-red-700"}   
                                                     px-2 py-1 rounded-md w-max`}
                                                 >
                                                     {totalEstoque > 1

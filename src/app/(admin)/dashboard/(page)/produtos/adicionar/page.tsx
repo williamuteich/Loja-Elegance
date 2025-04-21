@@ -30,8 +30,8 @@ export default function AdicionarProduto() {
     async function fetchData() {
       try {
         const [brandsRes, categoriesRes] = await Promise.all([
-          fetch("/api/brand?fetchAll=true"),
-          fetch("/api/category?fetchAll=true"),
+          fetch("/api/privada/brand?fetchAll=true"),
+          fetch("/api/privada/category?fetchAll=true"),
         ]);
         const [brandsData, categoriesData] = await Promise.all([
           brandsRes.json(),
@@ -110,7 +110,7 @@ export default function AdicionarProduto() {
         variants: variants
       };
 
-      const response = await fetch("/api/product", {
+      const response = await fetch("/api/privada/product", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

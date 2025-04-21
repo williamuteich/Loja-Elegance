@@ -19,7 +19,7 @@ export default function BannerEdit({ params }: { params: Promise<{ id: string }>
   const fetchData = async () => {
     const { id } = await params;
 
-    const bannerRes = await fetch(`/api/banner?id=${id}`);
+    const bannerRes = await fetch(`/api/privada/banner?id=${id}`);
     if (!bannerRes.ok) {
       toast.error("Banner não encontrado");
       return;
@@ -56,7 +56,7 @@ export default function BannerEdit({ params }: { params: Promise<{ id: string }>
     const link = event.target.link.value;
 
     try {
-      const response = await fetch("/api/banner", {
+      const response = await fetch("/api/privada/banner", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -9,7 +9,7 @@ import { headers } from "next/headers";
 
 const fetchConfig = async (search: string, page: string, status: string) => {
   const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/setup?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`
+    `${process.env.NEXTAUTH_URL}/api/privada/setup?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`
   );
 
   if (!response.ok) {
@@ -75,7 +75,7 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
                         { name: "url", label: "URL", type: "text", placeholder: "Digite a URL" },
                         { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
                       ],
-                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/setup`,
+                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
                       urlRevalidate: "/dashboard/setup",
                       method: "PUT",
                       initialValues: {
@@ -93,7 +93,7 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
                       title: "Tem certeza de que deseja excluir essa variável?",
                       description:
                         "Esta ação irá remover permanentemente a variável do seu site. Isso pode afetar a configuração do seu site, como URLs ou nomes, e pode causar erros em partes do sistema que dependem dessa variável. Certifique-se de que não há dependências antes de prosseguir com a exclusão.",
-                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/setup`,
+                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
                       urlRevalidate: "/dashboard/setup",
                     }}
                   />
@@ -147,7 +147,7 @@ export default async function Settings({ searchParams }: { searchParams: Promise
               { name: "url", label: "URL", type: "text", placeholder: "Digite a URL" },
               { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
             ],
-            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/setup`,
+            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
             urlRevalidate: "/dashboard/setup",
             method: "POST",
           }}

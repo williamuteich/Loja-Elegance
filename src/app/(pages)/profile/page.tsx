@@ -8,7 +8,7 @@ import { headers } from "next/headers";
 export default async function Profile() {
     const session: UserProps | null = await getServerSession(authOptions);
 
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/addresses?userID=${session?.user.userID}`,{
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/addresses?userID=${session?.user.userID}`,{
         headers: await headers(),
     });
 

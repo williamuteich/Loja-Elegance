@@ -23,7 +23,7 @@ export default function AdicionarCupom() {
    // useEffect(() => {
    //     async function fetchData() {
    //         try {
-   //             const categoriesRes = await fetch("/api/category");
+   //             const categoriesRes = await fetch("/api/publica/category");
    //             const categoriesData = await categoriesRes.json();
    //             setCategorias(categoriesData.category);
    //         } catch (error) {

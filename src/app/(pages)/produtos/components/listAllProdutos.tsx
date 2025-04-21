@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FaShoppingBag } from "react-icons/fa";
 
 export default async function ListAllProdutos() {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product`, { cache: 'no-store' });
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product`, { cache: 'no-store' });
 
     if (!response.ok) {
         throw new Error("Erro ao buscar produtos");
@@ -83,10 +83,10 @@ export default async function ListAllProdutos() {
 
                                         <div
                                             className={`mt-2 text-xs font-semibold text-white ${totalEstoque > 1
-                                                ? "bg-green-700"   // Cor para disponível
+                                                ? "bg-green-700"   
                                                 : totalEstoque === 1
-                                                    ? "bg-yellow-600"  // Cor para última unidade
-                                                    : "bg-red-700"}    // Cor para indisponível
+                                                    ? "bg-yellow-600"  
+                                                    : "bg-red-700"}   
                                             px-2 py-1 rounded-md w-max`}
                                         >
                                             {totalEstoque > 1

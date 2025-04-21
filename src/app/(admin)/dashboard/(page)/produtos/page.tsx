@@ -13,7 +13,7 @@ import { Produto, VariantProps } from "@/utils/types/produto";
 export default async function Produtos({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
     const { search, page, status } = await searchParams;
 
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
 
     if (!response.ok) {
         return <p>Ocorreu um erro ao carregar os produtos.</p>;
@@ -164,7 +164,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                                             title: "Tem certeza de que deseja excluir esse produto?",
                                             description:
                                                 "Esta ação não pode ser desfeita. O produto será excluído permanentemente.",
-                                            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/product`,
+                                            apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/product`,
                                             urlRevalidate: "/dashboard/produtos",
                                         }}
                                     />

@@ -50,7 +50,7 @@ export default function TableMobile({
                 title: "Tem certeza de que deseja excluir esse usuário?",
                 description:
                   "Esta ação não pode ser desfeita. O usuário será excluído permanentemente.",
-                apiEndpoint: `${process.env.NEXTAUTH_URL}/api/user`,
+                apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/user`,
                 urlRevalidate: "/dashboard/usuarios",
               }}
             />

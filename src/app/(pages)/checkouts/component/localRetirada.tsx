@@ -31,7 +31,7 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
 
     const fetchPickupLocations = async () => {
       try {
-        const response = await fetch("/api/delivery");
+        const response = await fetch("/api/privada/delivery");
         const data = await response.json();
  
         setPickupLocations(data.pickupLocations || []);

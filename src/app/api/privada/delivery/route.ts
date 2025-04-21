@@ -105,14 +105,12 @@ export async function DELETE(request: Request) {
         const body = await request.json(); 
         const { id } = body;
 
-        // Verificar se o ID foi fornecido
         if (!id) {
             return NextResponse.json({ message: 'ID is required' }, { status: 400 });
         }
 
-        // Excluir a opção de entrega no banco de dados (MongoDB)
         await prisma.deliveryOption.delete({
-            where: { id: id }  // id é uma String (ObjectId)
+            where: { id: id }  
         });
 
         return NextResponse.json({

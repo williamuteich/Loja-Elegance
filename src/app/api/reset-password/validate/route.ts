@@ -9,12 +9,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Token no proporcionado' }, { status: 400 });
     }
 
-    // Buscar o token no banco de dados
     const passwordReset = await prisma.passwordReset.findFirst({
       where: {
         token,
         expiresAt: {
-          gt: new Date() // Token ainda não expirou
+          gt: new Date() 
         }
       },
       include: {

@@ -16,7 +16,7 @@ export default function Footer() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/setup`, { next: { revalidate: 1000 } });
+        const response = await fetch(`/api/publica/setup`, { next: { revalidate: 1000 } });
         if (!response.ok) throw new Error("Erro ao carregar as configurações.");
 
         const { config } = await response.json();

@@ -10,12 +10,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Token y contraseña son obligatorios' }, { status: 400 });
     }
 
-    // Verificar se o token é válido e não expirou
     const passwordReset = await prisma.passwordReset.findFirst({
       where: {
         token,
         expiresAt: {
-          gt: new Date() // Token ainda não expirou
+          gt: new Date()
         }
       },
       include: {
@@ -27,10 +26,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Token inválido o expirado' }, { status: 400 });
     }
 
-    // Hash da nova senha
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Atualizar a senha do usuário
     await prisma.user.update({
       where: {
         id: passwordReset.userId
@@ -40,7 +37,6 @@ export async function POST(request: Request) {
       }
     });
 
-    // Remover o token de redefinição após uso
     await prisma.passwordReset.delete({
       where: {
         id: passwordReset.id

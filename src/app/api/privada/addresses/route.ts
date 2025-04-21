@@ -58,7 +58,6 @@ export async function PUT(request: Request) {
   const userID = session.user.userID!;
   const body = await request.json();
 
-  // Apenas nome e email são obrigatórios
   if (!body.name || !body.email) {
     return NextResponse.json(
       { message: "Nome e email são obrigatórios" },
@@ -66,7 +65,6 @@ export async function PUT(request: Request) {
     );
   }
 
-  // Preparar dados de atualização do usuário
   const userUpdateData: any = {
     name: body.name,
     email: body.email,
@@ -75,13 +73,11 @@ export async function PUT(request: Request) {
     userUpdateData.telefone = body.telefone;
   }
 
-  // Executa update de User
   await prisma.user.update({
     where: { id: userID },
     data: userUpdateData,
   });
 
-  // Campos opcionais de endereço
   const addressData: any = {};
   const addressFields = [
     "cep",
@@ -99,7 +95,7 @@ export async function PUT(request: Request) {
     }
   });
 
-  // Se houve algum campo de endereço, atualiza ou cria registro
+
   if (Object.keys(addressData).length > 0) {
     const existing = await prisma.endereco.findFirst({
       where: { userId: userID },

@@ -34,7 +34,7 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
   const queryString = new URLSearchParams(query).toString();
 
   const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/order?${queryString}`,
+    `${process.env.NEXTAUTH_URL}/api/privada/order?${queryString}`,
     {
       headers: await headers(),
       cache: "no-store"

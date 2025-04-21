@@ -31,7 +31,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
 
   const fetchData = async () => {
     const { id } = await params;
-    const productRes = await fetch(`/api/product?id=${id}`);
+    const productRes = await fetch(`/api/privada/product?id=${id}`);
 
     if (!productRes.ok) {
       toast.error("Produto não encontrado");
@@ -51,8 +51,8 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
 
 
     const [brandsRes, categoriesRes] = await Promise.all([
-      fetch("/api/brand?fetchAll=true"),
-      fetch("/api/category?fetchAll=true"),
+      fetch("/api/privada/brand?fetchAll=true"),
+      fetch("/api/privada/category?fetchAll=true"),
     ]);
 
     const [brandsData, categoriesData] = await Promise.all([
@@ -158,7 +158,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
         variants: variants
       };
 
-      const response = await fetch("/api/product", {
+      const response = await fetch("/api/privada/product", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

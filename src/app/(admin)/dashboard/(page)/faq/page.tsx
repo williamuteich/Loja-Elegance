@@ -24,7 +24,7 @@ const modalConfig = (action: string, initialValues?: FaqProps) => {
             { name: "question", label: "Pergunta", type: "text", placeholder: "Sua pergunta" },
             { name: "response", label: "Resposta", type: "text", placeholder: "Sua resposta" },
         ] as FieldConfig[],
-        apiEndpoint: `${process.env.NEXTAUTH_URL}/api/faq`,
+        apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/faq`,
         urlRevalidate: "/dashboard/faq",
         method: action === "Adicionar" ? "POST" : "PUT",
         initialValues: initialValuesFormatted,
@@ -33,7 +33,7 @@ const modalConfig = (action: string, initialValues?: FaqProps) => {
 
 const fetchFaqs = async (search: string, page: string, status: string) => {
     const response = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/faq?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`
+        `${process.env.NEXTAUTH_URL}/api/privada/faq?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`
     );
 
     if (!response.ok) {
@@ -77,7 +77,7 @@ const FaqList = async ({ search, page, status }: { search: string, page: string,
                                                     id: faqItem.id,
                                                     title: "Tem certeza que deseja excluir esta pergunta?",
                                                     description: "Esta ação não pode ser desfeita. A pergunta será removida permanentemente. Deseja continuar?",
-                                                    apiEndpoint: `${process.env.NEXTAUTH_URL}/api/faq`,
+                                                    apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/faq`,
                                                     urlRevalidate: "/dashboard/faq",
                                                 }}
                                             />

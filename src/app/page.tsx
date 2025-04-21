@@ -6,7 +6,7 @@ import BannerHome from "./components/home/bannerHome";
 import { Banners } from "./components/home/carousel/banners";
 
 export default async function Home() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/product?fetchAll=true`);
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`);
   const res = await response.json(); 
 
   return (

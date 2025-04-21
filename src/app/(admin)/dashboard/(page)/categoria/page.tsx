@@ -20,7 +20,7 @@ const modalConfig = (action: string, categoria?: Categoria) => ({
     { name: "name", label: "Nome", type: "text" as "text", placeholder: "Digite o nome da Categoria" },
     { name: "description", label: "Descrição", type: "text" as "text", placeholder: "Descrição da categoria" },
   ],
-  apiEndpoint: `${process.env.NEXTAUTH_URL}/api/category`,
+  apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/category`,
   urlRevalidate: "/dashboard/categoria",
   method: action === "Adicionar" ? "POST" : "PUT",
   initialValues: categoria ? { name: categoria.name, description: categoria.description } : undefined,
@@ -32,7 +32,7 @@ const fetchCategories = async (search: string, page: string, status: string) => 
   if (page) params.append("page", page);
   if (status) params.append("status", status);
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/category?${params}`, {
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/category?${params}`, {
     headers: await headers(),
     cache: "no-store",
   });
@@ -85,7 +85,7 @@ const CategoriasList = async ({ search, page, status }: { search: string; page: 
                       title: "Tem certeza que deseja excluir esta categoria?",
                       description:
                         "Esta ação não pode ser desfeita. A categoria será removida permanentemente. Deseja continuar?",
-                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/category`,
+                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/category`,
                       urlRevalidate: "/dashboard/categoria",
                     }}
                   />

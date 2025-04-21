@@ -24,7 +24,7 @@ const modalConfig = (action: string, initialValues?: Marca) => {
       { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome da Marca" },
       { name: "description", label: "Descrição", type: "text", placeholder: "Descrição da marca" },
     ] as FieldConfig[],
-    apiEndpoint: `${process.env.NEXTAUTH_URL}/api/brand`,
+    apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/brand`,
     urlRevalidate: "/dashboard/marca",
     method: action === "Adicionar" ? "POST" : "PUT",
     initialValues: initialValuesFormatted,
@@ -33,7 +33,7 @@ const modalConfig = (action: string, initialValues?: Marca) => {
 
 const fetchMarcas = async (search: string, page: string, status: string) => {
   const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/brand?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`
+    `${process.env.NEXTAUTH_URL}/api/privada/brand?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`
   );
 
   if (!response.ok) {
@@ -93,7 +93,7 @@ const MarcasList = async ({ search, page, status }: { search: string, page: stri
                       id: marca.id,
                       title: "Tem certeza que deseja excluir esta marca?",
                       description: "Esta ação não pode ser desfeita. A marca será removida permanentemente. Deseja continuar?",
-                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/brand`,
+                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/brand`,
                       urlRevalidate: "/dashboard/marca",
                     }}
                   />

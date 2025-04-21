@@ -23,7 +23,7 @@ export default function ProdutosGerais() {
     const fetchData = async () => {
       setLoading(true);
 
-      const response = await fetch(`/api/product?fetchAll=true`, { cache: 'no-store' });
+      const response = await fetch(`/api/publica/product?fetchAll=true`, { cache: 'no-store' });
 
       if (!response.ok) {
         throw new Error("Error al buscar productos");
@@ -41,7 +41,7 @@ export default function ProdutosGerais() {
   React.useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const categoriesRes = await fetch("/api/category?fetchAll=true");
+        const categoriesRes = await fetch("/api/publica/category?fetchAll=true");
         const categoriesData = await categoriesRes.json();
         setCategorias(categoriesData.category);
       } catch (error) {

@@ -26,7 +26,7 @@ export default function Registro() {
             return { error: "El campo Contraseña no puede estar vacío." };
         }
 
-        const response = await fetch(`${process.env.NEXTAUTH_URL}/api/user`, {
+        const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/user`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

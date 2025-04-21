@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 
 
 export default async function Dashboard() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/order`, {
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/order`, {
     method: "GET",
     headers: await headers(),
   });

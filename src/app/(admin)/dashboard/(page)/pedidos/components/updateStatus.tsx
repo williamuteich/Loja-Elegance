@@ -31,7 +31,7 @@ export default function UpdateStatus({ orderId, currentStatus }: UpdateStatusPro
 
     try {
       setIsUpdating(true);
-      const response = await fetch(`/api/orders/${orderId}`, {
+      const response = await fetch(`/api/privada/orders/${orderId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

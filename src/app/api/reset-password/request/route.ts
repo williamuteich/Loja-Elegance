@@ -3,23 +3,20 @@ import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 
-// Função para enviar email
 async function sendResetEmail(email: string, token: string) {
-  // URL de redefinição com o token
+
   const resetUrl = `${process.env.NEXTAUTH_URL}/resetPwd/reset?token=${token}`;
 
-  // Configurar o transporter do nodemailer
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_EMAIL_HOST || 'smtp.gmail.com',
     port: Number(process.env.SMTP_EMAIL_PORT || 465),
-    secure: true, // true para porta 465
+    secure: true, 
     auth: {
       user: process.env.EMAIL_USER || 'williamuteich14@gmail.com',
       pass: process.env.PASSOWRD_EMAIL_PASS || 'ueme icty hmrm rjue',
     },
   });
 
-  // Template HTML do email
   const htmlTemplate = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 5px;">
       <div style="text-align: center; margin-bottom: 20px;">
@@ -45,7 +42,6 @@ async function sendResetEmail(email: string, token: string) {
     </div>
   `;
 
-  // Conteúdo do email
   const mailOptions = {
     from: `"${process.env.SMTP_NAME || 'Elegance'}" <${process.env.EMAIL_USER || 'williamuteich14@gmail.com'}>`,
     to: email,
@@ -54,9 +50,7 @@ async function sendResetEmail(email: string, token: string) {
   };
 
   try {
-    // Enviar o email
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email enviado:', info.response);
     return true;
   } catch (error) {
     console.error('Erro ao enviar email:', error);
@@ -72,22 +66,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'El correo electrónico es obligatorio' }, { status: 400 });
     }
 
-    // Verificar se o email existe no banco de dados
     const user = await prisma.user.findUnique({
       where: { email },
     });
 
     if (!user) {
-      // Por segurança, não informamos se o email existe ou não
+   
       return NextResponse.json({ message: 'Si el correo electrónico existe, se enviará un enlace de recuperación' }, { status: 200 });
     }
 
-    // Gerar token aleatório
     const resetToken = crypto.randomBytes(32).toString('hex');
     const tokenExpiry = new Date();
-    tokenExpiry.setHours(tokenExpiry.getHours() + 1); // Token válido por 1 hora
+    tokenExpiry.setHours(tokenExpiry.getHours() + 1); 
 
-    // Salvar o token no banco de dados
     await prisma.passwordReset.upsert({
       where: { userId: user.id },
       update: {
@@ -101,7 +92,6 @@ export async function POST(request: Request) {
       },
     });
 
-    // Enviar email com o token
     const emailSent = await sendResetEmail(email, resetToken);
 
     if (!emailSent) {

@@ -61,7 +61,7 @@ export default function AdicionarBanner() {
         })
       );
 
-      const response = await fetch("/api/banner", {
+      const response = await fetch("/api/privada/banner", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bannersParaSalvar),

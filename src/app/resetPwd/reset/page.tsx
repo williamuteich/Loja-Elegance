@@ -1,6 +1,4 @@
-// src/app/resetPwd/reset/page.tsx
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
 
 async function validateToken(token: string | null) {
   if (!token) return { valid: false, email: null };
