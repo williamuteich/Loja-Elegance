@@ -51,7 +51,7 @@ export default async function PaginaFaq({ searchParams }: { searchParams: Promis
                 <Suspense fallback={<div>Cargando...</div>}>
                     {await obtenerFaq({ searchParams: Promise.resolve(defaultSearchParams) })}
                 </Suspense>
-            </div>
+            </div> 
         </div>
     );
 };
