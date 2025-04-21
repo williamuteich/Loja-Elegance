@@ -9,11 +9,6 @@ const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
 
-    const authError = await requireAdmin(request);
-    if (authError) {
-        return authError;
-    }
-
     try {
         const url = new URL(request.url);
         const search = url.searchParams.get('search');

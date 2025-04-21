@@ -1,15 +1,9 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from '@prisma/client';
-import { requireAdmin } from "@/utils/auth";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
-
-    const authError = await requireAdmin(request);
-    if (authError) {
-        return authError;
-    }
 
     try {
         const url = new URL(request.url);

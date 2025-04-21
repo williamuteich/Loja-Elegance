@@ -5,9 +5,7 @@ import OrderDashboard from "./(page)/components/order";
 import GraficoDashboard from "./(page)/components/grafico";
 
 export default async function Dashboard() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/order`, {
-    method: "GET"
-  });
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/order`);
 
   const result = await response.json();
   const pedidos = result.orders;
