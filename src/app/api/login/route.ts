@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client';
 
@@ -42,6 +43,19 @@ export async function POST(request: Request) {
         if(user.active === false) {
             return NextResponse.json({ message: "Necessária Validação de Email", active: user.active }, { status: 401 });
         }
+
+      
+        const token = `${user.id}-${user.email}-${Date.now()}`;
+
+  
+        (await
+          
+            cookies()).set('auth_token', token, {
+            httpOnly: true,
+            path: '/',
+            sameSite: 'lax',
+            secure: true 
+        });
 
         return NextResponse.json({ 
             message: 'User authenticated successfully',
