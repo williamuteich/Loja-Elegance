@@ -15,8 +15,8 @@ export class SendEmail {
 
         const response = await transporter.sendMail({
             from: {
-              address: "willianuteich@hotmail.com",  
-              name: process.env.SMTP_NAME || 'William Uteichhh',  
+              address: "teste@hotmail.com",  
+              name: process.env.SMTP_NAME,  
             },
             to: to,
             subject: subject,

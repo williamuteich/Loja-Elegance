@@ -5,15 +5,15 @@ import nodemailer from 'nodemailer';
 
 async function sendResetEmail(email: string, token: string) {
 
-  const resetUrl = `${process.env.NEXTAUTH_URL}/resetPwd/reset?token=${token}`;
+  const resetUrl = `${process.env.NEXTAUTH_URL}/resetPwd/reset/${token}`;
 
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_EMAIL_HOST || 'smtp.gmail.com',
     port: Number(process.env.SMTP_EMAIL_PORT || 465),
     secure: true, 
     auth: {
-      user: process.env.EMAIL_USER || 'williamuteich14@gmail.com',
-      pass: process.env.PASSOWRD_EMAIL_PASS || 'ueme icty hmrm rjue',
+      user: process.env.EMAIL_USER,
+      pass: process.env.PASSOWRD_EMAIL_PASS,
     },
   });
 
@@ -43,7 +43,7 @@ async function sendResetEmail(email: string, token: string) {
   `;
 
   const mailOptions = {
-    from: `"${process.env.SMTP_NAME || 'Elegance'}" <${process.env.EMAIL_USER || 'williamuteich14@gmail.com'}>`,
+    from: `"${process.env.SMTP_NAME || 'Elegance'}" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: 'Recuperación de contraseña - Elegance',
     html: htmlTemplate,
@@ -93,6 +93,8 @@ export async function POST(request: Request) {
     });
 
     const emailSent = await sendResetEmail(email, resetToken);
+
+    console.log("Email enviado:", emailSent);
 
     if (!emailSent) {
       return NextResponse.json({ error: 'Error al enviar el correo electrónico' }, { status: 500 });

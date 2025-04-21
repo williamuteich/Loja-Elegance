@@ -14,7 +14,7 @@ export default function RequestPasswordReset() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/reset-password/request', {
+      const res = await fetch('/api/publica/reset-password/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

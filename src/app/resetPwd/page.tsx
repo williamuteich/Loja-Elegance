@@ -13,7 +13,7 @@ export default function ResetPasswordPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/reset-password/request', {
+      const response = await fetch('/api/publica/reset-password/request', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
