@@ -113,7 +113,7 @@ export async function POST(request: Request) {
             }
         });
 
-        const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+        const baseUrl = process.env.NEXTAUTH_URL;
         const verifyUrl = `${baseUrl}/verify-email?token=${verificationToken}`;
 
         const emailHtml = await render(VerifyEmail({ verifyUrl }));

@@ -6,7 +6,7 @@ import nodemailer from 'nodemailer';
 // Função para enviar email
 async function sendResetEmail(email: string, token: string) {
   // URL de redefinição com o token
-  const resetUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/resetPwd/reset?token=${token}`;
+  const resetUrl = `${process.env.NEXTAUTH_URL}/resetPwd/reset?token=${token}`;
 
   // Configurar o transporter do nodemailer
   const transporter = nodemailer.createTransport({
