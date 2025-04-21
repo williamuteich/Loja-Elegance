@@ -28,7 +28,13 @@ type Props = {
   pickupLocation: { id: string; title: string; description: string };
 };
 
-const COUNTRIES = [
+type Country = {
+  code: string;
+  name: string;
+  dial: string;
+};
+
+const COUNTRIES: Country[] = [
   { code: "BR", name: "Brasil", dial: "+55" },
   { code: "UY", name: "Uruguay", dial: "+598" },
   { code: "AR", name: "Argentina", dial: "+54" },
@@ -63,17 +69,9 @@ export default function ConfirmOrderLayout({
 
           if (data.telefone) {
             const tel = data.telefone.replace(/\s/g, "");
-            let foundCountry = null;
-            let maxLength = 0;
-
-            COUNTRIES.forEach((country) => {
-              if (tel.startsWith(country.dial.replace(/\s/g, ""))) {
-                if (country.dial.length > maxLength) {
-                  maxLength = country.dial.length;
-                  foundCountry = country;
-                }
-              }
-            });
+            const foundCountry = COUNTRIES.find((country) =>
+              tel.startsWith(country.dial.replace(/\s/g, ""))
+            );
 
             if (foundCountry) {
               setPhone(tel.slice(foundCountry.dial.length));

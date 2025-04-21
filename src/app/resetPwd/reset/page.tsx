@@ -20,12 +20,8 @@ async function validateToken(token: string | null) {
   }
 }
 
-export default async function ResetPasswordPage({
-  searchParams,
-}: {
-  searchParams: { token?: string; error?: string; success?: string };
-}) {
-  const token = searchParams.token;
+export default async function ResetPasswordPage({ params }: any) {
+  const token = params.token;
   const { valid, email } = await validateToken(token || null);
 
   if (!token || !valid) {
@@ -85,13 +81,13 @@ export default async function ResetPasswordPage({
           Ingresa tu nueva contraseña para la cuenta {email}
         </p>
 
-        {searchParams.error === 'password_mismatch' && (
+        {params.error === 'password_mismatch' && (
           <p className="text-red-500 mt-2">Las contraseñas no coinciden</p>
         )}
-        {searchParams.error === 'invalid_password' && (
+        {params.error === 'invalid_password' && (
           <p className="text-red-500 mt-2">La contraseña debe tener al menos 6 caracteres</p>
         )}
-        {searchParams.error === 'connection_error' && (
+        {params.error === 'connection_error' && (
           <p className="text-red-500 mt-2">Error de conexión con el servidor</p>
         )}
       </div>

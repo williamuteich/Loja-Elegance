@@ -49,17 +49,9 @@ export default function DataProfile({
   useEffect(() => {
     if (data?.telefone) {
       const tel = data.telefone.replace(/\s/g, '');
-      let foundCountry = null;
-      let maxLength = 0;
-
-      COUNTRIES.forEach((country) => {
-        if (tel.startsWith(country.dial.replace(/\s/g, ''))) {
-          if (country.dial.length > maxLength) {
-            maxLength = country.dial.length;
-            foundCountry = country;
-          }
-        }
-      });
+      const foundCountry = COUNTRIES.find((country) =>
+        tel.startsWith(country.dial.replace(/\s/g, ''))
+      );
 
       if (foundCountry) {
         const phoneNumber = tel.slice(foundCountry.dial.length);
