@@ -9,10 +9,9 @@ import Paginacao from "@/app/components/Paginacao";
 
 async function obtenerFaq({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
     const { search, page, status } = await searchParams;
-    console.log("está recebendo o valor do ENV", process.env.NEXTAUTH_URL);
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/faq?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
-    console.log("está recebendo o valor do ENV mais a API", process.env.NEXTAUTH_URL + `api/faq`)
-    console.log("está pegando a resposta da API", response)
+
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/faq?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}, {cache: "no-store"}`);
+
     if (!response.ok) {
         throw new Error("Error al buscar las preguntas frecuentes");
     }
@@ -51,7 +50,7 @@ export default async function PaginaFaq({ searchParams }: { searchParams: Promis
                 <Suspense fallback={<div>Cargando...</div>}>
                     {await obtenerFaq({ searchParams: Promise.resolve(defaultSearchParams) })}
                 </Suspense>
-            </div> 
+            </div>
         </div>
     );
 };
