@@ -27,14 +27,14 @@ interface OrderRequest {
 
 export async function GET(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
+   //const session = await getServerSession(authOptions);
 
-    if (!session?.user?.userID || (session.user?.role !== "user" && session.user?.role !== "admin")) {
-      return NextResponse.json(
-        { message: "Usuário não autenticado ou sem permissão" },
-        { status: 401 }
-      );
-    }
+   // if (!session?.user?.userID || (session.user?.role !== "user" && session.user?.role !== "admin")) {
+   //   return NextResponse.json(
+   //     { message: "Usuário não autenticado ou sem permissão" },
+   //     { status: 401 }
+   //   );
+   // }
 
     const url = new URL(request.url);
     const search = url.searchParams.get('search');
@@ -46,9 +46,9 @@ export async function GET(request: Request) {
 
     let where: any = {};
 
-    if (session.user.role === "user") {
-      where.userId = session.user.userID;
-    }
+   // if (session.user.role === "user") {
+   //   where.userId = session.user.userID;
+   // }
 
     if (search) {
       const orFilters = [
