@@ -10,8 +10,9 @@ import Paginacao from "@/app/components/Paginacao";
 async function obtenerFaq({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
     const { search, page, status } = await searchParams;
 
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/faq?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}, {cache: "no-store"}`);
-
+    const response = await fetch(`https://loja-elegance.vercel.app//api/publica/faq?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}, {cache: "no-store"}`);
+    console.log("Está pegando isso aqui do DotEnv", process.env.NEXTAUTH_URL);
+   
     if (!response.ok) {
         throw new Error("Error al buscar las preguntas frecuentes");
     }
