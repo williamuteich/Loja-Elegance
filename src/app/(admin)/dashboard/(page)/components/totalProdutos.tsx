@@ -1,12 +1,7 @@
-import { headers } from "next/headers";
 import { FaBoxes } from "react-icons/fa";
 
 export default  async function TotalProdutos() {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/product`, 
-        {
-            headers: await headers()
-        }
-    );
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/product`);
 
     if (!response.ok) {
         throw new Error("Failed to fetch data");
