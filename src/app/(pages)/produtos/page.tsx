@@ -23,7 +23,7 @@ export default function ProdutosGerais() {
     const fetchData = async () => {
       setLoading(true);
 
-      const response = await fetch(`/api/publica/product?fetchAll=true`, { cache: 'no-store' });
+      const response = await fetch(`/api/publica/product?fetchAll=true`, { next: {revalidate: 600 } });
 
       if (!response.ok) {
         throw new Error("Error al buscar productos");
