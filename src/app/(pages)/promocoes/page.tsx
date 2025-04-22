@@ -1,5 +1,5 @@
-"use client";
 
+"use client";
 import * as React from "react";
 import { Produto, VariantProps } from "@/utils/types/produto";
 import Image from "next/image";
