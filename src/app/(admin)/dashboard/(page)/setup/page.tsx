@@ -5,6 +5,7 @@ import ModalDeletar from "../components/ModalDeletar";
 import SearchItems from "../components/searchItems";
 import Paginacao from "../../../../components/Paginacao";
 import { LoadSkeleton } from "../components/loadSkeleton";
+import { headers } from "next/headers";
 
 const fetchConfig = async (search: string, page: string, status: string) => {
   const response = await fetch(

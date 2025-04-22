@@ -307,6 +307,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "ID é obrigatório" }, { status: 400 });
     }
 
+    // 1. Verificar existência do produto
     const product = await prisma.product.findUnique({
       where: { id },
       select: {
@@ -320,6 +321,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
+    // 2. Excluir imagens do Supabase
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -343,8 +345,9 @@ export async function DELETE(request: Request) {
       }
     }
 
+    // 3. Excluir todas as dependências em transação
     await prisma.$transaction([
-
+      // 3.1. Excluir itens de pedidos relacionados
       prisma.orderItem.deleteMany({
         where: { 
           OR: [
@@ -354,17 +357,22 @@ export async function DELETE(request: Request) {
         }
       }),
       
+      // 3.2. Excluir categorias do produto
       prisma.productCategory.deleteMany({ where: { productId: id } }),
       
+      // 3.3. Excluir estoque das variantes
       prisma.stock.deleteMany({
         where: { variantId: { in: product.variants.map(v => v.id) } }
       }),
       
+      // 3.4. Excluir variantes do produto
       prisma.productVariant.deleteMany({ where: { productId: id } }),
-
+      
+      // 3.5. Excluir o produto principal
       prisma.product.delete({ where: { id } })
     ]);
 
+    // 4. Verificar e limpar pedidos órfãos
     const emptyOrders = await prisma.order.findMany({
       where: { items: { none: {} } }
     });

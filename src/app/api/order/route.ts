@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { auth as authOptions } from "@/lib/auth-config";
 import { getServerSession } from "next-auth";
-import { ObjectId } from 'mongodb';
 
 const prisma = new PrismaClient();
 
@@ -25,7 +24,7 @@ interface OrderRequest {
   };
 }
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
@@ -36,63 +35,33 @@ export async function GET(request: Request) {
       );
     }
 
-    const url = new URL(request.url);
-    const search = url.searchParams.get('search');
-    const page = parseInt(url.searchParams.get('page') || '1', 10);
-    const status = url.searchParams.get('status');
-    const pageSize = 10;
-
-    const skip = (page - 1) * pageSize;
-
-    let where: any = {};
-
-    if (session.user.role === "user") {
-      where.userId = session.user.userID;
-    }
-
-    if (search) {
-      const orFilters = [
-        { user: { name: { contains: search, mode: 'insensitive' } } },
-        { user: { telefone: { contains: search, mode: 'insensitive' } } }
-      ];
-    
-   
-      if (ObjectId.isValid(search) && new ObjectId(search).toString() === search) {
-        where.id = search;
-      } else {
-        where.OR = orFilters;
-      }
-    }
-
-    if (status) {
-      where.status = status;
-    }
+    const whereCondition =
+      session.user?.role === "user"
+        ? { userId: session.user.userID }
+        : undefined;
 
     const orders = await prisma.order.findMany({
-      skip,
-      take: pageSize,
-      where,
-      orderBy: { createdAt: "desc" },
+      where: whereCondition,
+      orderBy: {
+        createdAt: "desc",
+      },
       include: {
         user: true,
         items: {
           include: {
             product: true,
             productVariant: {
-              include: { color: true }
+              include: {
+                color: true
+              }
             }
-          }
+          },
         },
         pickupLocation: true,
       },
     });
 
-    const totalRecords = await prisma.order.count({ where });
-
-    return NextResponse.json({
-      orders: orders.map(order => ({ ...order, total: Number(order.total) })),
-      totalRecords
-    }, { status: 200 });
+    return NextResponse.json({ orders }, { status: 200 });
   } catch (error) {
     console.error("Erro ao buscar pedidos:", error);
     return NextResponse.json(
@@ -101,6 +70,7 @@ export async function GET(request: Request) {
     );
   }
 }
+
 
 export async function POST(request: Request) {
   try {

@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from '@prisma/client';
+import { requireAdmin } from "@/utils/auth";
 
 const prisma = new PrismaClient();
 
-import { withUserOrAdminApiAuth } from "@/utils/api-auth-wrapper-user-or-admin";
+export async function GET(request: Request) {
 
-export const GET = withUserOrAdminApiAuth(async (request: Request, token: any) => {
-    if (token.role !== "admin") {
-        return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
     }
 
     try {
@@ -66,7 +67,8 @@ export const GET = withUserOrAdminApiAuth(async (request: Request, token: any) =
         console.error(err);
         return NextResponse.json({ error: 'Erro no servidor' }, { status: 500 });
     }
-});
+}
+
 
 export async function POST(request: Request) {
     try {

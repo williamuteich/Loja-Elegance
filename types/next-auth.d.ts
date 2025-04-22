@@ -19,7 +19,7 @@ declare module "next-auth" {
         role: string | undefined
         active: boolean
     }
-}
+} 
 
 declare module "next-auth/jwt" {
     interface JWT {

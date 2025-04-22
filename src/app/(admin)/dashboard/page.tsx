@@ -3,20 +3,13 @@ import TotalUsuarios from "./(page)/components/totalUsuarios";
 import TotalProdutos from "./(page)/components/totalProdutos";
 import OrderDashboard from "./(page)/components/order";
 import GraficoDashboard from "./(page)/components/grafico";
+import { headers } from "next/headers";
 
-import { cookies } from "next/headers";
 
 export default async function Dashboard() {
-  const cookieStore = cookies();
-  const allCookies = (await cookieStore).getAll();
-  const cookieString = (allCookies as { name: string; value: string }[]).map(({ name, value }) => `${name}=${value}`).join('; ');
-
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/order`, {
-    headers: {
-      cookie: cookieString,
-      "Content-Type": "application/json"
-    },
-    cache: "no-store"
+    method: "GET",
+    headers: await headers(),
   });
 
   const result = await response.json();

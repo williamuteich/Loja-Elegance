@@ -16,9 +16,14 @@ import CheckoutHeader from "./checkoutHeader";
 import Image from 'next/image'
 import { useSession } from "next-auth/react";
 
-export default function MenuSuspenso() {
-  const { data: session } = useSession();
-  const pathname = usePathname();
+import { Session } from "next-auth";
+
+type MenuSuspensoProps = {
+  session: Session | null;
+};
+
+export default function MenuSuspenso({ session }: MenuSuspensoProps) {
+    const pathname = usePathname();
 
     const [isFixed, setIsFixed] = useState(false);
 

@@ -9,6 +9,7 @@ import { LoadSkeleton } from "../components/loadSkeleton";
 import TableMobile from "./components/tableMobile";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 import { FieldConfig } from "@/utils/types/fieldConfig";
+import { headers } from "next/headers";
 
 const userFields: FieldConfig[] = [
   { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
@@ -46,25 +47,16 @@ const createButtonConfig = (action: string, userId?: string, initialValues?: any
   initialValues,
 });
 
-import { cookies } from "next/headers";
-
 const fetchUsuarios = async (search: string, page: string, status: string) => {
-  const cookieStore = await cookies();
-  const allCookies = cookieStore.getAll() as Array<{ name: string, value: string }>;
-  const cookieString = allCookies.map(({ name, value }) => `${name}=${value}`).join('; ');
-
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/privada/user?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`,
     {
-      headers: {
-        'cookie': cookieString,
-        'Content-Type': 'application/json'
-      }
+      headers: await headers(),
     }
   );
 
   if (!response.ok) {
-    return { usuarios: [], totalRecords: 0, error: true };
+    console.log("Erro ao carregar os dados.");
   }
 
   const data = await response.json();
@@ -74,15 +66,7 @@ const fetchUsuarios = async (search: string, page: string, status: string) => {
 const UsuariosList = async ({ search, page, status }: { search: string, page: string, status: string }) => {
   const data = await fetchUsuarios(search, page, status);
 
-  if (data.error) {
-    return (
-      <>
-        <p className="mt-10 font-medium text-lg text-red-600">Acesso negado: apenas administradores podem visualizar a lista de usuários.</p>
-      </>
-    );
-  }
-
-  if (!data.usuarios || data.usuarios.length === 0) {
+  if (data.usuarios.length === 0 || !data.usuarios) {
     return (
       <>
         <p className="mt-10 font-medium text-lg">Nenhum Usuário Encontrado</p>

@@ -7,6 +7,7 @@ import { LoadSkeleton } from "../components/loadSkeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Formulario } from "@/utils/types/formulario";
+import { headers } from "next/headers";
 
 const fetchFormularios = async (search: string, page: string, status: string) => {
   const params = new URLSearchParams();
@@ -14,7 +15,9 @@ const fetchFormularios = async (search: string, page: string, status: string) =>
   if (page) params.append("page", page);
   if (status) params.append("status", status);
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/formContact?${params}`);
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/formContact?${params}`,{
+    headers: await headers(),
+  });
   if (!response.ok) throw new Error("Erro ao carregar os formulários.");
 
   return response.json();

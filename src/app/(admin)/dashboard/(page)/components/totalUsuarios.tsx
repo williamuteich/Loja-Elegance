@@ -1,17 +1,12 @@
+import { headers } from "next/headers";
 import { FaUsers } from "react-icons/fa";
-import { cookies } from "next/headers";
 
 export default async function TotalUsuarios() {
-    const cookieStore = cookies();
-    const allCookies = (await cookieStore).getAll();
-    const cookieString = (allCookies as { name: string; value: string }[]).map(({ name, value }) => `${name}=${value}`).join('; ');
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/user`, {
-        headers: {
-            cookie: cookieString,
-            "Content-Type": "application/json"
-        },
-        cache: "no-store"
-    });
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/user`, 
+        {
+            headers: await headers()
+        }
+    );
     
     if (!response.ok) {
         console.log("Erro ao carregar os usuários.");

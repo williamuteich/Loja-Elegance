@@ -1,5 +1,5 @@
-
 "use client";
+
 import * as React from "react";
 import { Produto, VariantProps } from "@/utils/types/produto";
 import Image from "next/image";
@@ -18,7 +18,7 @@ export default function Promocoes() {
     React.useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`/api/publica/product?fetchAll=true`, { next: { revalidate: 600 } });
+                const response = await fetch(`/api/publica/product?fetchAll=true`);
                 if (!response.ok) throw new Error("Error al buscar productos");
                 const { produtos } = await response.json();
                 
@@ -39,7 +39,7 @@ export default function Promocoes() {
 
         const fetchCategories = async () => {
             try {
-                const categoriesRes = await fetch("/api/publica/category?fetchAll=true", { next: { revalidate: 600 } });
+                const categoriesRes = await fetch("/api/publica/category?fetchAll=true");
                 const categoriesData = await categoriesRes.json();
                 setCategorias(categoriesData.category);
             } catch (error) {
