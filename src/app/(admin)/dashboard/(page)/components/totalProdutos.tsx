@@ -1,7 +1,18 @@
 import { FaBoxes } from "react-icons/fa";
 
+import { cookies } from "next/headers";
+
 export default  async function TotalProdutos() {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/product`);
+    const cookieStore = cookies();
+    const allCookies = (await cookieStore).getAll();
+    const cookieString = (allCookies as { name: string; value: string }[]).map(({ name, value }) => `${name}=${value}`).join('; ');
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/product`, {
+        headers: {
+            cookie: cookieString,
+            "Content-Type": "application/json"
+        },
+        cache: "no-store"
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch data");

@@ -3,7 +3,12 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function GET(request: Request) {
+import { withUserOrAdminApiAuth } from "@/utils/api-auth-wrapper-user-or-admin";
+
+export const GET = withUserOrAdminApiAuth(async (request: Request, token: any) => {
+    if (token.role !== "admin") {
+        return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    }
 
     try {
         const url = new URL(request.url);
@@ -61,8 +66,7 @@ export async function GET(request: Request) {
         console.error(err);
         return NextResponse.json({ error: 'Erro no servidor' }, { status: 500 });
     }
-}
-
+});
 
 export async function POST(request: Request) {
     try {

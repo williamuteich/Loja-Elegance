@@ -1,19 +1,21 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from '@prisma/client';
+import { withUserOrAdminApiAuth } from "@/utils/api-auth-wrapper-user-or-admin";
 import { getServerSession } from "next-auth";
 import { auth as authOptions } from "@/lib/auth-config";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: Request) {
-  const session = await getServerSession(authOptions);
-
-  if (!session || !session.user || session.user.role !== "user") {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
-  }
-
+export const GET = withUserOrAdminApiAuth(async (request: Request, token: any) => {
   try {
-    const userId = session.user.userID;
+    const url = new URL(request.url);
+    let userId = token.userID;
+
+    // Se admin, pode buscar qualquer usuário pelo query param userId
+    if (token.role === "admin") {
+      const paramUserId = url.searchParams.get("userId");
+      if (paramUserId) userId = paramUserId;
+    }
 
     if (!userId) {
       return NextResponse.json({ message: 'ID do usuário ausente' }, { status: 400 });
@@ -41,13 +43,11 @@ export async function GET(request: Request) {
     });
 
     return NextResponse.json(getAddresses, { status: 200 });
-
   } catch (err) {
     console.error("Erro ao buscar endereços", err);
     return NextResponse.json({ error: 'Erro interno no servidor' }, { status: 500 });
   }
-}
-
+});
 
 export async function PUT(request: Request) {
   const session = await getServerSession(authOptions);

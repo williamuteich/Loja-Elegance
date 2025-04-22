@@ -286,8 +286,24 @@ export async function DELETE(request: Request) {
           where: { userId: id }
       });
 
+      const orders = await prisma.order.findMany({
+        where: { userId: id },
+        select: { id: true }
+      });
+      const orderIds = orders.map(order => order.id);
+
+      if (orderIds.length > 0) {
+        await prisma.orderItem.deleteMany({
+          where: { orderId: { in: orderIds } }
+        });
+      }
+
+      await prisma.order.deleteMany({
+        where: { userId: id }
+      });
+
       await prisma.user.delete({
-          where: { id }
+        where: { id }
       });
 
         return NextResponse.json({ message: 'User deleted successfully' }, { status: 200 });

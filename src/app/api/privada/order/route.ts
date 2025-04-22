@@ -25,32 +25,33 @@ interface OrderRequest {
   };
 }
 
-import { withOrderApiAuth } from "@/utils/api-auth-wrapper-order";
+import { withUserOrAdminApiAuth } from "@/utils/api-auth-wrapper-user-or-admin";
 
-export const GET = withOrderApiAuth(async (request: Request, token: any) => {
+export const GET = withUserOrAdminApiAuth(async (request: Request, token: any) => {
   try {
-   //const session = await getServerSession(authOptions);
-
-   // if (!session?.user?.userID || (session.user?.role !== "user" && session.user?.role !== "admin")) {
-   //   return NextResponse.json(
-   //     { message: "Usuário não autenticado ou sem permissão" },
-   //     { status: 401 }
-   //   );
-   // }
+    // LOG DE DEBUG
+    console.log("TOKEN RECEBIDO:", token);
 
     const url = new URL(request.url);
     const search = url.searchParams.get('search');
     const page = parseInt(url.searchParams.get('page') || '1', 10);
     const status = url.searchParams.get('status');
     const pageSize = 10;
-
+    console.log("recebendooooo")
     const skip = (page - 1) * pageSize;
 
     let where: any = {};
 
-   // if (session.user.role === "user") {
-   //   where.userId = session.user.userID;
-   // }
+    // LOG DE DEBUG
+    console.log("TOKEN RECEBIDO:", token);
+
+    // Se for user, só pode ver os próprios pedidos
+    if (token.role === "user") {
+      where.userId = token.userID;
+    }
+
+    // LOG DE DEBUG
+    console.log("WHERE FINAL PARA CONSULTA:", where);
 
     if (search) {
       const orFilters = [
@@ -69,6 +70,9 @@ export const GET = withOrderApiAuth(async (request: Request, token: any) => {
     if (status) {
       where.status = status;
     }
+
+    // LOG DE DEBUG
+    console.log("WHERE FINAL PARA CONSULTA:", where);
 
     const orders = await prisma.order.findMany({
       skip,
@@ -89,6 +93,9 @@ export const GET = withOrderApiAuth(async (request: Request, token: any) => {
       },
     });
 
+    // LOG DE DEBUG
+    console.log("RESULTADO ORDERS:", orders);
+
     const totalRecords = await prisma.order.count({ where });
 
     return NextResponse.json({
@@ -96,15 +103,15 @@ export const GET = withOrderApiAuth(async (request: Request, token: any) => {
       totalRecords
     }, { status: 200 });
   } catch (error) {
-    console.error("Erro ao buscar pedidos:", error);
+    console.error("[ERRO AO BUSCAR PEDIDOS]", error);
     return NextResponse.json(
-      { message: "Erro ao buscar pedidos" },
+      { message: "Erro ao buscar pedidos", error: error || error },
       { status: 500 }
     );
   }
-}
+});
 
-export const POST = withOrderApiAuth(async (request: Request, token: any) => {
+export const POST = withUserOrAdminApiAuth(async (request: Request, token: any) => {
   try {
     // Permite tanto user quanto admin, mas só user pode criar pedidos
     if (!token?.userID || token.role !== "user") {

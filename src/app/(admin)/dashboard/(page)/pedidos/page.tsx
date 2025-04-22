@@ -2,6 +2,7 @@ import Container from "../components/Container";
 import Paginacao from "@/app/components/Paginacao";
 import Link from "next/link";
 import SearchItems from "../components/searchItems";
+import { cookies } from "next/headers";
 
 const BadgeStatus = ({ status }: { status: string }) => {
   const statusMap: { [key: string]: { label: string; color: string } } = {
@@ -32,9 +33,17 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
   if (page) query.page = page;
   const queryString = new URLSearchParams(query).toString();
 
+  const cookieStore = cookies();
+  const allCookies = (await cookieStore).getAll();
+  const cookieString = (allCookies as { name: string; value: string }[]).map(({ name, value }) => `${name}=${value}`).join('; ');
+
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/privada/order?${queryString}`,
     {
+      headers: {
+        cookie: cookieString,
+        "Content-Type": "application/json"
+      },
       cache: "no-store"
     }
   );
@@ -49,6 +58,7 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
   }
 
   const result = await response.json();
+
   const pedidos = Array.isArray(result.orders) ? result.orders : [];
   const totalRecords = typeof result.totalRecords === "number" ? result.totalRecords : 0;
 
