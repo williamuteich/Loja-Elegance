@@ -291,7 +291,7 @@ export async function DELETE(request: Request) {
         select: { id: true }
       });
       const orderIds = orders.map(order => order.id);
-
+ 
       if (orderIds.length > 0) {
         await prisma.orderItem.deleteMany({
           where: { orderId: { in: orderIds } }
