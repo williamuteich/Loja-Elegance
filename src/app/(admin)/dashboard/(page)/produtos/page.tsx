@@ -10,10 +10,27 @@ import Image from "next/image";
 import { FaBox } from 'react-icons/fa';
 import { Produto, VariantProps } from "@/utils/types/produto";
 
+import { cookies } from "next/headers";
+
 export default async function Produtos({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
     const { search, page, status } = await searchParams;
 
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`);
+    // Monta os cookies do usuário para enviar na requisição
+    // cookies() é assíncrono no seu ambiente
+    const cookieStore = await cookies();
+    const allCookies = cookieStore.getAll() as Array<{ name: string, value: string }>;
+    const cookieString = allCookies
+        .map(({ name, value }) => `${name}=${value}`)
+        .join('; ');
+
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`,
+        {
+            headers: {
+                'cookie': cookieString,
+                'Content-Type': 'application/json'
+            }
+        }
+    );
 
     if (!response.ok) {
         return <p>Ocorreu um erro ao carregar os produtos.</p>;

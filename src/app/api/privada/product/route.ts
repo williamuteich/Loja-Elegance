@@ -5,7 +5,17 @@ import { requireAdmin } from "@/utils/auth";
 
 const prisma = new PrismaClient();
 
+import { getToken } from "next-auth/jwt";
+
 export async function GET(request: Request) {
+  const token = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET });
+
+  if (!token) {
+    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+  }
+  if (token.role !== "admin") {
+    return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+  }
   try {
     const url = new URL(request.url);
     const search = url.searchParams.get("search");
@@ -112,8 +122,6 @@ export async function GET(request: Request) {
     );
   }
 }
-
-
 
 export async function POST(request: Request) {
 
