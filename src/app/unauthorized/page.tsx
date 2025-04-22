@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 const { useState, useEffect } = require("react");
 
+import { Suspense } from "react";
+
 export default function Unauthorized() {
     const [timing, setTiming] = useState(50);
 
@@ -26,6 +28,7 @@ export default function Unauthorized() {
     }
 
     return (
+        <Suspense>
         <div className="min-h-screen flex flex-col items-center justify-center bg-white">
             <div className="h-screen py-10">
                 <div className="text-center">
@@ -50,5 +53,6 @@ export default function Unauthorized() {
                 </div>
             </div>
         </div>
+        </Suspense>
     );
 }

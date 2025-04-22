@@ -19,7 +19,9 @@ import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 
-export default function SearchHeaderItems() {
+import { Suspense } from "react";
+
+function SearchHeaderItemsContent() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -174,5 +176,13 @@ export default function SearchHeaderItems() {
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+export default function SearchHeaderItems() {
+  return (
+    <Suspense fallback={<button aria-label="Buscar en nuestra tienda" className="cursor-pointer"><Search className="w-6 h-6 animate-pulse" /></button>}>
+      <SearchHeaderItemsContent />
+    </Suspense>
   );
 }
