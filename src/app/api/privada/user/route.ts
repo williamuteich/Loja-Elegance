@@ -4,11 +4,11 @@ import { PrismaClient } from '@prisma/client';
 import { requireAdmin } from "@/utils/auth";
 import { auth as authOptions } from "@/lib/auth-config";
 import { getServerSession } from "next-auth";
+import { withApiAuth } from "@/utils/api-auth-wrapper";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: Request) {
-
+export const GET = withApiAuth(async (request: Request, token: any) => {
     try {
         const url = new URL(request.url);
         const search = url.searchParams.get('search');
@@ -54,7 +54,7 @@ export async function GET(request: Request) {
         console.error("Erro no filtro de status", err);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
-}
+});
 
 import { generateToken } from "@/utils/generateToken";
 import { SendEmail } from "@/infra/SendEmail";

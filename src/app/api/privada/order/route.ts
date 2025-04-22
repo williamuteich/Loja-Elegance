@@ -25,7 +25,9 @@ interface OrderRequest {
   };
 }
 
-export async function GET(request: Request) {
+import { withOrderApiAuth } from "@/utils/api-auth-wrapper-order";
+
+export const GET = withOrderApiAuth(async (request: Request, token: any) => {
   try {
    //const session = await getServerSession(authOptions);
 
@@ -102,11 +104,10 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export const POST = withOrderApiAuth(async (request: Request, token: any) => {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.userID || session.user?.role !== "user") {
+    // Permite tanto user quanto admin, mas só user pode criar pedidos
+    if (!token?.userID || token.role !== "user") {
       return NextResponse.json(
         { message: "Usuário não autenticado ou sem permissão:" },
         { status: 401 }
@@ -168,7 +169,7 @@ export async function POST(request: Request) {
 
       const order = await tx.order.create({
         data: {
-          userId: session.user.userID,
+          userId: token.userID,
           total: itemsWithStock.reduce(
             (sum, i) => sum + i.price * i.quantity,
             0
@@ -226,4 +227,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+});
