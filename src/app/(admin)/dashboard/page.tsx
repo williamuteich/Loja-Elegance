@@ -6,10 +6,13 @@ import GraficoDashboard from "./(page)/components/grafico";
 //import { headers } from "next/headers";
 
 export default async function Dashboard() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/order`, {
-    method: "GET",
-    //headers: await headers(),
-  });
+  const response = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/privada/order`,
+    {
+      //headers: await headers(),
+      cache: "no-store"
+    }
+  );
 
   const result = await response.json();
   const pedidos = result.orders;

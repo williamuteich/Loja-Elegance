@@ -4,7 +4,7 @@ import "./globals.css";
 import Footer from "./components/footer/footer";
 import AuthProvider from "./components/providers/auth-provider";
 import { CartProvider } from "@/context/cartContext";
-
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: 'Elegance Ecommerce - Descubra produtos incríveis para você',
@@ -13,25 +13,38 @@ export const metadata: Metadata = {
     'Elegance',
     'Ecommerce',
     'Elegance Ecommerce',
-    'Produtos de qualidade',
-    'roupas intimas',
-    'diversos produtos',
-    'produtos de qualidade',
-    'produtos de bom gosto',
-    'produtos de luxo',
-    'produtos de beleza',
-    'produtos de moda',
-    'produtos de vestuário',
-    'produtos de acessórios',
-    'produtos de beleza',
-    'produtos de saúde',
-    'produtos de bem estar',
-    'joias',
-    'bijuterias',
-  ],
-  //openGraph: {
-  //  images: ['/Frame8.webp'],
-  //},
+    'productos de calidad',
+    'ropa interior',
+    'productos variados',
+    'productos con buen gusto',
+    'productos de lujo',
+    'productos de belleza',
+    'productos de moda',
+    'ropa y accesorios',
+    'productos de bienestar',
+    'salud y belleza',
+    'joyas',
+    'tienda online Uruguay',
+    'moda femenina Uruguay',
+    'compras en línea',
+    'accesorios elegantes',
+    'ropa de diseño Uruguay',
+    'cosméticos online',
+    'lencería de calidad',
+    'estilo y elegancia',
+    'artículos de bazar',
+    'productos para el hogar',
+    'decoración de interiores',
+    'cocina y utensilios',
+    'bazar online',
+    'organización del hogar',
+    'accesorios de cocina',
+    'almacenamiento y orden',
+  ],  
+  openGraph: {
+    images: ['/fundoLogo.png'],
+    title: 'Elegance Ecommerce - Descubrí productos increíbles para vos',
+    description: 'Elegance Ecommerce es una tienda online con productos de calidad y buen gusto.',},
   robots: {
     index: true,
     follow: true,
@@ -59,6 +72,7 @@ export default async function RootLayout({
         <Footer />
         </CartProvider>
         </AuthProvider>
+        <SpeedInsights />
       </body>
     </html>
   );

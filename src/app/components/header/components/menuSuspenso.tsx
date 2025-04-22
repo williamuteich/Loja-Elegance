@@ -18,11 +18,10 @@ import { useSession } from "next-auth/react";
 
 import { Session } from "next-auth";
 
-type MenuSuspensoProps = {
-  session: Session | null;
-};
 
-export default function MenuSuspenso({ session }: MenuSuspensoProps) {
+
+export default function MenuSuspenso() {
+    const { data: session } = useSession();
     const pathname = usePathname();
 
     const [isFixed, setIsFixed] = useState(false);
