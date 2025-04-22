@@ -1,11 +1,11 @@
-import { headers } from "next/headers";
+//import { headers } from "next/headers";
 import { FaUsers } from "react-icons/fa";
 
 export default async function TotalUsuarios() {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/user`, 
-        {
-            headers: await headers()
-        }
+        //{
+        //    headers: await headers()
+        //}
     );
     
     if (!response.ok) {
