@@ -3,13 +3,12 @@ import TotalUsuarios from "./(page)/components/totalUsuarios";
 import TotalProdutos from "./(page)/components/totalProdutos";
 import OrderDashboard from "./(page)/components/order";
 import GraficoDashboard from "./(page)/components/grafico";
-import { headers } from "next/headers";
-
+//import { headers } from "next/headers";
 
 export default async function Dashboard() {
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/order`, {
     method: "GET",
-    headers: await headers(),
+    //headers: await headers(),
   });
 
   const result = await response.json();

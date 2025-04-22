@@ -7,7 +7,7 @@ import SearchItems from "../components/searchItems";
 import { LoadSkeleton } from "../components/loadSkeleton";
 import Paginacao from "@/app/components/Paginacao";
 import type { Categoria } from "@/utils/types/categoria";
-import { headers } from "next/headers";
+//import { headers } from "next/headers";
 
 const modalConfig = (action: string, categoria?: Categoria) => ({
   title: `${action} Categoria`,
@@ -33,7 +33,7 @@ const fetchCategories = async (search: string, page: string, status: string) => 
   if (status) params.append("status", status);
 
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/category?${params}`, {
-    headers: await headers(),
+    //headers: await headers(),
     cache: "no-store",
   });
 

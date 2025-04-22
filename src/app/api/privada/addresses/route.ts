@@ -6,21 +6,29 @@ import { auth as authOptions } from "@/lib/auth-config";
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
-  const session = await getServerSession(authOptions);
 
-  if (!session || !session.user || session.user.role !== "user") {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
+  const url = new URL(request.url);
+  const getParam = url.searchParams.get("userID");
+
+  if (!getParam || getParam === "") {
+    return NextResponse.json({ error: "ID do usuário ausente" }, { status: 400 });
   }
 
-  try {
-    const userId = session.user.userID;
+  //const session = await getServerSession(authOptions);
+  //
+  //if (!session || !session.user || session.user.role !== "user") {
+  //  return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
+  //}
 
-    if (!userId) {
-      return NextResponse.json({ message: 'ID do usuário ausente' }, { status: 400 });
-    }
+  try {
+   // const userId = session.user.userID;
+   //
+   // if (!userId) {
+   //   return NextResponse.json({ message: 'ID do usuário ausente' }, { status: 400 });
+   // }
 
     const getAddresses = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: getParam},
       select: {
         name: true,
         email: true,

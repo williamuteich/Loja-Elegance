@@ -9,7 +9,7 @@ import { LoadSkeleton } from "../components/loadSkeleton";
 import TableMobile from "./components/tableMobile";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 import { FieldConfig } from "@/utils/types/fieldConfig";
-import { headers } from "next/headers";
+//import { headers } from "next/headers";
 
 const userFields: FieldConfig[] = [
   { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
@@ -50,9 +50,9 @@ const createButtonConfig = (action: string, userId?: string, initialValues?: any
 const fetchUsuarios = async (search: string, page: string, status: string) => {
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/privada/user?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`,
-    {
-      headers: await headers(),
-    }
+    //{
+    //  headers: await headers(),
+    //}
   );
 
   if (!response.ok) {

@@ -22,8 +22,18 @@ const modalConfig = (action: string, initialValues?: DeliveryOption) => {
       : "Faça alterações no endereço abaixo.",
     action,
     fields: [
-      { name: "title", label: "Título", type: "text", placeholder: "Título do endereço" },
-      { name: "description", label: "Descrição", type: "text", placeholder: "Descrição completa do endereço" },
+      { 
+        name: "title", 
+        label: "Título", 
+        type: "text", 
+        placeholder: "Título do endereço" 
+      },
+      { 
+        name: "description", 
+        label: "Descrição", 
+        type: "text", 
+        placeholder: "Descrição completa do endereço" 
+      },
       {
         name: "category",
         label: "Categoria",
@@ -51,9 +61,7 @@ const fetchAddresses = async (): Promise<{ pickupLocations: DeliveryOption[] }> 
       return { pickupLocations: [] };
     }
 
-    const data = await response.json();
-    return data;
-
+    return await response.json();
   } catch (error) {
     console.error("Erro ao buscar endereços:", error);
     return { pickupLocations: [] };
@@ -148,3 +156,5 @@ export default function Envio() {
     </Container>
   );
 }
+
+export const dynamic = 'force-dynamic';

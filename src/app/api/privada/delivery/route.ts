@@ -4,6 +4,18 @@ import { requireAdmin } from "@/utils/auth";
 
 const prisma = new PrismaClient();
 
+export async function GET(request: Request) {
+    try {
+        const pickupLocations = await prisma.deliveryOption.findMany();
+
+        return NextResponse.json({ pickupLocations }, { status: 200 });
+
+    } catch (err) {
+        console.error(err);
+        return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    }
+}
+
 export async function POST(request: Request) {
 
     const authError = await requireAdmin(request);
@@ -35,18 +47,6 @@ export async function POST(request: Request) {
             message: 'Delivery option created successfully',
             deliveryOption: newDeliveryOption
         }, { status: 201 });
-
-    } catch (err) {
-        console.error(err);
-        return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
-    }
-}
-
-export async function GET(request: Request) {
-    try {
-        const pickupLocations = await prisma.deliveryOption.findMany();
-
-        return NextResponse.json({ pickupLocations }, { status: 200 });
 
     } catch (err) {
         console.error(err);
