@@ -10,15 +10,11 @@ import {
 } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
 
-import { Home, Package, Tag , Phone, HelpCircle, Truck, User, AlignJustify } from "lucide-react";
+import { Home, Package, Tag, Phone, HelpCircle, Truck, User, AlignJustify } from "lucide-react";
 import SearchHeaderItems from "./searchHeaderItems";
 import CheckoutHeader from "./checkoutHeader";
 import Image from 'next/image'
 import { useSession } from "next-auth/react";
-
-import { Session } from "next-auth";
-
-
 
 export default function MenuSuspenso() {
     const { data: session } = useSession();
@@ -44,7 +40,7 @@ export default function MenuSuspenso() {
     }, []);
 
     if (pathname.startsWith("/dashboard")) {
-        return null; 
+        return null;
     }
 
     return (
@@ -119,8 +115,8 @@ export default function MenuSuspenso() {
 
                         <div className="flex gap-4 text-gray-600">
                             <Suspense>
-  <SearchHeaderItems />
-</Suspense>
+                                <SearchHeaderItems />
+                            </Suspense>
 
                             <Link
                                 href={session ? "/profile" : "/login"}
@@ -220,8 +216,8 @@ export default function MenuSuspenso() {
                         </Sheet>
 
                         <Suspense>
-  <SearchHeaderItems />
-</Suspense>
+                            <SearchHeaderItems />
+                        </Suspense>
                     </div>
 
                     <div className="flex-shrink-0">
