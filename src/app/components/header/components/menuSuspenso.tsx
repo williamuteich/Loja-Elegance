@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import {
     Sheet,
@@ -118,7 +118,9 @@ export default function MenuSuspenso() {
                         </nav>
 
                         <div className="flex gap-4 text-gray-600">
-                            <SearchHeaderItems />
+                            <Suspense>
+  <SearchHeaderItems />
+</Suspense>
 
                             <Link
                                 href={session ? "/profile" : "/login"}
@@ -217,7 +219,9 @@ export default function MenuSuspenso() {
                             </SheetContent>
                         </Sheet>
 
-                        <SearchHeaderItems />
+                        <Suspense>
+  <SearchHeaderItems />
+</Suspense>
                     </div>
 
                     <div className="flex-shrink-0">

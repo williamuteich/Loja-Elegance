@@ -41,10 +41,10 @@ export const metadata: Metadata = {
     'accesorios de cocina',
     'almacenamiento y orden',
   ],  
-  openGraph: {
-    images: ['/fundoLogo.png'],
-    title: 'Elegance Ecommerce - Descubrí productos increíbles para vos',
-    description: 'Elegance Ecommerce es una tienda online con productos de calidad y buen gusto.',},
+  //openGraph: {
+  //  images: ['/fundoLogo.png'],
+  //  title: 'Elegance Ecommerce - Descubrí productos increíbles para vos',
+  //  description: 'Elegance Ecommerce es una tienda online con productos de calidad y buen gusto.',},
   robots: {
     index: true,
     follow: true,
