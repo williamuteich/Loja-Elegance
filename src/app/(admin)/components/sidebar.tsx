@@ -229,17 +229,24 @@ export default function Sidebar() {
                                     <FaImages className="w-6 h-6" />
                                     <span>Galeria</span>
                                 </Link>
-                                {/*
-                                <Link href="/dashboard/cupom" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/cupom') ? 'bg-gray-700' : ''}`}>
-                                    <FaImages className="w-6 h-6" />
-                                    <span>Cupom</span>
+                               
+                                <Link href="/dashboard/banners" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/banners') ? 'bg-gray-700' : ''}`}>
+                                    <FaRegImage className="w-6 h-6" />
+                                    <span>Banners</span>
                                 </Link>
-                                */}
+                                <Link href="/dashboard/envio" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/envio') ? 'bg-gray-700' : ''}`}>
+                                    <FaShippingFast className="w-6 h-6" />
+                                    <span>Endereços</span>
+                                </Link>
+                                <Link href="/dashboard/pedidos" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/pedidos') ? 'bg-gray-700' : ''}`}>
+                                    <FaClipboardList className="w-6 h-6" />
+                                    <span>Pedidos</span>
+                                </Link>
                             </div>
 
                             <div className="mt-16 space-y-2 flex flex-col">
                                 <Link href="/dashboard/setup" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/setup') ? 'bg-gray-700' : ''}`}>
-                                    <FaGift size={24} />
+                                <FaCog size={24} />
                                     <span>Configurações</span>
                                 </Link>
                                 <LogoutDashboard />

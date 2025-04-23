@@ -36,7 +36,8 @@ const FormularioList = async ({ search, page, status }: { search: string; page: 
         <span className="font-semibold text-gray-800">Total de Formulários: </span>
         <span className="font-medium text-blue-600">{totalRecords}</span>
       </p>
-      <table className="min-w-full text-white table-auto border-collapse rounded-md border-t border-b border-gray-300">
+      {/* TABELA PARA DESKTOP */}
+      <table className="hidden md:table min-w-full text-white table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-800 text-white">
           <tr>
             {["ID", "Nome", "Assunto", "Mensagem", "Status", ""].map((header, idx) => (
@@ -76,6 +77,34 @@ const FormularioList = async ({ search, page, status }: { search: string; page: 
           ))}
         </tbody>
       </table>
+
+      {/* CARDS PARA MOBILE */}
+      <div className="md:hidden flex flex-col gap-4">
+        {formContacts.map((form: Formulario) => (
+          <div key={form.id} className="bg-white rounded-lg shadow border p-4 flex flex-col gap-2">
+            <div className="flex justify-between items-center mb-1">
+              <span className="font-semibold text-blue-700">ID: {form.id}</span>
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs font-semibold ${form.respondido ? "bg-green-700 text-white" : "bg-red-700 text-white"}`}
+              >
+                {form.respondido ? "Respondido" : "Não Respondido"}
+              </span>
+            </div>
+            <div className="text-gray-800 text-sm">
+              <span className="block"><b>Nome:</b> {form.name}</span>
+              <span className="block"><b>Assunto:</b> {form.assunto}</span>
+              <span className="block"><b>Mensagem:</b> {form.mensagem}</span>
+            </div>
+            <div className="mt-2">
+              <Link href={`/dashboard/formulario/${form.id}`}>
+                <Button variant="outline" className="w-full bg-green-800 text-white hover:bg-green-600 font-semibold py-1 px-4 rounded-md">
+                  {form.respondido ? "Visualizar" : "Responder"}
+                </Button>
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
       <Paginacao data={formContacts} totalRecords={totalRecords} />
     </div>
   );

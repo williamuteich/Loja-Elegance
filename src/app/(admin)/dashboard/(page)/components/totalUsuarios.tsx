@@ -16,7 +16,7 @@ export default async function TotalUsuarios() {
 
     if (data.usuarios.length === 0 || !data.usuarios) {
         return (
-          <div className="bg-white p-6 shadow-lg rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white p-4 md:p-6 shadow-lg rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow duration-300">
             <p className="font-medium text-lg">Nenhum Usuário Encontrado</p>
           </div>
         );
@@ -24,7 +24,7 @@ export default async function TotalUsuarios() {
 
     return (
         <div className="bg-white p-6 shadow-lg rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow duration-300">
-            <p className="text-md text-gray-500 font-semibold">Total de Usuários</p>
+            <p className="text-md text-gray-700 font-bold">Usuários</p>
             <div className="flex items-center justify-between">
                 <span className="text-2xl text-blue-600 font-extrabold">{data.totalRecords}</span>
                 <div className="bg-blue-50 p-4 rounded-full">

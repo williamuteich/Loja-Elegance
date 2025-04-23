@@ -55,7 +55,8 @@ const CategoriasList = async ({ search, page, status }: { search: string; page: 
         <span className="font-semibold text-gray-800">Total de Categorias: </span>
         <span className="font-medium text-blue-600">{data.totalRecords}</span>
       </p>
-      <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
+      {/* TABELA PARA DESKTOP */}
+      <table className="hidden md:table min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-800 text-white">
           <tr>
             {['ID', 'Nome', 'Descrição', ''].map((header, idx) => (
@@ -95,6 +96,35 @@ const CategoriasList = async ({ search, page, status }: { search: string; page: 
           ))}
         </tbody>
       </table>
+
+      {/* CARDS PARA MOBILE */}
+      <div className="md:hidden flex flex-col gap-4">
+        {data.category.map((categoria: Categoria) => (
+          <div key={categoria.id} className="bg-white rounded-lg shadow border p-4 flex flex-col gap-2">
+            <div className="flex items-center gap-2 mb-1">
+              <FaList size={22} className="text-gray-500" />
+              <span className="font-semibold text-blue-700">{categoria.name}</span>
+            </div>
+            <div className="text-gray-800 text-sm mb-2">
+              <span className="block"><b>ID:</b> {categoria.id}</span>
+              <span className="block"><b>Descrição:</b> {categoria.description}</span>
+            </div>
+            <div className="flex gap-2 mt-2 justify-end">
+              <ButtonAdicionar config={modalConfig("Editar", categoria)} params={categoria.id} />
+              <ModalDeletar
+                config={{
+                  id: categoria.id,
+                  title: "Tem certeza que deseja excluir esta categoria?",
+                  description:
+                    "Esta ação não pode ser desfeita. A categoria será removida permanentemente. Deseja continuar?",
+                  apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/category`,
+                  urlRevalidate: "/dashboard/categoria",
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
       <Paginacao data={data.category} totalRecords={data.totalRecords} />
     </div>
   );

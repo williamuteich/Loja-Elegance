@@ -9,6 +9,11 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 export const metadata: Metadata = {
   title: 'Elegance Ecommerce - Descubra produtos incríveis para você',
   description: 'Elegance Ecommerce é uma loja virtual de produtos de qualidade e bom gosto.',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon-16x16.png',
+    apple: '/apple-touch-icon.png'
+  },
   keywords: [
     'Elegance',
     'Ecommerce',
@@ -41,10 +46,11 @@ export const metadata: Metadata = {
     'accesorios de cocina',
     'almacenamiento y orden',
   ],  
-  //openGraph: {
-  //  images: ['/fundoLogo.png'],
-  //  title: 'Elegance Ecommerce - Descubrí productos increíbles para vos',
-  //  description: 'Elegance Ecommerce es una tienda online con productos de calidad y buen gusto.',},
+  openGraph: {
+    images: ['/fundoLogo.png'],
+    title: 'Elegance Ecommerce - Descubrí productos increíbles para vos',
+    description: 'Elegance Ecommerce es una tienda online con productos de calidad y buen gusto.',
+  },
   robots: {
     index: true,
     follow: true,
@@ -77,4 +83,3 @@ export default async function RootLayout({
     </html>
   );
 }
-

@@ -64,7 +64,8 @@ const MarcasList = async ({ search, page, status }: { search: string, page: stri
         <span className="font-semibold text-gray-800">Total de Marcas: </span>
         <span className="font-medium text-blue-600">{totalRecords}</span>
       </p>
-      <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
+      {/* TABELA PARA DESKTOP */}
+      <table className="hidden md:table min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="text-white bg-gray-800">
           <tr>
             {['ID', 'Nome', 'Descrição', ''].map((header, idx) => (
@@ -103,6 +104,34 @@ const MarcasList = async ({ search, page, status }: { search: string, page: stri
           ))}
         </tbody>
       </table>
+
+      {/* CARDS PARA MOBILE */}
+      <div className="md:hidden flex flex-col gap-4">
+        {marcas.map((marca: Marca) => (
+          <div key={marca.id} className="bg-white rounded-lg shadow border p-4 flex flex-col gap-2">
+            <div className="flex items-center gap-2 mb-1">
+              <FaTag size={22} className="text-gray-500" />
+              <span className="font-semibold text-blue-700">{marca.name}</span>
+            </div>
+            <div className="text-gray-800 text-sm mb-2">
+              <span className="block"><b>ID:</b> {marca.id}</span>
+              <span className="block"><b>Descrição:</b> {marca.description}</span>
+            </div>
+            <div className="flex gap-2 mt-2 justify-end">
+              <ButtonAdicionar config={modalConfig("Editar", marca)} params={marca.id} />
+              <ModalDeletar
+                config={{
+                  id: marca.id,
+                  title: "Tem certeza que deseja excluir esta marca?",
+                  description: "Esta ação não pode ser desfeita. A marca será removida permanentemente. Deseja continuar?",
+                  apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/brand`,
+                  urlRevalidate: "/dashboard/marca",
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
       <div className="mt-5 flex justify-between">
         <ButtonAdicionar config={modalConfig("Adicionar")} />
       </div>

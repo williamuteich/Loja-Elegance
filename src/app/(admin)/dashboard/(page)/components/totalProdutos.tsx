@@ -16,7 +16,7 @@ export default  async function TotalProdutos() {
 
     if (data.produtos.length === 0 || !data.produtos) {
         return (
-          <div className="bg-white p-6 shadow-lg rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow duration-300">
+          <div className="bg-white p-4 md:p-6 shadow-lg rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow duration-300">
             <p className="font-medium text-lg">Nenhum Produto Encontrado</p>
           </div>
         );
@@ -24,7 +24,7 @@ export default  async function TotalProdutos() {
 
     return (
         <div className="bg-white p-6 shadow-lg rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow duration-300">
-            <p className="text-md text-gray-500 font-semibold">Produtos Cadastrados</p>
+            <p className="text-md text-gray-700 font-bold">Produtos</p>
             <div className="flex items-center justify-between">
                 <span className="text-2xl text-blue-600 font-extrabold">{data.totalRecords}</span>
                 <div className="bg-blue-50 p-4 rounded-full">

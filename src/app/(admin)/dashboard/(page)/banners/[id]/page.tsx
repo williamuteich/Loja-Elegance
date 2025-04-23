@@ -101,7 +101,7 @@ export default function BannerEdit({ params }: { params: Promise<{ id: string }>
       </Link>
       <h2 className="text-4xl font-semibold mt-8 mb-6 text-gray-900">Editar Banner</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2 w-1/6">
+        <div className="space-y-2 w-full md:w-1/6">
           <label htmlFor="primaryImage" className="block text-lg font-medium text-gray-700">
             Imagem do Banner
           </label>
@@ -139,7 +139,7 @@ export default function BannerEdit({ params }: { params: Promise<{ id: string }>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label htmlFor="alt" className="block text-sm font-medium text-gray-700">
               Texto Alternativo (Alt)
@@ -166,7 +166,7 @@ export default function BannerEdit({ params }: { params: Promise<{ id: string }>
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <label htmlFor="status" className="block text-sm font-medium text-gray-700">
               Status
             </label>

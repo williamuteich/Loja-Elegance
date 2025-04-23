@@ -71,7 +71,8 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
           <span className="font-medium text-blue-600">{totalRecords}</span>
         </p>
 
-        <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
+        {/* TABELA PARA DESKTOP */}
+        <table className="hidden md:table min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
           <thead className="bg-gray-800 text-white">
             <tr>
               <th className="py-3 px-4 text-left text-sm font-medium">ID</th>
@@ -152,6 +153,33 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
             ))}
           </tbody>
         </table>
+
+        {/* CARDS PARA MOBILE */}
+        <div className="md:hidden flex flex-col gap-4">
+          {pedidos.map((pedido: any) => (
+            <div key={pedido.id} className="bg-white rounded-lg shadow border p-4 flex flex-col gap-2">
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-semibold text-blue-700">#{pedido.id.slice(-6).toUpperCase()}</span>
+                <BadgeStatus status={pedido.status} />
+              </div>
+              <div className="text-gray-800 text-sm">
+                <span className="block"><b>Cliente:</b> {pedido.user?.name || "Cliente"}</span>
+                <span className="block"><b>Telefone:</b> {pedido.user?.telefone || "Não informado"}</span>
+                <span className="block"><b>Data:</b> {new Date(pedido.createdAt).toLocaleDateString('pt-BR')}</span>
+                <span className="block"><b>Total:</b> {Number(pedido.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                <span className="block"><b>Produtos:</b> {pedido.items?.length ?? 0}</span>
+              </div>
+              <div>
+                <Link
+                  href={`/dashboard/pedidos/${pedido.id}`}
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm shadow h-9 bg-blue-800 text-white hover:bg-blue-700 font-semibold py-1 px-3 rounded-md transition duration-300 w-full"
+                >
+                  Visualizar
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
 
         <Paginacao totalRecords={totalRecords} data={pedidos} />
       </div>

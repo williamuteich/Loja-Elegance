@@ -58,7 +58,8 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                 <span className="font-semibold text-gray-800">Total de produtos: </span>
                 <span className="font-medium text-blue-600">{totalRecords}</span>
             </p>
-            <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
+            {/* TABELA PARA DESKTOP */}
+            <table className="hidden md:table min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
                 <thead className="bg-gray-800 text-white">
                     <tr>
                         {['ID', 'Nome', 'Categoria', 'Marca', 'Preço', 'Quantidade', 'Variantes', 'Status', ''].map((header, idx) => (
@@ -174,6 +175,69 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
                     ))}
                 </tbody>
             </table>
+
+            {/* CARDS PARA MOBILE */}
+            <div className="md:hidden flex flex-col gap-4">
+                {produtos.map((produto: Produto) => (
+                    <div key={produto.id} className="bg-white rounded-lg shadow border p-4 flex flex-col gap-2">
+                        <div className="flex items-center gap-2 mb-1">
+                            {produto.imagePrimary ? (
+                                <Image
+                                    priority
+                                    width={40}
+                                    height={40}
+                                    src={produto.imagePrimary}
+                                    alt={produto.id}
+                                    className="object-cover rounded"
+                                />
+                            ) : (
+                                <div className="flex justify-center items-center w-10 h-10 bg-gray-100 rounded">
+                                    <FaBox size={25} color="#1f2937c4" />
+                                </div>
+                            )}
+                            <span className="font-semibold text-blue-700">{produto.name}</span>
+                        </div>
+                        <div className="text-gray-800 text-sm mb-2">
+                            <span className="block"><b>ID:</b> {produto.id}</span>
+                            <span className="block"><b>Categoria:</b> {produto.categories.reduce((acc, item, index) => {
+                                const separator = index > 0 ? ', ' : '';
+                                return acc + separator + item.category.name;
+                            }, '')}</span>
+                            <span className="block"><b>Marca:</b> {produto.brand.name}</span>
+                            <span className="block"><b>Preço:</b> $ {produto.price}</span>
+                            <span className="block"><b>Quantidade:</b> {produto.variants.reduce((total: number, variant: VariantProps) => total + variant.availableStock, 0)} unidades</span>
+                            <span className="block"><b>Status:</b> <span className={produto.active ? "text-green-700" : "text-red-600"}>{produto.active ? "Ativo" : "Inativo"}</span></span>
+                        </div>
+                        <div className="flex flex-col gap-1 mb-2">
+                            <span className="font-semibold text-gray-700">Variantes:</span>
+                            {produto.variants.map((variant: VariantProps, idx: number) => (
+                                <div key={idx} className="flex items-center space-x-2 ml-2">
+                                    <span className="w-4 h-4 rounded" style={{ backgroundColor: variant.color.hexCode, display: 'inline-block' }}></span>
+                                    <span>{variant.color.name}</span>
+                                    <span>- {variant.availableStock} em estoque</span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex gap-2 mt-2 justify-end">
+                            <Link href={`/dashboard/produtos/${produto.id}`}>
+                                <Button className="bg-blue-800 text-white hover:bg-blue-700 font-semibold py-1 px-3 rounded-md transition duration-300 ease-in-out">
+                                    Editar
+                                </Button>
+                            </Link>
+                            <ModalDeletar
+                                config={{
+                                    id: produto.id,
+                                    title: "Tem certeza de que deseja excluir esse produto?",
+                                    description:
+                                        "Esta ação não pode ser desfeita. O produto será excluído permanentemente.",
+                                    apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/product`,
+                                    urlRevalidate: "/dashboard/produtos",
+                                }}
+                            />
+                        </div>
+                    </div>
+                ))}
+            </div>
 
             <div className="mt-5 w-full flex justify-end">
                 <Link href={`/dashboard/produtos/adicionar`}>

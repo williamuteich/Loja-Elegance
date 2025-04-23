@@ -36,7 +36,8 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
         <span className="font-medium text-blue-600">{data.totalRecords}</span>
       </p>
 
-      <table className="min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
+      {/* TABELA PARA DESKTOP */}
+      <table className="hidden md:table min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-800 text-white">
           <tr>
             {['Variável', 'Nome', 'URL', 'Valor', ''].map((header, idx) => (
@@ -103,6 +104,60 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
           ))}
         </tbody>
       </table>
+
+      {/* CARDS PARA MOBILE */}
+      <div className="md:hidden flex flex-col gap-4">
+        {data.config.map((config: any) => (
+          <div key={config.id} className="bg-white rounded-lg shadow border p-4 flex flex-col gap-2">
+            <div className="text-gray-800 text-sm mb-2">
+              <span className="block"><b>Variável:</b> {config.type}</span>
+              <span className="block"><b>Nome:</b> {config.name}</span>
+              <span className="block"><b>URL:</b> {config.url ? (
+                <a href={config.url} className="text-blue-600 break-all">{config.url}</a>
+              ) : (
+                <span className="text-gray-400">URL não disponível</span>
+              )}</span>
+              <span className="block"><b>Valor:</b> {config.value ? config.value : <span className="text-gray-400">Valor não disponível</span>}</span>
+            </div>
+            <div className="flex gap-2 mt-2 justify-end">
+              <ModalGeneric
+                config={{
+                  id: config.id,
+                  title: "Editar Configuração",
+                  description: "Faça alterações na variável, nome, URL e valor abaixo.",
+                  action: "Editar",
+                  fields: [
+                    { name: "type", label: "Variável", type: "text", placeholder: "Digite o nome da variável" },
+                    { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
+                    { name: "url", label: "URL", type: "text", placeholder: "Digite a URL" },
+                    { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
+                  ],
+                  apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
+                  urlRevalidate: "/dashboard/setup",
+                  method: "PUT",
+                  initialValues: {
+                    type: config.type,
+                    name: config.name,
+                    url: config.url,
+                    value: config.value,
+                  },
+                }}
+                params={config.id}
+              />
+              <ModalDeletar
+                config={{
+                  id: config.id,
+                  title: "Tem certeza de que deseja excluir essa variável?",
+                  description:
+                    "Esta ação irá remover permanentemente a variável do seu site. Isso pode afetar a configuração do seu site, como URLs ou nomes, e pode causar erros em partes do sistema que dependem dessa variável. Certifique-se de que não há dependências antes de prosseguir com a exclusão.",
+                  apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
+                  urlRevalidate: "/dashboard/setup",
+                }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
 
       <Paginacao
         data={data.config}
