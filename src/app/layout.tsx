@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     'almacenamiento y orden',
   ],  
   openGraph: {
-    images: ['/fundoLogo.png'],
+    images: ['/favicon.ico'],
     title: 'Elegance Ecommerce - Descubrí productos increíbles para vos',
     description: 'Elegance Ecommerce es una tienda online con productos de calidad y buen gusto.',
   },

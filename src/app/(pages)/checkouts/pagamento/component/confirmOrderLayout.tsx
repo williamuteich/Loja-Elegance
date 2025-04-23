@@ -60,8 +60,9 @@ export default function ConfirmOrderLayout({
 
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!session?.user?.userID) return; // só faz a chamada se tiver o id
       try {
-        const response = await fetch("/api/privada/addresses", { credentials: "include" });
+        const response = await fetch(`/api/privada/addresses?userID=${session.user.userID}`, { credentials: "include" });
         const data = await response.json();
 
         if (data) {
@@ -88,7 +89,7 @@ export default function ConfirmOrderLayout({
     };
 
     fetchUserData();
-  }, []);
+  }, [session]);
 
   const handleToggleEdit = async () => {
     if (editPhone) {
@@ -145,6 +146,8 @@ export default function ConfirmOrderLayout({
         pagamento,
         pickupLocation,
         telefone: fullPhone,
+        userID: session?.user?.userID || "",
+        email: userData.email || "",
       };
 
       if (pagamentoDetalhado) {
