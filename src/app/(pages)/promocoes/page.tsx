@@ -6,7 +6,7 @@ export default async function PromocoesPage({ searchParams }: any) {
   const resolvedSearchParams = await searchParams;
   const productResponse = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`,
-    { next: { revalidate: 10800 } }
+    { next: { revalidate: 800 } }
   );
 
   if (!productResponse.ok) {
