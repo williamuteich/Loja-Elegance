@@ -1,7 +1,7 @@
 import Container from "../components/Container";
 import Paginacao from "@/app/components/Paginacao";
 import Link from "next/link";
-//import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import SearchItems from "../components/searchItems";
 
 const BadgeStatus = ({ status }: { status: string }) => {
@@ -33,10 +33,11 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
   if (page) query.page = page;
   const queryString = new URLSearchParams(query).toString();
 
+  const cookieHeader = cookies().toString();
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/privada/order?${queryString}`,
     {
-      //headers: await headers(),
+      headers: { Cookie: cookieHeader },
       cache: "no-store"
     }
   );

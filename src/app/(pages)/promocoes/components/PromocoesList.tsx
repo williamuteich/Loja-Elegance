@@ -198,7 +198,7 @@ export default function PromocoesList({
           Productos en Promoción ({totalRecords})
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {produtosExibidos.map((produto) => {
             const totalEstoque = produto.variants.reduce(
               (acc: any, variant: { availableStock: any }) => acc + (variant.availableStock || 0),

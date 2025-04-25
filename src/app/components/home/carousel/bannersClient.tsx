@@ -31,15 +31,17 @@ export function BannersClient({ banners }: { banners: Banner[] }) {
           .filter(item => item.active && item.imageUrl)
           .map((item) => (
             <CarouselItem key={item.id}>
-              <div className="relative opacity-85 w-full h-[350px] md:h-[530px]">
+              <div className="relative opacity-85 w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[530px]">
                 <Link href={item.link || '#'}>
                 <Image
-                  className="object-cover"
+                  className="object-cover rounded-xl"
                   src={item.imageUrl}
                   alt={`Banner ${item.id}`}
                   fill
-                  quality={100}
+                  quality={80}
                   priority
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
+                  style={{objectFit: 'cover'}}
                 />
                 </Link>
               </div>

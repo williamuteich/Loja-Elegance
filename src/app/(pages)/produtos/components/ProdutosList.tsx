@@ -196,7 +196,7 @@ export default function ClientProdutos({
           Catálogo de Produtos ({totalRecords})
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {produtosExibidos.map((produto) => {
             const totalEstoque = produto.variants.reduce(
               (acc: any, variant: { stock: { quantity: any } }) => acc + (variant.stock?.quantity || 0),

@@ -3,13 +3,14 @@ import TotalUsuarios from "./(page)/components/totalUsuarios";
 import TotalProdutos from "./(page)/components/totalProdutos";
 import OrderDashboard from "./(page)/components/order";
 import GraficoDashboard from "./(page)/components/grafico";
-//import { headers } from "next/headers";
+import { cookies } from "next/headers";
 
 export default async function Dashboard() {
+  const cookieHeader = cookies().toString();
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/privada/order`,
     {
-      //headers: await headers(),
+      headers: { Cookie: cookieHeader },
       cache: "no-store"
     }
   );
@@ -21,7 +22,7 @@ export default async function Dashboard() {
     <div className="p-8 px-10 bg-gray-50">
       <div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <TotalVendidos pedidos={pedidos}/>
+          <TotalVendidos pedidos={pedidos} />
           <TotalUsuarios />
           <TotalProdutos />
         </div>

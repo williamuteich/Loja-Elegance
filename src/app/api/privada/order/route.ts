@@ -26,16 +26,15 @@ interface OrderRequest {
 }
 
 export async function GET(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.userID || session.user?.role !== "admin") {
+    return NextResponse.json(
+      { message: "Usuário não autenticado ou sem permissão" },
+      { status: 403 }
+    );
+  }
+
   try {
-  // const session = await getServerSession(authOptions);
-
-  // if (!session?.user?.userID || (session.user?.role !== "user" && session.user?.role !== "admin")) {
-  //   return NextResponse.json(
-  //     { message: "Usuário não autenticado ou sem permissão" },
-  //     { status: 401 }
-  //   );
-  // }
-
     const url = new URL(request.url);
     const search = url.searchParams.get('search');
     const page = parseInt(url.searchParams.get('page') || '1', 10);
@@ -46,17 +45,12 @@ export async function GET(request: Request) {
 
     let where: any = {};
 
-  //  if (session.user.role === "user") {
-  //    where.userId = session.user.userID;
-  //  }
-
     if (search) {
       const orFilters = [
         { user: { name: { contains: search, mode: 'insensitive' } } },
         { user: { telefone: { contains: search, mode: 'insensitive' } } }
       ];
-    
-   
+
       if (ObjectId.isValid(search) && new ObjectId(search).toString() === search) {
         where.id = search;
       } else {
