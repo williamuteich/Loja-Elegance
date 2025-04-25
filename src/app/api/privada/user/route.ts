@@ -8,11 +8,11 @@ import { getServerSession } from "next-auth";
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
-
-  //  const authError = await requireAdmin(request);
-  //  if (authError) {
-  //      return authError;
-  //  }
+  
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return new Response(JSON.stringify({ error: "Não autorizado" }), { status: 403 });
+  }
 
     try {
         const url = new URL(request.url);

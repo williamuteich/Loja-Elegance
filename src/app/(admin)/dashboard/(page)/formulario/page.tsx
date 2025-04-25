@@ -6,8 +6,10 @@ import { Suspense } from "react";
 import { LoadSkeleton } from "../components/loadSkeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import ModalDeletar from "../components/ModalDeletar";
 import { Formulario } from "@/utils/types/formulario";
-//import { headers } from "next/headers";
+
+import { cookies } from "next/headers";
 
 const fetchFormularios = async (search: string, page: string, status: string) => {
   const params = new URLSearchParams();
@@ -15,8 +17,10 @@ const fetchFormularios = async (search: string, page: string, status: string) =>
   if (page) params.append("page", page);
   if (status) params.append("status", status);
 
+  const cookieHeader = (await cookies()).toString();
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/formContact?${params}`,{
-   // headers: await headers(),
+    headers: { Cookie: cookieHeader },
+    cache: "no-store"
   });
   if (!response.ok) throw new Error("Erro ao carregar os formulários.");
 
@@ -36,7 +40,6 @@ const FormularioList = async ({ search, page, status }: { search: string; page: 
         <span className="font-semibold text-gray-800">Total de Formulários: </span>
         <span className="font-medium text-blue-600">{totalRecords}</span>
       </p>
-      {/* TABELA PARA DESKTOP */}
       <table className="hidden md:table min-w-full text-white table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-800 text-white">
           <tr>
@@ -66,19 +69,29 @@ const FormularioList = async ({ search, page, status }: { search: string; page: 
                   </span>
                 </div>
               </td>
-              <td className="py-3 px-4 font-medium text-sm text-gray-700">
-                <Link href={`/dashboard/formulario/${form.id}`}>
-                  <Button variant="outline" className="bg-green-800 text-white hover:bg-green-600 font-semibold py-1 px-4 rounded-md">
-                    {form.respondido ? "Visualizar" : "Responder"}
-                  </Button>
-                </Link>
+              <td className="py-3 px-0 font-medium text-sm text-gray-700">
+                <div className="flex justify-end items-center space-x-3">
+                  <Link href={`/dashboard/formulario/${form.id}`}>
+                    <Button variant="outline" className="bg-green-800 text-white hover:bg-green-600 font-semibold py-1 px-4 rounded-md">
+                      {form.respondido ? "Visualizar" : "Responder"}
+                    </Button>
+                  </Link>
+                  <ModalDeletar
+                    config={{
+                      id: form.id,
+                      title: "Tem certeza de que deseja excluir esse formulário?",
+                      description: "Esta ação não pode ser desfeita. O formulário será excluído permanentemente.",
+                      apiEndpoint: `${process.env.NEXTAUTH_URL}/api/formContact`,
+                      urlRevalidate: "/dashboard/formulario",
+                    }}
+                  />
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* CARDS PARA MOBILE */}
       <div className="md:hidden flex flex-col gap-4">
         {formContacts.map((form: Formulario) => (
           <div key={form.id} className="bg-white rounded-lg shadow border p-4 flex flex-col gap-2">
@@ -95,12 +108,21 @@ const FormularioList = async ({ search, page, status }: { search: string; page: 
               <span className="block"><b>Assunto:</b> {form.assunto}</span>
               <span className="block"><b>Mensagem:</b> {form.mensagem}</span>
             </div>
-            <div className="mt-2">
+            <div className="mt-2 flex gap-2">
               <Link href={`/dashboard/formulario/${form.id}`}>
                 <Button variant="outline" className="w-full bg-green-800 text-white hover:bg-green-600 font-semibold py-1 px-4 rounded-md">
                   {form.respondido ? "Visualizar" : "Responder"}
                 </Button>
               </Link>
+              <ModalDeletar
+                config={{
+                  id: form.id,
+                  title: "Tem certeza de que deseja excluir esse formulário?",
+                  description: "Esta ação não pode ser desfeita. O formulário será excluído permanentemente.",
+                  apiEndpoint: `${process.env.NEXTAUTH_URL}/api/formContact`,
+                  urlRevalidate: "/dashboard/formulario",
+                }}
+              />
             </div>
           </div>
         ))}

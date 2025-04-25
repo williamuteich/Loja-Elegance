@@ -1,12 +1,13 @@
 //import { headers } from "next/headers";
 import { FaUsers } from "react-icons/fa";
+import { cookies } from "next/headers";
 
 export default async function TotalUsuarios() {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/user`, 
-        //{
-        //    headers: await headers()
-        //}
-    );
+    const cookieHeader = cookies().toString();
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/user`, {
+        headers: { Cookie: cookieHeader },
+        cache: "no-store"
+    });
     
     if (!response.ok) {
         console.log("Erro ao carregar os usuários.");
@@ -14,7 +15,7 @@ export default async function TotalUsuarios() {
     
     const data = await response.json();
 
-    if (data.usuarios.length === 0 || !data.usuarios) {
+    if (!data.usuarios || data.usuarios.length === 0) {
         return (
           <div className="bg-white p-4 md:p-6 shadow-lg rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow duration-300">
             <p className="font-medium text-lg">Nenhum Usuário Encontrado</p>

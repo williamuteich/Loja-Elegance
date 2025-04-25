@@ -3,13 +3,15 @@ import Container from "../../components/Container";
 import Form from "@/components/Form";
 import Submit from "@/components/Submit";
 import { Formulario } from "@/utils/types/formulario";
+import { cookies } from "next/headers";
 
 export default async function RespFormulario({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
+  const cookieHeader = (await cookies()).toString();
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/formContact?id=${id}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: { Cookie: cookieHeader },
+    cache: "no-store"
   });
 
   if (!res.ok) return <div>Erro ao carregar formulário</div>;

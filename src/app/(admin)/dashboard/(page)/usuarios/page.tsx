@@ -47,12 +47,16 @@ const createButtonConfig = (action: string, userId?: string, initialValues?: any
   initialValues,
 });
 
+import { cookies } from "next/headers";
+
 const fetchUsuarios = async (search: string, page: string, status: string) => {
+  const cookieHeader = cookies().toString();
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/privada/user?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`,
-    //{
-    //  headers: await headers(),
-    //}
+    {
+      headers: { Cookie: cookieHeader },
+      cache: "no-store"
+    }
   );
 
   if (!response.ok) {
@@ -66,7 +70,7 @@ const fetchUsuarios = async (search: string, page: string, status: string) => {
 const UsuariosList = async ({ search, page, status }: { search: string, page: string, status: string }) => {
   const data = await fetchUsuarios(search, page, status);
 
-  if (data.usuarios.length === 0 || !data.usuarios) {
+  if (!data.usuarios || data.usuarios.length === 0) {
     return (
       <>
         <p className="mt-10 font-medium text-lg">Nenhum Usuário Encontrado</p>

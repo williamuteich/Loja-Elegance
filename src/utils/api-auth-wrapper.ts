@@ -6,8 +6,8 @@ export function withApiAuth(handler: (request: Request, session: any) => Promise
   return async function(request: Request) {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user) {
-      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    if (!session?.user || !["user", "admin"].includes(session.user.role ?? "")) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
     }
 
     return handler(request, session.user);

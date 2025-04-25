@@ -4,12 +4,14 @@ import { requireAdmin } from "@/utils/auth";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: Request) {
+import { getServerSession } from "next-auth";
+import { auth as authOptions } from "@/lib/auth-config";
 
-   // const authError = await requireAdmin(request);
-   // if (authError) {
-   //     return authError;
-   // }
+export async function GET(request: Request) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user || session.user.role !== "admin") {
+        return new Response(JSON.stringify({ error: "Não autorizado" }), { status: 403 });
+    }
 
     try {
         const url = new URL(request.url);
@@ -69,8 +71,13 @@ export async function GET(request: Request) {
     }
 }
 
-
 export async function POST(request: Request) {
+
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
     try {
         const body = await request.json()
 
@@ -97,6 +104,12 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
+
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
     try {
         const { id, resposta } = await request.json();
         const formContact = await prisma.formulario.update({
@@ -108,6 +121,24 @@ export async function PUT(request: Request) {
         })
 
         return NextResponse.json({ formContact }, { status: 200 });
+    } catch (err) {
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
+export async function DELETE(request: Request) {
+    const authError = await requireAdmin(request);
+    if (authError) {
+        return authError;
+    }
+
+    try {
+        const { id } = await request.json();
+        if (!id) {
+            return NextResponse.json({ error: 'ID obrigatório para deletar.' }, { status: 400 });
+        }
+        await prisma.formulario.delete({ where: { id } });
+        return NextResponse.json({ message: 'Formulário deletado com sucesso.' }, { status: 200 });
     } catch (err) {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }

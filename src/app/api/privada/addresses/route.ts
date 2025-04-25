@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 export const GET = withApiAuth(async (request, session) => {
   const url = new URL(request.url);
   const requestedUserId = url.searchParams.get("userID") || undefined;
-  console.log("pega id", requestedUserId)
+  
   if (session.role === "admin" && !requestedUserId) {
     try {
       const allUsers = await prisma.user.findMany({
@@ -42,7 +42,6 @@ export const GET = withApiAuth(async (request, session) => {
     }
   }
 
-  // USER: precisa passar userID e só pode acessar o próprio
   if (session.role !== "admin") {
     if (!requestedUserId) {
       return NextResponse.json(
@@ -58,7 +57,6 @@ export const GET = withApiAuth(async (request, session) => {
     }
   }
 
-  // ADMIN OU USER: retorna usuário específico
   try {
     const userData = await prisma.user.findUnique({
       where: { id: requestedUserId },
