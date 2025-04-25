@@ -4,7 +4,6 @@ import "./globals.css";
 import Footer from "./components/footer/footer";
 import AuthProvider from "./components/providers/auth-provider";
 import { CartProvider } from "@/context/cartContext";
-import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: 'Elegance Ecommerce - Descubra produtos incríveis para você',
@@ -78,7 +77,6 @@ export default async function RootLayout({
         <Footer />
         </CartProvider>
         </AuthProvider>
-        <SpeedInsights />
       </body>
     </html>
   );

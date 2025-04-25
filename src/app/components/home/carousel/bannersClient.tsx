@@ -32,7 +32,7 @@ export function BannersClient({ banners }: { banners: Banner[] }) {
           .map((item) => (
             <CarouselItem key={item.id}>
               <div className="relative opacity-85 w-full h-[350px] md:h-[530px]">
-                <Link href={item.link}>
+                <Link href={item.link || '#'}>
                 <Image
                   className="object-cover"
                   src={item.imageUrl}

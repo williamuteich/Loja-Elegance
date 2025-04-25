@@ -3,53 +3,86 @@
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { ToastContainer, toast } from "react-toastify";
-
-import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
 import Link from "next/link";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Formulario() {
     const router = useRouter();
-    const [userActive, setUserActive] = useState();
+    const [userActive, setUserActive] = useState<boolean | undefined>();
+    const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+
+    const validateForm = (data: { email: string; password: string }) => {
+        const newErrors: typeof errors = {};
+        if (!data.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            newErrors.email = "Formato de e-mail inválido";
+        }
+        if (data.password.length < 6) {
+            newErrors.password = "Mínimo 6 caracteres";
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     async function login(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-
+        setLoading(true);
+        
         const formData = new FormData(e.currentTarget);
         const data = {
-            email: formData.get("email") as string,
-            password: formData.get("password") as string,
+            email: formData.get("email")?.toString()?.trim() || "",
+            password: formData.get("password")?.toString() || "",
         };
 
-        await signIn("credentials", {
-            ...data,
-            redirect: false,
-        });
+        if (!validateForm(data)) {
+            setLoading(false);
+            return;
+        }
 
-        const sessionResponse = await fetch(`/api/login`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        });
+        try {
+            const result = await signIn("credentials", {
+                ...data,
+                redirect: false,
+            });
 
-        if (!sessionResponse.ok) {
-            toast.error("Correo electrónico o contraseña incorrectos.", {
+            if (result?.error) {
+                toast.error("Credenciais inválidas ou conta inativa", {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+                return;
+            }
+
+            const sessionResponse = await fetch(`/api/login`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "X-CSRF-Protection": "1"
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!sessionResponse.ok) throw new Error("Falha na autenticação");
+
+            const session = await sessionResponse.json();
+            setUserActive(session.user?.active);
+
+            if (session.user?.active) {
+                const redirectPath = session.user?.role === "admin" 
+                    ? "/dashboard" 
+                    : "/";
+                router.push(redirectPath);
+            }
+
+        } catch (error) {
+            toast.error("Erro inesperado. Tente novamente mais tarde.", {
                 position: "top-right",
                 autoClose: 3000,
-            })
+            });
+        } finally {
+            setLoading(false);
         }
-
-        const session = await sessionResponse.json();
-
-        if (session?.user?.role === "admin" && session?.user?.active === true) {
-            router.push("/dashboard");
-        } else if (session?.user?.active === true) {
-            router.push("/");
-        }
-
-        setUserActive(session.active);
     }
 
     if (userActive === false) {
@@ -68,55 +101,107 @@ export default function Formulario() {
                     <p className="text-sm text-gray-500">Si no has recibido el correo electrónico, revisa tu carpeta de spam.</p>
                 </div>
             </div>
-        )
+        );
     }
 
     return (
-        <>
-            <h1 className="text-2xl font-bold text-center text-pink-700 mb-6 uppercase">¡Bienvenido de nuevo!</h1>
+        <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+            <h1 className="text-2xl font-bold text-center text-pink-700 mb-6 uppercase">
+                ¡Bienvenido de nuevo!
+            </h1>
+            
             <ToastContainer />
-            <form onSubmit={login} className="relative">
-                <div className="mb-6">
+            
+            <form onSubmit={login} className="space-y-4">
+                <div>
                     <input
                         type="email"
                         name="email"
                         placeholder="Correo electrónico"
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
+                        className={`w-full px-4 py-3 border ${
+                            errors.email ? "border-red-500" : "border-gray-300"
+                        } rounded-md placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                        onChange={() => setErrors(prev => ({ ...prev, email: undefined }))}
                     />
+                    {errors.email && (
+                        <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                    )}
                 </div>
-                <div className="mb-6">
-                    <div className="relative">
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="Contraseña"
-                            required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black"
-                        />
-                    </div>
+
+                <div>
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Contraseña"
+                        required
+                        className={`w-full px-4 py-3 border ${
+                            errors.password ? "border-red-500" : "border-gray-300"
+                        } rounded-md placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500`}
+                        onChange={() => setErrors(prev => ({ ...prev, password: undefined }))}
+                    />
+                    {errors.password && (
+                        <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                    )}
                 </div>
+
                 <button
-                    title="login"
                     type="submit"
-                    className="w-full py-3 bg-pink-700 text-white font-semibold uppercase rounded-md hover:bg-pink-600"
+                    disabled={loading}
+                    className={`w-full py-3 bg-pink-700 text-white font-semibold uppercase rounded-md transition-all ${
+                        loading ? "opacity-75 cursor-not-allowed" : "hover:bg-pink-600"
+                    }`}
                 >
-                    Iniciar sesión
+                    {loading ? (
+                        <div className="flex items-center justify-center gap-2">
+                            <svg 
+                                className="animate-spin h-5 w-5 text-white" 
+                                xmlns="http://www.w3.org/2000/svg" 
+                                fill="none" 
+                                viewBox="0 0 24 24"
+                            >
+                                <circle 
+                                    className="opacity-25" 
+                                    cx="12" 
+                                    cy="12" 
+                                    r="10" 
+                                    stroke="currentColor" 
+                                    strokeWidth="4"
+                                ></circle>
+                                <path 
+                                    className="opacity-75" 
+                                    fill="currentColor" 
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
+                            </svg>
+                            Carregando...
+                        </div>
+                    ) : (
+                        "Iniciar sesión"
+                    )}
                 </button>
             </form>
+
             <div className="mt-4 text-center">
-                <Link href="/resetPwd" className="text-sm text-gray-600 hover:text-black font-medium">
+                <Link 
+                    href="/resetPwd" 
+                    className="text-sm text-pink-700 hover:text-pink-900 font-medium transition-colors"
+                >
                     Olvidé mi contraseña
                 </Link>
             </div>
-            <div className="mt-6 border-t border-gray-300 pt-6 text-center">
+
+            <div className="mt-6 border-t border-gray-200 pt-6 text-center">
                 <p className="text-sm text-gray-600">
                     ¿No tienes una cuenta?{' '}
-                    <Link href="/cadastro" className="text-black font-semibold hover:underline">
+                    <Link 
+                        href="/cadastro" 
+                        className="font-semibold text-pink-700 hover:text-pink-900 transition-colors"
+                    >
                         Crea una ahora
                     </Link>
                 </p>
             </div>
-        </>
+        </div>
     );
 }
