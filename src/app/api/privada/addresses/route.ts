@@ -2,33 +2,66 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from "next-auth";
 import { auth as authOptions } from "@/lib/auth-config";
+import { withApiAuth } from "@/utils/api-auth-wrapper";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: Request) {
-
+export const GET = withApiAuth(async (request, session) => {
   const url = new URL(request.url);
-  const getParam = url.searchParams.get("userID");
-
-  if (!getParam || getParam === "") {
-    return NextResponse.json({ error: "ID do usuário ausente" }, { status: 400 });
+  const requestedUserId = url.searchParams.get("userID") || undefined;
+  console.log("pega id", requestedUserId)
+  if (session.role === "admin" && !requestedUserId) {
+    try {
+      const allUsers = await prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          telefone: true,
+          enderecos: {
+            select: {
+              cep: true,
+              logradouro: true,
+              numero: true,
+              complemento: true,
+              bairro: true,
+              cidade: true,
+              estado: true,
+              pais: true
+            }
+          }
+        }
+      });
+      return NextResponse.json(allUsers, { status: 200 });
+    } catch (error) {
+      console.error("Erro ao buscar todos os usuários:", error);
+      return NextResponse.json(
+        { error: "Erro interno do servidor" },
+        { status: 500 }
+      );
+    }
   }
 
-  //const session = await getServerSession(authOptions);
-  //
-  //if (!session || !session.user || session.user.role !== "user") {
-  //  return NextResponse.json({ error: "Não autorizado" }, { status: 403 });
-  //}
+  // USER: precisa passar userID e só pode acessar o próprio
+  if (session.role !== "admin") {
+    if (!requestedUserId) {
+      return NextResponse.json(
+        { error: "ID do usuário é obrigatório" },
+        { status: 400 }
+      );
+    }
+    if (session.userID !== requestedUserId) {
+      return NextResponse.json(
+        { error: "Acesso não autorizado" },
+        { status: 403 }
+      );
+    }
+  }
 
+  // ADMIN OU USER: retorna usuário específico
   try {
-   // const userId = session.user.userID;
-   //
-   // if (!userId) {
-   //   return NextResponse.json({ message: 'ID do usuário ausente' }, { status: 400 });
-   // }
-
-    const getAddresses = await prisma.user.findUnique({
-      where: { id: getParam},
+    const userData = await prisma.user.findUnique({
+      where: { id: requestedUserId },
       select: {
         name: true,
         email: true,
@@ -48,14 +81,22 @@ export async function GET(request: Request) {
       }
     });
 
-    return NextResponse.json(getAddresses, { status: 200 });
+    if (!userData) {
+      return NextResponse.json(
+        { error: "Usuário não encontrado" },
+        { status: 404 }
+      );
+    }
 
-  } catch (err) {
-    console.error("Erro ao buscar endereços", err);
-    return NextResponse.json({ error: 'Erro interno no servidor' }, { status: 500 });
+    return NextResponse.json(userData, { status: 200 });
+  } catch (error) {
+    console.error("Erro na busca de endereços:", error);
+    return NextResponse.json(
+      { error: "Erro interno do servidor" },
+      { status: 500 }
+    );
   }
-}
-
+});
 
 export async function PUT(request: Request) {
   const session = await getServerSession(authOptions);

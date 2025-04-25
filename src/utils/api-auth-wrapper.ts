@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { getServerSession } from "next-auth";
+import { auth as authOptions } from "@/lib/auth-config";
 
-export function withApiAuth(handler: (request: Request, token: any) => Promise<Response>) {
+export function withApiAuth(handler: (request: Request, session: any) => Promise<Response>) {
   return async function(request: Request) {
-    const token = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET });
-    if (!token) {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user) {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
-    // Se quiser restringir por role:
-    if (token.role !== "admin") {
-      return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
-    }
-    return handler(request, token);
+
+    return handler(request, session.user);
   };
 }

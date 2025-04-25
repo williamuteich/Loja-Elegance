@@ -1,16 +1,24 @@
 import { getServerSession } from "next-auth";
 import { auth as authOptions } from "@/lib/auth-config";
-import { UserProps } from "@/utils/types/user";
 import DataProfile from "./components/dataProfile";
 import NavProfile from "../../components/navProfile";
 //import { headers } from "next/headers";
 
-export default async function Profile() {
-    const session: UserProps | null = await getServerSession(authOptions);
+import { cookies } from "next/headers";
 
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/addresses?userID=${session?.user.userID}`,{
-        //headers: await headers(),
-    });
+export default async function Profile() {
+    const session = await getServerSession(authOptions);
+
+    // Pegue os cookies da requisição original e repasse no fetch interno (agora de forma assíncrona)
+    const cookieHeader = (await cookies()).toString();
+
+    const response = await fetch(
+      `${process.env.NEXTAUTH_URL}/api/privada/addresses?userID=${session?.user.userID}`,
+      {
+        headers: { Cookie: cookieHeader },
+        cache: "no-store"
+      }
+    );
 
     if (!response.ok) {
         return <div>Error al cargar la información del usuario</div>;
