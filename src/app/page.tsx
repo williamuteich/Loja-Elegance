@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Container } from "./components/container";
 import Produtos from "./(pages)/produtos/components/produtos";
 import { Promocao } from "./(pages)/produtos/components/promocao";
