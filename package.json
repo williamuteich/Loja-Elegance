@@ -55,6 +55,7 @@
     "validator": "^13.12.0"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.10.7",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.17.10",
     "@types/nodemailer": "^6.4.17",
