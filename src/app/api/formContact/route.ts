@@ -73,11 +73,6 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
 
-    const authError = await requireAdmin(request);
-    if (authError) {
-        return authError;
-    }
-
     try {
         const body = await request.json()
 
