@@ -196,20 +196,18 @@ export async function POST(request: Request) {
       );
     }
 
+    // 1. Upsert das cores FORA da transação
+    const colorUpserts = body.variants.map((variant: any) =>
+      prisma.color.upsert({
+        where: { hexCode: variant.hexCode },
+        create: { name: variant.name, hexCode: variant.hexCode },
+        update: {}
+      })
+    );
+    const colors = await Promise.all(colorUpserts);
+
+    // 2. Prisma transaction só para o resto
     const newProduct = await prisma.$transaction(async (tx) => {
-      const colorOperations = body.variants.map((variant: any) =>
-        tx.color.upsert({
-          where: { hexCode: variant.hexCode },
-          create: {
-            name: variant.name,
-            hexCode: variant.hexCode
-          },
-          update: {}
-        })
-      );
-
-      const colors = await Promise.all(colorOperations);
-
       const product = await tx.product.create({
         data: {
           name: body.name,
@@ -410,7 +408,6 @@ export async function PUT(request: Request) {
 
   try {
     const body = await request.json();
-
     const requiredFields = ['id', 'name', 'description', 'price', 'brandId', 'categoryIds', 'features'];
     if (requiredFields.some(field => !body[field])) {
       return NextResponse.json(
@@ -419,7 +416,16 @@ export async function PUT(request: Request) {
       );
     }
 
-    const updatedProduct = await prisma.$transaction(async (tx): Promise<any> => {
+    const colorUpserts = body.variants.map((variant: any) =>
+      prisma.color.upsert({
+        where: { hexCode: variant.hexCode },
+        create: { name: variant.name, hexCode: variant.hexCode },
+        update: { name: variant.name }
+      })
+    );
+    const updatedColors = await Promise.all(colorUpserts);
+
+    const updatedProduct = await prisma.$transaction(async (tx) => {
       const existingProduct = await tx.product.findUnique({
         where: { id: body.id },
         include: {
@@ -434,15 +440,6 @@ export async function PUT(request: Request) {
       });
 
       if (!existingProduct) throw new Error("Produto não encontrado");
-
-      const colorOperations = body.variants.map((variant: any) =>
-        tx.color.upsert({
-          where: { hexCode: variant.hexCode },
-          create: { name: variant.name, hexCode: variant.hexCode },
-          update: { name: variant.name }
-        })
-      );
-      const updatedColors = await Promise.all(colorOperations);
 
       const existingVariantsMap = new Map(
         existingProduct.variants.map(v => [v.color.hexCode, v])
@@ -474,7 +471,6 @@ export async function PUT(request: Request) {
       }
 
       const incomingHexCodes = new Set(body.variants.map((v: any) => v.hexCode));
-      
       for (const existingVariant of existingProduct.variants) {
         if (!incomingHexCodes.has(existingVariant.color.hexCode)) {
           const hasAssociatedOrders = await tx.orderItem.count({
@@ -541,21 +537,6 @@ export async function PUT(request: Request) {
         });
       }
 
-      const originalImages = [
-        existingProduct.imagePrimary,
-        ...existingProduct.imagesSecondary
-      ].filter(Boolean) as string[];
-
-      const newImages = [
-        body.imagePrimary,
-        ...(Array.isArray(body.imagesSecondary) ? body.imagesSecondary : [])
-      ].filter(Boolean) as string[];
-
-      const imagesToDelete = originalImages.filter(img => !newImages.includes(img));
-      for (const imgUrl of imagesToDelete) {
-        await deleteImageFromSupabase(imgUrl);
-      }
-
       return tx.product.findUnique({
         where: { id: body.id },
         include: { 
@@ -564,6 +545,21 @@ export async function PUT(request: Request) {
         }
       });
     });
+
+    const originalImages = [
+      updatedProduct?.imagePrimary,
+      ...(updatedProduct?.imagesSecondary || [])
+    ].filter(Boolean) as string[];
+
+    const newImages = [
+      body.imagePrimary,
+      ...(Array.isArray(body.imagesSecondary) ? body.imagesSecondary : [])
+    ].filter(Boolean) as string[];
+
+    const imagesToDelete = originalImages.filter(img => !newImages.includes(img));
+    for (const imgUrl of imagesToDelete) {
+      await deleteImageFromSupabase(imgUrl);
+    }
 
     return NextResponse.json(
       { message: "Produto atualizado com sucesso", data: updatedProduct },
