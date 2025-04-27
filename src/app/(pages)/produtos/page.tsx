@@ -30,7 +30,7 @@ export default async function ProdutosPage({ searchParams }: { searchParams: Pro
   const { produtos, totalRecords }: { produtos: Produto[]; totalRecords: number } = await productResponse.json();
 
   const categoryResponse = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/publica/category`,
+    `${process.env.NEXTAUTH_URL}/api/publica/category?fetchAll=true`,
     { next: { revalidate: 2000 } }
   );
   if (!categoryResponse.ok) {

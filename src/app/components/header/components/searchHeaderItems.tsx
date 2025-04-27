@@ -19,7 +19,11 @@ import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 
-export default function SearchHeaderItems() {
+interface SearchHeaderItemsProps {
+  initialProducts: any[];
+}
+
+export default function SearchHeaderItems({ initialProducts = [] }: SearchHeaderItemsProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -41,30 +45,24 @@ export default function SearchHeaderItems() {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const handleChange = useDebouncedCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useDebouncedCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const params = new URLSearchParams(searchParams);
     const searchString = e.target.value;
 
     if (searchString) {
       setLoading(true);
       params.set("search", searchString);
-
-      const response = await fetch(
-        `/api/privada/product?${searchString ? `search=${searchString}&` : ""}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Error al buscar productos");
-      }
-
-      const { produtos } = await response.json();
-
-      const produtosFiltrados = produtos.filter((produto: Product) => 
+      
+      // Client-side filtering using initialProducts
+      const filtered = initialProducts.filter((produto) => 
+        produto.name.toLowerCase().includes(searchString.toLowerCase()) &&
         produto.active && 
-        produto.variants.some((variant: any) => variant.availableStock >= 1)
+        produto.variants.some((variant: any) => 
+          variant.stock && variant.stock.quantity > 0
+        )
       );
-
-      setFilteredProducts(produtosFiltrados);
+      
+      setFilteredProducts(filtered);
       setLoading(false);
     } else {
       setFilteredProducts([]);
@@ -72,7 +70,7 @@ export default function SearchHeaderItems() {
     }
 
     replace(`${pathname}?${params.toString()}`);
-  }, 450);
+  }, 300);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -147,18 +145,18 @@ export default function SearchHeaderItems() {
                         <div className="flex flex-col gap-0 w-full px-4">
                           <h2 className="text-base uppercase font-bold">{item.name}</h2>
                           <span className="text-base font-medium uppercase flex items-end gap-2 mb-2 w-full">
-                            $ {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(item.price)}
+                             {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(item.price)}
                             <div
-                              className={`mt-2 text-xs font-semibold text-white ${item.variants.some((variant: any) => variant.availableStock > 0)
-                                ? item.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0) > 1
+                              className={`mt-2 text-xs font-semibold text-white ${item.variants.some((variant: any) => variant.stock && variant.stock.quantity > 0)
+                                ? item.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0) > 1
                                   ? "bg-green-700"
                                   : "bg-yellow-700"
                                 : "bg-red-700 text-white"
                                 } px-2 py-1 rounded-md w-max`}
                             >
-                              {item.variants.some((variant: any) => variant.availableStock > 0)
-                                ? item.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0) > 1
-                                  ? `${item.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0)} Disponíveis`
+                              {item.variants.some((variant: any) => variant.stock && variant.stock.quantity > 0)
+                                ? item.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0) > 1
+                                  ? `${item.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0)} Disponíveis`
                                   : "Última Unidade"
                                 : "Indisponível"}
                             </div>

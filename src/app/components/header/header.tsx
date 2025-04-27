@@ -1,10 +1,22 @@
-"use client";
-import MenuSuspenso from "./components/menuSuspenso";
+import ClientHeader from "./components/ClientHeader";
 
-export default function Header() {
+async function getProducts() {
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/product?fetchAll=true`, {
+    next: { revalidate: 3600 } 
+  });
+  
+  if (!res.ok) {
+    console.error('Failed to fetch products');
+    return { produtos: [] };
+  }
+  
+  return res.json();
+}
+
+export default async function Header() {
+  const { produtos } = await getProducts();
+  
   return (
-    <header className="w-full z-50">
-      <MenuSuspenso />
-    </header>
+    <ClientHeader initialProducts={produtos} />
   );
 }
