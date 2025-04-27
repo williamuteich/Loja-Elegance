@@ -10,7 +10,10 @@ export async function GET(request: Request) {
     const page = parseInt(url.searchParams.get("page") || "1");
     const status = url.searchParams.get("status");
     const id = url.searchParams.get('id');
-    const pageSize = 10;
+    const categoria = url.searchParams.get('categoria');
+    const precoMin = url.searchParams.get('precoMin');
+    const precoMax = url.searchParams.get('precoMax');
+    const pageSize = parseInt(url.searchParams.get("pageSize") || "10");
     const fetchAll = url.searchParams.get("fetchAll") === "true";
 
     const baseInclude = {
@@ -39,17 +42,29 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Produto não encontrado' }, { status: 404 });
       }
     } else {
-      const where: any = search
-        ? {
-            OR: [
-              { name: { contains: search, mode: "insensitive" } },
-              { description: { contains: search, mode: "insensitive" } },
-            ],
-          }
-        : {};
+      const where: any = {};
 
+      if (search) {
+        where.OR = [
+          { name: { contains: search, mode: "insensitive" } },
+        ];
+      }
       if (status !== null) {
         where.active = status === "true";
+      }
+      if (categoria) {
+        where.categories = {
+          some: {
+            category: {
+              name: categoria,
+            },
+          },
+        };
+      }
+      if (precoMin || precoMax) {
+        where.price = {};
+        if (precoMin) where.price.gte = Number(precoMin);
+        if (precoMax) where.price.lte = Number(precoMax);
       }
 
       const findOptions = {
@@ -86,15 +101,32 @@ export async function GET(request: Request) {
         : processProduct(products)
       : null;
 
+    const countWhere: any = {};
+    if (search) {
+      countWhere.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+      ];
+    }
+    if (status !== null) {
+      countWhere.active = status === "true";
+    }
+    if (categoria) {
+      countWhere.categories = {
+        some: {
+          category: {
+            name: categoria,
+          },
+        },
+      };
+    }
+    if (precoMin || precoMax) {
+      countWhere.price = {};
+      if (precoMin) countWhere.price.gte = Number(precoMin);
+      if (precoMax) countWhere.price.lte = Number(precoMax);
+    }
+
     const totalRecords = await prisma.product.count({
-      where: search
-        ? {
-            OR: [
-              { name: { contains: search, mode: "insensitive" } },
-              { description: { contains: search, mode: "insensitive" } },
-            ],
-          }
-        : {},
+      where: countWhere,
     });
 
     return NextResponse.json({

@@ -25,7 +25,20 @@ export interface Produto {
 
   export interface ProdutoProps {
     produtos: Produto[];
-  }
+}
+
+export interface ProdutosListProps {
+  produtos: Produto[];
+  totalRecords: number;
+  categorias: { id: string; name: string }[];
+  paginaAtual: number;
+  produtosPorPagina: number;
+  search: string;
+  categoria: string;
+  precoMin?: number;
+  precoMax?: number;
+  filtrosAberto?: boolean;
+}
   
   interface ProductCategoryProps {
     id: string;
