@@ -4,6 +4,10 @@ import { PrismaClient, Prisma } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
+  // DEBUG LOGS
+  console.log("[API][GET /api/publica/product]");
+  console.log("URL:", request.url);
+
   try {
     const url = new URL(request.url);
     const search = url.searchParams.get("search");
