@@ -50,7 +50,7 @@ export default function SearchHeaderItems() {
       params.set("search", searchString);
 
       const response = await fetch(
-        `/api/publica/product?${searchString ? `search=${searchString}&` : ""}`
+        `/api/privada/product?${searchString ? `search=${searchString}&` : ""}`
       );
 
       if (!response.ok) {
