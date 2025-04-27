@@ -16,7 +16,11 @@ import CheckoutHeader from "./checkoutHeader";
 import Image from 'next/image'
 import { useSession } from "next-auth/react";
 
-export default function MenuSuspenso() {
+interface MenuSuspensoProps {
+  initialProducts: any[];
+}
+
+export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
     const { data: session } = useSession();
     const pathname = usePathname();
 
@@ -115,7 +119,7 @@ export default function MenuSuspenso() {
 
                         <div className="flex gap-4 text-gray-600">
                             <Suspense>
-                                <SearchHeaderItems />
+                                <SearchHeaderItems initialProducts={initialProducts} />
                             </Suspense>
 
                             <Link
@@ -216,7 +220,7 @@ export default function MenuSuspenso() {
                         </Sheet>
 
                         <Suspense>
-                            <SearchHeaderItems />
+                            <SearchHeaderItems initialProducts={initialProducts} />
                         </Suspense>
                     </div>
 
