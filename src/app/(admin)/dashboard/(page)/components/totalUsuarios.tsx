@@ -1,9 +1,11 @@
 //import { headers } from "next/headers";
 import { FaUsers } from "react-icons/fa";
 import { cookies } from "next/headers";
+import { JSX } from "react";
 
-export default async function TotalUsuarios() {
-    const cookieHeader = cookies().toString();
+export default async function TotalUsuarios(): Promise<JSX.Element> {
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore.toString();
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/user`, {
         headers: { Cookie: cookieHeader },
         cache: "no-store"

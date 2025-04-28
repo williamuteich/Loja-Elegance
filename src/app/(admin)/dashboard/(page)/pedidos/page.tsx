@@ -33,12 +33,15 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
   if (page) query.page = page;
   const queryString = new URLSearchParams(query).toString();
 
-  const cookieHeader = cookies().toString();
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore.toString();
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/privada/order?${queryString}`,
     {
-      headers: { Cookie: cookieHeader },
-      cache: "no-store"
+      headers: {
+        Cookie: cookieHeader,
+      },
+      cache: "no-store",
     }
   );
 

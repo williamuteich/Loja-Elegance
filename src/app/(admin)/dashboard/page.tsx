@@ -4,14 +4,18 @@ import TotalProdutos from "./(page)/components/totalProdutos";
 import OrderDashboard from "./(page)/components/order";
 import GraficoDashboard from "./(page)/components/grafico";
 import { cookies } from "next/headers";
+import { JSX } from "react";
 
-export default async function Dashboard() {
-  const cookieHeader = cookies().toString();
+export default async function Dashboard(): Promise<JSX.Element> {
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore.toString();
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/privada/order`,
     {
-      headers: { Cookie: cookieHeader },
-      cache: "no-store"
+      headers: {
+        Cookie: cookieHeader,
+      },
+      cache: "no-store",
     }
   );
 

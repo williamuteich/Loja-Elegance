@@ -50,12 +50,15 @@ const createButtonConfig = (action: string, userId?: string, initialValues?: any
 import { cookies } from "next/headers";
 
 const fetchUsuarios = async (search: string, page: string, status: string) => {
-  const cookieHeader = cookies().toString();
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore.toString();
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/privada/user?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`,
     {
-      headers: { Cookie: cookieHeader },
-      cache: "no-store"
+      headers: {
+        Cookie: cookieHeader,
+      },
+      cache: "no-store",
     }
   );
 
