@@ -11,20 +11,6 @@ export async function POST(request: Request) {
 
         const email = body.email;
         const password = body.password;
-        const recaptchaToken = body.recaptchaToken;
-
-        // Validação do reCAPTCHA
-        if (!recaptchaToken) {
-            return NextResponse.json({ message: 'reCAPTCHA obrigatório' }, { status: 400 });
-        }
-        const recaptchaRes = await fetch(
-            `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`,
-            { method: 'POST' }
-        );
-        const recaptchaJson = await recaptchaRes.json();
-        if (!recaptchaJson.success) {
-            return NextResponse.json({ message: 'Falha no reCAPTCHA' }, { status: 400 });
-        }
 
         if (!email || !password) {
             return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });

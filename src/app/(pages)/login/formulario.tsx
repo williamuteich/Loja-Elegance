@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { ToastContainer, toast } from "react-toastify";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import "react-toastify/dist/ReactToastify.css";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -14,6 +14,13 @@ export default function Formulario() {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
     const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+
+    const [clientDomain, setClientDomain] = useState("");
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setClientDomain(window.location.hostname);
+        }
+    }, []);
 
     const validateForm = (data: { email: string; password: string }) => {
         const newErrors: typeof errors = {};
@@ -52,19 +59,8 @@ export default function Formulario() {
         }
 
         try {
-            const result = await signIn("credentials", {
-                ...data,
-                redirect: false,
-            });
-
-            if (result?.error) {
-                toast.error("Credenciais inválidas ou conta inativa", {
-                    position: "top-right",
-                    autoClose: 3000,
-                });
-                return;
-            }
-
+            // Primeiro valida o reCAPTCHA e autentica o usuário via /api/login
+            console.log('[LOGIN] Enviando dados para /api/login:', { ...data, recaptchaToken });
             const sessionResponse = await fetch(`/api/login`, {
                 method: "POST",
                 headers: { 
@@ -74,19 +70,42 @@ export default function Formulario() {
                 body: JSON.stringify({ ...data, recaptchaToken }),
             });
 
-            if (!sessionResponse.ok) throw new Error("Falha na autenticação");
-
             const session = await sessionResponse.json();
+            console.log('[LOGIN] Resposta de /api/login:', session);
+
+            if (!sessionResponse.ok) {
+                toast.error(session.message || "Credenciais inválidas ou conta inativa", {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+                setLoading(false);
+                return;
+            }
+
             setUserActive(session.user?.active);
 
             if (session.user?.active) {
+                // Agora sim, cria a sessão NextAuth
+                const result = await signIn("credentials", {
+                    ...data,
+                    recaptchaToken,
+                    redirect: false,
+                });
+                if (result?.error) {
+                    toast.error("Erro ao criar sessão de autenticação.", {
+                        position: "top-right",
+                        autoClose: 3000,
+                    });
+                    setLoading(false);
+                    return;
+                }
                 const redirectPath = session.user?.role === "admin" 
                     ? "/dashboard" 
                     : "/";
                 router.push(redirectPath);
             }
-
         } catch (error) {
+            console.error('[LOGIN] Erro inesperado:', error);
             toast.error("Erro inesperado. Tente novamente mais tarde.", {
                 position: "top-right",
                 autoClose: 3000,
@@ -192,11 +211,26 @@ export default function Formulario() {
                     )}
                 </button>
                 <div>
-                  <ReCAPTCHA
-                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-                    onChange={token => setRecaptchaToken(token)}
-                    className="mb-4"
-                  />
+                  <>
+  <ReCAPTCHA
+    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+    onChange={token => {
+      console.log('[reCAPTCHA] Token recebido:', token);
+      setRecaptchaToken(token);
+    }}
+    className="mb-4"
+    onErrored={() => {
+      console.error('[reCAPTCHA] Houve um erro ao renderizar o widget!');
+    }}
+    onExpired={() => {
+      console.warn('[reCAPTCHA] Token expirado!');
+    }}
+  />
+  <div style={{fontSize:'12px',color:'#888'}}>
+    <strong>DEBUG:</strong> sitekey: <code>{process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}</code><br/>
+    dominio detectado: <code>{clientDomain}</code>
+  </div>
+</>
                 </div>
             </form>
 

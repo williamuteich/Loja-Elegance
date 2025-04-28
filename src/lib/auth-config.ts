@@ -12,11 +12,21 @@ export const auth: NextAuthOptions = {
         name: { label: "username", type: "text", placeholder: "Seu Nome" },
         email: { label: "E-mail", type: "email", placeholder: "Seu E-mail" },
         password: { label: "Password", type: "password" },
+        recaptchaToken: { label: "reCAPTCHA Token", type: "text" },
       },
 
       async authorize(credentials) {
-
+        if (!credentials?.recaptchaToken) {
+          throw new Error('El token de reCAPTCHA es obligatorio.');
+        }
         try {
+          const recaptchaRes = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${credentials.recaptchaToken}`,
+            { method: 'POST' }
+          );
+          const recaptchaJson = await recaptchaRes.json();
+          if (!recaptchaJson.success) {
+            throw new Error('Error en la validación de reCAPTCHA. Por favor, intente nuevamente.');
+          }
           const response = await fetch(`${process.env.NEXTAUTH_URL}/api/login`, {
             method: "POST",
             headers: {
@@ -28,11 +38,9 @@ export const auth: NextAuthOptions = {
               password: credentials?.password,
             }),
           });
-
           if (response.ok) {
             const data = await response.json();
             const user = data.user;
-           
             if (user) {
               return {
                 id: user.id,
@@ -40,14 +48,13 @@ export const auth: NextAuthOptions = {
                 email: user.email,
                 role: user.role,
                 active: user.active,
-              } as User; 
+              } as User;
             }
           }
-
-          return null; 
+          return null;
         } catch (error) {
           console.error("Erro ao autenticar com a API:", error);
-          return null; 
+          return null;
         }
       },
     }),
