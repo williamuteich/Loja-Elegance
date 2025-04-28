@@ -27,7 +27,7 @@ export default async function CategoriesCarousel() {
     <div className="w-full py-8">
       <div className="relative w-full max-w-5xl mx-auto px-4">
         <div className="relative">
-          <ClientCategoriesCarousel categories={categories} delay={4000} />
+          <ClientCategoriesCarousel categories={categories} delay={3000} />
         </div>
       </div>
     </div>

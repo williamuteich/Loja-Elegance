@@ -53,7 +53,6 @@ export default function SearchHeaderItems({ initialProducts = [] }: SearchHeader
       setLoading(true);
       params.set("search", searchString);
       
-      // Client-side filtering using initialProducts
       const filtered = initialProducts.filter((produto) => 
         produto.name.toLowerCase().includes(searchString.toLowerCase()) &&
         produto.active && 
