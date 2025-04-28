@@ -1,7 +1,7 @@
 import { FaList } from "react-icons/fa";
 import { Suspense } from "react";
 import Container from "../components/Container";
-import ButtonAdicionar from "../components/ModalGeneric";
+import ModalCategoria from "../components/ModalCategoria";
 import ModalDeletar from "../components/ModalDeletar";
 import SearchItems from "../components/searchItems";
 import { LoadSkeleton } from "../components/loadSkeleton";
@@ -23,7 +23,7 @@ const modalConfig = (action: string, categoria?: Categoria) => ({
   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/category`,
   urlRevalidate: "/dashboard/categoria",
   method: action === "Adicionar" ? "POST" : "PUT",
-  initialValues: categoria ? { name: categoria.name, description: categoria.description } : undefined,
+  initialValues: categoria ? { name: categoria.name, description: categoria.description, imageUrl: categoria.imageUrl } : undefined,
 });
 
 const fetchCategories = async (search: string, page: string, status: string) => {
@@ -79,7 +79,7 @@ const CategoriasList = async ({ search, page, status }: { search: string; page: 
               <td className="py-3 px-4 font-medium text-sm text-gray-700">{categoria.description}</td>
               <td className="py-3 px-0 font-medium text-sm text-gray-700">
                 <div className="flex justify-end items-center space-x-3">
-                  <ButtonAdicionar config={modalConfig("Editar", categoria)} params={categoria.id} />
+                  <ModalCategoria config={modalConfig("Editar", categoria)} params={categoria.id} />
                   <ModalDeletar
                     config={{
                       id: categoria.id,
@@ -110,7 +110,7 @@ const CategoriasList = async ({ search, page, status }: { search: string; page: 
               <span className="block"><b>Descrição:</b> {categoria.description}</span>
             </div>
             <div className="flex gap-2 mt-2 justify-end">
-              <ButtonAdicionar config={modalConfig("Editar", categoria)} params={categoria.id} />
+              <ModalCategoria config={modalConfig("Editar", categoria)} params={categoria.id} />
               <ModalDeletar
                 config={{
                   id: categoria.id,
@@ -150,7 +150,7 @@ export default async function Categoria({ searchParams }: { searchParams: Promis
       </div>
       <CategoriasWrapper search={search} page={page} status={status} />
       <div className="mt-5 flex justify-between">
-        <ButtonAdicionar config={modalConfig("Adicionar")} />
+        <ModalCategoria config={modalConfig("Adicionar")} />
       </div>
     </Container>
   );

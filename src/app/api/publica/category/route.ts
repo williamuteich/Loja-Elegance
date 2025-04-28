@@ -36,7 +36,8 @@ export async function GET(request: Request) {
     if (fetchAll) {
       categories = await prisma.category.findMany({
         where,
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
+        select: { id: true, name: true, imageUrl: true },
       });
     } else {
       const skip = (page - 1) * pageSize;
@@ -44,6 +45,7 @@ export async function GET(request: Request) {
         where,
         skip,
         take: pageSize,
+        select: { id: true, name: true, imageUrl: true },
       });
     }
 

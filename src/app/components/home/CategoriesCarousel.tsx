@@ -3,7 +3,7 @@ import { ClientCategoriesCarousel } from "./ClientCategoriesCarousel";
 
 async function getCategories() {
   try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/category?fetchaAll=true`, {
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/category?fetchAll=true`, {
       cache: 'no-store'
     });
     
@@ -22,9 +22,10 @@ async function getCategories() {
 
 export default async function CategoriesCarousel() {
   const data = await getCategories();
+
   const categories = data.category || [];
   return (
-    <div className="w-full py-8">
+    <div className="w-full py-4">
       <div className="relative w-full max-w-5xl mx-auto px-4">
         <div className="relative">
           <ClientCategoriesCarousel categories={categories} delay={4000} />

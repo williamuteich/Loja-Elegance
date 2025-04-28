@@ -74,7 +74,8 @@ export async function POST(request: Request) {
         const category = await prisma.category.create({
             data: {
                 name: body.name,
-                description: body.description
+                description: body.description,
+                imageUrl: body.imageUrl || null
             }
         });
 
@@ -99,7 +100,8 @@ export async function PUT(request: Request) {
             where: { id: body.id },
             data: {
                 name: body.name,
-                description: body.description
+                description: body.description,
+                imageUrl: body.imageUrl || null
             }
         });
 
@@ -120,9 +122,27 @@ export async function DELETE(request: Request) {
     try {
         const { id } = await request.json();
 
+        // Busca a categoria antes de deletar para pegar a imagem
+        const categoryToDelete = await prisma.category.findUnique({ where: { id } });
+
+        // Deleta a categoria do banco
         const category = await prisma.category.delete({
             where: { id }
-        })
+        });
+
+        // Remove a imagem do disco, se existir
+        if (categoryToDelete?.imageUrl) {
+            try {
+                const imagePath = categoryToDelete.imageUrl.startsWith("/categoriesImg/")
+                    ? require('path').join(process.cwd(), 'public', categoryToDelete.imageUrl)
+                    : null;
+                if (imagePath) {
+                    await require('fs/promises').unlink(imagePath);
+                }
+            } catch (imgErr) {
+                console.error("Erro ao remover imagem da categoria:", imgErr);
+            }
+        }
 
         return NextResponse.json({ message: 'Category deleted successfully', data: category }, { status: 200 });
     } catch (err) {
