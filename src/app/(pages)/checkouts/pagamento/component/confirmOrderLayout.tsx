@@ -20,12 +20,14 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSession } from "next-auth/react";
 
+import type { PickupLocation } from "@/types/pickupLocation";
+
 type Props = {
   cart: CartItem[];
   pagamento: string;
   finalCashInfo: { cashInHand: string; change: number };
   pagamentoDetalhado: string;
-  pickupLocation: { id: string; title: string; description: string };
+  pickupLocation: PickupLocation;
 };
 
 type Country = {

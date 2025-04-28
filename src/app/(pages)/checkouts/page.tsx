@@ -14,7 +14,6 @@ export default function CheckoutProduto() {
   const [isMounted, setIsMounted] = useState(false);
   const [localEndereco, setLocalEndereco] = useState<string | null>(null);
   const [selectedPickupLocation, setSelectedPickupLocation] = useState<string | null>(null);
-
   const {
     formState: { errors },
   } = useForm<FormData>();

@@ -42,8 +42,6 @@ export async function POST(request: Request) {
         id: passwordReset.id
       }
     });
-
-    console.log("senha atualizada com sucesso");
     
     return NextResponse.json({ message: 'Contraseña actualizada con éxito' }, { status: 200 });
   } catch (error) {

@@ -70,7 +70,6 @@ export default function Formulario() {
             });
 
             const session = await sessionResponse.json();
-            console.log('[LOGIN] Resposta de /api/login:', session);
 
             if (!sessionResponse.ok) {
                 toast.error(session.message || "Credenciais inválidas ou conta inativa", {
@@ -211,7 +210,6 @@ export default function Formulario() {
                         <ReCAPTCHA
                             sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
                             onChange={token => {
-                                console.log('[reCAPTCHA] Token recebido:', token);
                                 setRecaptchaToken(token);
                             }}
                             className="mb-4"
