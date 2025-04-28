@@ -151,20 +151,20 @@ export default function Footer() {
   <h3 className="font-semibold mb-4">Formas de pago</h3>
   <ul className="space-y-2 text-sm">
     <li className="flex items-center gap-2">
-      {/* ABITAB o RED PAGOS - solo texto */}
+   
       <span className="inline-block bg-pink-100 text-pink-600 rounded-full px-2 py-1 text-xs font-semibold">Depósito en ABITAB o RED PAGOS</span>
     </li>
     <li className="flex items-center gap-2">
-      {/* Transferencia bancaria - solo texto */}
+     
       <span className="inline-block bg-blue-100 text-blue-600 rounded-full px-2 py-1 text-xs font-semibold">Transferencia bancaria</span>
     </li>
     <li className="flex items-center gap-2">
-      {/* Tarjeta de crédito (Mercado Pago) */}
+    
       <Image src="/mercadoPago.svg" alt="Mercado Pago" width={24} height={24} className="h-6 w-auto" />
       <span className="text-xs font-semibold">Tarjeta de crédito (Mercado Pago)</span>
     </li>
     <li className="flex items-center gap-2">
-      {/* PIX */}
+     
       <Image src="/pix.svg" alt="Pix" width={24} height={24} className="h-6 w-auto" />
       <span className="text-xs font-semibold">PIX</span>
     </li>
