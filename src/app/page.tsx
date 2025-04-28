@@ -5,6 +5,7 @@ import Produtos from "./(pages)/produtos/components/produtos";
 import { Promocao } from "./(pages)/produtos/components/promocao";
 import ListAllProdutos from "./(pages)/produtos/components/listAllProdutos";
 import BannerHome from "./components/home/bannerHome";
+import CategoriesCarousel from "./components/home/CategoriesCarousel";
 import { Banners } from "./components/home/carousel/banners";
 
 export default async function Home() {
@@ -14,6 +15,7 @@ export default async function Home() {
   return (
     <div className="text-red-800">
       <Banners/>
+      <CategoriesCarousel />
       <Promocao produtos={res.produtos} /> 
       <Container >
         <Produtos produtos={res.produtos} titulo="Productos Destacados" isDestaque={true}/>
