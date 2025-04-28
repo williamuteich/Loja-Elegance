@@ -59,8 +59,7 @@ export default function Formulario() {
         }
 
         try {
-            // Primeiro valida o reCAPTCHA e autentica o usuário via /api/login
-            console.log('[LOGIN] Enviando dados para /api/login:', { ...data, recaptchaToken });
+            
             const sessionResponse = await fetch(`/api/login`, {
                 method: "POST",
                 headers: {
@@ -103,6 +102,7 @@ export default function Formulario() {
                     ? "/dashboard"
                     : "/";
                 router.push(redirectPath);
+                // Não chama setLoading(false) aqui! O loading continua até o redirect.
             }
         } catch (error) {
             console.error('[LOGIN] Erro inesperado:', error);
@@ -110,7 +110,6 @@ export default function Formulario() {
                 position: "top-right",
                 autoClose: 3000,
             });
-        } finally {
             setLoading(false);
         }
     }
