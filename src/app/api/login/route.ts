@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
     try {
-        const body = await request.json(); 
+        const body = await request.json();
 
         const email = body.email;
         const password = body.password;
@@ -40,24 +40,24 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: 'Invalid password' }, { status: 401 });
         }
 
-        if(user.active === false) {
+        if (user.active === false) {
             return NextResponse.json({ message: "Necessária Validação de Email", active: user.active }, { status: 401 });
         }
 
-      
+
         const token = `${user.id}-${user.email}-${Date.now()}`;
 
-  
-        (await
-          
-            cookies()).set('auth_token', token, {
-            httpOnly: true,
-            path: '/',
-            sameSite: 'lax',
-            secure: true 
-        });
 
-        return NextResponse.json({ 
+        (await
+
+            cookies()).set('auth_token', token, {
+                httpOnly: true,
+                path: '/',
+                sameSite: 'lax',
+                secure: true
+            });
+
+        return NextResponse.json({
             message: 'User authenticated successfully',
             user: {
                 id: user.id,
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
                 active: user.active
             }
         }, { status: 200 });
-        
+
     } catch (err) {
         return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
     }
