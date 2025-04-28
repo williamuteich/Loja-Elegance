@@ -6,12 +6,14 @@ import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
 import Link from "next/link";
 import "react-toastify/dist/ReactToastify.css";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export default function Formulario() {
     const router = useRouter();
     const [userActive, setUserActive] = useState<boolean | undefined>();
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+    const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
 
     const validateForm = (data: { email: string; password: string }) => {
         const newErrors: typeof errors = {};
@@ -40,6 +42,15 @@ export default function Formulario() {
             return;
         }
 
+        if (!recaptchaToken) {
+            toast.error("Por favor, marque o reCAPTCHA para continuar.", {
+                position: "top-right",
+                autoClose: 3000,
+            });
+            setLoading(false);
+            return;
+        }
+
         try {
             const result = await signIn("credentials", {
                 ...data,
@@ -60,7 +71,7 @@ export default function Formulario() {
                     "Content-Type": "application/json",
                     "X-CSRF-Protection": "1"
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify({ ...data, recaptchaToken }),
             });
 
             if (!sessionResponse.ok) throw new Error("Falha na autenticação");
@@ -147,7 +158,7 @@ export default function Formulario() {
 
                 <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || !recaptchaToken}
                     className={`w-full py-3 bg-pink-700 text-white font-semibold uppercase rounded-md transition-all ${
                         loading ? "opacity-75 cursor-not-allowed" : "hover:bg-pink-600"
                     }`}
@@ -180,6 +191,13 @@ export default function Formulario() {
                         "Iniciar sesión"
                     )}
                 </button>
+                <div>
+                  <ReCAPTCHA
+                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                    onChange={token => setRecaptchaToken(token)}
+                    className="mb-4"
+                  />
+                </div>
             </form>
 
             <div className="mt-4 text-center">

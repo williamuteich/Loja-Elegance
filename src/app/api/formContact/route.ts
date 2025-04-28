@@ -76,6 +76,20 @@ export async function POST(request: Request) {
     try {
         const body = await request.json()
 
+        // Validação do reCAPTCHA
+        const recaptchaToken = body.recaptchaToken;
+        if (!recaptchaToken) {
+            return NextResponse.json({ message: 'reCAPTCHA obrigatório' }, { status: 400 });
+        }
+        const recaptchaRes = await fetch(
+            `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`,
+            { method: 'POST' }
+        );
+        const recaptchaJson = await recaptchaRes.json();
+        if (!recaptchaJson.success) {
+            return NextResponse.json({ message: 'Falha no reCAPTCHA' }, { status: 400 });
+        }
+
         if (!body.name || !body.email || !body.telefone || !body.assunto || !body.mensagem) {
             return NextResponse.json({ message: "name, email, assunto and messagem are required" }, { status: 400 })
         }

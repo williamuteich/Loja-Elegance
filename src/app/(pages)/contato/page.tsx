@@ -2,9 +2,11 @@
 import Image from "next/image";
 import { ToastContainer, toast } from "react-toastify";
 import { FormEvent, useState } from 'react'
+import ReCAPTCHA from "react-google-recaptcha";
 
 export default function Contato() {
     const [loading, setLoading] = useState(false)
+    const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
 
     async function onSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -16,8 +18,15 @@ export default function Contato() {
             formObject[key] = value.toString();
         });
 
-        const jsonData = JSON.stringify(formObject);
+        if (!recaptchaToken) {
+            toast.error("Por favor, marque o reCAPTCHA para continuar.", {
+                position: "top-center",
+                autoClose: 3000
+            });
+            return;
+        }
 
+        const jsonData = JSON.stringify({ ...formObject, recaptchaToken });
         setLoading(true);
 
         try {
@@ -126,10 +135,17 @@ export default function Contato() {
                                 name="mensagem"
                                 className="w-full border border-gray-300 rounded-lg p-2 focus:outline-pink-800 h-32"
                             ></textarea>
+                            <div>
+                                <ReCAPTCHA
+                                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                                    onChange={(token: string | null) => setRecaptchaToken(token)}
+                                    className="mb-4"
+                                />
+                            </div>
                             <button
                                 type="submit"
                                 className={`bg-pink-800 text-white font-bold py-2 px-6 rounded-lg hover:bg-pink-700 ${loading ? "cursor-not-allowed opacity-50" : ""}`}
-                                disabled={loading}
+                                disabled={loading || !recaptchaToken}
                             >
                                 {loading ? (
                                     <div className="flex justify-center items-center space-x-2">
