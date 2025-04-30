@@ -1,18 +1,30 @@
 import ClientHeader from "./components/ClientHeader";
-import { prisma } from "@/lib/prisma"; 
 
 async function getProducts() {
+  const apiUrl = `${process.env.NEXTAUTH_URL}/api/privada/product?fetchAll=true`;
+  console.log(`Fetching products from: ${apiUrl}`); // Log para debug no build
+
   try {
-    // Fetch products directly from the database using Prisma
-    const produtos = await prisma.product.findMany({
-      // Add any necessary conditions or selections here, e.g.,
-      // where: { active: true },
-      // include: { variants: true } // If needed by ClientHeader
+    const res = await fetch(apiUrl, {
+      next: { revalidate: 3600 } 
     });
-    return { produtos }; // Return in the expected structure
+    
+    if (!res.ok) {
+     
+      let errorBody = '';
+      try {
+        errorBody = await res.text();
+      } catch (_) { }
+      console.error(`Failed to fetch products: ${res.status} ${res.statusText}`, errorBody);
+      return { produtos: [] };
+    }
+    
+    return res.json();
+
   } catch (error) {
-    console.error('Failed to fetch products directly:', error);
-    return { produtos: [] }; // Return empty array on error
+   
+    console.error('Network or fetch error in getProducts:', error);
+    return { produtos: [] }; 
   }
 }
 
