@@ -1,5 +1,5 @@
 import { SendEmail } from "@/infra/SendEmail";
-import { MyTemplate } from "transactional/emails/emailContact";
+import { MyTemplate } from "@/packages/transactional/emails/emailContact";
 
 export class SendWelcomeEmail {
   async execute(toEmail: string, message: string) {
