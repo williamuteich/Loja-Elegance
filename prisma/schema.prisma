@@ -1,0 +1,213 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String     @unique
+  password  String
+  role      String     @default("user")
+  active    Boolean    @default(true)
+  telefone  String?
+  verificationToken        String?
+  verificationTokenExpires DateTime?
+  resetToken         String?   @unique
+  resetTokenExpires  DateTime?
+  enderecos Endereco[] @relation("UserEnderecos")
+  orders    Order[]
+  passwordReset PasswordReset?
+}
+
+
+model Product {
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  description     String
+  price           Float
+  priceOld        Float?
+  active          Boolean           @default(true)
+  onSale          Boolean           @default(false)
+  destaque        Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  brandId         String            @db.ObjectId
+  brand           Brand             @relation(fields: [brandId], references: [id])
+  categories      ProductCategory[]
+  imagePrimary    String?
+  imagesSecondary String[]
+  features        String?
+  orderItems      OrderItem[]
+  variants        ProductVariant[]
+}
+
+model Brand {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  logo        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Category {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  imageUrl    String?           
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  products    ProductCategory[]
+}
+
+model ProductCategory {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId  String   @db.ObjectId
+  categoryId String   @db.ObjectId
+  product    Product  @relation(fields: [productId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+}
+
+model Stock {
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  quantity  Int            @default(0)
+  variant   ProductVariant @relation(fields: [variantId], references: [id])
+  variantId String         @unique @db.ObjectId
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model Color {
+  id       String           @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  hexCode  String           @unique
+  variants ProductVariant[]
+}
+
+model ProductVariant {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  productId String    @db.ObjectId
+  colorId   String    @db.ObjectId
+  stock     Stock?    @relation()
+  product   Product   @relation(fields: [productId], references: [id])
+  color     Color     @relation(fields: [colorId], references: [id])
+
+  OrderItem OrderItem[]
+}
+
+model config {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  value     String?
+  url       String?
+  type      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Faq {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  question  String
+  response  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Formulario {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  email      String
+  telefone   String
+  assunto    String
+  mensagem   String
+  resposta   String?
+  respondido Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Banner {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  imageUrl  String
+  active    Boolean  @default(true)
+  alt       String
+  link      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Endereco {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  cep         String
+  logradouro  String
+  numero      String
+  complemento String?
+  bairro      String
+  cidade      String
+  estado      String
+  pais        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String   @db.ObjectId
+  user        User     @relation("UserEnderecos", fields: [userId], references: [id])
+}
+
+model Order {
+  id               String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId           String   @db.ObjectId
+  user             User     @relation(fields: [userId], references: [id])
+  total            Float
+  paymentMethod    String         
+  paymentDetail    String?         
+  pickupLocationId String @db.ObjectId
+  status           String         
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  items            OrderItem[]
+  pickupLocation   DeliveryOption  @relation(fields: [pickupLocationId], references: [id])
+}
+
+model OrderItem {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  orderId       String        @db.ObjectId
+  order         Order         @relation(fields: [orderId], references: [id])
+  productId     String        @db.ObjectId
+  product       Product       @relation(fields: [productId], references: [id])
+  productVariantId String?    @db.ObjectId 
+  productVariant ProductVariant? @relation(fields: [productVariantId], references: [id])
+  quantity      Int
+  price         Float
+  total         Float
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([orderId, productId, productVariantId]) 
+}
+
+model DeliveryOption {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  Order Order[]
+}
+
+model PasswordReset {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @unique @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+} 

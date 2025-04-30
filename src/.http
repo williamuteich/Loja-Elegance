@@ -1,0 +1,17 @@
+### 
+DELETE http://localhost:3000/api/user HTTP/1.1
+content-type: application/json,
+Authorization: Bearer eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..9yQ04ZWBn0foaV7M.GKmFrw-q_MbHkOU1KxehFl1OMh5jFPLfce8OCSSBcfHNFlKXFgdIp9ULBYQQnANbJeUWkGnPvBCdS8a1UOBnVupweg3nYV3jInRScwvH43eVCwXeSYSq56UjMZ3eEw2bu1AQQYdRcigj7_5B6qreG1FXd8bcI6fsKhzHe1qt_TARVydyc9Ld9zeWjlxMr3xrm8Kc2mpqsZUMwfj3uFy7sGnEi-tLB3olBrL7Vbyyt0s8eB65C266CXdFZbe4UOftY3jmh9hcZPh4PbroaFFZjq-t4Xl1OMYa2LbdiZAOMDKxLIXTQ1j-OBKYmG3N2P-P9hRLnSwDglc.Nu4BqfbvgOpOcDXQ-Dngsg
+
+{
+    "id": "67b65a4fa8844f362bb4dfa1"
+}
+
+###
+GET http://localhost:3000/api/user HTTP/1.1
+content-type: application/json,
+Authorization: Bearer eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..YpeYMxrbc9gLtVDz.85XOsHyeD_9RGYhPFevzDax6SUDbsAJa0GFtAaM1COeUc7gcvKVyCcVUBxQZfEdQQDlu-gyVIsF9VVaxAtJotByLpf_Gd7NHfO4StXsUSxEmlLkGzw9E-nHlLWfQRPnb_i1ibpSD0UDSQPjdU6l3xZb4aPvmJnS_u6wbWWLQsphoTR_B5INEtwiVHaHsXHP_ZlAD7ZFgAJ7FFdRtcuS3-JUKuzDTkba8pRNDU_WOimlkayVkosWqDAuJfC8jaU99rkTJCBIYBXh_3Hm6C6U4nZss5WGh7CNupoo36_P4QGdUerR7Maha5d7yfKCx5SZ5BjCMd9O8WsE.V5psIEcxKE0UmDVID8sXHw
+
+{
+    "id": "67b6523ca8844f362bb4df9d"
+}
