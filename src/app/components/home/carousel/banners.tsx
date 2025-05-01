@@ -13,7 +13,7 @@ export async function Banners() {
 
     return (
         <div>
-            <div className="bg-slate-800">
+            <div className="bg-[#b11a48]">
                 <BannersClient banners={banners} />
             </div>
             <SubBannerHeader />

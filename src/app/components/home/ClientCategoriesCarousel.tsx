@@ -28,7 +28,7 @@ export function ClientCategoriesCarousel({ categories, delay = 4000 }: { categor
             key={cat.id}
             className="flex flex-col items-center basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/6 max-w-[150px]"
           >
-            <Link href={`/produtos?categoria=${cat.name}`}>
+            <Link href={`/produtos?categoria=${encodeURIComponent(cat.name).replace(/%20/g, '+')}`}>
               <div className="group relative min-w-min flex flex-col items-center">
                 <div className="w-[80px] h-[80px] flex cursor-pointer items-center justify-center rounded-full bg-pink-100 border-2 border-pink-100 shadow-md hover:border-pink-300 transition-all duration-200 overflow-hidden">
                   {cat.imageUrl ? (
