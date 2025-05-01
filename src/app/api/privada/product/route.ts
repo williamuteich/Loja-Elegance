@@ -523,7 +523,7 @@ export async function PUT(request: Request) {
         await tx.productCategory.deleteMany({
           where: { 
             productId: body.id, 
-            categoryId: { in: categoriesToRemove } 
+            categoryId: { in: categoriesToRemove.filter((id: string | null) => id !== null) as string[] }
           }
         });
       }
