@@ -1,12 +1,15 @@
 import { Wallet, CreditCard, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PickupLocation } from "../../../../../../types/pickupLocation";
 
 interface PaymentSelectionProps {
   pagamento: string;
   setPagamento: (value: string) => void;
+  selectedPickupLocation?: PickupLocation;
 }
 
-export default function PaymentSelection({ pagamento, setPagamento }: PaymentSelectionProps) {
+export default function PaymentSelection({ pagamento, setPagamento, selectedPickupLocation }: PaymentSelectionProps) {
+
   return (
     <Card className="mb-6 border border-gray-200 shadow-sm">
       <CardHeader>
@@ -14,7 +17,10 @@ export default function PaymentSelection({ pagamento, setPagamento }: PaymentSel
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {["dinheiro", "outros"].map((tipo) => (
+          {[
+            ...(selectedPickupLocation?.category === 'Retiro en tienda' ? ["dinheiro"] : []),
+            "outros"
+          ].map((tipo) => (
             <label
               key={tipo}
               className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${

@@ -11,6 +11,7 @@ interface SelectedPickupLocation {
   id: string;
   title: string;
   description?: string;
+  category: string;
 }
 
 export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetiradaProps) {
@@ -87,7 +88,7 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
                   id={location.id}
                   checked={selectedOption ? selectedOption.id === location.id : false}
                   onCheckedChange={(checked) => {
-                    setSelectedOption(checked ? { id: location.id, title: location.title, description: location.description } : null);
+                    setSelectedOption(checked ? { id: location.id, title: location.title, description: location.description, category: location.category } : null);
                   }}
                   className="mt-1 w-4 h-4 border-2 border-gray-300 rounded-lg checked:bg-pink-600 checked:border-pink-600"
                 />
@@ -127,7 +128,7 @@ export default function LocalRetirada({ setSelectedPickupLocation }: LocalRetira
                     id={location.id}
                     checked={selectedOption ? selectedOption.id === location.id : false}
                     onCheckedChange={(checked) => {
-                      setSelectedOption(checked ? { id: location.id, title: location.title, description: location.description} : null);
+                      setSelectedOption(checked ? { id: location.id, title: location.title, description: location.description, category: location.category } : null);
                     }}
                     className="mt-1 w-4 h-4 border-2 border-gray-300 rounded-lg checked:bg-pink-600 checked:border-pink-600"
                   />

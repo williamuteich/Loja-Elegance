@@ -9,12 +9,7 @@ import PaymentModal from "./component/paymentModal";
 import CashModal from "./component/cashModal";
 import ConfirmOrderLayout from "./component/confirmOrderLayout";
 import CarrinhoVazio from "../component/carrinhoVazio";
-
-type PickupLocation = {
-  id: string;
-  title: string;
-  description: string;
-}
+import { PickupLocation } from "../../../../../types/pickupLocation";
 
 export default function CheckoutPagamento() {
   const [pagamento, setPagamento] = useState("");
@@ -68,7 +63,7 @@ export default function CheckoutPagamento() {
   return (
     <div className="flex flex-col md:flex-row gap-6 max-w-4xl mx-auto p-6">
       <div className="w-full md:w-1/2">
-        <PaymentSelection pagamento={pagamento} setPagamento={setPagamento} />
+        <PaymentSelection pagamento={pagamento} setPagamento={setPagamento} selectedPickupLocation={pickupLocation ?? undefined} />
       </div>
       <div className="w-full md:w-1/2">
         <ResumoPedido cart={cart} />
