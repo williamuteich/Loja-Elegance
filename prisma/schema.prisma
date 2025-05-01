@@ -69,9 +69,9 @@ model Category {
 model ProductCategory {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   productId  String   @db.ObjectId
-  categoryId String   @db.ObjectId
+  categoryId String?   @db.ObjectId
   product    Product  @relation(fields: [productId], references: [id])
-  category   Category @relation(fields: [categoryId], references: [id])
+  category   Category? @relation(fields: [categoryId], references: [id])
 }
 
 model Stock {
