@@ -22,6 +22,7 @@ interface MenuSuspensoProps {
 
 export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
     const { data: session } = useSession();
+    const [open, setOpen] = useState(false);
     const pathname = usePathname();
 
     const [isFixed, setIsFixed] = useState(false);
@@ -123,9 +124,9 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                             </Suspense>
 
                             <Link
-                                href={session ? "/profile" : "/login"}
+                                href={session?.user ? '/profile' : '/login'}
                                 className="hover:text-pink-600 transition-colors duration-300"
-                                aria-label={session ? "Perfil" : "Iniciar sesión"}
+                                aria-label={session?.user ? "Perfil" : "Iniciar sesión"}
                             >
                                 <User className="w-6 h-6" />
                             </Link>
@@ -141,7 +142,7 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
             >
                 <div className="flex justify-between md:hidden max-w-[1400px] mx-auto w-full px-4 py-4 bg-white text-gray-900 font-bold shadow-md">
                     <div className="flex justify-between items-center gap-4">
-                        <Sheet>
+                        <Sheet open={open} onOpenChange={setOpen}>
                             <SheetTrigger asChild>
 
                                 <button
@@ -169,6 +170,7 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                                             href="/"
                                             title="Inicio"
                                             aria-label="Inicio"
+                                            onClick={() => setOpen(false)}
                                             className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                                         >
                                             <Home className="w-6 h-6" aria-hidden="true" />
@@ -179,6 +181,7 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                                             href="/produtos"
                                             title="Productos"
                                             aria-label="Productos"
+                                            onClick={() => setOpen(false)}
                                             className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                                         >
                                             <Package className="w-6 h-6" aria-hidden="true" />
@@ -189,6 +192,7 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                                             href="/promocoes"
                                             title="Promociones"
                                             aria-label="Promociones"
+                                            onClick={() => setOpen(false)}
                                             className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                                         >
                                             <Tag className="w-6 h-6" aria-hidden="true" />
@@ -199,6 +203,7 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                                             href="/contato"
                                             title="Contacto"
                                             aria-label="Contacto"
+                                            onClick={() => setOpen(false)}
                                             className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                                         >
                                             <Phone className="w-6 h-6" aria-hidden="true" />
@@ -209,6 +214,7 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                                             href="/faq"
                                             title="FAQ"
                                             aria-label="FAQ"
+                                            onClick={() => setOpen(false)}
                                             className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal"
                                         >
                                             <HelpCircle className="w-6 h-6" aria-hidden="true" />
