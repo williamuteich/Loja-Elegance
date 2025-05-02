@@ -22,7 +22,7 @@ export default async function ProdutosPage({ searchParams }: { searchParams: Pro
 
   const productResponse = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/product?${params.toString()}`,
-    { cache: 'no-store' }
+    { next: { revalidate: 300 } }
   );
   if (!productResponse.ok) {
     throw new Error('Falha ao buscar produtos');
@@ -31,7 +31,7 @@ export default async function ProdutosPage({ searchParams }: { searchParams: Pro
 
   const categoryResponse = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/category?fetchAll=true`,
-    { cache: 'no-store' }
+    { next: { revalidate: 300 } }
   );
   if (!categoryResponse.ok) {
     throw new Error('Falha ao buscar categorias');
