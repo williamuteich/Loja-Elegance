@@ -2,14 +2,13 @@ import { Produto } from "@/utils/types/produto";
 import ProdutosList from "./components/ProdutosList";
 
 export default async function ProdutosPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-
   const paramsObj = await searchParams;
   const search = typeof paramsObj.search === "string" ? paramsObj.search : "";
   const categoria = typeof paramsObj.categoria === "string" ? paramsObj.categoria : "";
   const precoMin = typeof paramsObj.precoMin === "string" ? paramsObj.precoMin : "";
   const precoMax = typeof paramsObj.precoMax === "string" ? paramsObj.precoMax : "";
   const page = typeof paramsObj.page === "string" && !isNaN(Number(paramsObj.page)) ? Number(paramsObj.page) : 1;
-  const produtosPorPagina = 12;
+  const produtosPorPagina = 10; // Definir o número de produtos por página
 
   const params = new URLSearchParams();
   if (search) params.set("search", search);
@@ -18,7 +17,8 @@ export default async function ProdutosPage({ searchParams }: { searchParams: Pro
   if (precoMax) params.set("precoMax", precoMax);
   params.set("page", page.toString());
   params.set("pageSize", produtosPorPagina.toString());
-
+  params.set("random", "true"); // Garantir que os produtos serão aleatórios
+  params.set("randomLimit", produtosPorPagina.toString()); // Limitar a 10 produtos
 
   const productResponse = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/product?${params.toString()}`,

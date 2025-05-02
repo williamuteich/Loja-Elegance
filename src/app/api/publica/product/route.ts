@@ -15,6 +15,8 @@ export async function GET(request: Request) {
     const precoMax = url.searchParams.get('precoMax');
     const pageSize = parseInt(url.searchParams.get("pageSize") || "10");
     const fetchAll = url.searchParams.get("fetchAll") === "true";
+    const random = url.searchParams.get("random") === "true";
+    const randomLimit = parseInt(url.searchParams.get("randomLimit") || "10", 10);
 
     const baseInclude = {
       brand: true,
@@ -32,16 +34,43 @@ export async function GET(request: Request) {
     };
 
     let products;
-    if (id) {
-      products = await prisma.product.findUnique({
-        where: { id },
+
+    if (random) {
+      const where: any = { active: true };
+
+      if (search) {
+        where.OR = [
+          { name: { contains: search, mode: "insensitive" } },
+        ];
+      }
+      if (categoria) {
+        where.categories = {
+          some: {
+            category: {
+              name: categoria,
+            },
+          },
+        };
+      }
+      if (precoMin || precoMax) {
+        where.price = {};
+        if (precoMin) where.price.gte = Number(precoMin);
+        if (precoMax) where.price.lte = Number(precoMax);
+      }
+
+      const allProducts = await prisma.product.findMany({
+        where,
         include: baseInclude,
+        orderBy: { createdAt: Prisma.SortOrder.desc },
       });
 
-      if (!products) {
-        return NextResponse.json({ error: 'Produto não encontrado' }, { status: 404 });
-      }
+      // Embaralha e pega os produtos aleatórios
+      const shuffled = allProducts.sort(() => Math.random() - 0.5);
+      const produtos = shuffled.slice(0, randomLimit);
+
+      return NextResponse.json({ produtos, totalRecords: allProducts.length }, { status: 200 });
     } else {
+      // Caso não seja aleatório, retorna paginando os produtos
       const where: any = {};
 
       if (search) {
@@ -70,7 +99,7 @@ export async function GET(request: Request) {
       const findOptions = {
         where,
         include: baseInclude,
-        orderBy: { createdAt: "desc" } as const,
+        orderBy: { createdAt: Prisma.SortOrder.desc },
       };
 
       if (fetchAll) {

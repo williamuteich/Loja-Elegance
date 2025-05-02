@@ -2,7 +2,6 @@ import ClientHeader from "./components/ClientHeader";
 
 async function getProducts() {
   const apiUrl = `${process.env.NEXTAUTH_URL}/api/privada/product?fetchAll=true`;
-  console.log(`Fetching products from: ${apiUrl}`); // Log para debug no build
 
   try {
     const res = await fetch(apiUrl, {

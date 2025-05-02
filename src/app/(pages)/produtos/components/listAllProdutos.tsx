@@ -5,21 +5,20 @@ import Link from "next/link";
 import { FaShoppingBag } from "react-icons/fa";
 
 export default async function ListAllProdutos() {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product`, { next: {revalidate: 800 } });
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?random=true&randomLimit=15`, { next: { revalidate: 800 } });
 
     if (!response.ok) {
         throw new Error("Erro ao buscar produtos");
     }
 
     const { produtos }: { produtos: Produto[] } = await response.json();
-    const produtosAleatorios = produtos
-        .filter(produto => produto.active)
-        .filter(produto =>
-            produto.variants.some((variant: {
-                availableStock: number; stock: { quantity: number; };
-            }) => variant.availableStock > 0)
+ 
+    const produtosAleatorios = produtos.filter(produto =>
+        Array.isArray(produto.variants) &&
+        produto.variants.some((variant: any) =>
+            (variant.availableStock ?? variant.stock?.quantity ?? 0) > 0
         )
-        .sort(() => Math.random() - 0.5);
+    );
 
     return (
         <div className="mx-auto py-10 sm:px-0">
@@ -30,7 +29,8 @@ export default async function ListAllProdutos() {
                 {produtosAleatorios.length > 0 ? (
                     produtosAleatorios.map((produto: Produto) => {
                         const totalEstoque = produto.variants.reduce(
-                            (total: number, variant: VariantProps) => total + (variant.availableStock || 0), 0
+                            (total: number, variant: VariantProps) =>
+                                total + (variant.availableStock ?? variant.stock?.quantity ?? 0), 0
                         );
 
                         const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
@@ -117,7 +117,7 @@ export default async function ListAllProdutos() {
                         );
                     })
                 ) : (
-                    <div className="text-red-800 pl-10">Nenhum produto encontrado</div>
+                    <div className="text-red-800 pl-10">No se encontró ningún producto</div>
                 )}
             </div>
 

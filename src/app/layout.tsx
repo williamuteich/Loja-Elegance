@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'Elegance Ecommerce é uma loja virtual de produtos de qualidade e bom gosto.',
   icons: {
     icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
+    //shortcut: '/favicon-16x16.png',
     apple: '/apple-touch-icon.png'
   },
   keywords: [
