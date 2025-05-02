@@ -18,6 +18,7 @@ export async function GET(request: Request) {
     const random = url.searchParams.get("random") === "true";
     const randomLimit = parseInt(url.searchParams.get("randomLimit") || "10", 10);
 
+    
     const baseInclude = {
       brand: true,
       categories: {
