@@ -28,7 +28,6 @@ export async function GET(request: Request) {
 
     let products: any;
 
-    // 1️⃣ Se veio um ID, busca somente esse produto
     if (id) {
       products = await prisma.product.findUnique({
         where: { id },
@@ -42,7 +41,7 @@ export async function GET(request: Request) {
         );
       }
     } else {
-      // 2️⃣ Monta filtros comuns
+ 
       const where: any = {};
       if (search) {
         where.OR = [{ name: { contains: search, mode: "insensitive" } }];
@@ -61,14 +60,13 @@ export async function GET(request: Request) {
         if (precoMax) where.price.lte = Number(precoMax);
       }
 
-      // 3️⃣ Random ou paginação/fetchAll
       if (random) {
         const allProducts = await prisma.product.findMany({
           where,
           include: baseInclude,
           orderBy: { createdAt: Prisma.SortOrder.desc },
         });
-        // embaralha e pega só até randomLimit
+
         const shuffled = allProducts.sort(() => Math.random() - 0.5);
         products = shuffled.slice(0, randomLimit);
       } else {
@@ -89,7 +87,6 @@ export async function GET(request: Request) {
       }
     }
 
-    // 4️⃣ Processa para adicionar availableStock em cada variante
     const processProduct = (product: any) => ({
       ...product,
       variants: product.variants.map((variant: any) => ({
@@ -102,7 +99,6 @@ export async function GET(request: Request) {
       ? products.map(processProduct)
       : processProduct(products);
 
-    // 5️⃣ Conta total para paginação (ignora `id` e `random`, pois só importa quando listando)
     const countWhere: any = {};
     if (search) {
       countWhere.OR = [{ name: { contains: search, mode: "insensitive" } }];
