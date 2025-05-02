@@ -34,7 +34,7 @@ export function Promocao({ produtos }: ProdutoProps) {
                 ¡Promociones Imperdibles!
               </h2>
               <p className="text-gray-700 text-sm text-center font-normal">
-                ¡No te pierdas las ofertas especiales que preparamos para ti! Aprovecha descuentos exclusivos en productos seleccionados, con envío gratis en compras superiores a $1500. Oferta por tiempo limitado.
+                ¡No te pierdas las ofertas especiales que preparamos para ti! Aprovecha descuentos exclusivos en productos seleccionados.
               </p>
               <Link href="/promocoes" className="w-full">
                 <Button className="uppercase text-xs lg:text-sm text-white bg-pink-800 hover:bg-pink-600 focus:bg-pink-600 w-full">

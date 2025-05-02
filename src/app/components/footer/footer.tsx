@@ -143,7 +143,7 @@ export default function Footer() {
                     contacto@elegance.com.br
                   </Link>
                 </li>
-                <li>Atención de 8 a 17 horas</li>
+                <li>Atención de lunes a sábado, de 09:00 a 18:00 horas</li>
               </ul>
             </div>
 

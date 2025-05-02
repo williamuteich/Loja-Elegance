@@ -6,6 +6,57 @@ import { ObjectId } from 'mongodb';
 
 const prisma = new PrismaClient();
 
+async function sendTelegramNotification(order: any) {
+  try {
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+    if (!token || !chatId) {
+      console.error("Telegram Bot Token ou Chat ID não configurados.");
+      return;
+    }
+
+    const userName = order.user?.name || order.user?.username || order.user?.email || order.userId;
+    const totalFormatted = `$ ${Number(order.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const localRetirada = order.pickupLocation?.title || order.pickupLocation?.name || order.pickupLocation?.description || 'N/A';
+
+    const itensMsg = order.items.map((item: any) => {
+      const nomeProduto = item.product?.name || 'Produto';
+      const cor = item.productVariant?.color?.name ? `\n  🎨 Cor: ${item.productVariant.color.name}` : '';
+      const precoUnit = Number(item.price).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const totalItem = Number(item.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return `🍥 *${nomeProduto}*${cor}\n  🔢 Quantidade: ${item.quantity}\n  💸 Unitário: $ ${precoUnit}\n  💰 Total: $ ${totalItem}`;
+    }).join("\n\n");
+
+    const message = `🛒 *Novo Pedido Recebido!*
+  👤 *Cliente*: ${userName}
+  💵 *Total*: ${totalFormatted}
+  💳 *Pagamento*: ${order.paymentMethod}${order.paymentDetail ? ` (${order.paymentDetail})` : ""}
+  🏪 *Retirada*: ${localRetirada}
+  📦 *Status*: ${order.status}
+
+  *Itens do pedido:*
+    ${itensMsg}`;
+
+    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: "Markdown",
+      }),
+    });
+    const telegramResult = await response.json();
+   
+    if (!response.ok) {
+      console.error("Erro ao enviar mensagem para o Telegram:", telegramResult);
+    }
+  } catch (err) {
+    console.error("Falha ao notificar no Telegram:", err);
+  }
+}
+
 interface OrderItemRequest {
   selectedVariantId: string;
   quantity: number;
@@ -170,7 +221,7 @@ export async function POST(request: Request) {
           paymentMethod: body.pagamento,
           paymentDetail: body.pagamentoDetalhado || null,
           pickupLocationId: body.pickupLocation.id,
-          status: "pending", 
+          status: "pending",
           items: {
             create: itemsWithStock.map((i) => ({
               productVariantId: i.variantId,
@@ -182,11 +233,17 @@ export async function POST(request: Request) {
           },
         },
         include: {
-          items: true,
+          user: true,
+          items: {
+            include: {
+              product: true,
+              productVariant: { include: { color: true } },
+            },
+          },
           pickupLocation: true,
         },
       });
-      
+
       await Promise.all(
         itemsWithStock.map((i) =>
           tx.stock.update({
@@ -199,6 +256,8 @@ export async function POST(request: Request) {
       return order;
     });
 
+    await sendTelegramNotification(result);
+
     return NextResponse.json(
       { message: "Pedido realizado com sucesso. Está em análise.", order: result },
       { status: 201 }
@@ -208,7 +267,7 @@ export async function POST(request: Request) {
 
     const errMsg =
       error.message.startsWith("Variante") ||
-      error.message.startsWith("Estoque")
+        error.message.startsWith("Estoque")
         ? error.message
         : "Erro interno no servidor";
 
