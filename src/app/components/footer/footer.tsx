@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaWhatsapp, FaFacebookF, FaInstagram, FaTiktok, FaYoutube, FaLinkedinIn, FaTelegramPlane  } from 'react-icons/fa';
+import { FaWhatsapp, FaFacebookF, FaInstagram, FaTiktok, FaYoutube, FaLinkedinIn, FaTelegramPlane, FaBarcode, FaQrcode, FaCreditCard, FaMoneyBillWave } from 'react-icons/fa';
 import { useSession } from "next-auth/react";
 import { LogoutMenu } from "../logoutAccount";
 import { useEffect, useState } from "react";
@@ -21,7 +21,7 @@ export default function Footer() {
 
         const { config } = await response.json();
         if (config) {
-          const filteredSocialMedia = config.filter((item: { type: string; active: boolean }) => item.type === 'social' );
+          const filteredSocialMedia = config.filter((item: { type: string; active: boolean }) => item.type === 'social');
           setSocialMedia(filteredSocialMedia);
         }
       } catch (error) {
@@ -148,14 +148,27 @@ export default function Footer() {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Formas de pago</h3>
-              <div className="flex flex-wrap gap-4">
-                <Image src="/visa.svg" alt="Visa" width={16} height={16} className="h-8 w-auto" />
-                <Image src="/mastercard.svg" alt="Mastercard" width={16} height={16} className="h-8 w-auto" />
-                <Image src="/pix.svg" alt="Pix" width={16} height={16} className="h-8 w-auto" />
-                <Image src="/boleto.svg" alt="Boleto" width={16} height={16} className="h-8 w-auto" />
+              <h3 className="font-semibold mb-4 text-white">Formas de pago</h3>
+              <div className="flex flex-wrap gap-4 text-white">
+                <div className="flex items-center gap-2">
+                  <FaMoneyBillWave className="w-6 h-6" />
+                  <span className="text-sm">Efectivo</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaCreditCard className="w-6 h-6" />
+                  <span className="text-sm">Tarjeta</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaQrcode className="w-6 h-6" />
+                  <span className="text-sm">Pix</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaBarcode className="w-6 h-6" />
+                  <span className="text-sm">Boleto</span>
+                </div>
               </div>
             </div>
+
           </div>
         </div>
 
