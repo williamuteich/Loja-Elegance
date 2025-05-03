@@ -28,7 +28,7 @@ export default function PromocoesList(props: PromocoesListProps) {
     if (params.page) url.set("page", params.page);
     return `/promocoes?${url.toString()}`;
   }
-
+ 
   return (
     <div className="flex flex-col md:flex-row mx-auto py-6 px-2 sm:px-0">
       <div className="md:hidden mb-4">
