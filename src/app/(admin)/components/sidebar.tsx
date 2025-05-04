@@ -1,5 +1,5 @@
 "use client";
-import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage, FaGift, FaShippingFast, FaClipboardList } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage, FaGift, FaShippingFast, FaClipboardList, FaInstagram } from 'react-icons/fa';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogoutDashboard } from '@/app/components/logoutAccount';
@@ -148,6 +148,19 @@ export default function Sidebar() {
                                         >
                                             <FaClipboardList size={24} />
                                             <span className='hidden xl:block'>Pedidos</span>
+                                        </div>
+                                    </Link>
+                                </li>
+                            }
+                                                        {
+                                <li>
+                                    <Link href="/dashboard/instagram">
+                                        <div
+                                            className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/instagram') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                                            title='instagram'
+                                        >
+                                            <FaInstagram size={24} />
+                                            <span className='hidden xl:block'>Instagram</span>
                                         </div>
                                     </Link>
                                 </li>
