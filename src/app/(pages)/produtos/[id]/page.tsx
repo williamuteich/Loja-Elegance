@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
               alt: produtos.name,
             }
           ],
-          url: `/producto/${id}`,
+          url: `${process.env.NEXTAUTH_URL}/producto/${id}`,
         },
         twitter: {
           card: 'summary_large_image',
