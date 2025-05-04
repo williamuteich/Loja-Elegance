@@ -16,7 +16,7 @@ export default function Footer() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/publica/setup`, { next: { revalidate: 1000 } });
+        const response = await fetch(`/api/publica/setup`, { next: { revalidate: 3800 } });
         if (!response.ok) throw new Error("Erro ao carregar as configurações.");
 
         const { config } = await response.json();
@@ -140,7 +140,7 @@ export default function Footer() {
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link href="mailto:contato@elegance.com.br" className="hover:underline">
-                    contacto@elegance.com.br
+                    elegancers.barra@gmail.com
                   </Link>
                 </li>
                 <li>Atención de lunes a sábado, de 09:00 a 18:00 horas</li>

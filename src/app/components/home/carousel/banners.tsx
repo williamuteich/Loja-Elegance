@@ -4,7 +4,7 @@ import SubBannerHeader from './subBanner';
 
 export async function Banners() {
     
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/banner`, { next: { revalidate: 172800 } });
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/banner`, { next: { revalidate: 4800 } });
     if (!response.ok) {
         return <p>Ocorreu um erro ao carregar os banners.</p>;
     }

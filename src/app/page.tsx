@@ -9,7 +9,7 @@ import CategoriesCarousel from "./components/home/CategoriesCarousel";
 import { Banners } from "./components/home/carousel/banners";
 
 export default async function Home() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, { next: {revalidate: 800 } });
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, { next: {revalidate: 150 } });
   const res = await response.json(); 
 
   return (

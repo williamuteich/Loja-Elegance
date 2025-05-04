@@ -17,7 +17,7 @@ export default async function ProdutoSlug({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params;
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`, { next: {revalidate: 300 } });
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`, { next: {revalidate: 150 } });
 
   if (!response.ok) {
     return <div className="py-10 px-4 text-gray-800 text-xl font-bold">

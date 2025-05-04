@@ -3,13 +3,27 @@ import Image from "next/image";
 import { ToastContainer, toast } from "react-toastify";
 import { FormEvent, useState } from 'react'
 import ReCAPTCHA from "react-google-recaptcha";
+import Flag from "react-world-flags";
+
+const COUNTRIES = [
+  { code: "BR", name: "Brasil", dial: "+55" },
+  { code: "UY", name: "Uruguay", dial: "+598" },
+  { code: "AR", name: "Argentina", dial: "+54" },
+];
 
 export default function Contato() {
     const [loading, setLoading] = useState(false)
     const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
+    const [countryCode, setCountryCode] = useState("UY")
+    const [phoneNumber, setPhoneNumber] = useState("")
 
     async function onSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
+
+        if (!phoneNumber.trim()) {
+            toast.error("Por favor, ingresa un número de teléfono válido");
+            return;
+        }
 
         const formData = new FormData(event.currentTarget);
         const formObject: { [key: string]: string } = {};
@@ -17,6 +31,12 @@ export default function Contato() {
         formData.forEach((value, key) => {
             formObject[key] = value.toString();
         });
+
+        // Combinar código do país com número
+        const selectedCountry = COUNTRIES.find(c => c.code === countryCode)
+        const dial = selectedCountry?.dial.replace(/\s/g, "") || ""
+        const cleanPhone = phoneNumber.replace(/\D/g, "")
+        formObject.telefone = dial + cleanPhone
 
         if (!recaptchaToken) {
             toast.error("Por favor, marque o reCAPTCHA para continuar.", {
@@ -53,10 +73,7 @@ export default function Contato() {
             })
 
             setLoading(false);
-
-            setTimeout(() => {
-                window.location.reload();
-            }, 5000);
+            setTimeout(() => window.location.reload(), 5000);
 
         } catch (err) {
             toast.error("Error al Enviar el Formulario de Contacto", {
@@ -64,7 +81,6 @@ export default function Contato() {
                 autoClose: 3000
             })
         }
-
     }
 
     return (
@@ -116,13 +132,39 @@ export default function Contato() {
                                     className="w-full border border-gray-300 rounded-lg p-2 focus:outline-pink-800"
                                 />
                             </div>
+                            
                             <div className="grid grid-cols-2 gap-4">
-                                <input
-                                    type="text"
-                                    name="telefone"
-                                    placeholder="Tu Teléfono"
-                                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-pink-800"
-                                />
+                                <div className="flex gap-2">
+                                    <div className="relative w-1/3">
+                                        <select
+                                            value={countryCode}
+                                            onChange={(e) => setCountryCode(e.target.value)}
+                                            className="appearance-none pr-8 pl-10 py-2 border rounded-lg bg-white w-full"
+                                        >
+                                            {COUNTRIES.map((c) => (
+                                                <option key={c.code} value={c.code}>
+                                                    {c.dial}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <div className="pointer-events-none absolute left-2 top-2">
+                                            <Flag 
+                                                code={countryCode} 
+                                                className="w-6 h-4 rounded-sm border" 
+                                            />
+                                        </div>
+                                    </div>
+                                    <input
+                                        type="tel"
+                                        value={phoneNumber}
+                                        onChange={(e) => {
+                                            const value = e.target.value.replace(/\D/g, "").slice(0, 15)
+                                            setPhoneNumber(value)
+                                        }}
+                                        placeholder="Ej: 099123456"
+                                        className="w-full border border-gray-300 rounded-lg p-2 focus:outline-pink-800"
+                                    />
+                                </div>
                                 <input
                                     type="text"
                                     name="assunto"
@@ -130,11 +172,13 @@ export default function Contato() {
                                     className="w-full border border-gray-300 rounded-lg p-2 focus:outline-pink-800"
                                 />
                             </div>
+
                             <textarea
                                 placeholder="Mensaje"
                                 name="mensagem"
                                 className="w-full border border-gray-300 rounded-lg p-2 focus:outline-pink-800 h-32"
                             ></textarea>
+                            
                             <div>
                                 <ReCAPTCHA
                                     sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
@@ -142,6 +186,7 @@ export default function Contato() {
                                     className="mb-4"
                                 />
                             </div>
+                            
                             <button
                                 type="submit"
                                 className={`bg-pink-800 text-white font-bold py-2 px-6 rounded-lg hover:bg-pink-700 ${loading ? "cursor-not-allowed opacity-50" : ""}`}
@@ -159,8 +204,10 @@ export default function Contato() {
                         </form>
                     </div>
                 </div>
-                <iframe title="Nuestra ubicación" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3453.7039973696415!2d-51.1331397!3d-30.045348799999992!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9519762be7be6c89%3A0xd14c8ec78197d0d2!2sRua%20Ney%20da%20Gama%20Ahrends%20-%20Morro%20Santana%2C%20Porto%20Alegre%20-%20RS%2C%2091450-345!5e0!3m2!1spt-BR!2sbr!4v1739205015604!5m2!1spt-BR!2sbr" width="600" height="450" style={{ border: 0, width: "100%", height: "400px" }} loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+                <iframe title="Nuestra ubicación" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1449.6861182992457!2d-57.55597675040666!3d-30.209857671747244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95acd6acbca676fd%3A0xe373108697f9f0d2!2sR.%20Salustiano%20Marty%2C%20244%20-%20Barra%20do%20Quara%C3%AD%2C%20RS%2C%2097538-000!5e0!3m2!1spt-BR!2sbr!4v1746321782889!5m2!1spt-BR!2sbr" width="600" height="450" style={{ border: 0, width: "100%", height: "400px" }} loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     );
 }
+
+
