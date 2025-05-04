@@ -89,7 +89,7 @@ export default function ShowInstaEmbeds({ posts, instagramUrl }: ShowInstaEmbeds
                                             minWidth: '326px',
                                             padding: '0',
                                             width: '100%',
-                                            height: '570px',
+                                            height: '685px',
                                         }}
                                     />
                                 </div>
