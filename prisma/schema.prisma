@@ -17,7 +17,7 @@ model User {
   telefone                 String?
   verificationToken        String?
   verificationTokenExpires DateTime?
-  resetToken               String?        @unique
+  resetToken               String?
   resetTokenExpires        DateTime?
   enderecos                Endereco[]     @relation("UserEnderecos")
   orders                   Order[]
