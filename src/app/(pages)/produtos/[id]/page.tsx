@@ -10,6 +10,88 @@ import ViewImages from "../components/viewImages";
 import Produtos from "../components/produtos";
 import { Produto, VariantProps } from "@/utils/types/produto";
 import EstoqueProdutos from "../components/estoqueProdutos";
+import type { Metadata } from 'next'
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  
+  try {
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`, { 
+      next: { revalidate: 150 } 
+    });
+    
+    if (!response.ok) throw new Error('Produto não encontrado');
+    
+    const { produtos } = await response.json();
+    const mainImage = produtos.images?.[0]?.url 
+      ? new URL(produtos.images[0].url, process.env.NEXT_PUBLIC_SITE_URL).toString()
+      : '/default-product.jpg';
+    
+    const description = produtos.description?.substring(0, 160) || 
+      'Descripción detallada del producto con especificaciones técnicas e información relevante.';
+
+      return {
+        metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+        title: `${produtos.name} | Elegance Ecommerce`,
+        description: description,
+        openGraph: {
+          title: produtos.name,
+          description: description,
+          images: [
+            {
+              url: mainImage,
+              width: 1200,
+              height: 630,
+              alt: produtos.name,
+            }
+          ],
+          url: `/producto/${id}`,
+        },
+        twitter: {
+          card: 'summary_large_image',
+          title: produtos.name,
+          description: description,
+          images: [mainImage],
+          site: '@elegance_ecommerce',
+        },
+        alternates: {
+          canonical: `/producto/${id}`,
+        },
+        keywords: [
+          ...(produtos.categories?.map((c: { name: string }) => c.name.toLowerCase()) || []),
+          'comprar ropa en línea uruguay',
+          'ecommerce de moda uruguayo',
+          'ropa femenina de alta calidad',
+          'tendencias de moda 2025',
+          'ropa elegante y moderna',
+          'tienda online de ropa en Montevideo',
+          'productos premium para mujer',
+          'moda sostenible en Uruguay',
+          'ropa cómoda y estilosa',
+          'ofertas en ropa de temporada',
+          'ropa con envío gratis uruguay',
+          'Elegance ecommerce Uruguay',
+          'prendas exclusivas online',
+          'ropa con garantía de calidad'
+        ],
+        robots: {
+          index: true,
+          follow: true,
+          nocache: false,
+          googleBot: {
+            index: true,
+            follow: true,
+            noimageindex: false,
+          }
+        }
+      }
+  } catch (error) {
+    return {
+      title: `Produto | Elegance Ecommerce`,
+      description: 'Página de detalhes do produto',
+    }
+  }
+}
 
 export default async function ProdutoSlug({
   params
