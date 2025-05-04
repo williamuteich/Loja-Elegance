@@ -255,6 +255,10 @@ export default function Sidebar() {
                                     <FaClipboardList className="w-6 h-6" />
                                     <span>Pedidos</span>
                                 </Link>
+                                <Link href="/dashboard/instagram" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/instagram') ? 'bg-gray-700' : ''}`}>
+                                    <FaInstagram className="w-6 h-6" />
+                                    <span>Instagram</span>
+                                </Link>
                             </div>
 
                             <div className="mt-16 space-y-2 flex flex-col">
