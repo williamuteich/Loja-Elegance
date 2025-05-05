@@ -99,7 +99,7 @@ export default function Formulario() {
                 }
                 const redirectPath = session.user?.role === "admin"
                     ? "/dashboard"
-                    : "/";
+                    : "/profile";
                 router.push(redirectPath);
                 // Não chama setLoading(false) aqui! O loading continua até o redirect.
             }

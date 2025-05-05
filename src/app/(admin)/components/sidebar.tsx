@@ -1,5 +1,5 @@
 "use client";
-import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage, FaGift, FaShippingFast, FaClipboardList, FaInstagram } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage, FaGift, FaShippingFast, FaClipboardList, FaInstagram, FaShieldAlt } from 'react-icons/fa';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogoutDashboard } from '@/app/components/logoutAccount';
@@ -27,6 +27,17 @@ export default function Sidebar() {
                             <h2 className="text-lg font-semibold underline hidden xl:block">Admin Dashboard</h2>
                         </div>
                         <ul className="space-y-2 p-2 xl:p-4">
+                            <li>
+                                <Link href="/dashboard/seguranca">
+                                    <div
+                                        className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/seguranca') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                                        title='Segurança/2FA'
+                                    >
+                                        <FaShieldAlt size={24} />
+                                        <span className='hidden xl:block'>Segurança/2FA</span>
+                                    </div>
+                                </Link>
+                            </li>
                             <li>
                                 <Link href="/dashboard">
                                     <div
@@ -206,6 +217,10 @@ export default function Sidebar() {
                                 <Link href="/dashboard" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard') ? 'bg-gray-700' : ''}`}>
                                     <FaHome className="w-6 h-6" />
                                     <span>Início</span>
+                                </Link>
+                                <Link href="/dashboard/seguranca" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/seguranca') ? 'bg-gray-700' : ''}`}>
+                                    <FaShieldAlt className="w-6 h-6" />
+                                    <span>Segurança/2FA</span>
                                 </Link>
 
                                 <Link href="/dashboard/usuarios" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/usuarios') ? 'bg-gray-700' : ''}`}>
