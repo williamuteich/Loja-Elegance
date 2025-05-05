@@ -163,7 +163,7 @@ export default function Footer() {
                 </div>
                 <div className="flex items-center gap-2">
                   <FaBarcode className="w-6 h-6" />
-                  <span className="text-sm">Boleto</span>
+                  <span className="text-sm">Transferencia bancaria</span>
                 </div>
               </div>
             </div>
