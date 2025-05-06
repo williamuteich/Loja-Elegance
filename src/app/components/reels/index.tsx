@@ -11,12 +11,10 @@ interface InstagramPost {
 
 async function getInstaData() {
     try {
-        // Busca posts
         const postsRes = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/instaEmbed`, {
             next: { revalidate: 4800 }
         });
         
-        // Busca configurações
         const setupRes = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/setup`, {
             next: { revalidate: 3800 }
         });
@@ -27,7 +25,6 @@ async function getInstaData() {
 
         const [postsData, setupData] = await Promise.all([postsRes.json(), setupRes.json()]);
         
-        // Filtra link do Instagram
         const instagramUrl = setupData.config?.find(
             (item: { type: string; name: string }) => 
             item.type === 'social' && item.name === 'instagram'

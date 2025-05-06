@@ -50,7 +50,7 @@ export default function EstoqueProdutos({
       {selectedVariant && (
         <div className="my-2">
           <h3 className="text-md font-bold">
-            Cor Selecionada: <span className="underline text-gray-600">{selectedVariant.color.name}</span>
+            Color Seleccionado: <span className="underline text-gray-600">{selectedVariant.color.name}</span>
           </h3>
         </div>
       )}
