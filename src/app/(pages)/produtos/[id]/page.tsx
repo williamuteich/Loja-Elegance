@@ -17,7 +17,7 @@ export default async function ProdutoSlug({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params;
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`, { next: {revalidate: 150 } });
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`, { next: {revalidate: 20 } });
 
   if (!response.ok) {
     return <div className="py-10 px-4 text-gray-800 text-xl font-bold">
@@ -78,7 +78,7 @@ export default async function ProdutoSlug({
                 <div className="mt-6 space-y-2">
                   <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">
                     <h3 className="font-bold text-base text-gray-800">Envío Gratis</h3>
-                    <p className="text-gray-900">Envío gratis en compras superiores a <strong>$600</strong> pesos</p>
+                    <p className="text-gray-900">Envío gratis en compras superiores a <strong>$2500</strong> pesos</p>
                   </div>
 
                   <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">

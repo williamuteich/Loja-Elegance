@@ -162,7 +162,7 @@ export async function POST(request: Request) {
 
     if (!body.cart || body.cart.length === 0) {
       return NextResponse.json(
-        { message: "Carrinho vazio" },
+        { message: "Carrito vacío" },
         { status: 400 }
       );
     }

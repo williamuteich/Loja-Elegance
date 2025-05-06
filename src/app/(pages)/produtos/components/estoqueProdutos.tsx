@@ -35,7 +35,7 @@ export default function EstoqueProdutos({
   return (
     <div>
       <div className="space-y-0">
-        <h3 className="text-sm text-gray-700 font-bold my-2">Estoque Disponível</h3>
+        <h3 className="text-sm text-gray-700 font-bold my-2">Stock disponible</h3>
         <div className="flex items-center gap-2 bg-gray-100 p-3 rounded shadow-sm">
           <FaBox size={20} className="text-pink-700" />
           <p className="text-md font-bold text-pink-700">

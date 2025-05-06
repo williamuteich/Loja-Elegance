@@ -27,6 +27,17 @@ export default function Sidebar() {
                             <h2 className="text-lg font-semibold underline hidden xl:block">Admin Dashboard</h2>
                         </div>
                         <ul className="space-y-2 p-2 xl:p-4">
+    <li>
+        <Link href="/">
+            <div
+                className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-700`}
+                title='Ir para Home'
+            >
+                <FaHome size={24} />
+                <span className='hidden xl:block'>Home</span>
+            </div>
+        </Link>
+    </li>
                             <li>
                                 <Link href="/dashboard/seguranca">
                                     <div

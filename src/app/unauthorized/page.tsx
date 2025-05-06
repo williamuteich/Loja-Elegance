@@ -18,11 +18,11 @@ export default function Unauthorized() {
 
     const handleRedirect = () => {
 
-        router.push("/login");
+        router.push("/");
     };
 
     if (timing === 0 || timing < 0) {
-        router.push("/login");
+        router.push("/");
     }
 
     return (
@@ -44,7 +44,7 @@ export default function Unauthorized() {
                             onClick={handleRedirect}
                             className="bg-pink-700 w-1/4 text-white text-lg px-6 py-4 hover:bg-pink-600 transition duration-300 ease-in-out"
                         >
-                            Volver al Login
+                            Volver al Home
                         </Button>
                     </div>
                 </div>

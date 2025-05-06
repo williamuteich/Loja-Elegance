@@ -92,7 +92,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     if (existingItemIndex >= 0) {
       if (cart[existingItemIndex].quantity >= selectedVariant.availableStock) {
-        toast.warning("Quantidade máxima disponível para esta variante atingida.");
+        toast.warning("Se alcanzó la cantidad máxima disponible para esta variante.");
         return;
       }
 
