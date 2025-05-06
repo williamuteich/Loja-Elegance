@@ -114,8 +114,8 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     images: ['/favicon.ico'],
-    title: 'Elegance Ecommerce - Ropa Interior de Lujo y Productos de Belleza | Tienda Online Uruguay',
-    description: 'Encontre smartphones, acessórios, joias finas e produtos de beleza com as melhores condições de pagamento.',
+    title: 'Elegance Ecommerce - Eletrônicos, Brinquedos, Acessórios e Maquiagem | Loja Online no Uruguai',
+    description: 'Descubrí una amplia variedad de productos: electrónicos, juguetes, accesorios y maquillaje. Comprá online en Uruguay con las mejores condiciones de pago.',
   },
   robots: {
     index: true,
