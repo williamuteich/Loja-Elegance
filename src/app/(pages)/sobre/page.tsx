@@ -13,7 +13,7 @@ export default function Sobre() {
                             </h2>
                             
                             <p className="text-lg leading-relaxed text-gray-700">
-                                En Punto Crear, somos una empresa innovadora apasionada por transformar ideas en realidades concretas. 
+                                En Bazar Elegance, somos una empresa innovadora apasionada por transformar ideas en realidades concretas. 
                                 Nuestro equipo de profesionales orientados al resultado trabaja incansablemente para ofrecer soluciones 
                                 creativas con el más alto estándar de calidad.
                             </p>
