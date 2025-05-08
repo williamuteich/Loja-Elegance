@@ -7,7 +7,6 @@ async function validateToken(token: string | null) {
   try {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/verify-email?token=${token}`, {
       cache: 'no-store',
-      next: { revalidate: 0 }
     });
 
     if (response.redirected) {

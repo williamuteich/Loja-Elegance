@@ -114,7 +114,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     images: ['/favicon.ico'],
-    title: 'Elegance Ecommerce - Eletrônicos, Brinquedos, Acessórios e Maquiagem | Loja Online no Uruguai',
+    title: 'Elegance Ecommerce - Electrónica, Juguetes, Accesorios y Maquillaje | Tienda Online en Uruguay',
     description: 'Descubrí una amplia variedad de productos: electrónicos, juguetes, accesorios y maquillaje. Comprá online en Uruguay con las mejores condiciones de pago.',
   },
   robots: {

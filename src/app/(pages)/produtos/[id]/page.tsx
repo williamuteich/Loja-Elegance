@@ -17,7 +17,7 @@ export default async function ProdutoSlug({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params;
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`, { next: {revalidate: 20 } });
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`, { next: { revalidate: 20 } });
 
   if (!response.ok) {
     return <div className="py-10 px-4 text-gray-800 text-xl font-bold">
@@ -27,20 +27,20 @@ export default async function ProdutoSlug({
 
   const { produtos } = await response.json();
   const availableStock = produtos.variants.map((variants: VariantProps) => variants.availableStock).reduce((acc: number, stock: number) => acc + stock, 0);
- 
+
   const isActive = produtos.active;
   const categorias = produtos.categories.map((prodctCategory: Produto) => prodctCategory);
 
   const { colors, stock, hex } = produtos.variants.reduce(
     (acc: { colors: string[], stock: number[], hex: string[] }, item: VariantProps) => {
-      acc.colors.push(item.color.name); 
-      acc.hex.push(item.color.hexCode); 
-      acc.stock.push(item.stock.quantity); 
+      acc.colors.push(item.color.name);
+      acc.hex.push(item.color.hexCode);
+      acc.stock.push(item.stock.quantity);
       return acc;
     },
-    { colors: [], stock: [], hex: [] } 
+    { colors: [], stock: [], hex: [] }
   );
-  
+
   return (
     <Container>
       <div className="flex justify-center py-10">
@@ -78,7 +78,10 @@ export default async function ProdutoSlug({
                 <div className="mt-6 space-y-2">
                   <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">
                     <h3 className="font-bold text-base text-gray-800">Envío Gratis</h3>
-                    <p className="text-gray-900">Envío gratis en compras superiores a <strong>$2500</strong> pesos</p>
+                    {/* <p className="text-gray-900">Envío gratis en compras superiores a <strong>$2500</strong> pesos</p> */}
+                    <p className="text-gray-900">
+                      Envío gratis en todos los pedidos del <strong>07/05</strong> al <strong>09/05</strong>. Después de esa fecha, el envío es gratis solo en compras superiores a <strong>$2500</strong> pesos, o cuesta <strong>$190</strong> pesos.
+                    </p>
                   </div>
 
                   <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">
