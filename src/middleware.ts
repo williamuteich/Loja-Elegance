@@ -20,7 +20,6 @@ export default withAuth(
       rota: req.nextUrl.pathname,
       metodo: req.method,
       url: req.nextUrl.href,
-      ip: req.headers.get('x-forwarded-for') || req.ip || null,
       userAgent: req.headers.get('user-agent') || null,
       status: 200,
       data: new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }),

@@ -7,7 +7,6 @@ export async function requireAdmin(request: Request) {
   const session = await getServerSession(authOptions);
   const method = request.method;
   const url = request.url;
-  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || null;
   const userAgent = request.headers.get('user-agent') || null;
   if (!session) {
     logger.warn({
@@ -15,7 +14,6 @@ export async function requireAdmin(request: Request) {
       motivo: 'nao autenticado',
       metodo: method,
       url,
-      ip,
       userAgent,
       status: 401,
       data: new Date().toISOString(),
@@ -33,7 +31,6 @@ export async function requireAdmin(request: Request) {
       },
       metodo: method,
       url,
-      ip,
       userAgent,
       status: 403,
       data: new Date().toISOString(),
