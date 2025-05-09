@@ -96,7 +96,7 @@ export default function ProdutosList(props: ProdutosListProps) {
             className="w-full block mt-2 text-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 rounded-lg text-lg shadow transition-all"
             style={{ textDecoration: 'none' }}
           >
-            Limpar filtros
+            Limpiar Filtros
           </a>
         </form>
       </div>
