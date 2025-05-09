@@ -3,8 +3,8 @@ import * as React from "react";
 export function VerifyEmail({ verifyUrl }: { verifyUrl: string }) {
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', color: '#222', padding: 24 }}>
-      <h2>Confirme seu e-mail</h2>
-      <p>Obrigado por se cadastrar! Para ativar sua conta, clique no botão abaixo:</p>
+      <h2>Confirma tu correo electrónico</h2>
+      <p>¡Gracias por registrarte! Para activar tu cuenta, haz clic en el siguiente botón:</p>
       <a
         href={verifyUrl}
         style={{
@@ -18,10 +18,10 @@ export function VerifyEmail({ verifyUrl }: { verifyUrl: string }) {
           marginTop: 16
         }}
       >
-        Ativar Conta
+        Activar Cuenta
       </a>
       <p style={{ marginTop: 24 }}>
-        Se você não se cadastrou, ignore este e-mail.
+        Si no te registraste, ignora este correo.
       </p>
     </div>
   );
