@@ -78,10 +78,13 @@ export default async function ProdutoSlug({
                 <div className="mt-6 space-y-2">
                   <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">
                     <h3 className="font-bold text-base text-gray-800">Envío Gratis</h3>
-                    {/* <p className="text-gray-900">Envío gratis en compras superiores a <strong>$2500</strong> pesos</p> */}
                     <p className="text-gray-900">
-                      Envío gratis en todos los pedidos del <strong>07/05</strong> al <strong>09/05</strong>. Después de esa fecha, el envío es gratis solo en compras superiores a <strong>$2500</strong> pesos, o cuesta <strong>$190</strong> pesos.
+                      Envío por <strong>$190</strong> o gratis en compras superiores a <strong>$2500</strong> pesos
                     </p>
+
+                    {/*<p className="text-gray-900">
+                      Envío gratis en todos los pedidos del <strong>07/05</strong> al <strong>09/05</strong>. Después de esa fecha, el envío es gratis solo en compras superiores a <strong>$2500</strong> pesos, o cuesta <strong>$190</strong> pesos.
+                    </p>*/}
                   </div>
 
                   <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">
