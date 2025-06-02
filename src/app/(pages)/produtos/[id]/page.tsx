@@ -10,6 +10,7 @@ import ViewImages from "../components/viewImages";
 import Produtos from "../components/produtos";
 import { Produto, VariantProps } from "@/utils/types/produto";
 import EstoqueProdutos from "../components/estoqueProdutos";
+import VendaWhatsapp from "../components/vendaWhatsapp";
 
 export default async function ProdutoSlug({
   params
@@ -73,6 +74,10 @@ export default async function ProdutoSlug({
 
                 <div className="space-y-4">
                   <EstoqueProdutos isActive={isActive} availableStock={availableStock} colors={colors} hex={hex} stock={stock} produtos={produtos} />
+                </div>
+
+                <div className="space-y-4">
+                  <VendaWhatsapp produto={produtos} />
                 </div>
 
                 <div className="mt-6 space-y-2">
