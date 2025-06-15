@@ -26,7 +26,7 @@ export function ClientCategoriesCarousel({ categories, delay = 4000 }: { categor
         }) => (
           <CarouselItem
             key={cat.id}
-            className="flex flex-col items-center basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/6 max-w-[150px]"
+            className="basis-[33.3333%] sm:basis-1/3 md:basis-1/4 lg:basis-1/6 max-w-[150px] flex flex-col items-center"
           >
             <Link href={`/produtos?categoria=${encodeURIComponent(cat.name).replace(/%20/g, '+')}`}>
               <div className="group relative min-w-min flex flex-col items-center">

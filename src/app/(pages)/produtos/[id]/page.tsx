@@ -42,6 +42,11 @@ export default async function ProdutoSlug({
     { colors: [], stock: [], hex: [] }
   );
 
+  console.log(`[${new Intl.DateTimeFormat('pt-BR', {
+    dateStyle: 'short',
+    timeStyle: 'medium'
+  }).format(new Date())}] Produto Visitado: ${produtos.name}`);
+
   return (
     <Container>
       <div className="flex justify-center py-10">
@@ -84,7 +89,8 @@ export default async function ProdutoSlug({
                   <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">
                     <h3 className="font-bold text-base text-gray-800">Envío Gratis</h3>
                     <p className="text-gray-900">
-                      Envío por <strong>$190</strong> o gratis en compras superiores a <strong>$2500</strong> pesos
+                      Envío gratis para <strong>Barra do Quaraí</strong> o en compras a partir de <strong>$2500</strong> pesos.
+                      Si no se cumple ninguna de estas condiciones, el costo del envío es de <strong>$190</strong>.
                     </p>
 
                     {/*<p className="text-gray-900">

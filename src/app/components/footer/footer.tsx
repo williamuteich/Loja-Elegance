@@ -50,9 +50,15 @@ export default function Footer() {
   return (
     <footer className="bg-black text-white py-10 relative">
       {whatsapp && (
-        <div className="flex items-center justify-center fixed z-50 bottom-0 h-[12vh] right-[5vw] xl:right-[8vw] 2xl:right-[7vw] lg:right-[8vw]">
-          <Link href={whatsapp.url} aria-label="Fale conosco pelo WhatsApp" target="_blank">
-            <FaWhatsapp className="w-12 h-12 text-green-500 animate-pulse cursor-pointer transition-all" />
+        <div className="fixed bottom-6 right-6 xl:right-12 z-50">
+          <Link
+            href={whatsapp.url}
+            target="_blank"
+            aria-label="Fale conosco pelo WhatsApp"
+            className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl transition-all border border-green-500"
+          >
+            <FaWhatsapp className="w-6 h-6 text-green-600" />
+            <span className="text-sm text-green-700 font-medium">¿Necesitás ayuda?</span>
           </Link>
         </div>
       )}
