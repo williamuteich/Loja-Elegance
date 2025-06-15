@@ -3,6 +3,8 @@ import TotalUsuarios from "./(page)/components/totalUsuarios";
 import TotalProdutos from "./(page)/components/totalProdutos";
 import OrderDashboard from "./(page)/components/order";
 import GraficoDashboard from "./(page)/components/grafico";
+import TopProducts from "./(page)/components/topProducts";
+import DailyVisits from "./(page)/components/dailyVisits";
 import { cookies } from "next/headers";
 import { JSX } from "react";
 
@@ -31,6 +33,12 @@ export default async function Dashboard(): Promise<JSX.Element> {
           <TotalProdutos />
         </div>
       </div>
+
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <DailyVisits />
+        <TopProducts />
+      </div>
+
 
       <div className="mt-16 flex flex-col md:flex-row gap-6 justify-between">
         <div className="p-8 rounded-xl border border-gray-200 shadow-lg bg-white w-full">
