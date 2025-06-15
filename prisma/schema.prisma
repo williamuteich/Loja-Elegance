@@ -214,7 +214,7 @@ model PasswordReset {
 
 model InstaEmbed {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title      String
+  title     String
   link      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -227,4 +227,13 @@ model PageView {
   count     Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ProductView {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId   String   @unique
+  productName String
+  count       Int      @default(0)
+  firstView   DateTime
+  lastView    DateTime
 }

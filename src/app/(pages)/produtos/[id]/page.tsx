@@ -1,11 +1,11 @@
 import { Container } from "@/app/components/container";
-import { FaFileAlt, FaList } from 'react-icons/fa'
+import { FaFileAlt, FaList } from "react-icons/fa";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/ui/accordion";
 import ViewImages from "../components/viewImages";
 import Produtos from "../components/produtos";
 import { Produto, VariantProps } from "@/utils/types/produto";
@@ -13,27 +13,49 @@ import EstoqueProdutos from "../components/estoqueProdutos";
 import VendaWhatsapp from "../components/vendaWhatsapp";
 
 export default async function ProdutoSlug({
-  params
+  params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`, { next: { revalidate: 20 } });
+
+  const response = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`,
+    { next: { revalidate: 20 } }
+  );
 
   if (!response.ok) {
-    return <div className="py-10 px-4 text-gray-800 text-xl font-bold">
-      Erro ao buscar produto
-    </div>
+    return (
+      <div className="py-10 px-4 text-gray-800 text-xl font-bold">
+        Erro ao buscar produto
+      </div>
+    );
   }
 
   const { produtos } = await response.json();
-  const availableStock = produtos.variants.map((variants: VariantProps) => variants.availableStock).reduce((acc: number, stock: number) => acc + stock, 0);
+
+  await fetch(`${process.env.NEXTAUTH_URL}/api/analytics/product-views`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      productId: produtos.id,
+      productName: produtos.name
+    }),
+  });
+
+  const availableStock = produtos.variants
+    .map((variants: VariantProps) => variants.availableStock)
+    .reduce((acc: number, stock: number) => acc + stock, 0);
 
   const isActive = produtos.active;
-  const categorias = produtos.categories.map((prodctCategory: Produto) => prodctCategory);
+  const categorias = produtos.categories.map(
+    (prodctCategory: Produto) => prodctCategory
+  );
 
   const { colors, stock, hex } = produtos.variants.reduce(
-    (acc: { colors: string[], stock: number[], hex: string[] }, item: VariantProps) => {
+    (acc: { colors: string[]; stock: number[]; hex: string[] }, item: VariantProps) => {
       acc.colors.push(item.color.name);
       acc.hex.push(item.color.hexCode);
       acc.stock.push(item.stock.quantity);
@@ -42,18 +64,12 @@ export default async function ProdutoSlug({
     { colors: [], stock: [], hex: [] }
   );
 
-  console.log(`[${new Intl.DateTimeFormat('pt-BR', {
-    dateStyle: 'short',
-    timeStyle: 'medium'
-  }).format(new Date())}] Produto Visitado: ${produtos.name}`);
-
   return (
     <Container>
       <div className="flex justify-center py-10">
         <div className="bg-white w-full">
           <div className="lg:flex lg:flex-row flex-col gap-4">
             <ViewImages produtos={produtos} />
-
             <div className="lg:w-[900px] w-full p-4 space-y-6 border border-gray-300 rounded-lg">
               <div className="w-full">
                 <h2 className="text-xl uppercase font-extrabold text-pink-700 mb-4">
@@ -64,21 +80,28 @@ export default async function ProdutoSlug({
                   <p className="text-3xl text-pink-700 font-bold">
                     {new Intl.NumberFormat("es-UY", {
                       style: "currency",
-                      currency: "UYU"
+                      currency: "UYU",
                     }).format(produtos.price)}
                   </p>
                   {produtos.priceOld && (
                     <p className="text-xl text-gray-500 line-through">
                       {new Intl.NumberFormat("es-UY", {
                         style: "currency",
-                        currency: "UYU"
+                        currency: "UYU",
                       }).format(produtos.priceOld)}
                     </p>
                   )}
                 </div>
 
                 <div className="space-y-4">
-                  <EstoqueProdutos isActive={isActive} availableStock={availableStock} colors={colors} hex={hex} stock={stock} produtos={produtos} />
+                  <EstoqueProdutos
+                    isActive={isActive}
+                    availableStock={availableStock}
+                    colors={colors}
+                    hex={hex}
+                    stock={stock}
+                    produtos={produtos}
+                  />
                 </div>
 
                 <div className="space-y-4">
@@ -92,10 +115,6 @@ export default async function ProdutoSlug({
                       Envío gratis para <strong>Barra do Quaraí</strong> o en compras a partir de <strong>$2500</strong> pesos.
                       Si no se cumple ninguna de estas condiciones, el costo del envío es de <strong>$190</strong>.
                     </p>
-
-                    {/*<p className="text-gray-900">
-                      Envío gratis en todos los pedidos del <strong>07/05</strong> al <strong>09/05</strong>. Después de esa fecha, el envío es gratis solo en compras superiores a <strong>$2500</strong> pesos, o cuesta <strong>$190</strong> pesos.
-                    </p>*/}
                   </div>
 
                   <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">
@@ -144,5 +163,5 @@ export default async function ProdutoSlug({
         </div>
       </div>
     </Container>
-  )
+  );
 }
