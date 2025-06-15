@@ -4,6 +4,7 @@ import "./globals.css";
 import Footer from "./components/footer/footer";
 import AuthProvider from "./components/providers/auth-provider";
 import { CartProvider } from "@/context/cartContext";
+import VisitTracker from "./components/visitTracker";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
@@ -137,6 +138,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
+        <VisitTracker />
         <AuthProvider>
           <CartProvider>
             <Header />
