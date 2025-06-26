@@ -205,6 +205,10 @@ export async function PUT(request: Request) {
         );
       }
 
+      if (!user.password) {
+        return NextResponse.json({ message: "Usuário sem senha cadastrada" }, { status: 400 });
+      }
+
       if (session.user.role === "user") {
         const isPasswordCorrect = await bcrypt.compare(
           currentPassword,

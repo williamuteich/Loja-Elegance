@@ -34,7 +34,12 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }
 
+        if (!user.password) {
+            return NextResponse.json({ message: "Senha não cadastrada" }, { status: 400 });
+        }
+
         const matchPassword = await bcrypt.compare(password, user.password);
+
 
         if (!matchPassword) {
             return NextResponse.json({ message: 'Invalid password' }, { status: 401 });

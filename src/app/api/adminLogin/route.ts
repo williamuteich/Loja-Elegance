@@ -35,7 +35,12 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: "Access denied" }, { status: 403 });
         }
 
-        const matchPassword = await bcrypt.compare(password, user.password);
+        if (!user.password) {
+            return NextResponse.json({ message: "Senha não cadastrada" }, { status: 400 });
+        }
+
+        const matchPassword = await bcrypt.compare(password, user.password ?? "");
+
         if (!matchPassword) {
             return NextResponse.json({ message: "Invalid password" }, { status: 401 });
         }
