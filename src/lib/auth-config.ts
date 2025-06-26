@@ -1,13 +1,16 @@
 import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcrypt";
 import speakeasy from "speakeasy";
 import { PrismaClient } from "@prisma/client";
+
 const prisma = new PrismaClient();
 
 export const auth: NextAuthOptions = {
+  debug: true,
   pages: {
-    signIn: '/login',
+    signIn: "/login",
   },
   providers: [
     CredentialsProvider({
@@ -19,19 +22,22 @@ export const auth: NextAuthOptions = {
         recaptchaToken: { label: "reCAPTCHA Token", type: "text" },
         totpCode: { label: "TOTP Code", type: "text" },
       },
-
       async authorize(credentials) {
         if (!credentials?.recaptchaToken) {
-          throw new Error('O token do reCAPTCHA é obrigatório.');
+          throw new Error("O token do reCAPTCHA é obrigatório.");
         }
-  
-        const recaptchaRes = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${credentials.recaptchaToken}`,
-          { method: 'POST' }
+
+        const recaptchaRes = await fetch(
+          `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${credentials.recaptchaToken}`,
+          { method: "POST" }
         );
         const recaptchaJson = await recaptchaRes.json();
         if (!recaptchaJson.success) {
-          throw new Error(`Erro na validação do reCAPTCHA: ${recaptchaJson["error-codes"]?.join(", ") || "desconhecido"}`);
+          throw new Error(
+            `Erro na validação do reCAPTCHA: ${recaptchaJson["error-codes"]?.join(", ") || "desconhecido"}`
+          );
         }
+
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
           select: {
@@ -41,34 +47,48 @@ export const auth: NextAuthOptions = {
             role: true,
             password: true,
             active: true,
-            totpSecret: true
-          }
+            totpSecret: true,
+            provider: true,
+          },
         });
+
         if (!user) {
-          throw new Error('Usuário não encontrado.');
+          throw new Error("Usuário não encontrado.");
+        }
+
+        if (user.provider === "google") {
+          throw new Error("Por favor, faça login com o Google.");
         }
 
         if (!user.active) {
-          throw new Error('Necessária validação de e-mail.');
+          throw new Error("Necessária validação de e-mail.");
         }
-        const matchPassword = await bcrypt.compare(credentials.password, user.password);
+
+        if (!user.password) {
+          throw new Error("Senha não cadastrada para esse usuário.");
+        }
+
+        const matchPassword = await bcrypt.compare(credentials.password, user.password ?? "");
         if (!matchPassword) {
-          throw new Error('Senha inválida.');
+          throw new Error("Senha inválida.");
         }
-        // Exige TOTP apenas para admin
-        if (user.role === 'admin' && user.totpSecret) {
+
+        if (user.role === "admin" && user.totpSecret) {
           if (!credentials.totpCode) {
-            throw new Error('Código TOTP obrigatório.');
+            throw new Error("Código TOTP obrigatório.");
           }
+
           const verified = speakeasy.totp.verify({
             secret: user.totpSecret,
-            encoding: 'base32',
-            token: credentials.totpCode
+            encoding: "base32",
+            token: credentials.totpCode,
           });
+
           if (!verified) {
-            throw new Error('Código TOTP inválido.');
+            throw new Error("Código TOTP inválido.");
           }
         }
+
         return {
           id: user.id,
           name: user.name,
@@ -78,21 +98,81 @@ export const auth: NextAuthOptions = {
         } as User;
       },
     }),
+
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        url: "https://accounts.google.com/o/oauth2/v2/auth",
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
+    }),
   ],
   session: {
     strategy: "jwt",
     maxAge: 1800,
   },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
+    async jwt({ token, user, account, profile }) {
+      console.log('JWT callback:', { 
+        hasUser: !!user, 
+        hasAccount: !!account, 
+        hasProfile: !!profile,
+        provider: account?.provider,
+        email: user?.email
+      });
+
+      if (user && account?.provider === "google") {
+        console.log('Google user found:', user);
+        console.log('Google account:', account);
+        console.log('Google profile:', profile);
+
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email! },
+        });
+
+        if (!existingUser) {
+          console.log('Creating new user with Google account');
+          const newUser = await prisma.user.create({
+            data: {
+              email: user.email!,
+              name: user.name ?? "",
+              role: "user",
+              active: true,
+              provider: "google",
+            },
+          });
+
+          token.userID = newUser.id;
+          token.role = newUser.role;
+          token.active = newUser.active;
+        } else {
+          console.log('Existing user found:', existingUser);
+          token.userID = existingUser.id;
+          token.role = existingUser.role;
+          token.active = existingUser.active;
+        }
+      } else if (user) {
         token.userID = user.id;
         token.role = user.role;
         token.active = user.active;
       }
+
       return token;
     },
+
     async session({ session, token }) {
+      console.log('Session callback:', { 
+        hasToken: !!token,
+        hasRole: !!token.role,
+        userID: token.userID,
+        role: token.role
+      });
+
       if (token.role) {
         session.user.userID = token.userID;
         session.user.role = token.role;

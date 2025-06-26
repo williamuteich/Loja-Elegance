@@ -27,17 +27,17 @@ export default function Sidebar() {
                             <h2 className="text-lg font-semibold underline hidden xl:block">Admin Dashboard</h2>
                         </div>
                         <ul className="space-y-2 p-2 xl:p-4">
-    <li>
-        <Link href="/">
-            <div
-                className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-700`}
-                title='Ir para Home'
-            >
-                <FaHome size={24} />
-                <span className='hidden xl:block'>Home</span>
-            </div>
-        </Link>
-    </li>
+                            <li>
+                                <Link href="/">
+                                    <div
+                                        className={`flex items-center gap-2 p-2 rounded-md hover:bg-gray-700`}
+                                        title='Ir para Home'
+                                    >
+                                        <FaHome size={24} />
+                                        <span className='hidden xl:block'>Home</span>
+                                    </div>
+                                </Link>
+                            </li>
                             <li>
                                 <Link href="/dashboard/seguranca">
                                     <div
@@ -174,7 +174,7 @@ export default function Sidebar() {
                                     </Link>
                                 </li>
                             }
-                                                        {
+                            {
                                 <li>
                                     <Link href="/dashboard/instagram">
                                         <div
@@ -225,15 +225,21 @@ export default function Sidebar() {
 
                         <div className="flex flex-col gap-6 min-h-screen py-4">
                             <div className="">
-                                <Link href="/dashboard" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard') ? 'bg-gray-700' : ''}`}>
+                                <Link href="/" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/') ? 'bg-gray-700' : ''}`}>
                                     <FaHome className="w-6 h-6" />
-                                    <span>Início</span>
+                                    <span>Home</span>
                                 </Link>
+
                                 <Link href="/dashboard/seguranca" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/seguranca') ? 'bg-gray-700' : ''}`}>
                                     <FaShieldAlt className="w-6 h-6" />
                                     <span>Segurança/2FA</span>
                                 </Link>
-
+                            
+                                <Link href="/dashboard" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard') ? 'bg-gray-700' : ''}`}>
+                                    <FaHome className="w-6 h-6" />
+                                    <span>Início</span>
+                                </Link>
+  
                                 <Link href="/dashboard/usuarios" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/usuarios') ? 'bg-gray-700' : ''}`}>
                                     <FaUserCircle className="w-6 h-6" />
                                     <span>Usuários</span>
@@ -268,7 +274,7 @@ export default function Sidebar() {
                                     <FaImages className="w-6 h-6" />
                                     <span>Galeria</span>
                                 </Link>
-                               
+
                                 <Link href="/dashboard/banners" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/banners') ? 'bg-gray-700' : ''}`}>
                                     <FaRegImage className="w-6 h-6" />
                                     <span>Banners</span>
@@ -289,7 +295,7 @@ export default function Sidebar() {
 
                             <div className="mt-16 space-y-2 flex flex-col">
                                 <Link href="/dashboard/setup" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/setup') ? 'bg-gray-700' : ''}`}>
-                                <FaCog size={24} />
+                                    <FaCog size={24} />
                                     <span>Configurações</span>
                                 </Link>
                                 <LogoutDashboard />

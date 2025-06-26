@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useCart } from "@/context/cartContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import GoogleLoginButtonSmall from "@/components/auth/GoogleLoginButtonSmall";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { Produto } from "@/utils/types/produto";
@@ -184,27 +185,36 @@ export default function CheckoutHeader() {
               </Link>
             ) : (
               <div>
-                <p className="text-center text-sm text-red-500 font-semibold mb-4">
-                  Para completar tu compra, necesitas <strong>iniciar sesión</strong> o{" "}
-                  <strong>crear una cuenta</strong>.
-                </p>
+                <div className="mb-2">
+                  <GoogleLoginButtonSmall 
+                    callbackUrl="/checkouts"
+                    className="w-full"
+                  />
+                </div>
+                <div className="flex items-center mb-4">
+                  <div className="flex-grow border-t border-gray-300"></div>
+                  <span className="mx-4 text-gray-500">o</span>
+                  <div className="flex-grow border-t border-gray-300"></div>
+                </div>
 
-                <Link href={`/login`}>
-                  <Button
-                    className="w-full mt-1 py-2 bg-pink-700 text-white font-semibold text-sm text-center rounded-md hover:bg-pink-600"
-                    onClick={() => setCartOpen(false)}
-                  >
-                    Iniciar Sesión
-                  </Button>
-                </Link>
-                <Link href={`/cadastro`}>
-                  <Button
-                    className="w-full mt-1 py-2 bg-green-600 text-white font-semibold text-sm text-center rounded-md hover:bg-green-500"
-                    onClick={() => setCartOpen(false)}
-                  >
-                    Crear Cuenta
-                  </Button>
-                </Link>
+                <div className="space-y-1 flex flex-col">
+                  <Link href={`/login`}>
+                    <Button
+                      className="w-full py-2 bg-pink-700 text-white font-semibold text-sm text-center rounded-md hover:bg-pink-600"
+                      onClick={() => setCartOpen(false)}
+                    >
+                      Iniciar Sesión
+                    </Button>
+                  </Link>
+                  <Link href={`/cadastro`}>
+                    <Button
+                      className="w-full py-2 bg-green-600 text-white font-semibold text-sm text-center rounded-md hover:bg-green-500"
+                      onClick={() => setCartOpen(false)}
+                    >
+                      Crear Cuenta
+                    </Button>
+                  </Link>
+                </div>
               </div>
             )}
           </div>

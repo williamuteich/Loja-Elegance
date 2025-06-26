@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import "react-toastify/dist/ReactToastify.css";
 import ReCAPTCHA from "react-google-recaptcha";
+import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 
 export default function Formulario() {
     const router = useRouter();
@@ -139,6 +140,16 @@ export default function Formulario() {
             </h1>
 
             <ToastContainer />
+
+            <div className="mb-6">
+                <GoogleLoginButton className="w-full" />
+            </div>
+
+            <div className="flex items-center mb-6">
+                <div className="flex-grow border-t border-gray-300"></div>
+                <span className="mx-4 text-gray-500">o</span>
+                <div className="flex-grow border-t border-gray-300"></div>
+            </div>
 
             <form onSubmit={login} className="space-y-4">
                 <div>

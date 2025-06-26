@@ -3,6 +3,7 @@ import Form from "@/components/Form";
 import Submit from "@/components/Submit";
 import Link from "next/link";
 import validator from 'validator';
+import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 
 export default function Registro() {
     async function nuevoUsuario(prevState: any, formData: FormData): Promise<{ success?: string; error?: string; confirm?: string}> {
@@ -48,6 +49,14 @@ export default function Registro() {
             <div className="flex items-center justify-center">
                 <div className="w-full max-w-xl p-6 min-h-screen">
                     <h1 className="text-2xl font-bold text-center text-pink-700 mb-6 uppercase">Crea tu Cuenta</h1>
+                    <div className="mb-6">
+                        <GoogleLoginButton className="w-full" />
+                    </div>
+                    <div className="flex items-center mb-6">
+                        <div className="flex-grow border-t border-gray-300"></div>
+                        <span className="mx-4 text-gray-500">o</span>
+                        <div className="flex-grow border-t border-gray-300"></div>
+                    </div>
                     <Form action={nuevoUsuario}>
                         <div className="mb-4">
                             <input
