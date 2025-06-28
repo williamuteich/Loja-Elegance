@@ -83,6 +83,17 @@ export default function Sidebar() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/dashboard/promocao">
+                                    <div
+                                        className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/promocao') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                                        title='promoção'
+                                    >
+                                        <FaGift size={24} />
+                                        <span className='hidden xl:block'>Promoção</span>
+                                    </div>
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/dashboard/faq">
                                     <div
                                         className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/faq') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
@@ -248,6 +259,11 @@ export default function Sidebar() {
                                 <Link href="/dashboard/produtos" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/produtos') ? 'bg-gray-700' : ''}`}>
                                     <FaBoxOpen className="w-6 h-6" />
                                     <span>Produtos</span>
+                                </Link>
+
+                                <Link href="/dashboard/promocao" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/promocao') ? 'bg-gray-700' : ''}`}>
+                                    <FaGift className="w-6 h-6" />
+                                    <span>Promoção</span>
                                 </Link>
 
                                 <Link href="/dashboard/faq" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/faq') ? 'bg-gray-700' : ''}`}>

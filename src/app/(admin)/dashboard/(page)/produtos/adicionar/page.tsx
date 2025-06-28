@@ -308,7 +308,7 @@ export default function AdicionarProduto() {
                 />
               </div>
 
-              <div>
+              {/*<div>
                 <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700 mb-2">Preço Anterior</label>
                 <NumericFormat
                   id="priceOld"
@@ -319,7 +319,7 @@ export default function AdicionarProduto() {
                   prefix="$ "
                   decimalScale={2}
                 />
-              </div>
+              </div>*/}
 
               <div className="md:col-span-2">
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Categorias</label>
@@ -381,7 +381,7 @@ export default function AdicionarProduto() {
                 </select>
               </div>
 
-              <div>
+              {/*<div>
                 <label htmlFor="onSale" className="block text-sm font-medium text-gray-700 mb-2">Promoção</label>
                 <select
                   id="onSale"
@@ -392,7 +392,7 @@ export default function AdicionarProduto() {
                   <option value="false">Não</option>
                   <option value="true">Sim</option>
                 </select>
-              </div>
+              </div>*/}
             </div>
           </div>
 

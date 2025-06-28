@@ -118,13 +118,6 @@ export const auth: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, account, profile }) {
-      console.log('JWT callback:', { 
-        hasUser: !!user, 
-        hasAccount: !!account, 
-        hasProfile: !!profile,
-        provider: account?.provider,
-        email: user?.email
-      });
 
       if (user && account?.provider === "google") {
         console.log('Google user found:', user);
@@ -166,12 +159,6 @@ export const auth: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      console.log('Session callback:', { 
-        hasToken: !!token,
-        hasRole: !!token.role,
-        userID: token.userID,
-        role: token.role
-      });
 
       if (token.role) {
         session.user.userID = token.userID;
