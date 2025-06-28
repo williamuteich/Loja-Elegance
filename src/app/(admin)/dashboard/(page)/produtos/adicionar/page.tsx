@@ -99,13 +99,13 @@ export default function AdicionarProduto() {
         description: event.target.description.value,
         features: event.target.features.value,
         price: parseFloat(event.target.price.value.replace("$", "").replace(".", "").replace(",", ".")),
-        priceOld: parseFloat(event.target.priceOld.value.replace("$", "").replace(".", "").replace(",", ".")),
+        //priceOld: parseFloat(event.target.priceOld.value.replace("$", "").replace(".", "").replace(",", ".")),
         brandId: event.target.brand.value,
         categoryIds: selectedCategories.map((c: any) => c.value),
         imagePrimary: uploadedImageUrls[0] || "",
         imagesSecondary: uploadedImageUrls.slice(1),
         active: event.target.status.value === "true",
-        onSale: event.target.onSale.value === "true",
+        //onSale: event.target.onSale.value === "false",
         destaque: event.target.destaque.value === "true",
         variants: variants
       };

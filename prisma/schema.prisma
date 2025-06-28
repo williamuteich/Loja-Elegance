@@ -27,24 +27,25 @@ model User {
 }
 
 model Product {
-  id              String            @id @default(auto()) @map("_id") @db.ObjectId
-  name            String
-  description     String
-  price           Float
-  priceOld        Float?
-  active          Boolean           @default(true)
-  onSale          Boolean           @default(false)
-  destaque        Boolean           @default(false)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  brandId         String            @db.ObjectId
-  brand           Brand             @relation(fields: [brandId], references: [id])
-  categories      ProductCategory[]
-  imagePrimary    String?
-  imagesSecondary String[]
-  features        String?
-  orderItems      OrderItem[]
-  variants        ProductVariant[]
+  id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  description       String
+  price             Float
+  priceOld          Float?
+  active            Boolean           @default(true)
+  onSale            Boolean           @default(false)
+  destaque          Boolean           @default(false)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  brandId           String            @db.ObjectId
+  brand             Brand             @relation(fields: [brandId], references: [id])
+  categories        ProductCategory[]
+  imagePrimary      String?
+  imagesSecondary   String[]
+  features          String?
+  orderItems        OrderItem[]
+  variants          ProductVariant[]
+  promotionDeadline DateTime?
 }
 
 model Brand {

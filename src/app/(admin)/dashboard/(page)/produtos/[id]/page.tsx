@@ -147,13 +147,13 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
         description: event.target.description.value,
         features: event.target.features.value,
         price: parseFloat(event.target.price.value.replace("$", "").replace(".", "").replace(",", ".")),
-        priceOld: parseFloat(event.target.priceOld.value.replace("$", "").replace(".", "").replace(",", ".")),
+        //priceOld: parseFloat(event.target.priceOld.value.replace("$", "").replace(".", "").replace(",", ".")),
         brandId: event.target.brand.value,
         categoryIds: selectedCategories.map((c: any) => c.value),
         imagePrimary: uploadedPrimaryImageUrl,
         imagesSecondary: newSecondaryImages,
         active: event.target.status.value === "true",
-        onSale: event.target.onSale.value === "true",
+        //onSale: event.target.onSale.value === "true",
         destaque: event.target.destaque.value === "true",
         variants: variants
       };

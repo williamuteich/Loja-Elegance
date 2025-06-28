@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/hooks/use-toast';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Container from '../components/Container';
 
 interface Produto {
@@ -14,18 +15,10 @@ interface Produto {
   estoque: number;
 }
 
-const produtosMock: Produto[] = [
-  { id: '1', nome: 'Fone Bluetooth', precoOriginal: 199.99, imagem: 'https://images.unsplash.com/photo-1606220588910-42a1dada2e99?auto=format&fit=crop&w=200&q=80', categoria: 'Áudio', estoque: 42 },
-  { id: '2', nome: 'Smartwatch Premium', precoOriginal: 349.90, imagem: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=200&q=80', categoria: 'Wearables', estoque: 18 },
-  { id: '3', nome: 'Câmera de Segurança HD', precoOriginal: 499.90, imagem: 'https://images.unsplash.com/photo-1586449480531-5318f4fbfd1f?auto=format&fit=crop&w=200&q=80', categoria: 'Segurança', estoque: 27 },
-  { id: '4', nome: 'Tablet 10" 128GB', precoOriginal: 1299.90, imagem: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=200&q=80', categoria: 'Tablets', estoque: 15 },
-  { id: '5', nome: 'Fone de Ouvido Gamer', precoOriginal: 299.90, imagem: 'https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?auto=format&fit=crop&w=200&q=80', categoria: 'Gamer', estoque: 36 },
-];
-
 interface ProdutoPromocao {
   produto: Produto;
   precoPromo: string;
-  fim: string;
+  promotionDeadline: string;
 }
 
 export default function PromocaoProdutos() {
@@ -33,51 +26,74 @@ export default function PromocaoProdutos() {
   const [termoBusca, setTermoBusca] = useState<string>('');
   const [resultadosBusca, setResultadosBusca] = useState<Produto[]>([]);
   const [mostrarResultados, setMostrarResultados] = useState<boolean>(false);
+  const [buscaProdutos, setBuscaProdutos] = useState<Produto[]>([]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/api/privada/product?fetchAll=true`, {
+          method: "GET",
+        });
+    
+        const data = await response.json();
+        if (data.produtos && Array.isArray(data.produtos)) {
+          const produtosMapeados = data.produtos.map((prod: any) => ({
+            id: prod.id,
+            nome: prod.name, 
+            precoOriginal: prod.price,
+            imagem: prod.imagePrimary,
+            categoria: prod.categories?.[0].category.name || 'Sem categoria',
+            estoque: prod.variants?.[0]?.quantity || 0 
+          }));
+          setBuscaProdutos(produtosMapeados);
+        } else {
+          setBuscaProdutos([]);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar produtos:", error);
+        setBuscaProdutos([]);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
   useEffect(() => {
     if (termoBusca.trim() === '') {
       setResultadosBusca([]);
       return;
     }
 
-    const resultado = produtosMock.filter(produto =>
-      produto.nome.toLowerCase().includes(termoBusca.toLowerCase())
+    const resultado = buscaProdutos.filter(produto => 
+      produto.nome && produto.nome.toLowerCase().includes(termoBusca.toLowerCase())
     );
 
     setResultadosBusca(resultado);
-  }, [termoBusca]);
+  }, [termoBusca, buscaProdutos]);
 
   const adicionarProdutoPromocao = (produto: Produto) => {
     if (produtosEmPromocao.some(p => p.produto.id === produto.id)) {
-      toast({
-        title: 'Produto já adicionado',
-        description: 'Este produto já está na lista de promoções.',
-        variant: 'destructive'
-      });
+      toast.error('Este produto já está na lista de promoções.');
       return;
     }
 
     const novaPromocao: ProdutoPromocao = {
       produto,
       precoPromo: '',
-      fim: ''
+      promotionDeadline: ''
     };
 
     setProdutosEmPromocao([...produtosEmPromocao, novaPromocao]);
     setTermoBusca('');
     setResultadosBusca([]);
-    toast({
-      title: 'Produto adicionado',
-      description: 'Agora defina o valor e o período da promoção.'
-    });
   };
 
   const atualizarPromocao = (index: number, campo: string, valor: string) => {
     const novasPromocoes = [...produtosEmPromocao];
     if (campo === 'precoPromo') {
       novasPromocoes[index].precoPromo = valor;
-    } else if (campo === 'fim') {
-      novasPromocoes[index].fim = valor;
+    } else if (campo === 'promotionDeadline') {
+      novasPromocoes[index].promotionDeadline = valor;
     }
     setProdutosEmPromocao(novasPromocoes);
   };
@@ -86,36 +102,31 @@ export default function PromocaoProdutos() {
     const novasPromocoes = [...produtosEmPromocao];
     novasPromocoes.splice(index, 1);
     setProdutosEmPromocao(novasPromocoes);
-    toast({
-      title: 'Produto removido',
-      description: 'O produto foi removido da lista de promoções.'
-    });
+    toast.info('O produto foi removido da lista de promoções.');
   };
 
   const salvarPromocoes = () => {
     const promocoesInvalidas = produtosEmPromocao.filter(promo =>
-      !promo.precoPromo || !promo.fim || parseFloat(promo.precoPromo) <= 0
+      !promo.precoPromo ||
+      !promo.promotionDeadline ||
+      parseFloat(promo.precoPromo) <= 0 ||
+      parseFloat(promo.precoPromo) >= promo.produto.precoOriginal
     );
 
+    console.log(produtosEmPromocao)
+
     if (promocoesInvalidas.length > 0) {
-      toast({
-        title: 'Erro ao salvar',
-        description: 'Verifique se todos os produtos têm preço promocional válido e data de término definida.',
-        variant: 'destructive'
-      });
+      toast.error('Verifique se todos os produtos têm preço promocional válido e data de término definida.');
       return;
     }
 
-    toast({
-      title: 'Promoções salvas!',
-      description: 'As promoções foram configuradas com sucesso.'
-    });
+    toast.success('As promoções foram configuradas com sucesso.');
   };
 
   return (
     <Container>
-      <div className="mx-auto">
-        {/* Header modernizado */}
+      <ToastContainer />
+      <div className="mx-auto">0
         <div className="mb-10">
           <h2 className="text-3xl font-bold text-gray-800 bg-clip-text">
             Gerenciador de Promoções
@@ -125,10 +136,8 @@ export default function PromocaoProdutos() {
           </p>
         </div>
 
-        {/* Painel principal com gradiente sutil */}
         <div className="bg-gradient-to-br from-white to-gray-50 border rounded-2xl shadow-lg p-6 md:p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Painel esquerdo - Busca */}
             <div className="space-y-6">
               <div className="bg-white rounded-xl border border-pink-100 shadow-lg p-6">
                 <div className="flex items-center justify-between mb-5">
@@ -141,7 +150,7 @@ export default function PromocaoProdutos() {
                     Buscar produtos
                   </h2>
                   <span className="bg-pink-100 text-pink-800 text-sm font-medium px-3 py-1 rounded-full">
-                    {produtosMock.length} produtos
+                    {buscaProdutos.length} produtos
                   </span>
                 </div>
 
@@ -161,7 +170,6 @@ export default function PromocaoProdutos() {
                   </div>
                 </div>
 
-                {/* Resultados da busca */}
                 {mostrarResultados && resultadosBusca.length > 0 && (
                   <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                     <div className="max-h-96 overflow-y-auto">
@@ -302,8 +310,8 @@ export default function PromocaoProdutos() {
                               </span>
                               <Input
                                 type="datetime-local"
-                                value={promocao.fim}
-                                onChange={(e) => atualizarPromocao(index, 'fim', e.target.value)}
+                                value={promocao.promotionDeadline}
+                                onChange={(e) => atualizarPromocao(index, 'promotionDeadline', e.target.value)}
                                 className="pl-10 py-4 rounded-lg border-indigo-100 focus:border-indigo-300"
                               />
                             </div>
@@ -313,11 +321,10 @@ export default function PromocaoProdutos() {
                     ))}
                   </div>
 
-                  {/* Botão Salvar Promoções */}
                   <div className="mt-6 pt-5 border-t border-gray-200">
                     <Button
                       onClick={salvarPromocoes}
-                      className="w-full py-5 bg-pink-600 text-white  hover:bg-pink-500 text-base font-bold shadow-lg transition-all"
+                      className="w-full py-5 bg-pink-600 text-white hover:bg-pink-500 text-base font-bold shadow-lg transition-all"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
