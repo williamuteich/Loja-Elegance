@@ -11,6 +11,7 @@ import Produtos from "../components/produtos";
 import { Produto, VariantProps } from "@/utils/types/produto";
 import EstoqueProdutos from "../components/estoqueProdutos";
 import VendaWhatsapp from "../components/vendaWhatsapp";
+import Countdown from "../components/Countdown"; // <-- importei aqui
 
 export default async function ProdutoSlug({
   params,
@@ -41,7 +42,7 @@ export default async function ProdutoSlug({
     },
     body: JSON.stringify({
       productId: produtos.id,
-      productName: produtos.name
+      productName: produtos.name,
     }),
   });
 
@@ -63,6 +64,14 @@ export default async function ProdutoSlug({
     },
     { colors: [], stock: [], hex: [] }
   );
+
+  const now = new Date();
+
+  const showCountdown =
+    produtos.onSale &&
+    produtos.priceOld &&
+    produtos.promotionDeadline &&
+    new Date(produtos.promotionDeadline) > now;
 
   return (
     <Container>
@@ -92,6 +101,9 @@ export default async function ProdutoSlug({
                     </p>
                   )}
                 </div>
+
+                {/* Contador da promoção */}
+                {showCountdown && <Countdown deadlineISO={produtos.promotionDeadline} updatedAt={produtos.updatedAt}/>}
 
                 <div className="space-y-4">
                   <EstoqueProdutos
