@@ -45,7 +45,7 @@ export default async function VendaWhatsapp({ produto }: VendaWhatsappProps) {
             className="mt-1 flex py-2 text-sm px-4 rounded-lg bg-green-500 text-white font-semibold items-center justify-center gap-2 transition-colors duration-300 hover:bg-green-600"
         >
             <FaWhatsapp size={22} />
-            <span>Comprar a través de WhatsApp</span>
+            <span>Hacé tu compra por WhatsApp</span>
         </a>
     );
 }
