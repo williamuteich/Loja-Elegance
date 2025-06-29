@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { requireAdmin } from "@/utils/auth";
-import { DateTime } from "luxon"; // Luxon para timezone
+import { DateTime } from "luxon"; 
 
 const prisma = new PrismaClient();
 
@@ -11,32 +11,7 @@ interface ProdutoPromo {
   promotionDeadline: string; // Ex: "2025-06-30T23:59"
 }
 
-// 🔁 Função para resetar promoções expiradas
-async function resetExpiredPromotions() {
-  const now = new Date();
 
-  const expiredProducts = await prisma.product.findMany({
-    where: {
-      promotionDeadline: { lt: now },
-      onSale: true,
-    },
-  });
-
-  for (const product of expiredProducts) {
-    await prisma.product.update({
-      where: { id: product.id },
-      data: {
-        price: product.priceOld ?? product.price,
-        priceOld: null,
-        promotionDeadline: null,
-        onSale: false,
-        updatedAt: new Date(),
-      },
-    });
-  }
-}
-
-// ✅ Atualiza promoções via PATCH
 export async function PATCH(request: Request) {
   const authError = await requireAdmin(request);
   if (authError) {
@@ -59,10 +34,9 @@ export async function PATCH(request: Request) {
         continue;
       }
 
-      // 🕓 Converte a deadline da hora brasileira para UTC
       const deadlineUTC = DateTime.fromISO(item.promotionDeadline, {
         zone: "America/Sao_Paulo",
-      }).toUTC().toJSDate(); // Converte para objeto Date
+      }).toUTC().toJSDate();
 
       await prisma.product.update({
         where: { id: item.produto.id },
@@ -90,5 +64,3 @@ export async function PATCH(request: Request) {
     );
   }
 }
-
-export { resetExpiredPromotions };
