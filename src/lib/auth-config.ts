@@ -8,7 +8,6 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const auth: NextAuthOptions = {
-  debug: true,
   pages: {
     signIn: "/login",
   },
