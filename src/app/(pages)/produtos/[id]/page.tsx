@@ -21,8 +21,7 @@ export default async function ProdutoSlug({
   const { id } = await params;
 
   const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`,
-    { next: { revalidate: 20 } }
+    `${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`
   );
 
   if (!response.ok) {

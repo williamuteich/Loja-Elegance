@@ -1,204 +1,194 @@
 'use client'
-import { useState, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Container from '../components/Container';
+import { useState, useEffect } from 'react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import Container from '../components/Container'
 
 interface Produto {
-  id: string;
-  nome: string;
-  precoOriginal: number;
-  imagem: string;
-  categoria: string;
-  estoque: number;
+  id: string
+  nome: string
+  precoOriginal: number
+  imagem: string
+  categoria: string
+  estoque: number
 }
 
 interface ProdutoPromocao {
-  produto: Produto;
-  precoPromo: string;
-  promotionDeadline: string;
+  produto: Produto
+  precoPromo: string
+  promotionDeadline: string
 }
 
 export default function PromocaoProdutos() {
-  const [produtosEmPromocao, setProdutosEmPromocao] = useState<ProdutoPromocao[]>([]);
-  const [termoBusca, setTermoBusca] = useState<string>('');
-  const [resultadosBusca, setResultadosBusca] = useState<Produto[]>([]);
-  const [mostrarResultados, setMostrarResultados] = useState<boolean>(false);
-  const [buscaProdutos, setBuscaProdutos] = useState<Produto[]>([]);
+  const [produtosEmPromocao, setProdutosEmPromocao] = useState<ProdutoPromocao[]>([])
+  const [termoBusca, setTermoBusca] = useState<string>('')
+  const [resultadosBusca, setResultadosBusca] = useState<Produto[]>([])
+  const [mostrarResultados, setMostrarResultados] = useState<boolean>(false)
+  const [buscaProdutos, setBuscaProdutos] = useState<Produto[]>([])
 
   function formatarParaDatetimeLocalBrasileiro(dataUTC: string): string {
-    const data = new Date(dataUTC);
-  
-    // Ajusta para horário de Brasília (GMT-3)
-    const dataBrasilia = new Date(data.getTime() - 3 * 60 * 60 * 1000);
-  
-    const ano = dataBrasilia.getFullYear();
-    const mes = String(dataBrasilia.getMonth() + 1).padStart(2, '0');
-    const dia = String(dataBrasilia.getDate()).padStart(2, '0');
-    const horas = String(dataBrasilia.getHours()).padStart(2, '0');
-    const minutos = String(dataBrasilia.getMinutes()).padStart(2, '0');
-  
-    return `${ano}-${mes}-${dia}T${horas}:${minutos}`;
+    const data = new Date(dataUTC)
+    const offsetMinutos = data.getTimezoneOffset()
+    const local = new Date(data.getTime() - offsetMinutos * 60_000)
+    return local.toISOString().slice(0, 16)
   }
-  
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       try {
-        const response = await fetch(`/api/privada/product?fetchAll=true`, {
-          method: "GET",
-        });
-  
-        const data = await response.json();
-        console.log("recebendo produtos", data)
-  
-        if (data.produtos && Array.isArray(data.produtos)) {
-          const agora = new Date();
-  
-          const produtosMapeados = data.produtos.map((prod: any) => {
-            const precoOriginal = prod.priceOld || prod.price;
-            const estoque = prod.variants.reduce((total: number, variant: any) => {
-              return total + (variant.stock?.quantity ?? 0);
-            }, 0);
-  
+        const response = await fetch('/api/privada/product?fetchAll=true')
+        const data = await response.json()
+
+        if (Array.isArray(data.produtos)) {
+          const agora = new Date()
+
+          type RawProd = {
+            id: string
+            name: string
+            price: number
+            priceOld?: number
+            imagePrimary: string
+            categories?: Array<{ category?: { name: string } }>
+            variants: Array<{ stock?: { quantity?: number } }>
+            onSale: boolean
+            promotionDeadline?: string
+          }
+
+          const produtosMapeados: Array<RawProd & {
+            precoOriginal: number
+            estoque: number
+          }> = data.produtos.map((prod: RawProd) => {
+            const precoOriginal = prod.priceOld ?? prod.price
+            const estoque = prod.variants.reduce(
+              (total, variant) => total + (variant.stock?.quantity ?? 0),
+              0
+            )
             return {
-              id: prod.id,
-              nome: prod.name,
+              ...prod,
               precoOriginal,
-              imagem: prod.imagePrimary,
-              categoria: prod.categories?.[0]?.category?.name || 'Sem categoria',
               estoque,
-              onSale: prod.onSale,
-              precoAtual: prod.price,
-              promotionDeadline: prod.promotionDeadline,
-            };
-          });
-  
-          const ativos = produtosMapeados.filter(p =>
+            }
+          })
+
+          const ativos = produtosMapeados.filter((p) =>
             p.onSale &&
-            p.precoOriginal &&
-            p.promotionDeadline &&
+            p.precoOriginal > 0 &&
+            p.promotionDeadline !== undefined &&
             new Date(p.promotionDeadline) > agora
-          );
-  
-          const listaPromocoes = ativos.map(p => ({
+          )
+
+          const listaPromocoes: ProdutoPromocao[] = ativos.map((p) => ({
             produto: {
               id: p.id,
-              nome: p.nome,
+              nome: p.name,
               precoOriginal: p.precoOriginal,
-              imagem: p.imagem,
-              categoria: p.categoria,
+              imagem: p.imagePrimary,
+              categoria: p.categories?.[0]?.category?.name ?? 'Sem categoria',
               estoque: p.estoque,
             },
-            precoPromo: p.precoAtual.toString(),
+            precoPromo: p.price.toString(),
             promotionDeadline: p.promotionDeadline
               ? formatarParaDatetimeLocalBrasileiro(p.promotionDeadline)
               : ''
-          }));
-          
-          const restantes = produtosMapeados
-            .filter(p => !ativos.some(a => a.id === p.id))
-            .map(p => ({
+          }))
+
+          const restantes: Produto[] = produtosMapeados
+            .filter((p) => !ativos.some((a) => a.id === p.id))
+            .map((p) => ({
               id: p.id,
-              nome: p.nome,
+              nome: p.name,
               precoOriginal: p.precoOriginal,
-              imagem: p.imagem,
-              categoria: p.categoria,
-              estoque: p.estoque
-            }));
-  
-          setProdutosEmPromocao(listaPromocoes);
-          setBuscaProdutos(restantes);
+              imagem: p.imagePrimary,
+              categoria: p.categories?.[0]?.category?.name ?? 'Sem categoria',
+              estoque: p.estoque,
+            }))
+
+          setProdutosEmPromocao(listaPromocoes)
+          setBuscaProdutos(restantes)
         } else {
-          setBuscaProdutos([]);
+          setBuscaProdutos([])
         }
       } catch (error) {
-        console.error("Erro ao buscar produtos:", error);
-        setBuscaProdutos([]);
+        console.error('Erro ao buscar produtos:', error)
+        setBuscaProdutos([])
       }
-    };
-  
-    fetchData();
-  }, []);
-  
-  
+    }
+    fetchData()
+  }, [])
+
   useEffect(() => {
     if (termoBusca.trim() === '') {
-      setResultadosBusca([]);
-      return;
+      setResultadosBusca([])
+      return
     }
-
-    const resultado = buscaProdutos.filter(produto => 
-      produto.nome && produto.nome.toLowerCase().includes(termoBusca.toLowerCase())
-    );
-
-    setResultadosBusca(resultado);
-  }, [termoBusca, buscaProdutos]);
+    const filtro = buscaProdutos.filter((produto) =>
+      produto.nome.toLowerCase().includes(termoBusca.toLowerCase())
+    )
+    setResultadosBusca(filtro)
+  }, [termoBusca, buscaProdutos])
 
   const adicionarProdutoPromocao = (produto: Produto) => {
-    if (produtosEmPromocao.some(p => p.produto.id === produto.id)) {
-      toast.error('Este produto já está na lista de promoções.');
-      return;
+    if (produtosEmPromocao.some((p) => p.produto.id === produto.id)) {
+      toast.error('Este produto já está na lista de promoções.')
+      return
     }
+    setProdutosEmPromocao([
+      ...produtosEmPromocao,
+      { produto, precoPromo: '', promotionDeadline: '' }
+    ])
+    setTermoBusca('')
+    setResultadosBusca([])
+  }
 
-    const novaPromocao: ProdutoPromocao = {
-      produto,
-      precoPromo: '',
-      promotionDeadline: ''
-    };
+  const atualizarPromocao = (index: number, campo: 'precoPromo' | 'promotionDeadline', valor: string) => {
+    const clone = [...produtosEmPromocao]
+    clone[index][campo] = valor
+    setProdutosEmPromocao(clone)
+  }
 
-    setProdutosEmPromocao([...produtosEmPromocao, novaPromocao]);
-    setTermoBusca('');
-    setResultadosBusca([]);
-  };
-
-  const atualizarPromocao = (index: number, campo: string, valor: string) => {
-    const novasPromocoes = [...produtosEmPromocao];
-    if (campo === 'precoPromo') {
-      novasPromocoes[index].precoPromo = valor;
-    } else if (campo === 'promotionDeadline') {
-      novasPromocoes[index].promotionDeadline = valor;
+  const removerProdutoPromocao = async (index: number) => {
+    const promo = produtosEmPromocao[index]
+    try {
+      const res = await fetch('/api/privada/revert-promo', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ produtoId: promo.produto.id })
+      })
+      if (!res.ok) throw new Error('Falha ao reverter a promoção')
+      const clone = [...produtosEmPromocao]
+      clone.splice(index, 1)
+      setProdutosEmPromocao(clone)
+      toast.success('Promoção revertida e produto removido.')
+    } catch {
+      toast.error('Não foi possível reverter a promoção.')
     }
-    setProdutosEmPromocao(novasPromocoes);
-  };
-
-  const removerProdutoPromocao = (index: number) => {
-    const novasPromocoes = [...produtosEmPromocao];
-    novasPromocoes.splice(index, 1);
-    setProdutosEmPromocao(novasPromocoes);
-    toast.info('O produto foi removido da lista de promoções.');
-  };
+  }
 
   const salvarPromocoes = async () => {
-    const promocoesInvalidas = produtosEmPromocao.filter(promo =>
+    const invalidas = produtosEmPromocao.filter((promo) =>
       !promo.precoPromo ||
       !promo.promotionDeadline ||
       parseFloat(promo.precoPromo) <= 0 ||
       parseFloat(promo.precoPromo) >= promo.produto.precoOriginal
-    );
-
-    if (promocoesInvalidas.length > 0) {
-      toast.error('Verifique se todos os produtos têm preço promocional válido e data de término definida.');
-      return;
+    )
+    if (invalidas.length > 0) {
+      toast.error('Verifique se todos os produtos têm preço promocional válido e data de término definida.')
+      return
     }
-
-    await fetch("/api/privada/promo", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ produtos: produtosEmPromocao }),
+    await fetch('/api/privada/promo', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ produtos: produtosEmPromocao })
     })
-
-    toast.success('As promoções foram configuradas com sucesso.');
-  };
+    toast.success('As promoções foram configuradas com sucesso.')
+  }
 
   return (
     <Container>
       <ToastContainer />
-      <div className="mx-auto">0
+      <div className="mx-auto">
         <div className="mb-10">
           <h2 className="text-3xl font-bold text-gray-800 bg-clip-text">
             Gerenciador de Promoções
@@ -210,6 +200,7 @@ export default function PromocaoProdutos() {
 
         <div className="bg-gradient-to-br from-white to-gray-50 border rounded-2xl shadow-lg p-6 md:p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* LADO ESQUERDO */}
             <div className="space-y-6">
               <div className="bg-white rounded-xl border border-pink-100 shadow-lg p-6">
                 <div className="flex items-center justify-between mb-5">
@@ -295,9 +286,33 @@ export default function PromocaoProdutos() {
                     </p>
                   </div>
                 )}
+
+                {/* ==== AQUI: produtos já em promoção abaixo da busca ==== */}
+                {produtosEmPromocao.length > 0 && (
+                  <div className="mt-6 bg-yellow-50 rounded-xl border border-yellow-100 p-4">
+                    <h3 className="text-lg font-bold text-yellow-700 mb-3">Produtos já em promoção</h3>
+                    <div className="space-y-3 max-h-48 overflow-y-auto">
+                      {produtosEmPromocao.map(promo => (
+                        <div key={promo.produto.id} className="flex items-center gap-3 bg-white p-2 rounded-lg border">
+                          <img src={promo.produto.imagem} alt={promo.produto.nome} className="w-10 h-10 object-contain rounded" />
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-800">{promo.produto.nome}</p>
+                            <p className="text-xs text-gray-500 line-through">R$ {promo.produto.precoOriginal.toFixed(2)}</p>
+                            <p>
+                              R$ {parseFloat(promo.precoPromo).toFixed(2)} até{' '}
+                              {promo.promotionDeadline.replace('T', ' ')}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {/* ==== fim ==== */}
               </div>
             </div>
 
+            {/* LADO DIREITO (produtosEmPromocao para edição) */}
             <div className="space-y-6">
               <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-100 shadow-sm p-6">
                 <div className="flex justify-between items-center mb-5">
@@ -332,16 +347,14 @@ export default function PromocaoProdutos() {
                           <div className="flex-1">
                             <h3 className="font-bold text-gray-900">{promocao.produto.nome}</h3>
                             <div className="flex items-center mt-1">
-                              <span className="text-gray-500 line-through mr-2 text-sm">
-                                $ {promocao.produto.precoOriginal.toFixed(2)}
-                              </span>
+                              <span className="text-gray-500 line-through mr-2 text-sm">$ {promocao.produto.precoOriginal.toFixed(2)}</span>
                               <span className="bg-gradient-to-r from-red-100 to-orange-100 text-red-700 text-sm font-bold px-2 py-0.5 rounded">
                                 {promocao.precoPromo ? `$ ${parseFloat(promocao.precoPromo).toFixed(2)}` : 'Defina o valor'}
                               </span>
                             </div>
                           </div>
                           <button
-                            onClick={() => removerProdutoPromocao(index)}
+                             onClick={() => removerProdutoPromocao(index)}
                             className="text-gray-400 hover:text-red-500 transition-colors self-start"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -356,9 +369,7 @@ export default function PromocaoProdutos() {
                               Valor promocional
                             </label>
                             <div className="relative">
-                              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-                                $
-                              </span>
+                              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">$</span>
                               <Input
                                 type="number"
                                 step="0.01"
@@ -419,6 +430,7 @@ export default function PromocaoProdutos() {
                 </div>
               )}
             </div>
+
           </div>
         </div>
       </div>
