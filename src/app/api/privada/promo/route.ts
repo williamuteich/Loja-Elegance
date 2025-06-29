@@ -20,7 +20,7 @@ export async function PATCH(request: Request) {
 
   try {
     const body = (await request.json()) as { produtos: ProdutoPromo[] };
-
+    console.log("recebendo produto", body)
     for (const item of body.produtos) {
       const promocional = parseFloat(item.precoPromo);
 

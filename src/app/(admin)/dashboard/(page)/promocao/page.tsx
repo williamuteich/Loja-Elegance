@@ -28,24 +28,89 @@ export default function PromocaoProdutos() {
   const [mostrarResultados, setMostrarResultados] = useState<boolean>(false);
   const [buscaProdutos, setBuscaProdutos] = useState<Produto[]>([]);
 
+  function formatarParaDatetimeLocalBrasileiro(dataUTC: string): string {
+    const data = new Date(dataUTC);
+  
+    // Ajusta para horário de Brasília (GMT-3)
+    const dataBrasilia = new Date(data.getTime() - 3 * 60 * 60 * 1000);
+  
+    const ano = dataBrasilia.getFullYear();
+    const mes = String(dataBrasilia.getMonth() + 1).padStart(2, '0');
+    const dia = String(dataBrasilia.getDate()).padStart(2, '0');
+    const horas = String(dataBrasilia.getHours()).padStart(2, '0');
+    const minutos = String(dataBrasilia.getMinutes()).padStart(2, '0');
+  
+    return `${ano}-${mes}-${dia}T${horas}:${minutos}`;
+  }
+  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`/api/privada/product?fetchAll=true`, {
           method: "GET",
         });
-    
+  
         const data = await response.json();
+        console.log("recebendo produtos", data)
+  
         if (data.produtos && Array.isArray(data.produtos)) {
-          const produtosMapeados = data.produtos.map((prod: any) => ({
-            id: prod.id,
-            nome: prod.name, 
-            precoOriginal: prod.price,
-            imagem: prod.imagePrimary,
-            categoria: prod.categories?.[0].category.name || 'Sem categoria',
-            estoque: prod.variants?.[0]?.quantity || 0 
+          const agora = new Date();
+  
+          const produtosMapeados = data.produtos.map((prod: any) => {
+            const precoOriginal = prod.priceOld || prod.price;
+            const estoque = prod.variants.reduce((total: number, variant: any) => {
+              return total + (variant.stock?.quantity ?? 0);
+            }, 0);
+  
+            return {
+              id: prod.id,
+              nome: prod.name,
+              precoOriginal,
+              imagem: prod.imagePrimary,
+              categoria: prod.categories?.[0]?.category?.name || 'Sem categoria',
+              estoque,
+              onSale: prod.onSale,
+              precoAtual: prod.price,
+              promotionDeadline: prod.promotionDeadline,
+            };
+          });
+  
+          const ativos = produtosMapeados.filter(p =>
+            p.onSale &&
+            p.precoOriginal &&
+            p.promotionDeadline &&
+            new Date(p.promotionDeadline) > agora
+          );
+  
+          const listaPromocoes = ativos.map(p => ({
+            produto: {
+              id: p.id,
+              nome: p.nome,
+              precoOriginal: p.precoOriginal,
+              imagem: p.imagem,
+              categoria: p.categoria,
+              estoque: p.estoque,
+            },
+            precoPromo: p.precoAtual.toString(),
+            promotionDeadline: p.promotionDeadline
+              ? formatarParaDatetimeLocalBrasileiro(p.promotionDeadline)
+              : ''
           }));
-          setBuscaProdutos(produtosMapeados);
+          
+          const restantes = produtosMapeados
+            .filter(p => !ativos.some(a => a.id === p.id))
+            .map(p => ({
+              id: p.id,
+              nome: p.nome,
+              precoOriginal: p.precoOriginal,
+              imagem: p.imagem,
+              categoria: p.categoria,
+              estoque: p.estoque
+            }));
+  
+          setProdutosEmPromocao(listaPromocoes);
+          setBuscaProdutos(restantes);
         } else {
           setBuscaProdutos([]);
         }
@@ -57,6 +122,7 @@ export default function PromocaoProdutos() {
   
     fetchData();
   }, []);
+  
   
   useEffect(() => {
     if (termoBusca.trim() === '') {
@@ -118,7 +184,7 @@ export default function PromocaoProdutos() {
       return;
     }
 
-    const response = await fetch("/api/privada/promo", {
+    await fetch("/api/privada/promo", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
