@@ -147,13 +147,13 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
         description: event.target.description.value,
         features: event.target.features.value,
         price: parseFloat(event.target.price.value.replace("$", "").replace(".", "").replace(",", ".")),
-        //priceOld: parseFloat(event.target.priceOld.value.replace("$", "").replace(".", "").replace(",", ".")),
+        priceOld: parseFloat(event.target.priceOld.value.replace("$", "").replace(".", "").replace(",", ".")),
         brandId: event.target.brand.value,
         categoryIds: selectedCategories.map((c: any) => c.value),
         imagePrimary: uploadedPrimaryImageUrl,
         imagesSecondary: newSecondaryImages,
         active: event.target.status.value === "true",
-        //onSale: event.target.onSale.value === "true",
+        onSale: event.target.onSale.value === "true",
         destaque: event.target.destaque.value === "true",
         variants: variants
       };
@@ -386,7 +386,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
                 />
               </div>
 
-              {/*<div>
+              <div>
                 <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700 mb-2">Preço Anterior</label>
                 <NumericFormat
                   id="priceOld"
@@ -398,7 +398,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
                   prefix="$ "
                   decimalScale={2}
                 />
-              </div>*/}
+              </div>
 
               <div className="md:col-span-2">
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Categorias</label>
@@ -462,7 +462,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
                 </select>
               </div>
 
-              {/*<div>
+              <div>
                 <label htmlFor="onSale" className="block text-sm font-medium text-gray-700 mb-2">Promoção</label>
                 <select
                   id="onSale"
@@ -473,7 +473,7 @@ export default function EditarProduto({ params }: { params: Promise<{ id: string
                   <option value="false">Não</option>
                   <option value="true">Sim</option>
                 </select>
-              </div>*/}
+              </div>
             </div>
           </div>
 
