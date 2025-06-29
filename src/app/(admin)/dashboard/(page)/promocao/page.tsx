@@ -105,7 +105,7 @@ export default function PromocaoProdutos() {
     toast.info('O produto foi removido da lista de promoções.');
   };
 
-  const salvarPromocoes = () => {
+  const salvarPromocoes = async () => {
     const promocoesInvalidas = produtosEmPromocao.filter(promo =>
       !promo.precoPromo ||
       !promo.promotionDeadline ||
@@ -113,12 +113,18 @@ export default function PromocaoProdutos() {
       parseFloat(promo.precoPromo) >= promo.produto.precoOriginal
     );
 
-    console.log(produtosEmPromocao)
-
     if (promocoesInvalidas.length > 0) {
       toast.error('Verifique se todos os produtos têm preço promocional válido e data de término definida.');
       return;
     }
+
+    const response = await fetch("/api/privada/promo", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ produtos: produtosEmPromocao }),
+    })
 
     toast.success('As promoções foram configuradas com sucesso.');
   };
@@ -261,10 +267,10 @@ export default function PromocaoProdutos() {
                             <h3 className="font-bold text-gray-900">{promocao.produto.nome}</h3>
                             <div className="flex items-center mt-1">
                               <span className="text-gray-500 line-through mr-2 text-sm">
-                                R$ {promocao.produto.precoOriginal.toFixed(2)}
+                                $ {promocao.produto.precoOriginal.toFixed(2)}
                               </span>
                               <span className="bg-gradient-to-r from-red-100 to-orange-100 text-red-700 text-sm font-bold px-2 py-0.5 rounded">
-                                {promocao.precoPromo ? `R$ ${parseFloat(promocao.precoPromo).toFixed(2)}` : 'Defina o valor'}
+                                {promocao.precoPromo ? `$ ${parseFloat(promocao.precoPromo).toFixed(2)}` : 'Defina o valor'}
                               </span>
                             </div>
                           </div>
@@ -285,7 +291,7 @@ export default function PromocaoProdutos() {
                             </label>
                             <div className="relative">
                               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-                                R$
+                                $
                               </span>
                               <Input
                                 type="number"
