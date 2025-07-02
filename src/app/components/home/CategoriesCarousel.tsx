@@ -3,9 +3,7 @@ import { ClientCategoriesCarousel } from "./ClientCategoriesCarousel";
 
 async function getCategories() {
   try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/category?fetchAll=true`, {
-      cache: 'no-store'
-    });
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/category?fetchAll=true`, { next: { revalidate: 4800 } });
     
     if (!response.ok) {
       throw new Error(`Erro ao buscar categorias: ${response.status}`);
