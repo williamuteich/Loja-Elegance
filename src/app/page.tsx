@@ -1,4 +1,3 @@
-export const dynamic = "force-dynamic";
 
 import { Container } from "./components/container";
 import Produtos from "./(pages)/produtos/components/produtos";
@@ -10,7 +9,7 @@ import { Banners } from "./components/home/carousel/banners";
 import Reels from "./components/reels";
 
 export default async function Home() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, { next: { revalidate: 1020 } });
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, { next: { revalidate: 20 } });
   const res = await response.json(); 
 
   return (

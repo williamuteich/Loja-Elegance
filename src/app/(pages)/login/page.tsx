@@ -1,15 +1,23 @@
-import { getServerSession } from "next-auth";
-import { auth as authOptions} from "@/lib/auth-config";
-import { redirect } from 'next/navigation';
-import Formulario from './formulario';
+"use client";
 
-export default async function Login() {
-    const session = await getServerSession(authOptions)
-    const isLoggedIn = !!session;
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Formulario from "./formulario";
 
-    if (isLoggedIn) {
-        redirect("/");
-    }
+export default function Login() {
+    const { data: session, status } = useSession();
+    const router = useRouter();
+
+    console.log("Session data:", session);
+    
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.push("/");
+        }
+    }, [status]);
+
+    if (status === "loading") return null;
 
     return (
         <div className="flex items-center justify-center py-10">
