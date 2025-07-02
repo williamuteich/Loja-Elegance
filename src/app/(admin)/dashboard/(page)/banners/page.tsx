@@ -113,7 +113,7 @@ export default async function Banners() {
                                             apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/banner`,
                                             urlRevalidate: "/dashboard/banner",
                                         }}
-                                    />
+                                    /> 
                                 </div>
                             </td>
                         </tr>
