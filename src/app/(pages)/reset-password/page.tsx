@@ -1,13 +1,10 @@
 import NavProfile from "@/app/components/navProfile";
 import Form from "@/components/Form";
 import Submit from "@/components/Submit";
-import { getServerSession } from "next-auth";
-import { auth as authOptions } from "@/lib/auth-config";
 import { FaKey } from "react-icons/fa";
 import { cookies } from "next/headers";
 
 export default async function ResetPassword() {
-    const session = await getServerSession(authOptions);
 
     async function handlePassword(prevState: any, formData: FormData): Promise<{ success?: string; error?: string }> {
         "use server";
