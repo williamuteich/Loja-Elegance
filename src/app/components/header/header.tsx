@@ -5,7 +5,7 @@ async function getProducts() {
 
   try {
     const res = await fetch(apiUrl, {
-      next: { revalidate: 900 } 
+      next: { revalidate: 1020 } 
     });
     
     if (!res.ok) {

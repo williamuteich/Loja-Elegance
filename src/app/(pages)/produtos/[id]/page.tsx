@@ -22,7 +22,7 @@ export default async function ProdutoSlug({
 
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`, 
-     { next: { revalidate: 900 } }
+     { next: { revalidate: 1020 } }
   );
 
   if (!response.ok) {
