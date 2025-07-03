@@ -41,7 +41,6 @@ export async function saveCategoria(
       return { error: "Erro ao salvar categoria." };
     }
 
-    // Revalidar todos os caminhos especificados
     config.urlRevalidate.forEach(path => revalidatePath(path));
 
     return { success: "Categoria salva com sucesso!" };

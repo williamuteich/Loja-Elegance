@@ -1,3 +1,4 @@
+
 import React, { Suspense } from "react";
 import { FaUser } from "react-icons/fa";
 import Container from "../components/Container";
@@ -9,7 +10,6 @@ import { LoadSkeleton } from "../components/loadSkeleton";
 import TableMobile from "./components/tableMobile";
 import { FiltroBuscarItem } from "../components/FiltroBuscarItem";
 import { FieldConfig } from "@/utils/types/fieldConfig";
-//import { headers } from "next/headers";
 
 const userFields: FieldConfig[] = [
   { name: "name", label: "Nome", type: "text", placeholder: "Digite o nome do usuário" },
@@ -42,7 +42,7 @@ const createButtonConfig = (action: string, userId?: string, initialValues?: any
   action,
   fields: userFields,
   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/user`,
-  urlRevalidate: "/dashboard/usuarios",
+  urlRevalidate: ["/dashboard/usuarios"],
   method: action === "Adicionar" ? "POST" : "PUT",
   initialValues,
 });
@@ -58,7 +58,6 @@ const fetchUsuarios = async (search: string, page: string, status: string) => {
       headers: {
         Cookie: cookieHeader,
       },
-      cache: "no-store",
     }
   );
 
@@ -133,7 +132,7 @@ const UsuariosList = async ({ search, page, status }: { search: string, page: st
                         title: "Tem certeza de que deseja excluir esse usuário?",
                         description: "Esta ação não pode ser desfeita. O usuário será excluído permanentemente.",
                         apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/user`,
-                        urlRevalidate: "/dashboard/usuarios",
+                        urlRevalidate: ["/dashboard/usuarios"],
                       }}
                     />
                   </div>

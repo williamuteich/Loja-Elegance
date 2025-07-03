@@ -7,7 +7,6 @@ import SearchItems from "../components/searchItems";
 import { LoadSkeleton } from "../components/loadSkeleton";
 import Paginacao from "@/app/components/Paginacao";
 import type { Categoria } from "@/utils/types/categoria";
-//import { headers } from "next/headers";
 
 const modalConfig = (action: string, categoria?: Categoria) => ({
   title: `${action} Categoria`,
@@ -20,7 +19,7 @@ const modalConfig = (action: string, categoria?: Categoria) => ({
     { name: "description", label: "Descrição", type: "text" as "text", placeholder: "Descrição da categoria" },
   ],
   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/category`,
-  urlRevalidate: ["/dashboard/categoria", "/categoria"], 
+  urlRevalidate: ["/dashboard/categoria"], 
   method: action === "Adicionar" ? "POST" : "PUT",
   initialValues: categoria ? { 
     name: categoria.name, 
@@ -36,8 +35,7 @@ const fetchCategories = async (search: string, page: string, status: string) => 
   if (status) params.append("status", status);
 
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/category?${params}`, {
-    //headers: await headers(),
-    cache: "no-store",
+    cache: "force-cache", 
   });
 
   if (!response.ok) throw new Error("Erro ao carregar os dados.");
@@ -58,7 +56,6 @@ const CategoriasList = async ({ search, page, status }: { search: string; page: 
         <span className="font-semibold text-gray-800">Total de Categorias: </span>
         <span className="font-medium text-blue-600">{data.totalRecords}</span>
       </p>
-      {/* TABELA PARA DESKTOP */}
       <table className="hidden md:table min-w-full table-auto border-collapse rounded-md border-t border-b border-gray-300">
         <thead className="bg-gray-800 text-white">
           <tr>

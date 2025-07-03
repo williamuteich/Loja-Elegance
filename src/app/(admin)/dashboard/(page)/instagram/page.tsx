@@ -27,7 +27,7 @@ const modalConfig = (action: string, initialValues?: any) => {
       { name: "link", label: "Link", type: "url", placeholder: "URL do post no Instagram" },
     ] as FieldConfig[],
     apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/instaEmbed`,
-    urlRevalidate: "/dashboard/instagram",
+    urlRevalidate: ["/dashboard/instagram"],
     method: action === "Adicionar" ? "POST" : "PUT",
     initialValues: initialValuesFormatted,
   };
@@ -35,7 +35,10 @@ const modalConfig = (action: string, initialValues?: any) => {
 
 const fetchInstagramPosts = async (search: string, page: string, status: string) => {
   const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/privada/instaEmbed?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`
+    `${process.env.NEXTAUTH_URL}/api/privada/instaEmbed?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`,
+    {
+      cache: "force-cache"
+    }
   );
 
   if (!response.ok) {
@@ -101,7 +104,7 @@ const InstagramList = async ({ search, page, status }: { search: string, page: s
                       title: "Excluir post do Instagram?",
                       description: "Esta ação removerá permanentemente o post. Continuar?",
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/instaEmbed`,
-                      urlRevalidate: "/dashboard/instagram",
+                      urlRevalidate: ["/dashboard/instagram"],
                     }}
                   />
                 </div>
@@ -135,7 +138,7 @@ const InstagramList = async ({ search, page, status }: { search: string, page: s
                   title: "Excluir post do Instagram?",
                   description: "Esta ação removerá permanentemente o post. Continuar?",
                   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/instaEmbed`,
-                  urlRevalidate: "/dashboard/instagram",
+                  urlRevalidate: ["/dashboard/instagram"],
                 }}
               />
             </div>

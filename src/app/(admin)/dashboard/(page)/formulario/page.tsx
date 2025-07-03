@@ -82,7 +82,7 @@ const FormularioList = async ({ search, page, status }: { search: string; page: 
                       title: "Tem certeza de que deseja excluir esse formulário?",
                       description: "Esta ação não pode ser desfeita. O formulário será excluído permanentemente.",
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/formContact`,
-                      urlRevalidate: "/dashboard/formulario",
+                      urlRevalidate: ["/dashboard/formulario"],
                     }}
                   />
                 </div>
@@ -120,7 +120,7 @@ const FormularioList = async ({ search, page, status }: { search: string; page: 
                   title: "Tem certeza de que deseja excluir esse formulário?",
                   description: "Esta ação não pode ser desfeita. O formulário será excluído permanentemente.",
                   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/formContact`,
-                  urlRevalidate: "/dashboard/formulario",
+                  urlRevalidate: ["/dashboard/formulario"],
                 }}
               />
             </div>
