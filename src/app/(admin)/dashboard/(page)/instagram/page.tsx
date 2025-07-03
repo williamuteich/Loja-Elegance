@@ -28,6 +28,7 @@ const modalConfig = (action: string, initialValues?: any) => {
     ] as FieldConfig[],
     apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/instaEmbed`,
     urlRevalidate: ["/dashboard/instagram"],
+    tags: ["embedInsta"],
     method: action === "Adicionar" ? "POST" : "PUT",
     initialValues: initialValuesFormatted,
   };
@@ -104,6 +105,7 @@ const InstagramList = async ({ search, page, status }: { search: string, page: s
                       title: "Excluir post do Instagram?",
                       description: "Esta ação removerá permanentemente o post. Continuar?",
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/instaEmbed`,
+                      tags: ["embedInsta"],
                       urlRevalidate: ["/dashboard/instagram"],
                     }}
                   />
@@ -138,6 +140,7 @@ const InstagramList = async ({ search, page, status }: { search: string, page: s
                   title: "Excluir post do Instagram?",
                   description: "Esta ação removerá permanentemente o post. Continuar?",
                   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/instaEmbed`,
+                  tags: ["embedInsta"],
                   urlRevalidate: ["/dashboard/instagram"],
                 }}
               />

@@ -1,3 +1,4 @@
+// src/app/components/reels/index.tsx
 import { Container } from "@/app/components/container";
 import ShowInstaEmbeds from "./component/showInstaEmbeds";
 
@@ -12,11 +13,12 @@ interface InstagramPost {
 async function getInstaData() {
     try {
         const postsRes = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/instaEmbed`, {
-            next: { revalidate: 18000 }
+            cache: 'force-cache',
+            next: { tags: ['embedInsta'] } 
         });
         
         const setupRes = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/setup`, {
-            next: { revalidate: 18000 }
+            cache: 'force-cache'
         });
 
         if (!postsRes.ok || !setupRes.ok) {

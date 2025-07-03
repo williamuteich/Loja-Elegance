@@ -13,17 +13,17 @@ export default withAuth(
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
-    logger.info({
-      usuario: token?.name,
-      email: token?.email,
-      role: token?.role === "user" ? "1" : "0",
-      rota: req.nextUrl.pathname,
-      metodo: req.method,
-      url: req.nextUrl.href,
-      userAgent: req.headers.get('user-agent') || null,
-      status: 200,
-      data: new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }),
-    });
+    //logger.info({
+    //  usuario: token?.name,
+    //  email: token?.email,
+    //  role: token?.role === "user" ? "1" : "0",
+    //  rota: req.nextUrl.pathname,
+    //  metodo: req.method,
+    //  url: req.nextUrl.href,
+    //  userAgent: req.headers.get('user-agent') || null,
+    //  status: 200,
+    //  data: new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }),
+    //});
 
     return NextResponse.next();
   },

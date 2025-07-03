@@ -14,6 +14,7 @@ export interface ButtonAdicionarProps {
         fields: FieldConfig[];
         apiEndpoint: string;
         urlRevalidate: string[];
+        tags?: string[];
         method: string;
         action: string;
         initialValues?: { [key: string]: string };

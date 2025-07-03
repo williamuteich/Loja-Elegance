@@ -1,3 +1,4 @@
+// components/ModalGeneric.tsx
 import { Button } from "@/components/ui/button";
 import {
     AlertDialog,
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache"; // Adicione revalidateTag
 import Form from "@/components/Form";
 import Submit from "@/components/Submit";
 import { ButtonAdicionarProps } from "@/utils/types/modaGeneric";
@@ -35,11 +36,20 @@ export default function ButtonAdicionar({ config, params }: ButtonAdicionarProps
         const cookieHeader = cookieStore.toString();
 
         const apiEndpoint = formData.get('apiEndpoint') as string;
+        const tags = formData.get('tags') as string;
         const method = formData.get('method') as string;
         const rawUrlRevalidate = formData.get('urlRevalidate') as string;
         const id = formData.get('id') as string | null;
 
-        // ✅ Corrigido: garantir que urlRevalidate seja sempre um array
+        // Parse das tags
+        let tagsArray: string[] = [];
+        try {
+            tagsArray = tags ? JSON.parse(tags) : [];
+        } catch {
+            tagsArray = [];
+        }
+
+        // Parse do urlRevalidate
         let urlRevalidate: string[];
         try {
             const parsed = JSON.parse(rawUrlRevalidate);
@@ -50,7 +60,7 @@ export default function ButtonAdicionar({ config, params }: ButtonAdicionarProps
 
         const data: Record<string, string> = {};
         for (const [key, value] of formData.entries()) {
-            if (!['apiEndpoint', 'method', 'urlRevalidate', 'id'].includes(key)) {
+            if (!['apiEndpoint', 'tags', 'method', 'urlRevalidate', 'id'].includes(key)) {
                 data[key] = value as string;
             }
         }
@@ -79,7 +89,9 @@ export default function ButtonAdicionar({ config, params }: ButtonAdicionarProps
                 return { error: "Erro ao adicionar conteúdo." };
             }
 
+            // Revalidação de paths e tags
             urlRevalidate.forEach(path => revalidatePath(path));
+            tagsArray.forEach(tag => revalidateTag(tag)); // Revalida cada tag
 
             return { success: "Conteúdo adicionado com sucesso!" };
         } catch (error) {
@@ -112,6 +124,7 @@ export default function ButtonAdicionar({ config, params }: ButtonAdicionarProps
                             <input type="hidden" name="apiEndpoint" value={config.apiEndpoint} />
                             <input type="hidden" name="method" value={config.method} />
                             <input type="hidden" name="urlRevalidate" value={JSON.stringify(config.urlRevalidate)} />
+                            <input type="hidden" name="tags" value={JSON.stringify(config.tags)} />
                             {params && <input type="hidden" name="id" value={params} />}
 
                             {config.fields.map((field) => (
