@@ -4,7 +4,7 @@ import { ClientCategoriesCarousel } from "./ClientCategoriesCarousel";
 async function getCategories() {
   try {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/category?fetchAll=true`, {
-      cache: 'no-store'
+      next: { revalidate: 1800 }
     });
     
     if (!response.ok) {

@@ -12,11 +12,11 @@ interface InstagramPost {
 async function getInstaData() {
     try {
         const postsRes = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/instaEmbed`, {
-            next: { revalidate: 4800 }
+            next: { revalidate: 18000 }
         });
         
         const setupRes = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/setup`, {
-            next: { revalidate: 3800 }
+            next: { revalidate: 18000 }
         });
 
         if (!postsRes.ok || !setupRes.ok) {

@@ -20,7 +20,7 @@ export default async function Produtos({
   let produtosFiltrados = produtos;
 
   if (categoriaProduct) {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`);
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {next: { revalidate: 1800 }});
 
     if (!response.ok) {
       throw new Error("Erro ao buscar produtos");

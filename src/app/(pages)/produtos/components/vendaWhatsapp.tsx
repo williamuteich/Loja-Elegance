@@ -6,7 +6,7 @@ interface VendaWhatsappProps {
 }
 
 export default async function VendaWhatsapp({ produto }: VendaWhatsappProps) {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/setup`, { next: { revalidate: 3800 } });
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/setup`, { next: { revalidate: 18000 } });
 
     if (!response.ok) {
         return null; 
