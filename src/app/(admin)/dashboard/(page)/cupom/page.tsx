@@ -75,7 +75,7 @@ const CupomList = async ({ search, page, status }: { search: string, page: strin
                         title: "Tem certeza de que deseja excluir esse Cupom?",
                         description: "Esta ação não pode ser desfeita. O Cupom será excluído permanentemente.",
                         apiEndpoint: `${process.env.NEXTAUTH_URL}/api/cupom`,
-                        urlRevalidate: "/dashboard/cupom",
+                        urlRevalidate: ["/dashboard/cupom"],
                       }}
                     />
                   </div>

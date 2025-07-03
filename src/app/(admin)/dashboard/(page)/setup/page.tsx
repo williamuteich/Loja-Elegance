@@ -77,7 +77,7 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
                         { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
                       ],
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
-                      urlRevalidate: "/dashboard/setup",
+                      urlRevalidate: ["/dashboard/setup"],
                       method: "PUT",
                       initialValues: {
                         type: config.type,
@@ -95,7 +95,7 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
                       description:
                         "Esta ação irá remover permanentemente a variável do seu site. Isso pode afetar a configuração do seu site, como URLs ou nomes, e pode causar erros em partes do sistema que dependem dessa variável. Certifique-se de que não há dependências antes de prosseguir com a exclusão.",
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
-                      urlRevalidate: "/dashboard/setup",
+                      urlRevalidate: ["/dashboard/setup"],
                     }}
                   />
                 </div>
@@ -133,7 +133,7 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
                     { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
                   ],
                   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
-                  urlRevalidate: "/dashboard/setup",
+                  urlRevalidate: ["/dashboard/setup"],
                   method: "PUT",
                   initialValues: {
                     type: config.type,
@@ -151,7 +151,7 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
                   description:
                     "Esta ação irá remover permanentemente a variável do seu site. Isso pode afetar a configuração do seu site, como URLs ou nomes, e pode causar erros em partes do sistema que dependem dessa variável. Certifique-se de que não há dependências antes de prosseguir com a exclusão.",
                   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
-                  urlRevalidate: "/dashboard/setup",
+                  urlRevalidate: ["/dashboard/setup"],
                 }}
               />
             </div>
@@ -203,7 +203,7 @@ export default async function Settings({ searchParams }: { searchParams: Promise
               { name: "value", label: "Valor", type: "text", placeholder: "Digite o valor" },
             ],
             apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
-            urlRevalidate: "/dashboard/setup",
+            urlRevalidate: ["/dashboard/setup"],
             method: "POST",
           }}
         />
