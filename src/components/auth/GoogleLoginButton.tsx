@@ -16,10 +16,7 @@ export default function GoogleLoginButton({ callbackUrl = "/profile", className 
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-      const result = await signIn("google", { 
-        callbackUrl,
-        redirect: false
-      });
+      const result = await signIn("google", { callbackUrl });
       if (result?.error) {
         console.error('Erro no login com Google:', result.error);
         toast.error("Erro ao fazer login com Google");

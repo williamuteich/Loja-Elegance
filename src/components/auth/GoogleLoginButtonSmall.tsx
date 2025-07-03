@@ -16,10 +16,7 @@ export default function GoogleLoginButtonSmall({ callbackUrl = "/profile", class
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-      const result = await signIn("google", { 
-        callbackUrl,
-        redirect: false
-      });
+      const result = await signIn("google", { callbackUrl });
       if (result?.error) {
         toast.error("Error al iniciar sesión con Google");
       } else if (result?.ok) {
