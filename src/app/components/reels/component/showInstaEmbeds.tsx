@@ -77,6 +77,8 @@ export default function ShowInstaEmbeds({ posts, instagramUrl }: ShowInstaEmbeds
                                 <div className="relative flex flex-col bg-white border border-neutral-300 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow min-h-[500px]">
                                     <blockquote
                                         className="instagram-media"
+                                        title={`Instagram post: ${post.title}`}
+                                        aria-label={`Instagram post: ${post.title}`}
                                         data-instgrm-permalink={`${post.link}?utm_source=ig_embed&amp;utm_campaign=loading`}
                                         data-instgrm-version="14"
                                         style={{

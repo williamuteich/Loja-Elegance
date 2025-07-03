@@ -34,7 +34,7 @@ export function ClientCategoriesCarousel({ categories, delay = 4000 }: { categor
                   {cat.imageUrl ? (
                     <Image
                       src={cat.imageUrl}
-                      alt={cat.name}
+                      alt={`Ícone da categoria ${cat.name} - Clique para explorar produtos`}
                       className="object-cover w-full h-full rounded-full transition-transform duration-200 group-hover:scale-110"
                       width={120}
                       height={120}
