@@ -49,7 +49,7 @@ export default function EditarProduto({ id }: { id: string }) {
             setVariants(formattedVariants);
 
             const [brandsRes, categoriesRes] = await Promise.all([
-                fetch("/api/privada/brand?fetchAll=true"),
+                fetch("/api/privada/brand?fetchAll=true", { next: { tags: ['reloadBrand'] } }),
                 fetch("/api/privada/category?fetchAll=true", { next: { tags: ['reloadCategory'] } }),
             ]);
 

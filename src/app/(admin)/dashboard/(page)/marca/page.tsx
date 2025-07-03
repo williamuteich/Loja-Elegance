@@ -26,6 +26,7 @@ const modalConfig = (action: string, initialValues?: Marca) => {
     ] as FieldConfig[],
     apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/brand`,
     urlRevalidate: ["/dashboard/marca"],
+    tags: ["reloadBrand"],
     method: action === "Adicionar" ? "POST" : "PUT",
     initialValues: initialValuesFormatted,
   };
@@ -96,6 +97,7 @@ const MarcasList = async ({ search, page, status }: { search: string, page: stri
                       description: "Esta ação não pode ser desfeita. A marca será removida permanentemente. Deseja continuar?",
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/brand`,
                       urlRevalidate: ["/dashboard/marca"],
+                      tags: ["reloadBrand"]
                     }}
                   />
                 </div>
@@ -126,6 +128,7 @@ const MarcasList = async ({ search, page, status }: { search: string, page: stri
                   description: "Esta ação não pode ser desfeita. A marca será removida permanentemente. Deseja continuar?",
                   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/brand`,
                   urlRevalidate: ["/dashboard/marca"],
+                  tags: ["reloadBrand"]
                 }}
               />
             </div>
