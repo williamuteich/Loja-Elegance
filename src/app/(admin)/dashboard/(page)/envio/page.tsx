@@ -45,7 +45,7 @@ const modalConfig = (action: string, initialValues?: DeliveryOption) => {
       }
     ] as FieldConfig[],
     apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/delivery`,
-    urlRevalidate: "/dashboard/envio",
+    urlRevalidate: ["/dashboard/envio"],
     method: action === "Adicionar" ? "POST" : "PUT",
     initialValues: initialValuesFormatted,
   };
@@ -54,7 +54,8 @@ const modalConfig = (action: string, initialValues?: DeliveryOption) => {
 const fetchAddresses = async (): Promise<{ pickupLocations: DeliveryOption[] }> => {
   try {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/delivery`, {
-      next: { tags: ['delivery'] }
+      //next: { tags: ['delivery'] }
+      cache: "force-cache",
     });
 
     if (!response.ok) {
@@ -94,7 +95,7 @@ const EnvioList = async () => {
                     title: "Excluir Endereço",
                     description: "Tem certeza que deseja excluir este endereço permanentemente?",
                     apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/delivery`,
-                    urlRevalidate: "/dashboard/envio"
+                    urlRevalidate: ["/dashboard/envio"]
                   }}
                 />
               </div>
@@ -124,7 +125,7 @@ const EnvioList = async () => {
                       title: "Excluir Endereço",
                       description: "Tem certeza que deseja excluir este endereço permanentemente?",
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/delivery`,
-                      urlRevalidate: "/dashboard/envio"
+                      urlRevalidate: ["/dashboard/envio"]
                     }}
                   />
                 </div>
