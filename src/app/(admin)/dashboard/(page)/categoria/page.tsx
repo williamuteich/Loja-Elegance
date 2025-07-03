@@ -21,7 +21,7 @@ const modalConfig = (action: string, categoria?: Categoria) => ({
     { name: "description", label: "Descrição", type: "text" as "text", placeholder: "Descrição da categoria" },
   ],
   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/category`,
-  urlRevalidate: "/dashboard/categoria",
+  urlRevalidate: ["/dashboard/categoria"],
   method: action === "Adicionar" ? "POST" : "PUT",
   initialValues: categoria ? { name: categoria.name, description: categoria.description, imageUrl: categoria.imageUrl } : undefined,
 });
@@ -87,7 +87,7 @@ const CategoriasList = async ({ search, page, status }: { search: string; page: 
                       description:
                         "Esta ação não pode ser desfeita. A categoria será removida permanentemente. Deseja continuar?",
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/category`,
-                      urlRevalidate: "/dashboard/categoria",
+                      urlRevalidate: ["/dashboard/categoria"],
                     }}
                   />
                 </div>
@@ -118,7 +118,7 @@ const CategoriasList = async ({ search, page, status }: { search: string; page: 
                   description:
                     "Esta ação não pode ser desfeita. A categoria será removida permanentemente. Deseja continuar?",
                   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/category`,
-                  urlRevalidate: "/dashboard/categoria",
+                  urlRevalidate: ["/dashboard/categoria"],
                 }}
               />
             </div>

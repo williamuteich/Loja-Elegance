@@ -13,10 +13,10 @@ export interface ButtonAdicionarProps {
         description: string;
         fields: FieldConfig[];
         apiEndpoint: string;
-        urlRevalidate: string;
+        urlRevalidate: string[];
         method: string;
         action: string;
         initialValues?: { [key: string]: string };
     },
-    params?: string; 
+    params?: string;
 }

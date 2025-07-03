@@ -35,7 +35,6 @@ export async function GET(request: Request) {
                 : {},
         });
 
-
         return NextResponse.json({ faq: faqs, totalRecords }, { status: 200 });
     } catch (err) {
         console.error("Erro ao buscar FAQs:", err);

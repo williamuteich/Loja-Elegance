@@ -26,7 +26,7 @@ import Submit from "@/components/Submit";
 import { ButtonAdicionarProps } from "@/utils/types/modaGeneric";
 import { cookies } from "next/headers";
 
-export default function ButtonAdicionar({ config, params  }: ButtonAdicionarProps) {
+export default function ButtonAdicionar({ config, params }: ButtonAdicionarProps) {
 
     async function newUser(prevState: any, formData: FormData): Promise<{ success?: string; error?: string }> {
         "use server";
@@ -34,21 +34,40 @@ export default function ButtonAdicionar({ config, params  }: ButtonAdicionarProp
         const cookieStore = await cookies();
         const cookieHeader = cookieStore.toString();
 
-        const data = Object.fromEntries(formData.entries());
+        const apiEndpoint = formData.get('apiEndpoint') as string;
+        const method = formData.get('method') as string;
+        const rawUrlRevalidate = formData.get('urlRevalidate') as string;
+        const id = formData.get('id') as string | null;
+
+        // ✅ Corrigido: garantir que urlRevalidate seja sempre um array
+        let urlRevalidate: string[];
+        try {
+            const parsed = JSON.parse(rawUrlRevalidate);
+            urlRevalidate = Array.isArray(parsed) ? parsed : [parsed];
+        } catch {
+            urlRevalidate = [rawUrlRevalidate];
+        }
+
+        const data: Record<string, string> = {};
+        for (const [key, value] of formData.entries()) {
+            if (!['apiEndpoint', 'method', 'urlRevalidate', 'id'].includes(key)) {
+                data[key] = value as string;
+            }
+        }
+
+        if (id) {
+            data.id = id;
+        }
 
         for (const [key, value] of Object.entries(data)) {
             if (!value) {
-                return { error: `O campo ${key} não pode estar vazio.` }; 
+                return { error: `O campo ${key} não pode estar vazio.` };
             }
-        }
-        
-        if (params) {
-            data.id = params; 
         }
 
         try {
-            const response = await fetch(config.apiEndpoint, {
-                method: config.method,
+            const response = await fetch(apiEndpoint, {
+                method: method,
                 headers: {
                     "Content-Type": "application/json",
                     Cookie: cookieHeader,
@@ -60,7 +79,7 @@ export default function ButtonAdicionar({ config, params  }: ButtonAdicionarProp
                 return { error: "Erro ao adicionar conteúdo." };
             }
 
-            revalidatePath(config.urlRevalidate);
+            urlRevalidate.forEach(path => revalidatePath(path));
 
             return { success: "Conteúdo adicionado com sucesso!" };
         } catch (error) {
@@ -90,6 +109,11 @@ export default function ButtonAdicionar({ config, params  }: ButtonAdicionarProp
                     </AlertDialogHeader>
                     <div>
                         <Form action={newUser} className="grid gap-4 py-4 pb-0">
+                            <input type="hidden" name="apiEndpoint" value={config.apiEndpoint} />
+                            <input type="hidden" name="method" value={config.method} />
+                            <input type="hidden" name="urlRevalidate" value={JSON.stringify(config.urlRevalidate)} />
+                            {params && <input type="hidden" name="id" value={params} />}
+
                             {config.fields.map((field) => (
                                 <div key={field.name} className="grid grid-cols-4 items-center gap-4">
                                     <Label htmlFor={field.name} className="text-right">

@@ -10,7 +10,7 @@ import Paginacao from "@/app/components/Paginacao";
 async function obtenerFaq({ searchParams }: { searchParams: Promise<{ search: string, page: string, status: string }> }) {
     const { search, page, status } = await searchParams;
 
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/faq?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`, { next: {revalidate: 3800 } });
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/faq?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`, { cache: 'force-cache' });
 
     if (!response.ok) {
         throw new Error("Error al buscar las preguntas frecuentes");
