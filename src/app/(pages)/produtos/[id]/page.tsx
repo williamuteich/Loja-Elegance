@@ -169,7 +169,6 @@ export default async function ProdutoSlug({
             titulo="Produtos Relacionados"
             isDestaque={false}
             categoriaProduct={categorias}
-            produtos={[]}
           />
         </div>
       </div>

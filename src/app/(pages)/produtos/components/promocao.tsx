@@ -12,8 +12,15 @@ import { Container } from "@/app/components/container";
 import { ProdutoProps } from "@/utils/types/produto";
 import { FaShoppingBag } from "react-icons/fa";
 
-export function Promocao({ produtos }: ProdutoProps) {
-  const produtosEmPromocao = produtos.filter((produto) => {
+export async function Promocao() {
+  // Faz a requisição diretamente no componente
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
+    next: { revalidate: 1800 }
+  });
+  const res = await response.json();
+  const produtos = res.produtos;
+
+  const produtosEmPromocao = produtos.filter((produto: any) => {
     const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) => acc + (variant.availableStock || 0), 0);
     return (
       produto.onSale &&
@@ -54,7 +61,7 @@ export function Promocao({ produtos }: ProdutoProps) {
                 </div>
               </div>
               <CarouselContent className="flex gap-[1px] px-3">
-                {produtosEmPromocao.map((produto) => {
+                {produtosEmPromocao.map((produto: any) => {
                   const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
                     ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
                     : 0;

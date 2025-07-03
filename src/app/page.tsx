@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+"use cache"
 
 import { Container } from "./components/container";
 import Produtos from "./(pages)/produtos/components/produtos";
@@ -10,17 +10,14 @@ import { Banners } from "./components/home/carousel/banners";
 import Reels from "./components/reels";
 
 export default async function Home() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, { next: { revalidate: 1800 } });
-  const res = await response.json(); 
 
   return (
     <div className="text-red-800">
       <Banners/>
       <CategoriesCarousel />
-      <Promocao produtos={res.produtos} /> 
- 
+      <Promocao />
       <Container >
-        <Produtos produtos={res.produtos} titulo="Productos Destacados" isDestaque={true}/>
+        <Produtos titulo="Productos Destacados" isDestaque={true} />
         <BannerHome />
         <ListAllProdutos />
       </Container>

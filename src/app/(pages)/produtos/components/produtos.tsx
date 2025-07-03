@@ -9,27 +9,24 @@ export default async function Produtos({
   titulo,
   isDestaque,
   categoriaProduct,
-  produtos,
 }: {
   titulo: string;
   isDestaque: boolean;
   categoriaProduct?: Produto[];
-  produtos: Produto[];
 }) {
+  // Faz a requisição diretamente no componente
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
+    next: { revalidate: 1800 }
+  });
+  
+  if (!response.ok) {
+    throw new Error("Erro ao buscar produtos");
+  }
 
-  let produtosFiltrados = produtos;
+  const { produtos } = await response.json();
+  let produtosFiltrados: Produto[] = [];
 
   if (categoriaProduct) {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {next: { revalidate: 1800 }});
-
-    if (!response.ok) {
-      throw new Error("Erro ao buscar produtos");
-    }
-
-    const { produtos } = await response.json();
-
-    produtosFiltrados = produtos;
-
     const categoriasProdutoAtual = categoriaProduct.map((itemCategory: any) => itemCategory.category);
 
     produtosFiltrados = produtos.filter((produto: Produto) => {
@@ -57,7 +54,6 @@ export default async function Produtos({
         .sort(() => Math.random() - 0.5)
         .slice(0, 10);
     }
-
   } else {
     produtosFiltrados = isDestaque
       ? produtos.filter((produto: Produto) => produto.destaque === true && produto.variants.some((variant: any) => variant.availableStock > 0) && produto.active)
