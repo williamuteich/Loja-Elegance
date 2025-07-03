@@ -38,7 +38,7 @@ export async function GET(request: Request) {
         });
 
         const totalRecords = await prisma.instaEmbed.count({ where });
-        console.log("consumindo")
+
         return NextResponse.json({
             posts: insta,
             totalRecords
