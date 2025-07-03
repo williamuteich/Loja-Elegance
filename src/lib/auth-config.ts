@@ -119,16 +119,12 @@ export const auth: NextAuthOptions = {
     async jwt({ token, user, account, profile }) {
 
       if (user && account?.provider === "google") {
-        console.log('Google user found:', user);
-        console.log('Google account:', account);
-        console.log('Google profile:', profile);
 
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email! },
         });
 
         if (!existingUser) {
-          console.log('Creating new user with Google account');
           const newUser = await prisma.user.create({
             data: {
               email: user.email!,
@@ -143,7 +139,6 @@ export const auth: NextAuthOptions = {
           token.role = newUser.role;
           token.active = newUser.active;
         } else {
-          console.log('Existing user found:', existingUser);
           token.userID = existingUser.id;
           token.role = existingUser.role;
           token.active = existingUser.active;

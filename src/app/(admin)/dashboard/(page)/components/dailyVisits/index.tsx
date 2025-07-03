@@ -18,24 +18,17 @@ export default function DailyVisits() {
         const response = await fetch('/api/analytics/page-views');
         const data = await response.json();
         
-        console.log('Response data:', data);
-
-        // Adicionar verificação mais robusta
         if (!data || typeof data !== 'object') {
           console.error('Invalid response format:', data);
           setPageViews([]);
           return;
         }
 
-        // Se não tem pageViews, usar um array vazio
         const pageViewsData = data.pageViews || [];
         
-        // Converter datas para o formato local do Brasil
         const formattedData = pageViewsData.map((item: any) => {
-          // Converter string ISO para data
           const date = new Date(item.date);
           
-          // Adicionar 1 dia à data
           date.setDate(date.getDate() + 1);
           
           return {

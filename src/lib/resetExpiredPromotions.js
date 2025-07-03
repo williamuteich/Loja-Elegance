@@ -32,5 +32,5 @@ export async function resetExpiredPromotions() {
   }
 
   console.log(`✅ Resetadas ${expiredProducts.length} promoções expiradas`);
-  await prisma.$disconnect(); // boa prática em scripts
+  await prisma.$disconnect(); 
 }
