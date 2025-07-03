@@ -8,7 +8,7 @@ export default async function ProdutosPage({ searchParams }: { searchParams: Pro
   const precoMin = typeof paramsObj.precoMin === "string" ? paramsObj.precoMin : "";
   const precoMax = typeof paramsObj.precoMax === "string" ? paramsObj.precoMax : "";
   const page = typeof paramsObj.page === "string" && !isNaN(Number(paramsObj.page)) ? Number(paramsObj.page) : 1;
-  const produtosPorPagina = 10; 
+  const produtosPorPagina = 10;
 
   const params = new URLSearchParams();
   if (search) params.set("search", search);
@@ -17,8 +17,8 @@ export default async function ProdutosPage({ searchParams }: { searchParams: Pro
   if (precoMax) params.set("precoMax", precoMax);
   params.set("page", page.toString());
   params.set("pageSize", produtosPorPagina.toString());
-  params.set("random", "true"); 
-  params.set("randomLimit", produtosPorPagina.toString()); 
+  params.set("random", "true");
+  params.set("randomLimit", produtosPorPagina.toString());
 
   const productResponse = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/product?${params.toString()}`,
@@ -31,7 +31,10 @@ export default async function ProdutosPage({ searchParams }: { searchParams: Pro
 
   const categoryResponse = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/category?fetchAll=true`,
-    { next: { revalidate: 1800 } }
+    {
+      cache: 'force-cache',
+      next: { tags: ['reloadCategory'] }
+    }
   );
   if (!categoryResponse.ok) {
     throw new Error('Falha ao buscar categorias');

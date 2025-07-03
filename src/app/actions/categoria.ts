@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 export async function saveCategoria(
@@ -42,6 +42,7 @@ export async function saveCategoria(
     }
 
     config.urlRevalidate.forEach(path => revalidatePath(path));
+    revalidateTag("reloadCategory");
 
     return { success: "Categoria salva com sucesso!" };
   } catch (error) {

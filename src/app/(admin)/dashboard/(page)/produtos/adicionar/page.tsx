@@ -32,7 +32,7 @@ export default function AdicionarProduto() {
       try {
         const [brandsRes, categoriesRes] = await Promise.all([
           fetch("/api/privada/brand?fetchAll=true"),
-          fetch("/api/privada/category?fetchAll=true"),
+          fetch("/api/privada/category?fetchAll=true"), { next: { tags: ['reloadCategory'] } },
         ]);
         const [brandsData, categoriesData] = await Promise.all([
           brandsRes.json(),

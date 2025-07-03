@@ -20,6 +20,7 @@ const modalConfig = (action: string, categoria?: Categoria) => ({
   ],
   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/category`,
   urlRevalidate: ["/dashboard/categoria"], 
+  tags: ["reloadCategory"],
   method: action === "Adicionar" ? "POST" : "PUT",
   initialValues: categoria ? { 
     name: categoria.name, 
@@ -88,6 +89,7 @@ const CategoriasList = async ({ search, page, status }: { search: string; page: 
                         "Esta ação não pode ser desfeita. A categoria será removida permanentemente. Deseja continuar?",
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/category`,
                       urlRevalidate: ["/dashboard/categoria"],
+                      tags: ["reloadCategory"],
                     }}
                   />
                 </div>
@@ -119,6 +121,7 @@ const CategoriasList = async ({ search, page, status }: { search: string; page: 
                     "Esta ação não pode ser desfeita. A categoria será removida permanentemente. Deseja continuar?",
                   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/category`,
                   urlRevalidate: ["/dashboard/categoria"],
+                  tags: ["reloadCategory"],
                 }}
               />
             </div>
