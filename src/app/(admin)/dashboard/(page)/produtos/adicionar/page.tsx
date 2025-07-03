@@ -10,6 +10,7 @@ import UploadImage from "@/app/components/upload-Image/uploadImage";
 import { uploadImage } from "@/supabase/storage/client";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { createProduct } from "@/app/actions/produto"; 
 
 type Variant = {
   name: string;
@@ -94,36 +95,39 @@ export default function AdicionarProduto() {
         if (imageUrl) uploadedImageUrls.push(imageUrl);
       }
 
-      const formData = {
+      // Preparar dados do formulário
+      const data = {
         name: event.target.name.value,
         description: event.target.description.value,
         features: event.target.features.value,
         price: parseFloat(event.target.price.value.replace("$", "").replace(".", "").replace(",", ".")),
-        priceOld: parseFloat(event.target.priceOld.value.replace("$", "").replace(".", "").replace(",", ".")),
+        priceOld: event.target.priceOld.value 
+          ? parseFloat(event.target.priceOld.value.replace("$", "").replace(".", "").replace(",", "."))
+          : null,
         brandId: event.target.brand.value,
-        categoryIds: selectedCategories.map((c: any) => c.value),
+        categoryIds: selectedCategories.map(c => c.value),
         imagePrimary: uploadedImageUrls[0] || "",
         imagesSecondary: uploadedImageUrls.slice(1),
         active: event.target.status.value === "true",
-        onSale: event.target.onSale.value === "false",
+        onSale: event.target.onSale.value === "true",
         destaque: event.target.destaque.value === "true",
-        variants: variants
+        variants: variants.map(variant => ({
+          name: variant.name,
+          hexCode: variant.hexCode,
+          quantity: variant.quantity
+        }))
       };
-
-      const response = await fetch("/api/privada/product", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) throw new Error();
       
-      toast.success("Produto adicionado com sucesso!");
-      setVariants([{ name: "", hexCode: "#000000", quantity: 0 }]);
-      event.target.reset();
-      setPrimaryImage(null);
-      setSecondaryImages([]);
+      const result = await createProduct(data);
 
+      if (result?.success) {
+        toast.success(result.success);
+        setTimeout(() => {
+          window.location.href = "/dashboard/produtos";
+        }, 2000);
+      } else if (result?.error) {
+        toast.error(result.error);
+      }
     } catch (error) {
       toast.error("Erro ao adicionar produto");
     } finally {

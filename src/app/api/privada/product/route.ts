@@ -98,7 +98,7 @@ export async function GET(request: Request) {
           }
         : {},
     });
-
+    console.log("consumindo api")
     return NextResponse.json({
       produtos: processedProducts,
       totalRecords,
@@ -122,7 +122,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-
+    console.log("recebendo dados do produto:", body);
     const requiredFields = [
       'name',
       'description',

@@ -6,7 +6,7 @@ import Image from "next/image";
 import { FaImage } from 'react-icons/fa';
 
 export default async function Banners() {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/banner`);
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/banner`, { cache: "force-cache" });
 
     if (!response.ok) {
         return <p>Ocorreu um erro ao carregar os banners.</p>;
@@ -111,7 +111,7 @@ export default async function Banners() {
                                             title: "Tem certeza de que deseja excluir esse banner?",
                                             description: "Esta ação não pode ser desfeita. O banner será excluído permanentemente.",
                                             apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/banner`,
-                                            urlRevalidate: "/dashboard/banner",
+                                            urlRevalidate: ["/dashboard/banner"],
                                         }}
                                     />
                                 </div>
@@ -164,7 +164,7 @@ export default async function Banners() {
                         title: "Tem certeza de que deseja excluir esse banner?",
                         description: "Esta ação não pode ser desfeita. O banner será excluído permanentemente.",
                         apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/banner`,
-                        urlRevalidate: "/dashboard/banner",
+                        urlRevalidate: ["/dashboard/banner"],
                       }}
                     />
                   </div>
