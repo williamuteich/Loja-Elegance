@@ -8,8 +8,8 @@ export async function GET(request: Request) {
     try {
         const pickupLocations = await prisma.deliveryOption.findMany();
 
-        console.log("consumindo")
         return NextResponse.json({ pickupLocations }, { status: 200 });
+
     } catch (err) {
         console.error(err);
         return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
