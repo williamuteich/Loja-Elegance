@@ -6,7 +6,7 @@ import Image from "next/image";
 import { FaImage } from 'react-icons/fa';
 
 export default async function Banners() {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/banner`, { cache: "force-cache" });
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/banner`);
 
     if (!response.ok) {
         return <p>Ocorreu um erro ao carregar os banners.</p>;

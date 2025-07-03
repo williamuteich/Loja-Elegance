@@ -14,11 +14,12 @@ async function getInstaData() {
     try {
         const postsRes = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/instaEmbed`, {
             cache: 'force-cache',
-            next: { tags: ['embedInsta'] } 
+            next: { tags: ['embedInsta'] }
         });
-        
+
         const setupRes = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/setup`, {
-            cache: 'force-cache'
+            cache: 'force-cache',
+            next: { tags: ["loadingSetup"] }
         });
 
         if (!postsRes.ok || !setupRes.ok) {
@@ -26,10 +27,10 @@ async function getInstaData() {
         }
 
         const [postsData, setupData] = await Promise.all([postsRes.json(), setupRes.json()]);
-        
+
         const instagramUrl = setupData.config?.find(
-            (item: { type: string; name: string }) => 
-            item.type === 'social' && item.name === 'instagram'
+            (item: { type: string; name: string }) =>
+                item.type === 'social' && item.name === 'instagram'
         )?.url || '';
 
         return {
@@ -53,8 +54,8 @@ export default async function Reels() {
                     <h2 className="text-2xl relative uppercase font-extrabold text-pink-700 mb-16 text-start md:mb-6">
                         Nuestros Reels
                     </h2>
-                    
-                    <ShowInstaEmbeds 
+
+                    <ShowInstaEmbeds
                         posts={posts}
                         instagramUrl={instagramUrl}
                     />

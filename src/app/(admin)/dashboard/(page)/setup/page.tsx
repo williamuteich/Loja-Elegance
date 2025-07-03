@@ -5,11 +5,10 @@ import ModalDeletar from "../components/ModalDeletar";
 import SearchItems from "../components/searchItems";
 import Paginacao from "../../../../components/Paginacao";
 import { LoadSkeleton } from "../components/loadSkeleton";
-import { headers } from "next/headers";
 
 const fetchConfig = async (search: string, page: string, status: string) => {
   const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/privada/setup?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`
+    `${process.env.NEXTAUTH_URL}/api/privada/setup?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`, { cache: "force-cache", next: { tags: ["loadingSetup"] } }
   );
 
   if (!response.ok) {
@@ -78,6 +77,7 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
                       ],
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
                       urlRevalidate: ["/dashboard/setup"],
+                      tags: ["loadingSetup"],
                       method: "PUT",
                       initialValues: {
                         type: config.type,
@@ -96,6 +96,7 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
                         "Esta ação irá remover permanentemente a variável do seu site. Isso pode afetar a configuração do seu site, como URLs ou nomes, e pode causar erros em partes do sistema que dependem dessa variável. Certifique-se de que não há dependências antes de prosseguir com a exclusão.",
                       apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
                       urlRevalidate: ["/dashboard/setup"],
+                      tags: ["loadingSetup"]
                     }}
                   />
                 </div>
@@ -134,6 +135,7 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
                   ],
                   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
                   urlRevalidate: ["/dashboard/setup"],
+                  tags: ["loadingSetup"],
                   method: "PUT",
                   initialValues: {
                     type: config.type,
@@ -152,6 +154,7 @@ const ConfigList = async ({ search, page, status }: { search: string, page: stri
                     "Esta ação irá remover permanentemente a variável do seu site. Isso pode afetar a configuração do seu site, como URLs ou nomes, e pode causar erros em partes do sistema que dependem dessa variável. Certifique-se de que não há dependências antes de prosseguir com a exclusão.",
                   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
                   urlRevalidate: ["/dashboard/setup"],
+                  tags: ["loadingSetup"]
                 }}
               />
             </div>
@@ -204,6 +207,7 @@ export default async function Settings({ searchParams }: { searchParams: Promise
             ],
             apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/setup`,
             urlRevalidate: ["/dashboard/setup"],
+            tags: ["loadingSetup"],
             method: "POST",
           }}
         />
