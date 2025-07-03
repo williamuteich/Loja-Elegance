@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import CategoryImageUpload from "./CategoryImageUpload";
+import { saveCategoria } from "@/app/actions/categoria"; // Ajuste o caminho conforme necessário
 
 export default function ModalCategoriaClient({
   config,
@@ -25,21 +26,28 @@ export default function ModalCategoriaClient({
     setLoading(true);
     setSuccess("");
     setError("");
+    
     try {
-      const res = await fetch(config.apiEndpoint, {
+      const result = await saveCategoria(form, params, {
+        apiEndpoint: config.apiEndpoint,
         method: config.method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, id: params }),
+        urlRevalidate: config.urlRevalidate
       });
-      setLoading(false);
-      if (!res.ok) {
-        setError("Erro ao salvar categoria.");
-        return;
+
+      if (result?.success) {
+        setSuccess(result.success);
+        // Fechar o modal após 2 segundos
+        setTimeout(() => {
+          const closeButton = document.querySelector('button[aria-label="Close"]');
+          if (closeButton) (closeButton as HTMLElement).click();
+        }, 2000);
+      } else if (result?.error) {
+        setError(result.error);
       }
-      setSuccess("Categoria salva com sucesso!");
     } catch (err) {
-      setLoading(false);
       setError("Erro ao salvar categoria.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -86,7 +94,11 @@ export default function ModalCategoriaClient({
           {success}
         </div>
       )}
-      <button type="submit" className="bg-blue-800 w-full hover:bg-blue-700 text-white mt-4" disabled={loading}>
+      <button 
+        type="submit" 
+        className="bg-blue-800 w-full hover:bg-blue-700 text-white mt-4 py-2" 
+        disabled={loading}
+      >
         {loading ? "Salvando..." : "Salvar"}
       </button>
       {error && <div className="text-red-700 mt-2 text-center font-bold">{error}</div>}

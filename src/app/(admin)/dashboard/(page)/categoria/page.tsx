@@ -11,19 +11,22 @@ import type { Categoria } from "@/utils/types/categoria";
 
 const modalConfig = (action: string, categoria?: Categoria) => ({
   title: `${action} Categoria`,
-  description:
-    action === "Adicionar"
-      ? "Preencha os campos abaixo para adicionar uma nova categoria."
-      : "Faça alterações na categoria abaixo.",
+  description: action === "Adicionar" 
+    ? "Preencha os campos abaixo para adicionar uma nova categoria." 
+    : "Faça alterações na categoria abaixo.",
   action,
   fields: [
     { name: "name", label: "Nome", type: "text" as "text", placeholder: "Digite o nome da Categoria" },
     { name: "description", label: "Descrição", type: "text" as "text", placeholder: "Descrição da categoria" },
   ],
   apiEndpoint: `${process.env.NEXTAUTH_URL}/api/privada/category`,
-  urlRevalidate: ["/dashboard/categoria"],
+  urlRevalidate: ["/dashboard/categoria", "/categoria"], 
   method: action === "Adicionar" ? "POST" : "PUT",
-  initialValues: categoria ? { name: categoria.name, description: categoria.description, imageUrl: categoria.imageUrl } : undefined,
+  initialValues: categoria ? { 
+    name: categoria.name, 
+    description: categoria.description, 
+    imageUrl: categoria.imageUrl 
+  } : undefined,
 });
 
 const fetchCategories = async (search: string, page: string, status: string) => {
