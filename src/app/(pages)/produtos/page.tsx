@@ -22,7 +22,7 @@ export default async function ProdutosPage({ searchParams }: { searchParams: Pro
 
   const productResponse = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/product?${params.toString()}`,
-    { next: { revalidate: 1800 } }
+    { next: { revalidate: 20 } }
   );
   if (!productResponse.ok) {
     throw new Error('Falha ao buscar produtos');
