@@ -1,36 +1,21 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import 'dotenv/config';
 
 export async function resetExpiredPromotions() {
-  const now = new Date();
-
-  const expiredProducts = await prisma.product.findMany({
-    where: {
-      promotionDeadline: { lt: now },
-      onSale: true,
-    },
-    select: { id: true, priceOld: true, price: true },
-  });
-
-  if (expiredProducts.length === 0) {
-    console.log("Nenhuma promoção expirada encontrada");
-    return;
-  }
-
-  for (const product of expiredProducts) {
-    await prisma.product.update({
-      where: { id: product.id },
-      data: {
-        price: product.priceOld ?? product.price,
-        priceOld: null,
-        promotionDeadline: null,
-        onSale: false,
-        updatedAt: new Date(),
-      },
+  try {
+    //tem que passar a url de prod
+    const response = await fetch(`http://localhost:3000/api/privada/revalida-produto`, {
+      method: 'PATCH',
     });
-  }
 
-  console.log(`✅ Resetadas ${expiredProducts.length} promoções expiradas`);
-  await prisma.$disconnect(); 
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Erro ao chamar API:', data.error || response.statusText);
+      return;
+    }
+
+    console.log(`✅ ${data.message}`);
+  } catch (error) {
+    console.error('Erro ao chamar a API de revalidação:', error);
+  }
 }
