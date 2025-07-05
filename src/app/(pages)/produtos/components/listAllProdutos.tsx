@@ -5,14 +5,18 @@ import Link from "next/link";
 import { FaShoppingBag } from "react-icons/fa";
 
 export default async function ListAllProdutos() {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?random=true&randomLimit=15`, { next: { revalidate: 20 } });
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?random=true&randomLimit=15`,
+        {
+            next: { tags: ["loadProduct"] }
+        }
+    );
 
     if (!response.ok) {
         throw new Error("Erro ao buscar produtos");
     }
 
     const { produtos }: { produtos: Produto[] } = await response.json();
- 
+
     const produtosAleatorios = produtos.filter(produto =>
         Array.isArray(produto.variants) &&
         produto.variants.some((variant: any) =>
@@ -83,9 +87,9 @@ export default async function ListAllProdutos() {
 
                                         <div
                                             className={`mt-2 text-xs font-semibold text-white ${totalEstoque > 1
-                                                ? "bg-green-700"   
+                                                ? "bg-green-700"
                                                 : totalEstoque === 1
-                                                    ? "bg-yellow-600"  
+                                                    ? "bg-yellow-600"
                                                     : "bg-red-700"}   
                                             px-2 py-1 rounded-md w-max`}
                                         >

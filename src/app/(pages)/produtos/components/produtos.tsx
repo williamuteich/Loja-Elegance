@@ -16,7 +16,7 @@ export default async function Produtos({
 }) {
   // Faz a requisição diretamente no componente
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
-    next: { revalidate: 20 }
+    next: { tags: ["loadProduct"] }
   });
   
   if (!response.ok) {

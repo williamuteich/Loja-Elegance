@@ -8,7 +8,10 @@ export default async function PromocoesPage({ searchParams }: any): Promise<Reac
   const resolvedSearchParams = typeof searchParams.then === "function" ? await searchParams : searchParams;
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`,
-    { next: { revalidate: 20 } }
+    {
+      next: { tags: ["loadProduct"] },
+      cache: 'force-cache'
+    }
   );
 
   if (!response.ok) {

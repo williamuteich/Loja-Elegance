@@ -13,10 +13,11 @@ import { ProdutoProps } from "@/utils/types/produto";
 import { FaShoppingBag } from "react-icons/fa";
 
 export async function Promocao() {
-  // Faz a requisição diretamente no componente
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
-    next: { revalidate: 20 }
-  });
+
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`,
+    {
+      next: { tags: ["loadProduct"] },
+    });
   const res = await response.json();
   const produtos = res.produtos;
 
@@ -111,13 +112,12 @@ export async function Promocao() {
                           </Link>
 
                           <div
-                            className={`mt-2 text-xs font-semibold text-white ${
-                              totalEstoque > 1
+                            className={`mt-2 text-xs font-semibold text-white ${totalEstoque > 1
                                 ? "bg-green-700"
                                 : totalEstoque === 1
                                   ? "bg-yellow-700"
                                   : "bg-red-700"
-                            } px-2 py-1 rounded-md w-max`}
+                              } px-2 py-1 rounded-md w-max`}
                           >
                             {totalEstoque > 1
                               ? `${totalEstoque} Disponibles`

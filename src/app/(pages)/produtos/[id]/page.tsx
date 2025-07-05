@@ -1,3 +1,5 @@
+"use cache"
+
 import { Container } from "@/app/components/container";
 import { FaFileAlt, FaList } from "react-icons/fa";
 import {
@@ -11,7 +13,7 @@ import Produtos from "../components/produtos";
 import { Produto, VariantProps } from "@/utils/types/produto";
 import EstoqueProdutos from "../components/estoqueProdutos";
 import VendaWhatsapp from "../components/vendaWhatsapp";
-import Countdown from "../components/Countdown"; // <-- importei aqui
+import Countdown from "../components/Countdown"; 
 
 export default async function ProdutoSlug({
   params,
@@ -21,7 +23,11 @@ export default async function ProdutoSlug({
   const { id } = await params;
 
   const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`, {next: { revalidate: 20 }}
+    `${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`,
+    {
+      next: { tags: ["loadProduct"] }
+      
+    }
   );
 
   if (!response.ok) {
@@ -102,7 +108,7 @@ export default async function ProdutoSlug({
                 </div>
 
                 {/* Contador da promoção */}
-                {showCountdown && <Countdown deadlineISO={produtos.promotionDeadline} updatedAt={produtos.updatedAt}/>}
+                {showCountdown && <Countdown deadlineISO={produtos.promotionDeadline} updatedAt={produtos.updatedAt} />}
 
                 <div className="space-y-4">
                   <EstoqueProdutos
