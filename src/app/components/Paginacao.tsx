@@ -67,7 +67,7 @@ export default function Paginacao({ data, totalRecords }: PaginacaoProps) {
                         />
                     </PaginationItem>
                 )}
-                <div className="max-w-[350px] overflow-x-auto flex gap-1">
+                <div className="overflow-x-auto flex gap-1 max-w-[180px] lg:max-w-[350px]">
                     {Array.from({ length: totalPages }, (_, index) => (
                         <PaginationItem key={index}>
                             <PaginationLink
