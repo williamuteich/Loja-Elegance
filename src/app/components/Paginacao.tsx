@@ -53,7 +53,7 @@ export default function Paginacao({ data, totalRecords }: PaginacaoProps) {
     };
 
     return (
-        <Pagination className="mt-10">
+        <Pagination className="mt-8 mb-12">
             <PaginationContent>
                 {/* Conditionally render the Previous button */}
                 {currentPage > 1 && (
@@ -67,7 +67,7 @@ export default function Paginacao({ data, totalRecords }: PaginacaoProps) {
                         />
                     </PaginationItem>
                 )}
-                <div className="overflow-x-auto flex gap-1 max-w-[180px] lg:max-w-[350px]">
+                <div className="overflow-x-auto flex gap-1 max-w-[150px] lg:max-w-[350px]">
                     {Array.from({ length: totalPages }, (_, index) => (
                         <PaginationItem key={index}>
                             <PaginationLink
