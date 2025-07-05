@@ -15,11 +15,11 @@ export default function ViewImages({ produtos }: { produtos: any }) {
 
     return (
         <div className="flex flex-col-reverse lg:flex-row gap-4 lg:items-start items-center mb-6 lg:mb-0 w-full">
-            <div className="flex lg:flex-col gap-2 items-center overflow-x-auto lg:overflow-visible">
+            <div className="flex flex-nowrap lg:flex-col gap-2 items-center overflow-x-auto lg:overflow-visible w-full max-w-full">
                 {imagesToDisplay?.map((img: string, index: number) => (
                     <div
                         key={index}
-                        className="h-[100px] w-[100px] lg:h-[125px] lg:w-[125px] max-w-[140px] max-h-[140px] rounded cursor-pointer hover:scale-105 transition-all flex items-center justify-center border border-gray-200"
+                        className="h-[100px] w-[100px] lg:h-[125px] lg:w-[125px] max-w-[140px] max-h-[140px] rounded cursor-pointer hover:scale-105 transition-all flex items-center justify-center border border-gray-200 flex-shrink-0"
                         onClick={() => setImage(img)}
                     >
                         {img ? (
@@ -61,7 +61,6 @@ export default function ViewImages({ produtos }: { produtos: any }) {
                         </div>
                     )}
                 </div>
-
             </div>
         </div>
     )

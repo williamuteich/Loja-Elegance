@@ -38,7 +38,7 @@ export async function PATCH(request: Request) {
     }
 
     revalidateTag("loadProduct");
-    console.log("validou")
+  
     return NextResponse.json(
       { message: `Resetadas ${expiredProducts.length} promoções expiradas` },
       { status: 200 }

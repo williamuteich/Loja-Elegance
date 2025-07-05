@@ -42,13 +42,13 @@ export default function Paginacao({ data, totalRecords }: PaginacaoProps) {
 
     const handlePrevious = () => {
         if (currentPage > 1) {
-            handlePageChange(currentPage - 1); 
+            handlePageChange(currentPage - 1);
         }
     };
 
     const handleNext = () => {
         if (currentPage < totalPages) {
-            handlePageChange(currentPage + 1); 
+            handlePageChange(currentPage + 1);
         }
     };
 
@@ -61,27 +61,27 @@ export default function Paginacao({ data, totalRecords }: PaginacaoProps) {
                         <PaginationPrevious
                             className="cursor-pointer"
                             onClick={(e) => {
-                                e.preventDefault(); 
-                                handlePrevious(); 
+                                e.preventDefault();
+                                handlePrevious();
                             }}
                         />
                     </PaginationItem>
                 )}
-
-                {Array.from({ length: totalPages }, (_, index) => (
-                    <PaginationItem key={index}>
-                        <PaginationLink
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handlePageChange(index + 1); 
-                            }}
-                            className={currentPage === index + 1 ? "bg-blue-500 text-white cursor-pointer" : "cursor-pointer"}
-                        >
-                            {index + 1}
-                        </PaginationLink>
-                    </PaginationItem>
-                ))}
-
+                <div className="max-w-[350px] overflow-x-auto flex gap-1">
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <PaginationItem key={index}>
+                            <PaginationLink
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handlePageChange(index + 1);
+                                }}
+                                className={currentPage === index + 1 ? "bg-blue-500 text-white cursor-pointer" : "cursor-pointer"}
+                            >
+                                {index + 1}
+                            </PaginationLink>
+                        </PaginationItem>
+                    ))}
+                </div>
                 <PaginationItem>
                     <PaginationEllipsis />
                 </PaginationItem>
@@ -92,8 +92,8 @@ export default function Paginacao({ data, totalRecords }: PaginacaoProps) {
                         <PaginationNext
                             className="cursor-pointer"
                             onClick={(e) => {
-                                e.preventDefault(); 
-                                handleNext(); 
+                                e.preventDefault();
+                                handleNext();
                             }}
                         />
                     </PaginationItem>

@@ -1,5 +1,5 @@
 "use client";
-import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage, FaGift, FaShippingFast, FaClipboardList, FaInstagram, FaShieldAlt } from 'react-icons/fa';
+import { FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog, FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage, FaGift, FaShippingFast, FaClipboardList, FaInstagram, FaShieldAlt, FaRocket } from 'react-icons/fa';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LogoutDashboard } from '@/app/components/logoutAccount';
@@ -21,7 +21,7 @@ export default function Sidebar() {
     return (
         <>
             <div className="xl:min-w-56 xl:flex hidden bg-gray-800">
-                <div className='text-white xl:min-w-56 flex flex-col min-h-screen fixed w-[inherit] justify-between'>
+                <div className='text-white xl:min-w-56 flex flex-col min-h-screen fixed w-[inherit] max-h-screen overflow-y-auto'>
                     <div>
                         <div className="p-4 text-center">
                             <h2 className="text-lg font-semibold underline hidden xl:block">Admin Dashboard</h2>
@@ -39,6 +39,17 @@ export default function Sidebar() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/dashboard">
+                                    <div
+                                        className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
+                                        title='Início'
+                                    >
+                                        <FaRocket size={24} />
+                                        <span className='hidden xl:block'>Dados Gerais</span>
+                                    </div>
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/dashboard/seguranca">
                                     <div
                                         className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard/seguranca') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
@@ -46,17 +57,6 @@ export default function Sidebar() {
                                     >
                                         <FaShieldAlt size={24} />
                                         <span className='hidden xl:block'>Segurança/2FA</span>
-                                    </div>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/dashboard">
-                                    <div
-                                        className={`flex items-center gap-2 p-2 rounded-md ${isActive('/dashboard') ? 'bg-gray-700' : 'hover:bg-gray-700'}`}
-                                        title='Início'
-                                    >
-                                        <FaHome size={24} />
-                                        <span className='hidden xl:block'>Inicio</span>
                                     </div>
                                 </Link>
                             </li>
@@ -224,7 +224,7 @@ export default function Sidebar() {
                     <SheetContent
                         aria-describedby={undefined}
                         side="left"
-                        className="bg-gray-800 p-6"
+                        className="bg-gray-800 p-6 h-screen flex flex-col max-h-screen overflow-y-auto"
                     >
                         <SheetHeader>
                             <SheetTitle className="text-start">
@@ -241,14 +241,14 @@ export default function Sidebar() {
                                     <span>Home</span>
                                 </Link>
 
+                                <Link href="/dashboard" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard') ? 'bg-gray-700' : ''}`}>
+                                    <FaRocket className="w-6 h-6" />
+                                    <span>Dados Gerais</span>
+                                </Link>
+
                                 <Link href="/dashboard/seguranca" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/seguranca') ? 'bg-gray-700' : ''}`}>
                                     <FaShieldAlt className="w-6 h-6" />
                                     <span>Segurança/2FA</span>
-                                </Link>
-                            
-                                <Link href="/dashboard" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard') ? 'bg-gray-700' : ''}`}>
-                                    <FaHome className="w-6 h-6" />
-                                    <span>Início</span>
                                 </Link>
   
                                 <Link href="/dashboard/usuarios" className={`flex text-white items-center gap-2 p-2 rounded-md ${isActive('/dashboard/usuarios') ? 'bg-gray-700' : ''}`}>
