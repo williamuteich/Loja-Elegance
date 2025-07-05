@@ -94,8 +94,6 @@ export async function POST(request: Request) {
 
     const emailSent = await sendResetEmail(email, resetToken);
 
-    console.log("Email enviado:", emailSent);
-
     if (!emailSent) {
       return NextResponse.json({ error: 'Error al enviar el correo electrónico' }, { status: 500 });
     }

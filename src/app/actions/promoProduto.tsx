@@ -4,7 +4,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 export async function promoProduto(data: any) {
-  console.log("recebendo dados:", data);
+  
   const cookieStore = cookies();
   const cookieHeader = (await cookieStore).getAll()
     .map(cookie => `${cookie.name}=${cookie.value}`)

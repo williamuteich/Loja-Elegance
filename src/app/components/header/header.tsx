@@ -5,11 +5,12 @@ async function getProducts() {
 
   try {
     const res = await fetch(apiUrl, {
-      next: { revalidate: 20 } 
+      cache: "force-cache",
+      next: { tags: ["loadProduct"] }
     });
-    
+
     if (!res.ok) {
-     
+
       let errorBody = '';
       try {
         errorBody = await res.text();
@@ -17,19 +18,19 @@ async function getProducts() {
       console.error(`Failed to fetch products: ${res.status} ${res.statusText}`, errorBody);
       return { produtos: [] };
     }
-    
+
     return res.json();
 
   } catch (error) {
-   
+
     console.error('Network or fetch error in getProducts:', error);
-    return { produtos: [] }; 
+    return { produtos: [] };
   }
 }
 
 export default async function Header() {
   const { produtos } = await getProducts();
-  
+
   return (
     <ClientHeader initialProducts={produtos} />
   );

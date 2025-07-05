@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     const fetchAll = url.searchParams.get("fetchAll") === "true";
     const random = url.searchParams.get("random") === "true";
     const randomLimit = parseInt(url.searchParams.get("randomLimit") || pageSize.toString(), 10);
-    console.log("<<<<<<<<<<<<FAZENDO REQUISIÇÃO PARA PRODUTOS>>>>>>>>>>>>>" )
+
     const baseInclude = {
       brand: true,
       categories: { include: { category: true } },

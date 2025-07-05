@@ -29,7 +29,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Token inválido o expirado' }, { status: 400 });
     }
 
-    console.log("validando token de reset de senha", passwordReset.token);
     return NextResponse.json({ 
       valid: true, 
       email: passwordReset.user.email 

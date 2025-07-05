@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 interface ProdutoPromo {
   produto: { id: string };
   precoPromo: string;
-  promotionDeadline: string; // Ex: "2025-06-30T23:59"
+  promotionDeadline: string; 
 }
 
 
@@ -49,7 +49,7 @@ export async function PATCH(request: Request) {
         },
       });
 
-      console.log(`Produto ${item.produto.id} atualizado para promoção: R$${promocional}, deadline UTC: ${deadlineUTC.toISOString()}`);
+      //console.log(`Produto ${item.produto.id} atualizado para promoção: R$${promocional}, deadline UTC: ${deadlineUTC.toISOString()}`);
     }
 
     return NextResponse.json(

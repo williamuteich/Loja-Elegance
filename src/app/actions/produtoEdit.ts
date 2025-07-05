@@ -1,7 +1,7 @@
 // app/actions/produto.ts
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 export async function updateProduct(data: any) {
@@ -26,7 +26,7 @@ export async function updateProduct(data: any) {
       return { error: errorData.error || "Erro ao atualizar produto." };
     }
 
-    // Revalidar caminhos importantes
+    revalidateTag("loadProduct");
     revalidatePath("/dashboard/produtos");
     
     return { success: "Produto atualizado com sucesso!" };

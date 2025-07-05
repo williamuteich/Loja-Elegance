@@ -1,7 +1,7 @@
 // app/actions/produto.ts
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 export async function createProduct(data: any) {
@@ -26,7 +26,9 @@ export async function createProduct(data: any) {
       return { error: errorData.error || "Erro ao adicionar produto." };
     }
 
+    revalidateTag("loadProduct");
     revalidatePath("/dashboard/produtos");
+
     return { success: "Produto adicionado com sucesso!" };
   } catch (error) {
     console.error("Erro ao adicionar produto:", error);
