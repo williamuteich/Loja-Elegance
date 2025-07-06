@@ -4,7 +4,7 @@ export async function resetExpiredPromotions() {
   try {
     //tem que passar a url de prod
     //const response = await fetch(`http://localhost:3000/api/privada/revalida-produto`
-    const response = await fetch(`https://https/bazarelegance.com.br/api/privada/revalida-produto`, {
+    const response = await fetch(`http://localhost:3000/api/privada/revalida-produto`, {
       method: 'PATCH',
     });
 
