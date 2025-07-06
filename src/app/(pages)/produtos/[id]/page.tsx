@@ -129,7 +129,6 @@ export default async function ProdutoSlug({ params }: { params: Promise<{ id: st
     produtos.promotionDeadline &&
     new Date(produtos.promotionDeadline) > now;
 
-  // Dados estruturados para Schema.org (SEO avançado)
   const structuredData = {
     "@context": "https://schema.org/",
     "@type": "Product",
@@ -159,12 +158,14 @@ export default async function ProdutoSlug({ params }: { params: Promise<{ id: st
           "handlingTime": {
             "@type": "QuantitativeValue",
             "minValue": "1",
-            "maxValue": "2"
+            "maxValue": "2",
+            "unitCode": "d"
           },
           "transitTime": {
             "@type": "QuantitativeValue",
             "minValue": "1",
-            "maxValue": "3"
+            "maxValue": "3",
+            "unitCode": "d"
           }
         }
       }
@@ -182,7 +183,6 @@ export default async function ProdutoSlug({ params }: { params: Promise<{ id: st
 
   return (
     <Container>
-      {/* Script de dados estruturados para SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -305,7 +305,6 @@ export default async function ProdutoSlug({ params }: { params: Promise<{ id: st
               </div>
             </div>
           </div>
-
           <Produtos
             titulo="Produtos Relacionados"
             isDestaque={false}
