@@ -85,7 +85,7 @@ export async function generateMetadata({
     alternates: {
       canonical: `${process.env.NEXTAUTH_URL}/produtos/${id}`,
     },
-    robots: produtos.active ? "index, follow" : "noindex, nofollow",
+    robots: "index, follow",
   };
 }
 

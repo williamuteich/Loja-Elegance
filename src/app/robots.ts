@@ -6,13 +6,13 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: 'Googlebot',
         allow: ['/'],
-        disallow: '/private/',
+        disallow: '/privada/',
       },
       {
         userAgent: ['Applebot', 'Bingbot'],
         disallow: ['/'],
       },
     ],
-    sitemap: 'https://acme.com/sitemap.xml',
+  sitemap: 'https://bazarelegance.com.br/sitemap.xml',
   }
 }
