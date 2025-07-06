@@ -1,3 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #7e045f;
+  border-radius: 6px;
+}
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #585858 transparent;
+}
+
+@keyframes titleGradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-title {
+  background: linear-gradient(90deg, #c721b9, #ce2626, #d31c78);
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: titleGradientMove 5s ease infinite;
+}
