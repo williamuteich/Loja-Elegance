@@ -14,13 +14,15 @@ export default async function Produtos({
   isDestaque: boolean;
   categoriaProduct?: Produto[];
 }) {
-  // Faz a requisição diretamente no componente
+
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
-    next: { tags: ["loadProduct"] }
+    cache: 'force-cache',
+    next: { tags: ['loadProduct'] }
   });
-  
+
   if (!response.ok) {
-    throw new Error("Erro ao buscar produtos");
+    console.log("Erro ao buscar produtos");
+    return null;
   }
 
   const { produtos } = await response.json();

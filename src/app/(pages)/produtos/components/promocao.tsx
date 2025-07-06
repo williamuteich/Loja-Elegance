@@ -9,15 +9,19 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/app/components/container";
-import { ProdutoProps } from "@/utils/types/produto";
 import { FaShoppingBag } from "react-icons/fa";
 
 export async function Promocao() {
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`,
-    {
-      next: { tags: ["loadProduct"] },
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`,{
+      cache: 'force-cache',
+      next: { tags: ['loadProduct'] } 
     });
+
+  if (!response.ok) {
+    return null;
+  }
+
   const res = await response.json();
   const produtos = res.produtos;
 

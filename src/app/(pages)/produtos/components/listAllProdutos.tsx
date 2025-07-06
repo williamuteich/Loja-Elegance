@@ -7,12 +7,14 @@ import { FaShoppingBag } from "react-icons/fa";
 export default async function ListAllProdutos() {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?random=true&randomLimit=15`,
         {
-            next: { tags: ["loadProduct"] }
+            next: { tags: ["loadProduct"] },
+            cache: "force-cache",
         }
     );
 
     if (!response.ok) {
-        throw new Error("Erro ao buscar produtos");
+        console.log("Erro ao buscar produtos");
+        return null;
     }
 
     const { produtos }: { produtos: Produto[] } = await response.json();
