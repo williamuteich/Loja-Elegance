@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { FaArrowLeft, FaImage, FaPlus, FaTrash } from "react-icons/fa";
+import { FaArrowLeft, FaPlus, FaTrash } from "react-icons/fa";
 import Container from "../../components/Container";
 import Link from "next/link";
 import { NumericFormat } from "react-number-format";
@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import UploadImage from "@/app/components/upload-Image/uploadImage";
 import Image from "next/image";
 import { updateProduct } from "@/app/actions/produtoEdit";
+import TiptapEditor from "@/app/components/rich-editor/TiptapEditor";
 
 type Variant = {
     name: string;
@@ -27,6 +28,8 @@ export default function EditarProduto({ id }: { id: string }) {
     const [primaryImage, setPrimaryImage] = useState<File | null>(null);
     const [secondaryImages, setSecondaryImages] = useState<File[]>([]);
     const [variants, setVariants] = useState<Variant[]>([]);
+    const [description, setDescription] = useState("");
+    const [features, setFeatures] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     const fetchData = useCallback(async () => {
@@ -39,6 +42,8 @@ export default function EditarProduto({ id }: { id: string }) {
 
             const productData = await productRes.json();
             setProduto(productData.produtos);
+            setDescription(productData.produtos.description || "");
+            setFeatures(productData.produtos.features || "");
 
             const formattedVariants = productData.produtos.variants.map((v: any) => ({
                 name: v.color.name,
@@ -145,8 +150,8 @@ export default function EditarProduto({ id }: { id: string }) {
             const data = {
                 id: produto.id,
                 name: event.target.name.value,
-                description: event.target.description.value,
-                features: event.target.features.value,
+                description,
+                features,
                 price: parseFloat(
                     event.target.price.value
                         .replace("$", "")
@@ -440,26 +445,14 @@ export default function EditarProduto({ id }: { id: string }) {
 
                             <div className="md:col-span-2">
                                 <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    defaultValue={produto.description}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                    rows={4}
-                                    required
-                                />
+                                <TiptapEditor value={description} onChange={setDescription} placeholder="Digite a descrição..." />
+                                <input type="hidden" name="description" value={description} />
                             </div>
 
                             <div className="md:col-span-2">
                                 <label htmlFor="features" className="block text-sm font-medium text-gray-700 mb-2">Características</label>
-                                <textarea
-                                    id="features"
-                                    name="features"
-                                    defaultValue={produto.features}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                    rows={4}
-                                    required
-                                />
+                                <TiptapEditor value={features} onChange={setFeatures} placeholder="Digite as características..." />
+                                <input type="hidden" name="features" value={features} />
                             </div>
 
                             <div>

@@ -311,7 +311,7 @@ export default async function ProdutoSlug({
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="px-4 max-h-44 overflow-y-auto">
-                        {produtos.description}
+                        <div className="rich-content" dangerouslySetInnerHTML={{ __html: produtos.description }} />
                       </AccordionContent>
                     </AccordionItem>
 
@@ -326,7 +326,7 @@ export default async function ProdutoSlug({
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="px-4 max-h-44 overflow-y-auto">
-                        {produtos.features}
+                        <div className="rich-content" dangerouslySetInnerHTML={{ __html: produtos.features }} />
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>

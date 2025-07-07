@@ -140,7 +140,14 @@ export default function SearchHeaderItems({ initialProducts = [] }: SearchHeader
                         onClick={() => setOpen(false)}
                         className="flex gap-4 items-start border-t-[1px] border-gray-300 pt-3"
                       >
-                        <Image src={item.imagePrimary} alt={item.name} width={75} height={75} quality={100} />
+                        {item.imagePrimary ? (
+                          <Image src={item.imagePrimary} alt={item.name} width={75} height={75} quality={100} />
+                        ) : (
+                          <div className="w-[75px] h-[75px] bg-gray-100 flex items-center justify-center rounded-lg text-gray-500 text-xs font-medium">
+                            Sem imagem
+                          </div>
+                        )}
+
                         <div className="flex flex-col gap-0 w-full px-4">
                           <h2 className="text-base uppercase font-bold">{item.name}</h2>
                           <span className="text-base font-medium uppercase flex items-end gap-2 mb-2 w-full">

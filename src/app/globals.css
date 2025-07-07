@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.rich-content a {
+  @apply text-pink-700;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }

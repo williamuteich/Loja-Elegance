@@ -157,9 +157,21 @@ export default function ProdutosList(props: ProdutosListProps) {
                           </p>
                         )}
                       </div>
-                      <p className="text-xs truncate font-medium text-neutral-700 sm:text-sm">
-                        {produto.description}
-                      </p>
+                      {(() => {
+                        const plain = produto.description
+                          ? produto.description
+                              .replace(/<(br|p|div|li|h[1-6])[^>]*>/gi, ' ')
+                              .replace(/<[^>]+>/g, '')
+                              .replace(/\s+/g, ' ')
+                              .trim()
+                          : '';
+                        const preview = plain.length > 80 ? plain.slice(0, 77) + '...' : plain;
+                        return (
+                          <p className="text-xs truncate font-medium text-neutral-700 sm:text-sm">
+                            {preview}
+                          </p>
+                        );
+                      })()}
                     </Link>
 
                     <div className={`mt-2 text-xs font-semibold text-white ${totalEstoque > 0

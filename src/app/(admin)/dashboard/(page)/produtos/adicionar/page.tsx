@@ -10,7 +10,8 @@ import UploadImage from "@/app/components/upload-Image/uploadImage";
 import { uploadImage } from "@/supabase/storage/client";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { createProduct } from "@/app/actions/produto"; 
+import { createProduct } from "@/app/actions/produto";
+import TiptapEditor from "@/app/components/rich-editor/TiptapEditor"; 
 
 type Variant = {
   name: string;
@@ -25,6 +26,8 @@ export default function AdicionarProduto() {
   const [primaryImage, setPrimaryImage] = useState<File | null>(null);
   const [secondaryImages, setSecondaryImages] = useState<File[]>([]);
   const [variants, setVariants] = useState<Variant[]>([{ name: "", hexCode: "#000000", quantity: 0 }]);
+  const [description, setDescription] = useState("");
+  const [features, setFeatures] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -99,7 +102,7 @@ export default function AdicionarProduto() {
       const data = {
         name: event.target.name.value,
         description: event.target.description.value,
-        features: event.target.features.value,
+        features,
         price: parseFloat(event.target.price.value.replace("$", "").replace(".", "").replace(",", ".")),
         priceOld: event.target.priceOld.value 
           ? parseFloat(event.target.priceOld.value.replace("$", "").replace(".", "").replace(",", "."))
@@ -328,6 +331,8 @@ export default function AdicionarProduto() {
               <div className="md:col-span-2">
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Categorias</label>
                 <Select
+                  instanceId="category-select"
+                  inputId="category-select-input"
                   isMulti
                   options={categorias.map(c => ({ label: c.name, value: c.id }))} 
                   onChange={handleCategoryChange}
@@ -339,24 +344,15 @@ export default function AdicionarProduto() {
 
               <div className="md:col-span-2">
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  rows={4}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  required
-                />
+                <TiptapEditor value={description} onChange={setDescription} placeholder="Digite a descrição..." />
+                {/* Hidden input to keep traditional form submission working */}
+                <input type="hidden" name="description" value={description} />
               </div>
 
               <div className="md:col-span-2">
                 <label htmlFor="features" className="block text-sm font-medium text-gray-700 mb-2">Características</label>
-                <textarea
-                  id="features"
-                  name="features"
-                  rows={4}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  required
-                />
+                <TiptapEditor value={features} onChange={setFeatures} placeholder="Digite as características..." />
+                <input type="hidden" name="features" value={features} />
               </div>
 
               <div>

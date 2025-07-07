@@ -120,9 +120,21 @@ export default async function Produtos({
                             </p>
                           )}
                         </div>
-                        <p className="text-xs truncate font-medium text-neutral-700 sm:text-sm">
-                          {produto.description}
-                        </p>
+                        {(() => {
+                          const plain = produto.description
+                            ? produto.description
+                                .replace(/<(br|p|div|li|h[1-6])[^>]*>/gi, ' ')
+                                .replace(/<[^>]+>/g, '')
+                                .replace(/\s+/g, ' ')
+                                .trim()
+                            : '';
+                          const preview = plain.length > 80 ? plain.slice(0, 77) + '...' : plain;
+                          return (
+                            <p className="text-xs truncate font-medium text-neutral-700 sm:text-sm">
+                              {preview}
+                            </p>
+                          );
+                        })()}
                         <div
                           className={`mt-2 text-xs font-semibold text-white ${produto.variants.some((variant: any) => variant.availableStock > 0)
                             ? produto.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0) > 1
