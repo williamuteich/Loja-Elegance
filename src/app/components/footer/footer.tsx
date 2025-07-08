@@ -115,6 +115,7 @@ export default function Footer() {
                 <li><Link href="/sobre" className="hover:underline">Sobre nosotros</Link></li>
                 <li><Link href="/contato" className="hover:underline">Contáctanos</Link></li>
                 <li><Link href="/faq" className="hover:underline">Preguntas frecuentes</Link></li>
+                <li><Link href="/politica" className="hover:underline">Política &amp; Términos</Link></li>
               </ul>
             </div>
 

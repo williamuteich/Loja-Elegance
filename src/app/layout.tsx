@@ -5,6 +5,7 @@ import Footer from "./components/footer/footer";
 import AuthProvider from "./components/providers/auth-provider";
 import { CartProvider } from "@/context/cartContext";
 import VisitTracker from "./components/visitTracker";
+import CookieBanner from "./components/cookieBanner";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
@@ -144,6 +145,7 @@ export default async function RootLayout({
             <Header />
             <div>{children}</div>
             <Footer />
+            <CookieBanner />
           </CartProvider>
         </AuthProvider>
       </body>
