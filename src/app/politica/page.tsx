@@ -86,12 +86,6 @@ export default function PoliticaPage() {
               Al navegar por el sitio aceptas el uso de cookies. Puedes
               cambiar tus preferencias en cualquier momento.
             </p>
-            <Link
-              href="#"
-              className="inline-block mt-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md text-sm font-medium transition-colors"
-            >
-              Gestionar preferencias de cookies
-            </Link>
           </div>
         </div>
       </section>
