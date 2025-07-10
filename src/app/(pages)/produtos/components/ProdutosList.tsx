@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import Link from "next/link";
 import { FaShoppingBag, FaSlidersH } from "react-icons/fa";
@@ -62,6 +61,7 @@ export default function ProdutosList(props: ProdutosListProps) {
           </button>
         </form>
       </div>
+
       <div className="hidden md:block md:w-1/4 p-4 bg-neutral-100 border-r">
         <form className="sticky top-16 max-h-screen overflow-y-auto p-2 space-y-3" action="/produtos" method="get">
           <h3 className="text-base font-semibold text-pink-700 mb-2 flex gap-1 border-b border-gray-400 pb-1 items-center">
@@ -93,7 +93,7 @@ export default function ProdutosList(props: ProdutosListProps) {
           </button>
           <a
             href="/produtos"
-            className="w-full block mt-2 text-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 rounded-lg text-lg shadow transition-all"
+            className="w-full block mt-2 text-center bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg text-lg shadow transition-all"
             style={{ textDecoration: 'none' }}
           >
             Limpiar Filtros
@@ -105,7 +105,7 @@ export default function ProdutosList(props: ProdutosListProps) {
         <h2 className="text-xl sm:text-2xl uppercase font-extrabold text-pink-700 mb-4 sm:mb-6 text-center md:text-left">
           Catálogo de Productos ({totalRecords})
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
           {produtos.map((produto, index) => {
             const totalEstoque = produto.variants.reduce(
               (acc: any, variant: { stock: { quantity: any } }) => acc + (variant.stock?.quantity || 0),
@@ -117,94 +117,94 @@ export default function ProdutosList(props: ProdutosListProps) {
             return (
               <div
                 key={produto.id}
-                className="flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all hover:scale-[1.02]"
+                className="group relative flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
               >
-                <div className="group relative flex flex-col border border-gray-50 flex-1">
-                  <Link href={`/produtos/${produto.id}`} className="relative aspect-square w-full flex items-center justify-center overflow-hidden bg-white">
-                    {produto.imagePrimary ? (
-                      <Image
-                        src={produto.imagePrimary}
-                        alt={produto.name}
-                        fill
-                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 20vw, 240px"
-                        priority={index < 4}
-                        className="object-contain"
-                      />
-                    ) : (
-                      <div className="p-4 bg-gray-100 rounded-lg flex items-center justify-center w-full h-full">
-                        <FaShoppingBag className="text-gray-400" size={110} />
-                      </div>
-                    )}
-                  </Link>
-                  <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm flex-1">
-                    <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
-                      <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
+                {desconto > 0 && (
+                  <div className="absolute top-3 left-3 z-20">
+                    <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold py-1 px-3 rounded-full shadow-md">
+                      -{desconto}% OFF
+                    </div>
+                  </div>
+                )}
+
+                <Link href={`/produtos/${produto.id}`} className="relative aspect-square w-full flex items-center justify-center bg-gray-50 overflow-hidden">
+                  {produto.imagePrimary ? (
+                    <Image
+                      src={produto.imagePrimary}
+                      alt={produto.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, (max-width: 1200px) 20vw, 240px"
+                      priority={index < 4}
+                      className="object-contain transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="p-4 bg-gray-100 rounded-lg flex items-center justify-center w-full h-full">
+                      <FaShoppingBag className="text-gray-400" size={110} />
+                    </div>
+                  )}
+                </Link>
+
+                <div className="flex flex-col flex-grow p-4">
+                  <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 flex-grow">
+                    <h3 className="font-bold text-sm sm:text-base line-clamp-2 text-gray-800 relative overflow-hidden">
+                      <span className="relative z-10 group-hover:text-white transition-colors duration-300">
                         {produto.name}
-                      </h3>
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 flex-wrap">
-                        <p className="text-xl font-bold text-pink-600 flex-wrap">
+                      </span>
+                      <span className="absolute inset-0 bg-gradient-to-r from-pink-600 to-rose-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-0"></span>
+                    </h3>
+
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-lg font-bold text-rose-700">
+                        {new Intl.NumberFormat("es-UY", {
+                          style: "currency",
+                          currency: "UYU"
+                        }).format(produto.price)}
+                      </span>
+                      {produto.priceOld && (
+                        <span className="text-xs text-gray-500 line-through">
                           {new Intl.NumberFormat("es-UY", {
                             style: "currency",
                             currency: "UYU"
-                          }).format(produto.price)}
-                        </p>
-                        {produto.priceOld && (
-                          <p className="text-md font-bold text-pink-700 line-through flex-wrap">
-                            {new Intl.NumberFormat("es-UY", {
-                              style: "currency",
-                              currency: "UYU"
-                            }).format(produto.priceOld)}
-                          </p>
-                        )}
+                          }).format(produto.priceOld)}
+                        </span>
+                      )}
+                    </div>
+
+                    {produto.description && (
+                      <p className="text-gray-600 text-xs line-clamp-2">
+                        {produto.description.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()}
+                      </p>
+                    )}
+
+                    <div className="mt-auto">
+                      <div className={`text-xs font-semibold px-2.5 rounded-full w-max mt-2 ${totalEstoque > 3
+                          ? "bg-green-100 text-green-800"
+                          : totalEstoque > 0
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
+                        }`}>
+                        {totalEstoque > 3
+                          ? `${totalEstoque} Disponibles`
+                          : totalEstoque > 0
+                            ? "Última Unidad"
+                            : "Agotado"}
                       </div>
-                      {(() => {
-                        const plain = produto.description
-                          ? produto.description
-                              .replace(/<(br|p|div|li|h[1-6])[^>]*>/gi, ' ')
-                              .replace(/<[^>]+>/g, '')
-                              .replace(/\s+/g, ' ')
-                              .trim()
-                          : '';
-                        const preview = plain.length > 80 ? plain.slice(0, 77) + '...' : plain;
-                        return (
-                          <p className="text-xs truncate font-medium text-neutral-700 sm:text-sm">
-                            {preview}
-                          </p>
-                        );
-                      })()}
+                    </div>
+                  </Link>
+
+                  <div className="mt-4">
+                    <Link href={`/produtos/${produto.id}`}>
+                      <button className="w-full py-2.5 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white text-sm font-semibold rounded-lg transition-all shadow-md hover:shadow-lg">
+                        Ver detalles
+                      </button>
                     </Link>
-
-                    <div className={`mt-2 text-xs font-semibold text-white ${totalEstoque > 0
-                        ? totalEstoque > 1
-                          ? "bg-green-700"
-                          : "bg-yellow-700"
-                        : "bg-red-700"
-                      } px-2 py-1 rounded-md w-max`}>
-                      {totalEstoque > 0
-                        ? totalEstoque > 1
-                          ? `${totalEstoque} Disponíveis`
-                          : "Última unidad"
-                        : "Agotado"}
-                    </div>
-
-                    <div className="mt-3">
-                      <Link href={`/produtos/${produto.id}`}>
-                        <button className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all">
-                          Ver detalles
-                        </button>
-                      </Link>
-                    </div>
                   </div>
-                  {desconto > 0 && (
-                    <span className="absolute top-2 right-2 bg-pink-700 text-white text-xs px-2 py-1 rounded-full">
-                      {desconto}% OFF
-                    </span>
-                  )}
                 </div>
               </div>
             );
           })}
         </div>
+
         <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-center items-center gap-2 text-sm sm:text-base">
           <Link href={buildUrl({ search, categoria, precoMin, precoMax, page: paginaAtual - 1 })}>
             <button disabled={paginaAtual === 1} className="px-4 py-2 bg-pink-600 text-white rounded-md disabled:opacity-50">
