@@ -19,39 +19,44 @@ export function ClientCategoriesCarousel({ categories, delay = 4000 }: { categor
         slidesToScroll: "auto"
       }}
       plugins={[Autoplay({ delay })]}
+      className="w-full px-4"
     >
-      <CarouselContent className="gap-1 md:gap-0 mx-8 py-2">
-        {categories.map((cat: {
-          [x: string]: any; id: string; name: string
-        }) => (
+      <CarouselContent className="py-6">
+        {categories.map((cat) => (
           <CarouselItem
             key={cat.id}
-            className="basis-[33.3333%] sm:basis-1/3 md:basis-1/4 lg:basis-1/6 max-w-[150px] flex flex-col items-center"
+            className="basis-1/3 sm:basis-1/4 md:basis-1/5 lg:basis-1/6 xl:basis-1/8 flex justify-center"
           >
-            <Link href={`/produtos?categoria=${encodeURIComponent(cat.name).replace(/%20/g, '+')}`}>
-              <div className="group relative min-w-min flex flex-col items-center">
-                <div className="w-[80px] h-[80px] flex cursor-pointer items-center justify-center rounded-full bg-pink-100 border-2 border-pink-100 shadow-md hover:border-pink-300 transition-all duration-200 overflow-hidden">
-                  {cat.imageUrl ? (
-                    <Image
-                      src={cat.imageUrl}
-                      alt={`Ícone da categoria ${cat.name} - Clique para explorar produtos`}
-                      className="object-cover w-full h-full rounded-full transition-transform duration-200 group-hover:scale-110"
-                      width={120}
-                      height={120}
-                      quality={100}
-                    />
-                  ) : (
-                    <FaTag className="text-pink-300 text-3xl" />
-                  )}
-                </div>
-                <span
-                  className="block mt-1 text-pink-700 text-xs font-semibold text-center leading-tight max-w-[80px] break-words overflow-hidden"
-                  style={{ display: 'block', wordBreak: 'break-word', maxHeight: '2.6em' }}
-                  title={cat.name}
-                >
-                  {cat.name}
-                </span>
+            <Link 
+              href={`/produtos?categoria=${encodeURIComponent(cat.name).replace(/%20/g, '+')}`}
+              className="group flex flex-col items-center w-full"
+            >
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center rounded-full bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+                {cat.imageUrl ? (
+                  <Image
+                    src={cat.imageUrl}
+                    alt={cat.name}
+                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+                    width={96}
+                    height={96}
+                    quality={95}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full bg-gray-50 rounded-full">
+                    <FaTag className="text-pink-400 text-2xl sm:text-3xl" />
+                  </div>
+                )}
+                
+                {/* Efeito de hover sutil */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
               </div>
+              
+              <span 
+                className="mt-3 text-center text-gray-700 font-medium text-sm transition-colors duration-200 group-hover:text-pink-600 line-clamp-2 px-1"
+                title={cat.name}
+              >
+                {cat.name}
+              </span>
             </Link>
           </CarouselItem>
         ))}
