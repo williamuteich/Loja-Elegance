@@ -9,24 +9,22 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/app/components/container";
-import { FaShoppingBag } from "react-icons/fa";
+import { FaShoppingBag, FaTag, FaClock, FaFire } from "react-icons/fa";
 
 export async function Promocao() {
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
+    cache: 'force-cache',
+    next: { tags: ['loadProduct'] }
+  });
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`,{
-      cache: 'force-cache',
-      next: { tags: ['loadProduct'] } 
-    });
-
-  if (!response.ok) {
-    return null;
-  }
+  if (!response.ok) return null;
 
   const res = await response.json();
   const produtos = res.produtos;
 
   const produtosEmPromocao = produtos.filter((produto: any) => {
-    const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) => acc + (variant.availableStock || 0), 0);
+    const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) =>
+      acc + (variant.availableStock || 0), 0);
     return (
       produto.onSale &&
       produto.priceOld &&
@@ -36,136 +34,176 @@ export async function Promocao() {
     );
   });
 
+  if (produtosEmPromocao.length === 0) return null;
+
   return (
-    <div className="py-10 lg:pt-24 w-full mx-auto bg-gray-100 flex justify-center items-center">
+    <div className="py-10 lg:py-16 w-full mx-auto bg-gradient-to-r from-pink-50 to-rose-50">
       <Container>
-        <div className="flex flex-col lg:flex-row gap-10 items-center">
-          <div className="w-full text-center lg:text-left mb-6 lg:mb-0">
-            <div className="flex flex-col gap-4">
-              <h2 className="text-2xl text-center uppercase font-extrabold text-pink-700">
-                ¡Promociones Imperdibles!
+        <div className="flex flex-col lg:flex-row gap-8 items-center">
+          {/* Card de promoção melhorado */}
+          <div className="w-full lg:w-[32%] text-center lg:text-left">
+            <div className="bg-white p-6 lg:p-8 rounded-xl shadow-lg border border-pink-100 flex flex-col gap-6 h-full">
+              <div className="flex justify-center lg:justify-start">
+                <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2">
+                  <FaFire className="text-yellow-200" />
+                  <span>OFERTAS ESPECIAIS</span>
+                </div>
+              </div>
+
+              <h2 className="text-3xl lg:text-4xl font-extrabold text-pink-700 leading-tight">
+                ¡Promociones <span className="text-rose-600">Imperdibles</span>!
               </h2>
-              <p className="text-gray-700 text-sm text-center font-normal">
-                ¡No te pierdas las ofertas especiales que preparamos para ti! Aprovecha descuentos exclusivos en productos seleccionados.
-              </p>
-              <Link href="/promocoes" className="w-full">
-                <Button className="uppercase text-xs lg:text-sm text-white bg-pink-800 hover:bg-pink-600 focus:bg-pink-600 w-full">
+
+              <div className="space-y-3">
+                <p className="text-gray-600 text-base leading-relaxed flex items-start gap-2">
+                  <FaTag className="text-pink-500 mt-1 flex-shrink-0" />
+                  <span>Descuentos exclusivos en productos seleccionados</span>
+                </p>
+
+                <p className="text-gray-600 text-base leading-relaxed flex items-start gap-2">
+                  <FaClock className="text-pink-500 mt-1 flex-shrink-0" />
+                  <span>Ofertas válidas por tiempo limitado</span>
+                </p>
+              </div>
+
+              <Link href="/promocoes" className="mt-auto">
+                <Button className="w-full py-5 text-sm font-bold bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white shadow-lg transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                  <FaShoppingBag className="text-lg" />
                   ¡Aprovechá Ahora!
                 </Button>
               </Link>
             </div>
           </div>
 
-          <div className="w-full lg:w-[75%] xl:w-[70%] relative">
-            <Carousel opts={{ align: "start" }} className="w-full">
-              <div className="absolute right-12 -top-12 sm:flex">
-                <p className="text-pink-700 font-extrabold mr-10">Ver Todos</p>
-                <div>
-                  <CarouselPrevious className="left-24 rounded-none" style={{ borderRadius: "5px" }} />
-                  <CarouselNext className="rounded-none" style={{ borderRadius: "5px" }} />
-                </div>
-              </div>
-              <CarouselContent className="flex gap-[1px] px-3">
-                {produtosEmPromocao.map((produto: any) => {
-                  const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
-                    ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
-                    : 0;
+          {/* Carrossel simplificado - SEM opções avançadas */}
+          <div className="w-full lg:w-[68%] relative">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-gray-800">
+                Productos en Oferta
+                <span className="text-pink-600 ml-2">({produtosEmPromocao.length})</span>
+              </h3>
+            </div>
 
-                  const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) => acc + (variant.availableStock || 0), 0);
-
-                  return (
+            <div className="relative">
+              {/* Configuração mínima do carrossel */}
+              <Carousel className="w-full">
+                <CarouselContent className="-ml-1 py-2">
+                  {produtosEmPromocao.map((produto: any) => (
                     <CarouselItem
                       key={produto.id}
-                      className="flex-shrink-0 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/4 xl:basis-1/4"
+                      className="pl-1 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
                     >
-                      <div className="group relative flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all">
-                        <Link href={`/produtos/${produto.id}`} className="relative aspect-square w-full flex items-center justify-center overflow-hidden bg-white">
-                          {produto.imagePrimary ? (
-                            <Image
-                              alt={produto.name}
-                              src={produto.imagePrimary}
-                              className="object-contain"
-                              width={300}
-                              height={300}
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            />
-                          ) : (
-                            <div className="flex items-center justify-center bg-gray-100 rounded-lg" style={{ width: 300, height: 300 }}>
-                              <FaShoppingBag className="text-gray-400" size={110} />
-                            </div>
-                          )}
-                        </Link>
-                        <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
-                          <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
-                            <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
-                              {produto.name}
-                            </h3>
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 flex-wrap">
-                              <p className="text-lg font-semibold text-pink-700 flex-wrap">
-                                {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(produto.price)}
-                              </p>
-                              {produto.priceOld && (
-                                <p className="text-sm font-semibold text-pink-600 line-through flex-wrap">
-                                  {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(produto.priceOld)}
-                                </p>
-                              )}
-                            </div>
-                            {(() => {
-                              const plain = produto.description
-                                ? produto.description
-                                    .replace(/<(br|p|div|li|h[1-6])[^>]*>/gi, ' ')
-                                    .replace(/<[^>]+>/g, '')
-                                    .replace(/\s+/g, ' ')
-                                    .trim()
-                                : '';
-                              const preview = plain.length > 80 ? plain.slice(0, 77) + '...' : plain;
-                              return (
-                                <p className="text-xs font-medium text-neutral-700 sm:text-sm truncate">
-                                  {preview}
-                                </p>
-                              );
-                            })()}
-                          </Link>
-
-                          <div
-                            className={`mt-2 text-xs font-semibold text-white ${totalEstoque > 1
-                                ? "bg-green-700"
-                                : totalEstoque === 1
-                                  ? "bg-yellow-700"
-                                  : "bg-red-700"
-                              } px-2 py-1 rounded-md w-max`}
-                          >
-                            {totalEstoque > 1
-                              ? `${totalEstoque} Disponibles`
-                              : totalEstoque === 1
-                                ? "Última Unidad"
-                                : "Indisponible"}
-                          </div>
-
-                          <div className="mt-3">
-                            <Link href={`/produtos/${produto.id}`}>
-                              <button
-                                className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all"
-                              >
-                                Ver detalles
-                              </button>
-                            </Link>
-                          </div>
-                        </div>
-                        {percentualDesconto > 0 && (
-                          <p className="absolute left-3 top-3 z-20 flex items-center bg-pink-700 px-3 py-1 text-sm font-semibold text-white">
-                            {percentualDesconto}% OFF
-                          </p>
-                        )}
-                      </div>
+                      <ProductCard produto={produto} />
                     </CarouselItem>
-                  );
-                })}
-              </CarouselContent>
-            </Carousel>
+                  ))}
+                </CarouselContent>
+
+                {/* Controles do carrossel */}
+                <div className="absolute right-0 top-0 z-10 flex gap-2 -translate-y-14">
+                  <CarouselPrevious className="static translate-y-0 rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
+                  <CarouselNext className="static translate-y-0 rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
+                </div>
+              </Carousel>
+            </div>
           </div>
         </div>
       </Container>
+    </div>
+  );
+}
+
+// Componente separado para o card de produto com descrição
+function ProductCard({ produto }: { produto: any }) {
+  const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
+    ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
+    : 0;
+
+  const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) =>
+    acc + (variant.availableStock || 0), 0);
+
+  return (
+    <div className="group relative flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+      {percentualDesconto > 0 && (
+        <div className="absolute top-3 left-3 z-20">
+          <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold py-1 px-3 rounded-full shadow-md">
+            -{percentualDesconto}% OFF
+          </div>
+        </div>
+      )}
+
+      <Link
+        href={`/produtos/${produto.id}`}
+        className="relative aspect-square w-full flex items-center justify-center bg-gray-50 overflow-hidden"
+      >
+        {produto.imagePrimary ? (
+          <Image
+            alt={produto.name}
+            src={produto.imagePrimary}
+            className="object-contain transition-transform duration-300 group-hover:scale-105"
+            width={280}
+            height={280}
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+          />
+        ) : (
+          <div className="flex items-center justify-center bg-gray-100 rounded-lg w-full h-full">
+            <FaShoppingBag className="text-gray-400" size={80} />
+          </div>
+        )}
+      </Link>
+
+      <div className="flex flex-col flex-grow p-4">
+        <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 flex-grow">
+          <h3 className="font-bold text-gray-800 line-clamp-2 text-sm sm:text-base group-hover:text-rose-600 transition-colors">
+            {produto.name}
+          </h3>
+
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-bold text-rose-700">
+                {new Intl.NumberFormat("es-UY", {
+                  style: "currency",
+                  currency: "UYU"
+                }).format(produto.price)}
+              </span>
+              {produto.priceOld && (
+                <span className="text-xs text-gray-500 line-through">
+                  {new Intl.NumberFormat("es-UY", {
+                    style: "currency",
+                    currency: "UYU"
+                  }).format(produto.priceOld)}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {produto.description && (
+            <p className="text-gray-600 text-xs line-clamp-2">
+              {produto.description}
+            </p>
+          )}
+
+          <div className="mt-auto pt-3">
+            <div className={`text-xs font-semibold px-2 py-1 rounded-full w-max ${totalEstoque > 3 ? "bg-green-100 text-green-800" :
+                totalEstoque > 0 ? "bg-yellow-100 text-yellow-800" :
+                  "bg-red-100 text-red-800"
+              }`}>
+              {totalEstoque > 3
+                ? "Disponible"
+                : totalEstoque > 0
+                  ? `${totalEstoque} restantes`
+                  : "Agotado"}
+            </div>
+          </div>
+        </Link>
+
+        <div className="mt-4">
+          <Link href={`/produtos/${produto.id}`}>
+            <button className="w-full py-2.5 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white text-sm font-semibold rounded-lg transition-all shadow-md hover:shadow-lg">
+              Ver detalles
+            </button>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

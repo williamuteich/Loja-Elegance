@@ -62,31 +62,56 @@ export default async function Produtos({
       : produtos.filter((produto: Produto) => produto.variants.some((variant: any) => variant.availableStock > 0) && produto.active);
   }
 
+  if (produtosFiltrados.length === 0) return null;
+
   return (
     <div className="mx-auto py-10 sm:px-0">
-      <h2 className="text-2xl relative uppercase font-extrabold text-pink-700 mb-6 text-start">{titulo}</h2>
-      <Carousel opts={{ align: "start" }} className="w-full relative">
-        <div className="absolute right-12 -top-12 hidden sm:flex">
-          <p className="text-pink-700 font-extrabold mr-10">Ver Todos</p>
-          <div>
-            <CarouselPrevious className="left-24 rounded-none" style={{ borderRadius: "5px" }} />
-            <CarouselNext className="rounded-none" style={{ borderRadius: "5px" }} />
-          </div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl md:text-2xl relative uppercase font-extrabold text-pink-700">{titulo}</h2>
+
+        <div className="flex items-center gap-2">
+          <Link href="/produtos" className="hidden sm:block text-pink-700 font-extrabold hover:underline mr-24">
+            Ver Todos
+          </Link>
         </div>
-        <CarouselContent className="flex gap-[1px] px-3">
-          {produtosFiltrados.length > 0 ? (
-            produtosFiltrados.map((produto: Produto) => {
+      </div>
+
+      <div className="relative">
+        <Carousel className="w-full">
+          <div className="absolute top-0 right-0 z-10 sm:flex gap-1 -translate-y-10 hidden">
+            <CarouselPrevious className="static rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
+            <CarouselNext className="static rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
+          </div>
+
+          <CarouselContent className="-ml-1 p-1 gap-2">
+            {produtosFiltrados.map((produto: Produto) => {
               const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
                 ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
                 : 0;
 
+              const totalEstoque = produto.variants.reduce(
+                (total: number, variant: any) => total + (variant.availableStock || 0),
+                0
+              );
+
               return (
                 <CarouselItem
                   key={produto.id}
-                  className="flex-shrink-0 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/4 xl:basis-1/4"
+                  className="pl-1 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
                 >
-                  <div className="group relative flex flex-col bg-neutral-100 border-neutral-300 hover:bg-pink-100 transition-all">
-                    <Link href={`/produtos/${produto.id}`} className="relative aspect-square w-full flex items-center justify-center overflow-hidden bg-white">
+                  <div className="group relative flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+                    {produto.onSale && percentualDesconto > 0 && (
+                      <div className="absolute top-3 left-3 z-20">
+                        <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold py-1 px-3 rounded-full shadow-md">
+                          -{percentualDesconto}% OFF
+                        </div>
+                      </div>
+                    )}
+
+                    <Link
+                      href={`/produtos/${produto.id}`}
+                      className="relative aspect-square w-full flex items-center justify-center bg-gray-50 overflow-hidden"
+                    >
                       {produto.imagePrimary ? (
                         <Image
                           alt={produto.name}
@@ -95,85 +120,77 @@ export default async function Produtos({
                           height={270}
                           priority
                           quality={100}
-                          className="object-contain rounded-lg"
-                          style={{ maxWidth: 300, maxHeight: 300 }}
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-contain transition-transform duration-300 group-hover:scale-105"
+                          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                         />
                       ) : (
-                        <div className="p-4 bg-gray-100 rounded-lg flex items-center justify-center w-full h-full" style={{ width: 270, height: 270 }}>
-                          <FaShoppingBag className="text-gray-400" size={110} />
+                        <div className="flex items-center justify-center bg-gray-100 rounded-lg w-full h-full">
+                          <FaShoppingBag className="text-gray-400" size={80} />
                         </div>
                       )}
                     </Link>
-                    <div className="flex flex-col w-full justify-between bg-white px-3 py-3 rounded-sm shadow-sm">
-                      <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 w-full">
-                        <h3 className="truncate text-sm sm:text-base md:text-lg font-extrabold text-pink-700">
+
+                    <div className="flex flex-col flex-grow p-4">
+                      <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 flex-grow">
+                        {/*<h3 className="font-bold text-gray-800 line-clamp-2 text-sm sm:text-base group-hover:text-rose-600 transition-colors">
                           {produto.name}
+                        </h3>*/}
+                        <h3 className="font-bold text-sm sm:text-base line-clamp-2 text-gray-800 relative overflow-hidden">
+                          <span className="relative z-10 group-hover:text-white transition-colors duration-300">
+                            {produto.name}
+                          </span>
+                          <span className="absolute inset-0 bg-gradient-to-r from-pink-600 to-rose-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-0"></span>
                         </h3>
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 flex-wrap">
-                          <p className="text-xl font-bold text-pink-600 flex-wrap">
-                            {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(produto.price)}
-                          </p>
-                          {produto.priceOld && (
-                            <p className="text-md font-bold text-pink-700 line-through flex-wrap">
-                              {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(produto.priceOld)}
-                            </p>
-                          )}
+
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg font-bold text-rose-700">
+                              {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(produto.price)}
+                            </span>
+                            {produto.priceOld && (
+                              <span className="text-xs text-gray-500 line-through">
+                                {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(produto.priceOld)}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        {(() => {
-                          const plain = produto.description
-                            ? produto.description
-                                .replace(/<(br|p|div|li|h[1-6])[^>]*>/gi, ' ')
-                                .replace(/<[^>]+>/g, '')
-                                .replace(/\s+/g, ' ')
-                                .trim()
-                            : '';
-                          const preview = plain.length > 80 ? plain.slice(0, 77) + '...' : plain;
-                          return (
-                            <p className="text-xs truncate font-medium text-neutral-700 sm:text-sm">
-                              {preview}
-                            </p>
-                          );
-                        })()}
-                        <div
-                          className={`mt-2 text-xs font-semibold text-white ${produto.variants.some((variant: any) => variant.availableStock > 0)
-                            ? produto.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0) > 1
-                              ? "bg-green-700"
-                              : "bg-yellow-700"
-                            : "bg-red-700 text-white"
-                            } px-2 py-1 rounded-md w-max`}
-                        >
-                          {produto.variants.some((variant: any) => variant.availableStock > 0)
-                            ? produto.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0) > 1
-                              ? `${produto.variants.reduce((total: number, variant: any) => total + (variant.availableStock || 0), 0)} Disponíveis`
-                              : "Última Unidade"
-                            : "Indisponível"}
+
+                        {/* Descrição simplificada */}
+                        {produto.description && (
+                          <p className="text-gray-600 text-xs line-clamp-2">
+                            {produto.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()}
+                          </p>
+                        )}
+
+                        <div className="mt-auto">
+                          <div className={`text-xs font-semibold px-2.5 rounded-full w-max ${totalEstoque > 3 ? "bg-green-100 text-green-800" :
+                              totalEstoque > 0 ? "bg-yellow-100 text-yellow-800" :
+                                "bg-red-100 text-red-800"
+                            }`}>
+                            {totalEstoque > 3
+                              ? `${totalEstoque} Disponíveis`
+                              : totalEstoque > 0
+                                ? "Última Unidade"
+                                : "Indisponível"}
+                          </div>
                         </div>
                       </Link>
-                      <div className="mt-3">
+
+                      <div className="mt-4">
                         <Link href={`/produtos/${produto.id}`}>
-                          <button
-                            className="w-full py-2 bg-pink-600 text-white text-sm font-semibold rounded-md hover:bg-pink-700 transition-all"
-                          >
+                          <button className="w-full py-2.5 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white text-sm font-semibold rounded-lg transition-all shadow-md hover:shadow-lg">
                             Ver detalles
                           </button>
                         </Link>
                       </div>
                     </div>
-                    {produto.onSale && percentualDesconto > 0 && (
-                      <p className="absolute left-3 top-3 z-20 flex items-center bg-pink-700 px-3 py-1 text-sm font-semibold text-white">
-                        {percentualDesconto}% OFF
-                      </p>
-                    )}
                   </div>
                 </CarouselItem>
               );
-            })
-          ) : (
-            <div className="text-red-800 pl-10">Nenhum produto encontrado</div>
-          )}
-        </CarouselContent>
-      </Carousel>
+            })}
+          </CarouselContent>
+        </Carousel>
+      </div>
     </div>
   );
 }
