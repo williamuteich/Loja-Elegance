@@ -1,7 +1,7 @@
 "use cache";
 
 import { Container } from "@/app/components/container";
-import { FaFileAlt, FaList } from "react-icons/fa";
+import { FaFileAlt, FaList, FaTruck, FaShieldAlt } from "react-icons/fa";
 import {
   Accordion,
   AccordionContent,
@@ -105,8 +105,9 @@ export default async function ProdutoSlug({
 
   if (!response.ok) {
     return (
-      <div className="py-10 px-4 text-gray-800 text-xl font-bold">
-        Erro ao buscar produto
+      <div className="py-20 text-center">
+        <div className="text-xl font-bold text-pink-700">Erro ao buscar produto</div>
+        <p className="text-gray-600 mt-2">O produto solicitado não pôde ser carregado.</p>
       </div>
     );
   }
@@ -229,41 +230,56 @@ export default async function ProdutoSlug({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      <div className="flex justify-center py-10">
-        <div className="bg-white w-full">
-          <div className="lg:flex lg:flex-row flex-col gap-4">
-            <ViewImages produtos={produtos} />
-            <div className="lg:w-[900px] w-full p-4 space-y-6 border border-gray-300 rounded-lg">
-              <div className="w-full">
-                <h2 className="text-xl uppercase font-extrabold text-pink-700 mb-4">
-                  {produtos.name}
-                </h2>
+      <div className="py-4 md:py-8">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className="flex flex-col lg:flex-row gap-4 md:gap-6">
+            {/* Imagens do produto */}
+            <div className="lg:w-1/2 p-4">
+              {/* Ajuste no container para evitar corte no mobile */}
+              <div className="overflow-visible">
+                <ViewImages produtos={produtos} />
+              </div>
+            </div>
 
-                <div className="flex gap-1 flex-wrap mb-1">
-                  <p className="text-3xl text-pink-700 font-bold">
-                    {new Intl.NumberFormat("es-UY", {
-                      style: "currency",
-                      currency: "UYU",
-                    }).format(produtos.price)}
-                  </p>
-                  {produtos.priceOld && (
-                    <p className="text-xl text-gray-500 line-through">
-                      {new Intl.NumberFormat("es-UY", {
-                        style: "currency",
-                        currency: "UYU",
-                      }).format(produtos.priceOld)}
-                    </p>
-                  )}
+            {/* Detalhes do produto */}
+            <div className="lg:w-1/2 p-4 md:p-6">
+              <div className="space-y-4 md:space-y-5">
+                <div>
+                  <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">
+                    {produtos.name}
+                  </h1>
+
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl md:text-3xl font-bold text-pink-600">
+                        {new Intl.NumberFormat("es-UY", {
+                          style: "currency",
+                          currency: "UYU",
+                        }).format(produtos.price)}
+                      </span>
+                      
+                      {produtos.priceOld && (
+                        <span className="text-lg md:text-xl text-gray-500 line-through">
+                          {new Intl.NumberFormat("es-UY", {
+                            style: "currency",
+                            currency: "UYU",
+                          }).format(produtos.priceOld)}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {showCountdown && (
+                      <div className="w-full mt-2">
+                        <Countdown
+                          deadlineISO={produtos.promotionDeadline}
+                          updatedAt={produtos.updatedAt}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                {showCountdown && (
-                  <Countdown
-                    deadlineISO={produtos.promotionDeadline}
-                    updatedAt={produtos.updatedAt}
-                  />
-                )}
-
-                <div className="space-y-4">
+                <div className="space-y-1 md:space-y-0">
                   <EstoqueProdutos
                     isActive={isActive}
                     availableStock={availableStock}
@@ -272,61 +288,77 @@ export default async function ProdutoSlug({
                     stock={stock}
                     produtos={produtos}
                   />
-                </div>
 
-                <div className="space-y-4">
-                  <VendaWhatsapp produto={produtos} />
-                </div>
-
-                <div className="mt-6 space-y-2">
-                  <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">
-                    <h3 className="font-bold text-base text-gray-800">Envío Gratis</h3>
-                    <p className="text-gray-900">
-                      Envío gratis para <strong>Barra do Quaraí</strong> o en compras a
-                      partir de <strong>$2500</strong> pesos. Si no se cumple ninguna de
-                      estas condiciones, el costo del envío es de <strong>$190</strong>.
-                    </p>
+                  {/* Botões de ação - versão desktop */}
+                  <div className="hidden md:block">
+                    <VendaWhatsapp produto={produtos} />
                   </div>
 
-                  <div className="text-sm text-gray-600 p-3 px-4 border bg-gray-100 rounded">
-                    <h3 className="font-bold text-base text-gray-800">
-                      Calidad Garantizada
-                    </h3>
-                    <p className="text-gray-900">
-                      Productos seleccionados con alto estándar de calidad
-                    </p>
+                  {/* Botão WhatsApp no mobile, logo abaixo do botão adicionar ao carrinho */}
+                  <div className="md:hidden mt-4">
+                    <VendaWhatsapp produto={produtos} />
                   </div>
                 </div>
 
-                <div className="mt-6 space-y-4 text-md">
-                  <Accordion type="single" collapsible className="flex flex-col gap-2">
-                    <AccordionItem
-                      value="item-1"
-                      className="border border-gray-200 rounded"
-                    >
-                      <AccordionTrigger className="px-4">
-                        <div className="flex items-center gap-2">
-                          <FaFileAlt size={18} />
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
+                  <div className="bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-100 rounded-lg p-3 md:p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-pink-100 p-2 rounded-full">
+                        <FaTruck className="text-pink-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 text-sm md:text-base">Envío Gratis</h3>
+                        <p className="text-xs md:text-sm text-gray-700 mt-1">
+                          Para Barra do Quaraí o compras desde $2500 pesos
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-100 rounded-lg p-3 md:p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-pink-100 p-2 rounded-full">
+                        <FaShieldAlt className="text-pink-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 text-sm md:text-base">Calidad Garantizada</h3>
+                        <p className="text-xs md:text-sm text-gray-700 mt-1">
+                          Productos seleccionados con alto estándar
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 md:space-y-4 pt-2">
+                  <Accordion type="multiple" className="space-y-2 md:space-y-3">
+                    <AccordionItem value="description" className="border border-gray-200 rounded-lg">
+                      <AccordionTrigger className="px-3 py-2 md:px-4 md:py-3 hover:no-underline">
+                        <div className="flex items-center gap-2 md:gap-3 font-medium text-gray-900 text-sm md:text-base">
+                          <FaFileAlt className="text-pink-600" />
                           Descripción del producto
                         </div>
                       </AccordionTrigger>
-                      <AccordionContent className="px-4 max-h-44 overflow-y-auto">
-                        <div className="rich-content" dangerouslySetInnerHTML={{ __html: produtos.description }} />
+                      <AccordionContent className="px-3 md:px-4 pb-3 md:pb-4">
+                        <div 
+                          className="rich-content prose prose-pink max-w-none text-sm md:text-base" 
+                          dangerouslySetInnerHTML={{ __html: produtos.description }} 
+                        />
                       </AccordionContent>
                     </AccordionItem>
 
-                    <AccordionItem
-                      value="item-2"
-                      className="border border-gray-200 rounded"
-                    >
-                      <AccordionTrigger className="px-4">
-                        <div className="flex items-center gap-2">
-                          <FaList size={18} />
+                    <AccordionItem value="features" className="border border-gray-200 rounded-lg">
+                      <AccordionTrigger className="px-3 py-2 md:px-4 md:py-3 hover:no-underline">
+                        <div className="flex items-center gap-2 md:gap-3 font-medium text-gray-900 text-sm md:text-base">
+                          <FaList className="text-pink-600" />
                           Características
                         </div>
                       </AccordionTrigger>
-                      <AccordionContent className="px-4 max-h-44 overflow-y-auto">
-                        <div className="rich-content" dangerouslySetInnerHTML={{ __html: produtos.features }} />
+                      <AccordionContent className="px-3 md:px-4 pb-3 md:pb-4">
+                        <div 
+                          className="rich-content prose prose-pink max-w-none text-sm md:text-base" 
+                          dangerouslySetInnerHTML={{ __html: produtos.features }} 
+                        />
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>
@@ -334,7 +366,9 @@ export default async function ProdutoSlug({
               </div>
             </div>
           </div>
+        </div>
 
+        <div className="mt-10 md:mt-16">
           <Produtos
             titulo="Produtos Relacionados"
             isDestaque={false}
