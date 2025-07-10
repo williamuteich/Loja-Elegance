@@ -153,8 +153,15 @@ function ProductCard({ produto }: { produto: any }) {
 
       <div className="flex flex-col flex-grow p-4">
         <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 flex-grow">
-          <h3 className="font-bold text-gray-800 line-clamp-2 text-sm sm:text-base group-hover:text-rose-600 transition-colors">
+          {/*<h3 className="font-bold text-gray-800 line-clamp-2 text-sm sm:text-base group-hover:text-rose-600 transition-colors">
             {produto.name}
+          </h3>*/}
+
+          <h3 className="font-bold text-sm sm:text-base line-clamp-2 text-gray-800 relative overflow-hidden">
+            <span className="relative z-10 group-hover:text-white transition-colors duration-300">
+              {produto.name}
+            </span>
+            <span className="absolute inset-0 bg-gradient-to-r from-pink-600 to-rose-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-0"></span>
           </h3>
 
           <div className="flex flex-col gap-1">
@@ -184,8 +191,8 @@ function ProductCard({ produto }: { produto: any }) {
 
           <div className="mt-auto pt-3">
             <div className={`text-xs font-semibold px-2 py-1 rounded-full w-max ${totalEstoque > 3 ? "bg-green-100 text-green-800" :
-                totalEstoque > 0 ? "bg-yellow-100 text-yellow-800" :
-                  "bg-red-100 text-red-800"
+              totalEstoque > 0 ? "bg-yellow-100 text-yellow-800" :
+                "bg-red-100 text-red-800"
               }`}>
               {totalEstoque > 3
                 ? "Disponible"
