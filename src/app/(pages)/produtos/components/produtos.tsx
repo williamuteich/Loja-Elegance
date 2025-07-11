@@ -5,16 +5,28 @@ import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import { FaShoppingBag } from "react-icons/fa";
 
-type ProdutosProps = {
+export default async function Produtos({
+  titulo,
+  isDestaque,
+  categoriaProduct,
+}: {
   titulo: string;
   isDestaque: boolean;
   categoriaProduct?: Produto[];
-  produtos?: Produto[];
-};
+}) {
 
-export default function Produtos({ titulo, isDestaque, categoriaProduct, produtos = [] }: ProdutosProps) {
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
+    cache: 'force-cache',
+    next: { tags: ['loadProduct'] }
+  });
 
-  let produtosFiltrados: Produto[] = [...produtos];
+  if (!response.ok) {
+    console.log("Erro ao buscar produtos");
+    return null;
+  }
+
+  const { produtos } = await response.json();
+  let produtosFiltrados: Produto[] = [];
 
   if (categoriaProduct) {
     const categoriasProdutoAtual = categoriaProduct.map((itemCategory: any) => itemCategory.category);
@@ -65,13 +77,13 @@ export default function Produtos({ titulo, isDestaque, categoriaProduct, produto
       </div>
 
       <div className="relative">
-        <Carousel opts={{ align: "start" }} className="w-full">
+        <Carousel className="w-full">
           <div className="absolute top-0 right-0 z-10 sm:flex gap-1 -translate-y-10 hidden">
             <CarouselPrevious className="static rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
             <CarouselNext className="static rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
           </div>
 
-          <CarouselContent className="-ml-1 p-1">
+          <CarouselContent className="-ml-1 p-1 gap-2">
             {produtosFiltrados.map((produto: Produto) => {
               const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
                 ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
@@ -152,8 +164,8 @@ export default function Produtos({ titulo, isDestaque, categoriaProduct, produto
 
                         <div className="mt-auto">
                           <div className={`text-xs font-semibold px-2.5 rounded-full w-max ${totalEstoque > 3 ? "bg-green-100 text-green-800" :
-                            totalEstoque > 0 ? "bg-yellow-100 text-yellow-800" :
-                              "bg-red-100 text-red-800"
+                              totalEstoque > 0 ? "bg-yellow-100 text-yellow-800" :
+                                "bg-red-100 text-red-800"
                             }`}>
                             {totalEstoque > 3
                               ? `${totalEstoque} Disponíveis`
