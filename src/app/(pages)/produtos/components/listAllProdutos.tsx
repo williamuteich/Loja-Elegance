@@ -6,7 +6,7 @@ import { FaShoppingBag } from "react-icons/fa";
 
 export default async function ListAllProdutos() {
     const response = await fetch(
-        `https://bazarelegance.com.br/api/publica/product?random=true&randomLimit=15`,
+        `${process.env.NEXTAUTH_URL}/api/publica/product?random=true&randomLimit=15`,
         {
             next: { tags: ["loadProduct"] },
             cache: "force-cache",

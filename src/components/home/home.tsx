@@ -1,4 +1,4 @@
-"use cache"
+export const dynamic = "force-dynamic";
 
 import ListAllProdutos from "@/app/(pages)/produtos/components/listAllProdutos";
 import Produtos from "@/app/(pages)/produtos/components/produtos";

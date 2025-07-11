@@ -12,7 +12,7 @@ import { Container } from "@/app/components/container";
 import { FaShoppingBag, FaTag, FaClock, FaFire } from "react-icons/fa";
 
 export async function Promocao() {
-  const response = await fetch(`https://bazarelegance.com.br/api/publica/product?fetchAll=true`, {
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
     cache: 'force-cache',
     next: { tags: ['loadProduct'] }
   });
