@@ -15,7 +15,7 @@ export default async function Produtos({
   categoriaProduct?: Produto[];
 }) {
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
+  const response = await fetch(`https://bazarelegance.com.br/api/publica/product?fetchAll=true`, {
     cache: 'force-cache',
     next: { tags: ['loadProduct'] }
   });
