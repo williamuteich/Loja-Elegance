@@ -21,8 +21,11 @@ export default async function Produtos({
   });
 
   if (!response.ok) {
-    console.log("Erro ao buscar produtos");
-    return null;
+    return (
+      <div className="py-10 px-4 max-w-7xl mx-auto text-center text-gray-500">
+        Não foi possível carregar os produtos no momento. Tente novamente mais tarde.
+      </div>
+    );
   }
 
   const { produtos } = await response.json();
@@ -164,8 +167,8 @@ export default async function Produtos({
 
                         <div className="mt-auto">
                           <div className={`text-xs font-semibold px-2.5 rounded-full w-max ${totalEstoque > 3 ? "bg-green-100 text-green-800" :
-                              totalEstoque > 0 ? "bg-yellow-100 text-yellow-800" :
-                                "bg-red-100 text-red-800"
+                            totalEstoque > 0 ? "bg-yellow-100 text-yellow-800" :
+                              "bg-red-100 text-red-800"
                             }`}>
                             {totalEstoque > 3
                               ? `${totalEstoque} Disponíveis`

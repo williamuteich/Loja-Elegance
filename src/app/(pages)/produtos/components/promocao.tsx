@@ -17,7 +17,13 @@ export async function Promocao() {
     next: { tags: ['loadProduct'] }
   });
 
-  if (!response.ok) return null;
+  if (!response.ok) {
+    return (
+      <div className="py-10 px-4 max-w-7xl mx-auto text-center text-gray-500">
+        Não foi possível carregar os produtos no momento. Tente novamente mais tarde.
+      </div>
+    );
+  }
 
   const res = await response.json();
   const produtos = res.produtos;
