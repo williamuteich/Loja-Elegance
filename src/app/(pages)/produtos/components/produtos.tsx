@@ -5,31 +5,16 @@ import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import { FaShoppingBag } from "react-icons/fa";
 
-export default async function Produtos({
-  titulo,
-  isDestaque,
-  categoriaProduct,
-}: {
+type ProdutosProps = {
   titulo: string;
   isDestaque: boolean;
   categoriaProduct?: Produto[];
-}) {
+  produtos?: Produto[];
+};
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
-    cache: 'force-cache',
-    next: { tags: ['loadProduct'] }
-  });
+export default function Produtos({ titulo, isDestaque, categoriaProduct, produtos = [] }: ProdutosProps) {
 
-  if (!response.ok) {
-    return (
-      <div className="py-10 px-4 max-w-7xl mx-auto text-center text-gray-500">
-        Não foi possível carregar os produtos no momento. Tente novamente mais tarde.
-      </div>
-    );
-  }
-
-  const { produtos } = await response.json();
-  let produtosFiltrados: Produto[] = [];
+  let produtosFiltrados: Produto[] = [...produtos];
 
   if (categoriaProduct) {
     const categoriasProdutoAtual = categoriaProduct.map((itemCategory: any) => itemCategory.category);
@@ -80,13 +65,13 @@ export default async function Produtos({
       </div>
 
       <div className="relative">
-        <Carousel className="w-full">
+        <Carousel opts={{ align: "start" }} className="w-full">
           <div className="absolute top-0 right-0 z-10 sm:flex gap-1 -translate-y-10 hidden">
             <CarouselPrevious className="static rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
             <CarouselNext className="static rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
           </div>
 
-          <CarouselContent className="-ml-1 p-1 gap-2">
+          <CarouselContent className="-ml-1 p-1">
             {produtosFiltrados.map((produto: Produto) => {
               const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
                 ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)

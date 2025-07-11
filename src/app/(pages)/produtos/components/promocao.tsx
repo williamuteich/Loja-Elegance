@@ -10,23 +10,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/app/components/container";
 import { FaShoppingBag, FaTag, FaClock, FaFire } from "react-icons/fa";
+import { ProdutoProps } from "@/utils/types/produto";
 
-export async function Promocao() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
-    cache: 'force-cache',
-    next: { tags: ['loadProduct'] }
-  });
+export function Promocao({ produtos }: ProdutoProps) {
 
-  if (!response.ok) {
-    return (
-      <div className="py-10 px-4 max-w-7xl mx-auto text-center text-gray-500">
-        Não foi possível carregar os produtos no momento. Tente novamente mais tarde.
-      </div>
-    );
-  }
-
-  const res = await response.json();
-  const produtos = res.produtos;
+  if (!produtos || produtos.length === 0) return null;
 
   const produtosEmPromocao = produtos.filter((produto: any) => {
     const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) =>
@@ -200,11 +188,9 @@ function ProductCard({ produto }: { produto: any }) {
               totalEstoque > 0 ? "bg-yellow-100 text-yellow-800" :
                 "bg-red-100 text-red-800"
               }`}>
-              {totalEstoque > 3
-                ? "Disponible"
-                : totalEstoque > 0
-                  ? `${totalEstoque} restantes`
-                  : "Agotado"}
+              {totalEstoque > 0
+                ? `${totalEstoque} disponibles`
+                : "Agotado"}
             </div>
           </div>
         </Link>

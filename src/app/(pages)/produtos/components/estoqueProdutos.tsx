@@ -7,10 +7,6 @@ import { FaBox } from "react-icons/fa";
 
 export default function EstoqueProdutos({
   isActive,
-  availableStock,
-  colors,
-  hex,
-  stock,
   produtos,
 }: {
   isActive: boolean;
@@ -77,7 +73,7 @@ export default function EstoqueProdutos({
         />
       ) : (
         <button
-          className="uppercase text-white py-3 px-6 rounded mt-6 w-full bg-gray-500"
+          className="uppercase text-white py-3 px-6 rounded mt-0 w-full bg-gray-600 cursor-not-allowed"
           disabled
         >
           Produto Indisponível
