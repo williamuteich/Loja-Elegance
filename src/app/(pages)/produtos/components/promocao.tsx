@@ -182,19 +182,20 @@ function ProductCard({ produto }: { produto: any }) {
               )}
             </div>
           </div>
-
+          
           {produto.description && (
-            <p className="text-gray-600 text-xs line-clamp-2">
-              {produto.description}
-            </p>
+            <div
+              className="text-gray-600 text-xs line-clamp-2"
+              dangerouslySetInnerHTML={{ __html: produto.description }}
+            />
           )}
 
           <div className="mt-auto pt-3">
             <div className={`text-xs font-semibold px-2 py-1 rounded-full w-max ${totalEstoque > 1
-                ? "bg-green-100 text-green-800"
-                : totalEstoque === 1
-                  ? "bg-red-100 text-red-800"
-                  : "bg-red-100 text-red-800"
+              ? "bg-green-100 text-green-800"
+              : totalEstoque === 1
+                ? "bg-red-100 text-red-800"
+                : "bg-red-100 text-red-800"
               }`}>
               {totalEstoque > 1
                 ? `${totalEstoque} Disponibles`
