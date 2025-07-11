@@ -190,14 +190,16 @@ function ProductCard({ produto }: { produto: any }) {
           )}
 
           <div className="mt-auto pt-3">
-            <div className={`text-xs font-semibold px-2 py-1 rounded-full w-max ${totalEstoque > 3 ? "bg-green-100 text-green-800" :
-              totalEstoque > 0 ? "bg-yellow-100 text-yellow-800" :
-                "bg-red-100 text-red-800"
+            <div className={`text-xs font-semibold px-2 py-1 rounded-full w-max ${totalEstoque > 1
+                ? "bg-green-100 text-green-800"
+                : totalEstoque === 1
+                  ? "bg-red-100 text-red-800"
+                  : "bg-red-100 text-red-800"
               }`}>
-              {totalEstoque > 3
-                ? "Disponible"
-                : totalEstoque > 0
-                  ? `${totalEstoque} restantes`
+              {totalEstoque > 1
+                ? `${totalEstoque} Disponibles`
+                : totalEstoque === 1
+                  ? "Última Unidad"
                   : "Agotado"}
             </div>
           </div>

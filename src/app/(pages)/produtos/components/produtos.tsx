@@ -163,15 +163,19 @@ export default async function Produtos({
                         )}
 
                         <div className="mt-auto">
-                          <div className={`text-xs font-semibold px-2.5 rounded-full w-max ${totalEstoque > 3 ? "bg-green-100 text-green-800" :
-                              totalEstoque > 0 ? "bg-yellow-100 text-yellow-800" :
-                                "bg-red-100 text-red-800"
-                            }`}>
-                            {totalEstoque > 3
-                              ? `${totalEstoque} Disponíveis`
-                              : totalEstoque > 0
-                                ? "Última Unidade"
-                                : "Indisponível"}
+                          <div
+                            className={`text-xs font-semibold px-2.5 rounded-full w-max ${totalEstoque > 1
+                                ? "bg-green-100 text-green-800"
+                                : totalEstoque === 1
+                                  ? "bg-red-100 text-red-800" 
+                                  : "bg-red-100 text-red-800"
+                              }`}
+                          >
+                            {totalEstoque > 1
+                              ? `${totalEstoque} Disponibles`
+                              : totalEstoque === 1
+                                ? `Última Unidad`
+                                : "No Disponible"}
                           </div>
                         </div>
                       </Link>

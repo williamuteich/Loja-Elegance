@@ -179,13 +179,15 @@ export default function ProdutosList(props: ProdutosListProps) {
                     <div className="mt-auto">
                       <div className={`text-xs font-semibold px-2.5 rounded-full w-max mt-2 ${totalEstoque > 3
                           ? "bg-green-100 text-green-800"
-                          : totalEstoque > 0
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
+                          : totalEstoque === 1
+                            ? "bg-red-100 text-red-800"
+                            : totalEstoque > 0
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
                         }`}>
-                        {totalEstoque > 3
+                        {totalEstoque > 1
                           ? `${totalEstoque} Disponibles`
-                          : totalEstoque > 0
+                          : totalEstoque === 1
                             ? "Última Unidad"
                             : "Agotado"}
                       </div>

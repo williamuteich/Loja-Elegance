@@ -188,8 +188,8 @@ export default function PromocoesList(props: PromocoesListProps) {
             const desconto =
               produto.priceOld && produto.priceOld > produto.price
                 ? Math.round(
-                    ((produto.priceOld - produto.price) / produto.priceOld) * 100
-                  )
+                  ((produto.priceOld - produto.price) / produto.priceOld) * 100
+                )
                 : 0;
             return (
               <div
@@ -264,19 +264,20 @@ export default function PromocoesList(props: PromocoesListProps) {
 
                     <div className="mt-auto">
                       <div
-                        className={`text-xs font-semibold px-2.5 rounded-full w-max mt-2 ${
-                          totalEstoque > 3
+                        className={`text-xs font-semibold px-2.5 rounded-full w-max mt-2 ${totalEstoque > 3
                             ? "bg-green-100 text-green-800"
-                            : totalEstoque > 0
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
+                            : totalEstoque === 1
+                              ? "bg-red-100 text-red-800"
+                              : totalEstoque > 0
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                          }`}
                       >
-                        {totalEstoque > 3
+                        {totalEstoque > 1
                           ? `${totalEstoque} Disponibles`
-                          : totalEstoque > 0
-                          ? "Última Unidad"
-                          : "Agotado"}
+                          : totalEstoque === 1
+                            ? "Última Unidad"
+                            : "Agotado"}
                       </div>
                     </div>
                   </Link>
