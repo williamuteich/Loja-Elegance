@@ -1,216 +1,381 @@
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import Link from "next/link";
+"use cache";
+
 import { Container } from "@/app/components/container";
-import { FaShoppingBag, FaTag, FaClock, FaFire } from "react-icons/fa";
+import { FaFileAlt, FaList, FaTruck, FaShieldAlt } from "react-icons/fa";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import ViewImages from "../components/viewImages";
+import Produtos from "../components/produtos";
+import { Produto, VariantProps } from "@/utils/types/produto";
+import EstoqueProdutos from "../components/estoqueProdutos";
+import VendaWhatsapp from "../components/vendaWhatsapp";
+import Countdown from "../components/Countdown";
+import type { Metadata } from "next";
 
-export async function Promocao() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
-    cache: 'force-cache',
-    next: { tags: ['loadProduct'] }
-  });
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
 
-  if (!response.ok) return null;
-
-  const res = await response.json();
-  const produtos = res.produtos;
-
-  const produtosEmPromocao = produtos.filter((produto: any) => {
-    const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) =>
-      acc + (variant.availableStock || 0), 0);
-    return (
-      produto.onSale &&
-      produto.priceOld &&
-      produto.price < produto.priceOld &&
-      produto.active &&
-      totalEstoque > 0
-    );
-  });
-
-  if (produtosEmPromocao.length === 0) return null;
-
-  return (
-    <div className="py-10 lg:py-16 w-full mx-auto bg-gradient-to-r from-pink-50 to-rose-50">
-      <Container>
-        <div className="flex flex-col lg:flex-row gap-8 items-center">
-          {/* Card de promoção melhorado */}
-          <div className="w-full lg:w-[32%] text-center lg:text-left">
-            <div className="bg-white p-6 lg:p-8 rounded-xl shadow-lg border border-pink-100 flex flex-col gap-6 h-full">
-              <div className="flex justify-center lg:justify-start">
-                <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2">
-                  <FaFire className="text-yellow-200" />
-                  <span>OFERTAS ESPECIAIS</span>
-                </div>
-              </div>
-
-              <h2 className="text-3xl lg:text-4xl font-extrabold text-pink-700 leading-tight">
-                ¡Promociones <span className="text-rose-600">Imperdibles</span>!
-              </h2>
-
-              <div className="space-y-3">
-                <p className="text-gray-600 text-base leading-relaxed flex items-start gap-2">
-                  <FaTag className="text-pink-500 mt-1 flex-shrink-0" />
-                  <span>Descuentos exclusivos en productos seleccionados</span>
-                </p>
-
-                <p className="text-gray-600 text-base leading-relaxed flex items-start gap-2">
-                  <FaClock className="text-pink-500 mt-1 flex-shrink-0" />
-                  <span>Ofertas válidas por tiempo limitado</span>
-                </p>
-              </div>
-
-              <Link href="/promocoes" className="mt-auto">
-                <Button className="w-full py-5 text-sm font-bold bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white shadow-lg transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2">
-                  <FaShoppingBag className="text-lg" />
-                  ¡Aprovechá Ahora!
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Carrossel simplificado - SEM opções avançadas */}
-          <div className="w-full lg:w-[68%] relative">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-gray-800">
-                Productos en Oferta
-                <span className="text-pink-600 ml-2">({produtosEmPromocao.length})</span>
-              </h3>
-            </div>
-
-            <div className="relative">
-              {/* Configuração mínima do carrossel */}
-              <Carousel className="w-full">
-                <CarouselContent className="-ml-1 py-2">
-                  {produtosEmPromocao.map((produto: any) => (
-                    <CarouselItem
-                      key={produto.id}
-                      className="pl-1 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
-                    >
-                      <ProductCard produto={produto} />
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-
-                {/* Controles do carrossel */}
-                <div className="absolute right-0 top-0 z-10 flex gap-2 -translate-y-14">
-                  <CarouselPrevious className="static translate-y-0 rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
-                  <CarouselNext className="static translate-y-0 rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
-                </div>
-              </Carousel>
-            </div>
-          </div>
-        </div>
-      </Container>
-    </div>
+  const response = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`
   );
+
+  if (!response.ok) {
+    return {
+      title: "Produto não encontrado",
+      description: "Não foi possível carregar o produto.",
+    };
+  }
+
+  const { produtos } = await response.json();
+
+  const categories = Array.isArray(produtos.categories) ? produtos.categories : [];
+  const images = Array.isArray(produtos.images) ? produtos.images : [];
+
+  return {
+    title: `${produtos.name} | Bazar Elegance - Barra do Quaraí`,
+    description:
+      produtos.description?.substring(0, 160) ||
+      "Producto de calidad a excelente precio en la frontera Uruguay–Brasil",
+    keywords: [
+      ...categories.map((c: any) => c.name),
+      produtos.name,
+      "bazar Elegance",
+      "Barra do Quaraí",
+      "compras en la frontera",
+      "productos económicos",
+      "e‑commerce transfronterizo",
+      "frontera Uruguay Brasil",
+      "ofertas frontera",
+      "envío sin fronteras",
+      "comprar barato Uruguay",
+      "shop frontera",
+    ],
+    openGraph: {
+      title: `${produtos.name} | Bazar Elegance`,
+      description:
+        produtos.description?.substring(0, 160) ||
+        "Mejores precios en la región de frontera",
+      url: `${process.env.NEXTAUTH_URL}/produtos/${id}`,
+      siteName: "Bazar Elegance",
+      images: images.map((img: any) => ({
+        url: img.url,
+        width: 800,
+        height: 600,
+        alt: produtos.name,
+      })),
+      locale: "pt_BR",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${produtos.name} | Bazar Fronteira`,
+      description:
+        produtos.description?.substring(0, 160) ||
+        "Produtos de qualidade na fronteira Uruguai-Brasil",
+      images: images.length > 0 ? images[0].url : "/default-image.jpg",
+    },
+    alternates: {
+      canonical: `${process.env.NEXTAUTH_URL}/produtos/${id}`,
+    },
+    robots: "index, follow",
+  };
 }
 
-// Componente separado para o card de produto com descrição
-function ProductCard({ produto }: { produto: any }) {
-  const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
-    ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
+export default async function ProdutoSlug({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  const response = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`,
+    {
+      next: { tags: ["loadProduct"] },
+    }
+  );
+
+  if (!response.ok) {
+    return (
+      <div className="py-20 text-center">
+        <div className="text-xl font-bold text-pink-700">Erro ao buscar produto</div>
+        <p className="text-gray-600 mt-2">O produto solicitado não pôde ser carregado.</p>
+      </div>
+    );
+  }
+
+  const { produtos } = await response.json();
+
+  await fetch(`${process.env.NEXTAUTH_URL}/api/analytics/product-views`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      productId: produtos.id,
+      productName: produtos.name,
+    }),
+  });
+
+  const availableStock = Array.isArray(produtos.variants)
+    ? produtos.variants
+        .map((variant: VariantProps) => variant.availableStock)
+        .reduce((acc: number, stock: number) => acc + stock, 0)
     : 0;
 
-  const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) =>
-    acc + (variant.availableStock || 0), 0);
+  const isActive = produtos.active;
+
+  const categorias = Array.isArray(produtos.categories)
+    ? produtos.categories
+    : [];
+
+  const { colors, stock, hex } = Array.isArray(produtos.variants)
+    ? produtos.variants.reduce(
+        (
+          acc: { colors: string[]; stock: number[]; hex: string[] },
+          item: VariantProps
+        ) => {
+          acc.colors.push(item.color.name);
+          acc.hex.push(item.color.hexCode);
+          acc.stock.push(item.stock.quantity);
+          return acc;
+        },
+        { colors: [], stock: [], hex: [] }
+      )
+    : { colors: [], stock: [], hex: [] };
+
+  const now = new Date();
+
+  const showCountdown =
+    produtos.onSale &&
+    produtos.priceOld &&
+    produtos.promotionDeadline &&
+    new Date(produtos.promotionDeadline) > now;
+
+  const images = Array.isArray(produtos.images) ? produtos.images : [];
+
+  const structuredData = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    name: produtos.name,
+    description: produtos.description,
+    image: images.map((img: any) => img.url),
+    offers: {
+      "@type": "Offer",
+      price: produtos.price,
+      priceCurrency: "UYU",
+      priceValidUntil:
+        produtos.promotionDeadline ||
+        new Date(
+          new Date().setFullYear(new Date().getFullYear() + 1)
+        )
+          .toISOString()
+          .split("T")[0],
+      availability:
+        availableStock > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+      url: `${process.env.NEXTAUTH_URL}/produtos/${id}`,
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: "190",
+          currency: "UYU",
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "UY",
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: "1",
+            maxValue: "2",
+            unitCode: "d",
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: "1",
+            maxValue: "3",
+            unitCode: "d",
+          },
+        },
+      },
+    },
+    brand: {
+      "@type": "Brand",
+      name: produtos.brand || "Bazar Fronteira",
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.8",
+      reviewCount: "125",
+    },
+  };
 
   return (
-    <div className="group relative flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
-      {percentualDesconto > 0 && (
-        <div className="absolute top-3 left-3 z-20">
-          <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold py-1 px-3 rounded-full shadow-md">
-            -{percentualDesconto}% OFF
+    <Container>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+
+      <div className="py-4 md:py-8">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className="flex flex-col lg:flex-row gap-4 md:gap-6">
+            {/* Imagens do produto */}
+            <div className="lg:w-1/2 p-4">
+              {/* Ajuste no container para evitar corte no mobile */}
+              <div className="overflow-visible">
+                <ViewImages produtos={produtos} />
+              </div>
+            </div>
+
+            {/* Detalhes do produto */}
+            <div className="lg:w-1/2 p-4 md:p-6">
+              <div className="space-y-4 md:space-y-5">
+                <div>
+                  <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">
+                    {produtos.name}
+                  </h1>
+
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl md:text-3xl font-bold text-pink-600">
+                        {new Intl.NumberFormat("es-UY", {
+                          style: "currency",
+                          currency: "UYU",
+                        }).format(produtos.price)}
+                      </span>
+                      
+                      {produtos.priceOld && (
+                        <span className="text-lg md:text-xl text-gray-500 line-through">
+                          {new Intl.NumberFormat("es-UY", {
+                            style: "currency",
+                            currency: "UYU",
+                          }).format(produtos.priceOld)}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {showCountdown && (
+                      <div className="w-full mt-2">
+                        <Countdown
+                          deadlineISO={produtos.promotionDeadline}
+                          updatedAt={produtos.updatedAt}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-1 md:space-y-0">
+                  <EstoqueProdutos
+                    isActive={isActive}
+                    availableStock={availableStock}
+                    colors={colors}
+                    hex={hex}
+                    stock={stock}
+                    produtos={produtos}
+                  />
+
+                  {/* Botões de ação - versão desktop */}
+                  <div className="hidden md:block">
+                    <VendaWhatsapp produto={produtos} />
+                  </div>
+
+                  {/* Botão WhatsApp no mobile, logo abaixo do botão adicionar ao carrinho */}
+                  <div className="md:hidden mt-4">
+                    <VendaWhatsapp produto={produtos} />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
+                  <div className="bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-100 rounded-lg p-3 md:p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-pink-100 p-2 rounded-full">
+                        <FaTruck className="text-pink-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 text-sm md:text-base">Envío Gratis</h3>
+                        <p className="text-xs md:text-sm text-gray-700 mt-1">
+                          Para Barra do Quaraí o compras desde $2500 pesos
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-100 rounded-lg p-3 md:p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-pink-100 p-2 rounded-full">
+                        <FaShieldAlt className="text-pink-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 text-sm md:text-base">Calidad Garantizada</h3>
+                        <p className="text-xs md:text-sm text-gray-700 mt-1">
+                          Productos seleccionados con alto estándar
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 md:space-y-4 pt-2">
+                  <Accordion type="multiple" className="space-y-2 md:space-y-3">
+                    <AccordionItem value="description" className="border border-gray-200 rounded-lg">
+                      <AccordionTrigger className="px-3 py-2 md:px-4 md:py-3 hover:no-underline">
+                        <div className="flex items-center gap-2 md:gap-3 font-medium text-gray-900 text-sm md:text-base">
+                          <FaFileAlt className="text-pink-600" />
+                          Descripción del producto
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-3 md:px-4 pb-3 md:pb-4">
+                        <div 
+                          className="rich-content prose prose-pink max-w-none text-sm md:text-base" 
+                          dangerouslySetInnerHTML={{ __html: produtos.description }} 
+                        />
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="features" className="border border-gray-200 rounded-lg">
+                      <AccordionTrigger className="px-3 py-2 md:px-4 md:py-3 hover:no-underline">
+                        <div className="flex items-center gap-2 md:gap-3 font-medium text-gray-900 text-sm md:text-base">
+                          <FaList className="text-pink-600" />
+                          Características
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-3 md:px-4 pb-3 md:pb-4">
+                        <div 
+                          className="rich-content prose prose-pink max-w-none text-sm md:text-base" 
+                          dangerouslySetInnerHTML={{ __html: produtos.features }} 
+                        />
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      )}
 
-      <Link
-        href={`/produtos/${produto.id}`}
-        className="relative aspect-square w-full flex items-center justify-center bg-gray-50 overflow-hidden"
-      >
-        {produto.imagePrimary ? (
-          <Image
-            alt={produto.name}
-            src={produto.imagePrimary}
-            className="object-contain transition-transform duration-300 group-hover:scale-105"
-            width={280}
-            height={280}
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+        <div className="mt-10 md:mt-16">
+          <Produtos
+            titulo="Produtos Relacionados"
+            isDestaque={false}
+            categoriaProduct={categorias}
           />
-        ) : (
-          <div className="flex items-center justify-center bg-gray-100 rounded-lg w-full h-full">
-            <FaShoppingBag className="text-gray-400" size={80} />
-          </div>
-        )}
-      </Link>
-
-      <div className="flex flex-col flex-grow p-4">
-        <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 flex-grow">
-          {/*<h3 className="font-bold text-gray-800 line-clamp-2 text-sm sm:text-base group-hover:text-rose-600 transition-colors">
-            {produto.name}
-          </h3>*/}
-
-          <h3 className="font-bold text-sm sm:text-base line-clamp-2 text-gray-800 relative overflow-hidden">
-            <span className="relative z-10 group-hover:text-white transition-colors duration-300">
-              {produto.name}
-            </span>
-            <span className="absolute inset-0 bg-gradient-to-r from-pink-600 to-rose-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-0"></span>
-          </h3>
-
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold text-rose-700">
-                {new Intl.NumberFormat("es-UY", {
-                  style: "currency",
-                  currency: "UYU"
-                }).format(produto.price)}
-              </span>
-              {produto.priceOld && (
-                <span className="text-xs text-gray-500 line-through">
-                  {new Intl.NumberFormat("es-UY", {
-                    style: "currency",
-                    currency: "UYU"
-                  }).format(produto.priceOld)}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {produto.description && (
-            <p className="text-gray-600 text-xs line-clamp-2">
-              {produto.description}
-            </p>
-          )}
-
-          <div className="mt-auto pt-3">
-            <div className={`text-xs font-semibold px-2 py-1 rounded-full w-max ${totalEstoque > 3 ? "bg-green-100 text-green-800" :
-              totalEstoque > 0 ? "bg-yellow-100 text-yellow-800" :
-                "bg-red-100 text-red-800"
-              }`}>
-              {totalEstoque > 3
-                ? "Disponible"
-                : totalEstoque > 0
-                  ? `${totalEstoque} restantes`
-                  : "Agotado"}
-            </div>
-          </div>
-        </Link>
-
-        <div className="mt-4">
-          <Link href={`/produtos/${produto.id}`}>
-            <button className="w-full py-2.5 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white text-sm font-semibold rounded-lg transition-all shadow-md hover:shadow-lg">
-              Ver detalles
-            </button>
-          </Link>
         </div>
       </div>
-    </div>
+    </Container>
   );
 }
