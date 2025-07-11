@@ -46,7 +46,7 @@ export async function Promocao() {
               <div className="flex justify-center lg:justify-start">
                 <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2">
                   <FaFire className="text-yellow-200" />
-                  <span>OFERTAS ESPECIAIS</span>
+                  <span>OFERTAS ESPECIALES</span>
                 </div>
               </div>
 
