@@ -9,22 +9,12 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/app/components/container";
+import { ProdutoProps } from "@/utils/types/produto";
 import { FaShoppingBag, FaTag, FaClock, FaFire } from "react-icons/fa";
 
-export async function Promocao() {
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
-    cache: 'force-cache',
-    next: { tags: ['loadProduct'] }
-  });
-
-  if (!response.ok) return null;
-
-  const res = await response.json();
-  const produtos = res.produtos;
-
-  const produtosEmPromocao = produtos.filter((produto: any) => {
-    const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) =>
-      acc + (variant.availableStock || 0), 0);
+export function Promocao({ produtos }: ProdutoProps) {
+  const produtosEmPromocao = produtos.filter((produto) => {
+    const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) => acc + (variant.availableStock || 0), 0);
     return (
       produto.onSale &&
       produto.priceOld &&
@@ -75,7 +65,7 @@ export async function Promocao() {
             </div>
           </div>
 
-          {/* Carrossel simplificado - SEM opções avançadas */}
+          {/* Carrossel simplificado */}
           <div className="w-full lg:w-[68%] relative">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-gray-800">
@@ -85,17 +75,112 @@ export async function Promocao() {
             </div>
 
             <div className="relative">
-              {/* Configuração mínima do carrossel */}
               <Carousel className="w-full">
                 <CarouselContent className="-ml-1 py-2">
-                  {produtosEmPromocao.map((produto: any) => (
-                    <CarouselItem
-                      key={produto.id}
-                      className="pl-1 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
-                    >
-                      <ProductCard produto={produto} />
-                    </CarouselItem>
-                  ))}
+                  {produtosEmPromocao.map((produto) => {
+                    const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
+                      ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
+                      : 0;
+
+                    const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) =>
+                      acc + (variant.availableStock || 0), 0);
+
+                    return (
+                      <CarouselItem
+                        key={produto.id}
+                        className="pl-1 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
+                      >
+                        <div className="group relative flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+                          {percentualDesconto > 0 && (
+                            <div className="absolute top-3 left-3 z-20">
+                              <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold py-1 px-3 rounded-full shadow-md">
+                                -{percentualDesconto}% OFF
+                              </div>
+                            </div>
+                          )}
+
+                          <Link
+                            href={`/produtos/${produto.id}`}
+                            className="relative h-56 w-full flex items-center justify-center bg-gray-50 overflow-hidden"
+                          >
+                            {produto.imagePrimary ? (
+                              <Image
+                                alt={produto.name}
+                                src={produto.imagePrimary}
+                                fill
+                                className="object-contain transition-transform duration-300 group-hover:scale-105"
+                                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+                              />
+                            ) : (
+                              <div className="flex items-center justify-center bg-gray-100 rounded-lg w-full h-full">
+                                <FaShoppingBag className="text-gray-400" size={80} />
+                              </div>
+                            )}
+                          </Link>
+
+                          <div className="flex flex-col flex-grow p-4">
+                            <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 flex-grow">
+                              <h3 className="font-bold text-sm sm:text-base line-clamp-2 text-gray-800 relative overflow-hidden">
+                                <span className="relative z-10 group-hover:text-white transition-colors duration-300">
+                                  {produto.name}
+                                </span>
+                                <span className="absolute inset-0 bg-gradient-to-r from-pink-600 to-rose-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-0"></span>
+                              </h3>
+
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-lg font-bold text-rose-700">
+                                    {new Intl.NumberFormat("es-UY", {
+                                      style: "currency",
+                                      currency: "UYU"
+                                    }).format(produto.price)}
+                                  </span>
+                                  {produto.priceOld && (
+                                    <span className="text-xs text-gray-500 line-through">
+                                      {new Intl.NumberFormat("es-UY", {
+                                        style: "currency",
+                                        currency: "UYU"
+                                      }).format(produto.priceOld)}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {produto.description && (
+                                <div
+                                  className="text-gray-600 text-xs line-clamp-2"
+                                  dangerouslySetInnerHTML={{ __html: produto.description }}
+                                />
+                              )}
+
+                              <div className="mt-auto pt-3">
+                                <div className={`text-xs font-semibold px-2 py-1 rounded-full w-max ${totalEstoque > 1
+                                  ? "bg-green-100 text-green-800"
+                                  : totalEstoque === 1
+                                    ? "bg-red-100 text-red-800"
+                                    : "bg-red-100 text-red-800"
+                                  }`}>
+                                  {totalEstoque > 1
+                                    ? `${totalEstoque} Disponibles`
+                                    : totalEstoque === 1
+                                      ? "Última Unidad"
+                                      : "Agotado"}
+                                </div>
+                              </div>
+                            </Link>
+
+                            <div className="mt-4">
+                              <Link href={`/produtos/${produto.id}`}>
+                                <button className="w-full py-2.5 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white text-sm font-semibold rounded-lg transition-all shadow-md hover:shadow-lg">
+                                  Ver detalles
+                                </button>
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      </CarouselItem>
+                    );
+                  })}
                 </CarouselContent>
 
                 {/* Controles do carrossel */}
@@ -108,112 +193,6 @@ export async function Promocao() {
           </div>
         </div>
       </Container>
-    </div>
-  );
-}
-
-// Componente separado para o card de produto com descrição
-function ProductCard({ produto }: { produto: any }) {
-  const percentualDesconto = produto.priceOld && produto.priceOld > produto.price
-    ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
-    : 0;
-
-  const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) =>
-    acc + (variant.availableStock || 0), 0);
-
-  return (
-    <div className="group relative flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
-      {percentualDesconto > 0 && (
-        <div className="absolute top-3 left-3 z-20">
-          <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold py-1 px-3 rounded-full shadow-md">
-            -{percentualDesconto}% OFF
-          </div>
-        </div>
-      )}
-
-      <Link
-        href={`/produtos/${produto.id}`}
-        className="relative aspect-square w-full flex items-center justify-center bg-gray-50 overflow-hidden"
-      >
-        {produto.imagePrimary ? (
-          <Image
-            alt={produto.name}
-            src={produto.imagePrimary}
-            className="object-contain transition-transform duration-300 group-hover:scale-105"
-            width={280}
-            height={280}
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
-          />
-        ) : (
-          <div className="flex items-center justify-center bg-gray-100 rounded-lg w-full h-full">
-            <FaShoppingBag className="text-gray-400" size={80} />
-          </div>
-        )}
-      </Link>
-
-      <div className="flex flex-col flex-grow p-4">
-        <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 flex-grow">
-          {/*<h3 className="font-bold text-gray-800 line-clamp-2 text-sm sm:text-base group-hover:text-rose-600 transition-colors">
-            {produto.name}
-          </h3>*/}
-
-          <h3 className="font-bold text-sm sm:text-base line-clamp-2 text-gray-800 relative overflow-hidden">
-            <span className="relative z-10 group-hover:text-white transition-colors duration-300">
-              {produto.name}
-            </span>
-            <span className="absolute inset-0 bg-gradient-to-r from-pink-600 to-rose-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-0"></span>
-          </h3>
-
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold text-rose-700">
-                {new Intl.NumberFormat("es-UY", {
-                  style: "currency",
-                  currency: "UYU"
-                }).format(produto.price)}
-              </span>
-              {produto.priceOld && (
-                <span className="text-xs text-gray-500 line-through">
-                  {new Intl.NumberFormat("es-UY", {
-                    style: "currency",
-                    currency: "UYU"
-                  }).format(produto.priceOld)}
-                </span>
-              )}
-            </div>
-          </div>
-          
-          {produto.description && (
-            <div
-              className="text-gray-600 text-xs line-clamp-2"
-              dangerouslySetInnerHTML={{ __html: produto.description }}
-            />
-          )}
-
-          <div className="mt-auto pt-3">
-            <div className={`text-xs font-semibold px-2 py-1 rounded-full w-max ${totalEstoque > 1
-              ? "bg-green-100 text-green-800"
-              : totalEstoque === 1
-                ? "bg-red-100 text-red-800"
-                : "bg-red-100 text-red-800"
-              }`}>
-              {totalEstoque > 1
-                ? `${totalEstoque} Disponibles`
-                : totalEstoque === 1
-                  ? "Última Unidad"
-                  : "Agotado"}
-            </div>
-          </div>
-        </Link>
-
-        <div className="mt-4">
-          <Link href={`/produtos/${produto.id}`}>
-            <button className="w-full py-2.5 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white text-sm font-semibold rounded-lg transition-all shadow-md hover:shadow-lg">
-              Ver detalles
-            </button>
-          </Link>
-        </div>
-      </div>
     </div>
   );
 }

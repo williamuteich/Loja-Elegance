@@ -5,27 +5,18 @@ import { Produto } from "@/utils/types/produto";
 import Image from "next/image";
 import { FaShoppingBag } from "react-icons/fa";
 
-export default async function Produtos({
+export default function Produtos({
   titulo,
   isDestaque,
   categoriaProduct,
+  produtos, // Recebendo produtos como prop
 }: {
   titulo: string;
   isDestaque: boolean;
   categoriaProduct?: Produto[];
+  produtos: Produto[]; // Adicionando a prop produtos
 }) {
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
-    cache: 'force-cache',
-    next: { tags: ['loadProduct'] }
-  });
-
-  if (!response.ok) {
-    console.log("Erro ao buscar produtos");
-    return null;
-  }
-
-  const { produtos } = await response.json();
   let produtosFiltrados: Produto[] = [];
 
   if (categoriaProduct) {
@@ -58,8 +49,15 @@ export default async function Produtos({
     }
   } else {
     produtosFiltrados = isDestaque
-      ? produtos.filter((produto: Produto) => produto.destaque === true && produto.variants.some((variant: any) => variant.availableStock > 0) && produto.active)
-      : produtos.filter((produto: Produto) => produto.variants.some((variant: any) => variant.availableStock > 0) && produto.active);
+      ? produtos.filter((produto: Produto) => 
+          produto.destaque === true && 
+          produto.variants.some((variant: any) => variant.availableStock > 0) && 
+          produto.active
+        )
+      : produtos.filter((produto: Produto) => 
+          produto.variants.some((variant: any) => variant.availableStock > 0) && 
+          produto.active
+        );
   }
 
   if (produtosFiltrados.length === 0) return null;
@@ -110,16 +108,13 @@ export default async function Produtos({
 
                     <Link
                       href={`/produtos/${produto.id}`}
-                      className="relative aspect-square w-full flex items-center justify-center bg-gray-50 overflow-hidden"
+                      className="relative h-72 w-full flex items-center justify-center bg-gray-50 overflow-hidden"
                     >
                       {produto.imagePrimary ? (
                         <Image
                           alt={produto.name}
                           src={produto.imagePrimary}
-                          width={270}
-                          height={270}
-                          priority
-                          quality={100}
+                          fill
                           className="object-contain transition-transform duration-300 group-hover:scale-105"
                           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                         />
@@ -132,9 +127,6 @@ export default async function Produtos({
 
                     <div className="flex flex-col flex-grow p-4">
                       <Link href={`/produtos/${produto.id}`} className="flex flex-col gap-2 flex-grow">
-                        {/*<h3 className="font-bold text-gray-800 line-clamp-2 text-sm sm:text-base group-hover:text-rose-600 transition-colors">
-                          {produto.name}
-                        </h3>*/}
                         <h3 className="font-bold text-sm sm:text-base line-clamp-2 text-gray-800 relative overflow-hidden">
                           <span className="relative z-10 group-hover:text-white transition-colors duration-300">
                             {produto.name}
@@ -164,18 +156,19 @@ export default async function Produtos({
 
                         <div className="mt-auto">
                           <div
-                            className={`text-xs font-semibold px-2.5 rounded-full w-max ${totalEstoque > 1
-                                ? "bg-green-100 text-green-800"
-                                : totalEstoque === 1
-                                  ? "bg-red-100 text-red-800" 
+                            className={`text-xs font-semibold px-2.5 rounded-full w-max ${
+                              totalEstoque > 0
+                                ? totalEstoque > 1
+                                  ? "bg-green-100 text-green-800"
                                   : "bg-red-100 text-red-800"
-                              }`}
+                                : "bg-red-100 text-red-800"
+                            }`}
                           >
-                            {totalEstoque > 1
-                              ? `${totalEstoque} Disponibles`
-                              : totalEstoque === 1
-                                ? `Última Unidad`
-                                : "No Disponible"}
+                            {totalEstoque > 0
+                              ? totalEstoque > 1
+                                ? `${totalEstoque} Disponibles`
+                                : `Última Unidad`
+                              : "No Disponible"}
                           </div>
                         </div>
                       </Link>

@@ -10,31 +10,40 @@ import {
 } from "@/components/ui/accordion";
 import ViewImages from "../components/viewImages";
 import Produtos from "../components/produtos";
-import { Produto, VariantProps } from "@/utils/types/produto";
+import { VariantProps } from "@/utils/types/produto";
 import EstoqueProdutos from "../components/estoqueProdutos";
 import VendaWhatsapp from "../components/vendaWhatsapp";
 import Countdown from "../components/Countdown";
 import type { Metadata } from "next";
+
+async function getProductData(id: string) {
+  const response = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`,
+    {
+      next: { tags: ["loadProduct"] },
+      cache: "force-cache"
+    }
+  );
+
+  if (!response.ok) return null;
+
+  const { produtos } = await response.json();
+  return produtos;
+}
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const { id } = await params;
+  const produtos = await getProductData((await params).id);
 
-  const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`
-  );
-
-  if (!response.ok) {
+  if (!produtos) {
     return {
       title: "Produto não encontrado",
       description: "Não foi possível carregar o produto.",
     };
   }
-
-  const { produtos } = await response.json();
 
   const categories = Array.isArray(produtos.categories) ? produtos.categories : [];
   const images = Array.isArray(produtos.images) ? produtos.images : [];
@@ -63,7 +72,7 @@ export async function generateMetadata({
       description:
         produtos.description?.substring(0, 160) ||
         "Mejores precios en la región de frontera",
-      url: `${process.env.NEXTAUTH_URL}/produtos/${id}`,
+      url: `${process.env.NEXTAUTH_URL}/produtos/${(await params).id}`,
       siteName: "Bazar Elegance",
       images: images.map((img: any) => ({
         url: img.url,
@@ -83,7 +92,7 @@ export async function generateMetadata({
       images: images.length > 0 ? images[0].url : "/default-image.jpg",
     },
     alternates: {
-      canonical: `${process.env.NEXTAUTH_URL}/produtos/${id}`,
+      canonical: `${process.env.NEXTAUTH_URL}/produtos/${(await params).id}`,
     },
     robots: "index, follow",
   };
@@ -94,16 +103,9 @@ export default async function ProdutoSlug({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
+  const produtos = await getProductData((await params).id);
 
-  const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`,
-    {
-      next: { tags: ["loadProduct"] },
-    }
-  );
-
-  if (!response.ok) {
+  if (!produtos) {
     return (
       <div className="py-20 text-center">
         <div className="text-xl font-bold text-pink-700">Erro ao buscar produto</div>
@@ -112,23 +114,17 @@ export default async function ProdutoSlug({
     );
   }
 
-  const { produtos } = await response.json();
-
-  await fetch(`${process.env.NEXTAUTH_URL}/api/analytics/product-views`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      productId: produtos.id,
-      productName: produtos.name,
-    }),
-  });
+  // Buscar TODOS os produtos para os relacionados
+  const responseAll = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`,
+    { next: { tags: ["loadProduct"] } }
+  );
+  const { produtos: allProdutos } = await responseAll.json();
 
   const availableStock = Array.isArray(produtos.variants)
     ? produtos.variants
-        .map((variant: VariantProps) => variant.availableStock)
-        .reduce((acc: number, stock: number) => acc + stock, 0)
+      .map((variant: VariantProps) => variant.availableStock)
+      .reduce((acc: number, stock: number) => acc + stock, 0)
     : 0;
 
   const isActive = produtos.active;
@@ -139,17 +135,17 @@ export default async function ProdutoSlug({
 
   const { colors, stock, hex } = Array.isArray(produtos.variants)
     ? produtos.variants.reduce(
-        (
-          acc: { colors: string[]; stock: number[]; hex: string[] },
-          item: VariantProps
-        ) => {
-          acc.colors.push(item.color.name);
-          acc.hex.push(item.color.hexCode);
-          acc.stock.push(item.stock.quantity);
-          return acc;
-        },
-        { colors: [], stock: [], hex: [] }
-      )
+      (
+        acc: { colors: string[]; stock: number[]; hex: string[] },
+        item: VariantProps
+      ) => {
+        acc.colors.push(item.color.name);
+        acc.hex.push(item.color.hexCode);
+        acc.stock.push(item.stock.quantity);
+        return acc;
+      },
+      { colors: [], stock: [], hex: [] }
+    )
     : { colors: [], stock: [], hex: [] };
 
   const now = new Date();
@@ -183,7 +179,7 @@ export default async function ProdutoSlug({
         availableStock > 0
           ? "https://schema.org/InStock"
           : "https://schema.org/OutOfStock",
-      url: `${process.env.NEXTAUTH_URL}/produtos/${id}`,
+      url: `${process.env.NEXTAUTH_URL}/produtos/${(await params).id}`,
       shippingDetails: {
         "@type": "OfferShippingDetails",
         shippingRate: {
@@ -235,7 +231,6 @@ export default async function ProdutoSlug({
           <div className="flex flex-col lg:flex-row gap-4 md:gap-6">
             {/* Imagens do produto */}
             <div className="lg:w-1/2 p-4">
-              {/* Ajuste no container para evitar corte no mobile */}
               <div className="overflow-visible">
                 <ViewImages produtos={produtos} />
               </div>
@@ -257,7 +252,7 @@ export default async function ProdutoSlug({
                           currency: "UYU",
                         }).format(produtos.price)}
                       </span>
-                      
+
                       {produtos.priceOld && (
                         <span className="text-lg md:text-xl text-gray-500 line-through">
                           {new Intl.NumberFormat("es-UY", {
@@ -267,7 +262,7 @@ export default async function ProdutoSlug({
                         </span>
                       )}
                     </div>
-                    
+
                     {showCountdown && (
                       <div className="w-full mt-2">
                         <Countdown
@@ -340,9 +335,9 @@ export default async function ProdutoSlug({
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="px-3 md:px-4 pb-3 md:pb-4">
-                        <div 
-                          className="rich-content prose prose-pink max-w-none text-sm md:text-base" 
-                          dangerouslySetInnerHTML={{ __html: produtos.description }} 
+                        <div
+                          className="rich-content prose prose-pink max-w-none text-sm md:text-base"
+                          dangerouslySetInnerHTML={{ __html: produtos.description }}
                         />
                       </AccordionContent>
                     </AccordionItem>
@@ -355,9 +350,9 @@ export default async function ProdutoSlug({
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="px-3 md:px-4 pb-3 md:pb-4">
-                        <div 
-                          className="rich-content prose prose-pink max-w-none text-sm md:text-base" 
-                          dangerouslySetInnerHTML={{ __html: produtos.features }} 
+                        <div
+                          className="rich-content prose prose-pink max-w-none text-sm md:text-base"
+                          dangerouslySetInnerHTML={{ __html: produtos.features }}
                         />
                       </AccordionContent>
                     </AccordionItem>
@@ -373,6 +368,7 @@ export default async function ProdutoSlug({
             titulo="Produtos Relacionados"
             isDestaque={false}
             categoriaProduct={categorias}
+            produtos={allProdutos}
           />
         </div>
       </div>

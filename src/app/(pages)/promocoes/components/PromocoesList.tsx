@@ -215,10 +215,10 @@ export default function PromocoesList(props: PromocoesListProps) {
                       fill
                       sizes="(max-width: 768px) 50vw, (max-width: 1200px) 20vw, 240px"
                       priority={index < 4}
-                      className="object-contain transition-transform duration-300 group-hover:scale-105"
+                      className="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="p-4 bg-gray-100 rounded-lg flex items-center justify-center w-full h-full">
+                    <div className="bg-gray-100 rounded-lg flex items-center justify-center w-full h-full">
                       <FaShoppingBag className="text-gray-400" size={110} />
                     </div>
                   )}
@@ -265,12 +265,12 @@ export default function PromocoesList(props: PromocoesListProps) {
                     <div className="mt-auto">
                       <div
                         className={`text-xs font-semibold px-2.5 rounded-full w-max mt-2 ${totalEstoque > 3
-                            ? "bg-green-100 text-green-800"
-                            : totalEstoque === 1
-                              ? "bg-red-100 text-red-800"
-                              : totalEstoque > 0
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-red-100 text-red-800"
+                          ? "bg-green-100 text-green-800"
+                          : totalEstoque === 1
+                            ? "bg-red-100 text-red-800"
+                            : totalEstoque > 0
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
                           }`}
                       >
                         {totalEstoque > 1

@@ -10,14 +10,20 @@ import { Banners } from "./components/home/carousel/banners";
 import Reels from "./components/reels";
 
 export default async function Home() {
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
+    cache: 'force-cache',
+    next: { tags: ['loadProduct'] }
+  });
+  const res = await response.json(); 
 
   return (
     <div className="text-red-800">
       <Banners/>
       <CategoriesCarousel />
-      <Promocao />
+      <Promocao produtos={res.produtos} /> 
+ 
       <Container >
-        <Produtos titulo="Productos Destacados" isDestaque={true} />
+        <Produtos produtos={res.produtos} titulo="Productos Destacados" isDestaque={true}/>
         <BannerHome />
         <ListAllProdutos />
       </Container>

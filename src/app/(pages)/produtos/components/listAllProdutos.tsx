@@ -84,8 +84,7 @@ export default async function ListAllProdutos() {
                                     <Image
                                         alt={produto.name}
                                         src={produto.imagePrimary}
-                                        width={270}
-                                        height={270}
+                                        fill
                                         priority
                                         quality={100}
                                         className="object-contain transition-transform duration-300 group-hover:scale-105"
@@ -145,10 +144,10 @@ export default async function ListAllProdutos() {
                                     <div className="mt-auto">
                                         <div
                                             className={`text-xs font-semibold px-2.5 rounded-full w-max ${totalEstoque > 1
-                                                    ? "bg-green-100 text-green-800"
-                                                    : totalEstoque === 1
-                                                        ? "bg-red-100 text-red-800"
-                                                        : "bg-red-100 text-red-800"
+                                                ? "bg-green-100 text-green-800"
+                                                : totalEstoque === 1
+                                                    ? "bg-red-100 text-red-800"
+                                                    : "bg-red-100 text-red-800"
                                                 }`}
                                         >
                                             {totalEstoque > 1
