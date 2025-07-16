@@ -1,4 +1,5 @@
 import Header from "@/app/components/header/header";
+import ReduxProvider from "../store/redux-provider";
 import type { Metadata } from 'next'
 import "./globals.css";
 import Footer from "./components/footer/footer";
@@ -140,14 +141,16 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <VisitTracker />
-        <AuthProvider>
-          <CartProvider>
-            <Header />
-            <div>{children}</div>
-            <Footer />
-            <CookieBanner />
-          </CartProvider>
-        </AuthProvider>
+        <ReduxProvider>
+          <AuthProvider>
+            <CartProvider>
+              <Header />
+              <div>{children}</div>
+              <Footer />
+              <CookieBanner />
+            </CartProvider>
+          </AuthProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

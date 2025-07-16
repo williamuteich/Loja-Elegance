@@ -1,4 +1,4 @@
-"use cache";
+export const revalidate = 18000; // 5 horas
 
 import { Container } from "@/app/components/container";
 import { FaFileAlt, FaList, FaTruck, FaShieldAlt } from "react-icons/fa";
@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import ViewImages from "../components/viewImages";
-import Produtos from "../components/produtos";
+import RelatedProdutos from "../components/RelatedProdutos";
 import { VariantProps } from "@/utils/types/produto";
 import EstoqueProdutos from "../components/estoqueProdutos";
 import VendaWhatsapp from "../components/vendaWhatsapp";
@@ -364,12 +364,7 @@ export default async function ProdutoSlug({
         </div>
 
         <div className="mt-10 md:mt-16">
-          <Produtos
-            titulo="Produtos Relacionados"
-            isDestaque={false}
-            categoriaProduct={categorias}
-            produtos={allProdutos}
-          />
+          <RelatedProdutos categoriaProduct={categorias} fallback={allProdutos} />
         </div>
       </div>
     </Container>
