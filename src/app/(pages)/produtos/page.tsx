@@ -23,8 +23,7 @@ export default async function ProdutosPage({ searchParams }: { searchParams: Pro
   const productResponse = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/product?${params.toString()}`,
     { 
-      next: { tags: ["loadProduct"] },
-      cache: 'force-cache'
+      next: { tags: ["loadProduct"], revalidate: 14400 }
     }
   );
   if (!productResponse.ok) {

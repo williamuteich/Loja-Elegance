@@ -20,8 +20,7 @@ async function getProductData(id: string) {
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/product?id=${id}`,
     {
-      next: { tags: ["loadProduct"] },
-      cache: "force-cache"
+      next: { tags: ["loadProduct"], revalidate: 14400 }
     }
   );
 
@@ -117,7 +116,7 @@ export default async function ProdutoSlug({
   // Buscar TODOS os produtos para os relacionados
   const responseAll = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`,
-    { next: { tags: ["loadProduct"] } }
+    { next: { tags: ["loadProduct"], revalidate: 14400 } }
   );
   const { produtos: allProdutos } = await responseAll.json();
 

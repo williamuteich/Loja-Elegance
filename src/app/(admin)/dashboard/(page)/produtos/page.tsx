@@ -15,8 +15,7 @@ export default async function Produtos({ searchParams }: { searchParams: Promise
 
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/privada/product?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`,
         {
-            cache: "force-cache",
-            next: { tags: ["loadProduct"] }
+            next: { tags: ["loadProduct"], revalidate: 3600 }
         });
 
     if (!response.ok) {

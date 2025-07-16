@@ -1,4 +1,4 @@
-"use cache";
+export const revalidate = 4200;
 
 import { Container } from "./components/container";
 import Produtos from "./(pages)/produtos/components/produtos";
@@ -12,8 +12,7 @@ import ProductsStoreInit from "./components/providers/productsStoreInit";
 
 export default async function Home() {
   const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`, {
-    cache: 'force-cache',
-    next: { tags: ['loadProduct'] }
+     next: { tags: ["loadProduct"], revalidate: 14400 }
   });
   const res = await response.json(); 
 

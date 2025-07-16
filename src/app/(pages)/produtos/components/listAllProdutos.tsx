@@ -8,8 +8,7 @@ export default async function ListAllProdutos() {
     const response = await fetch(
         `${process.env.NEXTAUTH_URL}/api/publica/product?random=true&randomLimit=15`,
         {
-            next: { tags: ["loadProduct"] },
-            cache: "force-cache",
+            next: { tags: ["loadProduct"], revalidate: 14400 }
         }
     );
 
