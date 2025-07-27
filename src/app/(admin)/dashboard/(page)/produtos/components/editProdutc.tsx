@@ -128,7 +128,6 @@ export default function EditarProduto({ id }: { id: string }) {
         const newSecondaryImages = [...produto.imagesSecondary];
 
         try {
-            // Upload de nova imagem primária se existir
             if (primaryImage) {
                 const { imageUrl, error } = await uploadImage({
                     file: primaryImage,
@@ -137,7 +136,6 @@ export default function EditarProduto({ id }: { id: string }) {
                 if (!error) uploadedPrimaryImageUrl = imageUrl;
             }
 
-            // Upload de novas imagens secundárias
             for (const image of secondaryImages) {
                 const { imageUrl, error } = await uploadImage({
                     file: image,
@@ -146,33 +144,41 @@ export default function EditarProduto({ id }: { id: string }) {
                 if (!error) newSecondaryImages.push(imageUrl);
             }
 
-            // Construir objeto de dados no formato esperado pela API
+            const price = parseFloat(
+                event.target.price.value
+                    .replace("$", "")
+                    .replace(/\./g, "")
+                    .replace(",", ".")
+            );
+
+            const priceOldRaw = event.target.priceOld.value;
+            const priceOld = priceOldRaw
+                ? parseFloat(priceOldRaw.replace("$", "").replace(/\./g, "").replace(",", "."))
+                : null;
+
+            // Validação: se preço antigo for menor ou igual ao preço atual
+            if (priceOld && priceOld <= price) {
+                toast.error("O preço anterior deve ser maior que o preço atual.");
+                setIsLoading(false);
+                return;
+            }
+
+            const onSale = priceOld && priceOld > price ? true : false;
+
             const data = {
                 id: produto.id,
                 name: event.target.name.value,
                 description,
                 features,
-                price: parseFloat(
-                    event.target.price.value
-                        .replace("$", "")
-                        .replace(/\./g, "")
-                        .replace(",", ".")
-                ),
-                priceOld: event.target.priceOld.value
-                    ? parseFloat(
-                        event.target.priceOld.value
-                            .replace("$", "")
-                            .replace(/\./g, "")
-                            .replace(",", ".")
-                    )
-                    : null,
+                price,
+                priceOld,
                 brandId: event.target.brand.value,
                 categoryIds: selectedCategories.map(c => c.value),
                 imagePrimary: uploadedPrimaryImageUrl,
                 imagesSecondary: newSecondaryImages,
                 active: event.target.status.value === "true",
-                onSale: event.target.onSale.value === "true",
                 destaque: event.target.destaque.value === "true",
+                onSale,
                 variants: variants.map(variant => ({
                     name: variant.name,
                     hexCode: variant.hexCode,
@@ -180,13 +186,11 @@ export default function EditarProduto({ id }: { id: string }) {
                 }))
             };
 
-            // Chamar a Server Action de atualização
             const result = await updateProduct(data);
 
             if (result?.success) {
                 toast.success(result.success, { position: "top-center", autoClose: 3000 });
-                // Recarregar os dados do produto após atualização
-                fetchData();
+                fetchData(); // Recarregar os dados atualizados
             } else if (result?.error) {
                 toast.error(result.error, { position: "top-center", autoClose: 3000 });
             }
@@ -474,19 +478,6 @@ export default function EditarProduto({ id }: { id: string }) {
                                     id="destaque"
                                     name="destaque"
                                     defaultValue={produto.destaque ? "true" : "false"}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="false">Não</option>
-                                    <option value="true">Sim</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label htmlFor="onSale" className="block text-sm font-medium text-gray-700 mb-2">Promoção</label>
-                                <select
-                                    id="onSale"
-                                    name="onSale"
-                                    defaultValue={produto.onSale ? "true" : "false"}
                                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option value="false">Não</option>

@@ -11,7 +11,7 @@ import { uploadImage } from "@/supabase/storage/client";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { createProduct } from "@/app/actions/produto";
-import TiptapEditor from "@/app/components/rich-editor/TiptapEditor"; 
+import TiptapEditor from "@/app/components/rich-editor/TiptapEditor";
 
 type Variant = {
   name: string;
@@ -80,7 +80,7 @@ export default function AdicionarProduto() {
     }
 
     const uploadedImageUrls: string[] = [];
-    
+
     try {
       if (primaryImage) {
         const { imageUrl, error } = await uploadImage({
@@ -98,29 +98,44 @@ export default function AdicionarProduto() {
         if (imageUrl) uploadedImageUrls.push(imageUrl);
       }
 
-      // Preparar dados do formulário
+      // Conversão de preços
+      const price = parseFloat(event.target.price.value.replace("$", "").replace(".", "").replace(",", "."));
+      const priceOldRaw = event.target.priceOld.value;
+      const priceOld = priceOldRaw
+        ? parseFloat(priceOldRaw.replace("$", "").replace(".", "").replace(",", "."))
+        : null;
+
+      // Validação: se preçoOld existe, ele deve ser maior que o preço atual
+      if (priceOld && priceOld <= price) {
+        toast.error("O preço anterior deve ser maior que o preço atual.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Definir promoção com base no valor do preço antigo
+      const onSale = priceOld && priceOld > price ? true : false;
+
+      // Preparar dados do produto
       const data = {
         name: event.target.name.value,
         description: event.target.description.value,
         features,
-        price: parseFloat(event.target.price.value.replace("$", "").replace(".", "").replace(",", ".")),
-        priceOld: event.target.priceOld.value 
-          ? parseFloat(event.target.priceOld.value.replace("$", "").replace(".", "").replace(",", "."))
-          : null,
+        price,
+        priceOld,
         brandId: event.target.brand.value,
         categoryIds: selectedCategories.map(c => c.value),
         imagePrimary: uploadedImageUrls[0] || "",
         imagesSecondary: uploadedImageUrls.slice(1),
         active: event.target.status.value === "true",
-        onSale: event.target.onSale.value === "true",
         destaque: event.target.destaque.value === "true",
+        onSale,
         variants: variants.map(variant => ({
           name: variant.name,
           hexCode: variant.hexCode,
           quantity: variant.quantity
         }))
       };
-      
+
       const result = await createProduct(data);
 
       if (result?.success) {
@@ -153,7 +168,7 @@ export default function AdicionarProduto() {
         <div className="space-y-8 mb-10">
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Imagens do Produto</h3>
-            
+
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">Imagem Principal</label>
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-6">
@@ -176,7 +191,7 @@ export default function AdicionarProduto() {
                   <UploadImage
                     onImagesSelected={(files) => handlePrimaryImageSelection(files[0])}
                     limit={1}
-                   />
+                  />
                 )}
               </div>
             </div>
@@ -184,9 +199,9 @@ export default function AdicionarProduto() {
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">Imagens Secundárias</label>
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-6">
-                  <UploadImage
-                    onImagesSelected={handleSecondaryImageSelection}
-                  />
+                <UploadImage
+                  onImagesSelected={handleSecondaryImageSelection}
+                />
               </div>
             </div>
           </div>
@@ -273,7 +288,7 @@ export default function AdicionarProduto() {
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
             <h3 className="text-xl font-semibold text-gray-800 mb-8">Informações do Produto</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Nome do Produto</label>
@@ -309,7 +324,7 @@ export default function AdicionarProduto() {
                   required
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   thousandSeparator="."
-                  decimalSeparator=","  
+                  decimalSeparator=","
                   prefix="$ "
                   decimalScale={2}
                 />
@@ -334,7 +349,7 @@ export default function AdicionarProduto() {
                   instanceId="category-select"
                   inputId="category-select-input"
                   isMulti
-                  options={categorias.map(c => ({ label: c.name, value: c.id }))} 
+                  options={categorias.map(c => ({ label: c.name, value: c.id }))}
                   onChange={handleCategoryChange}
                   className="react-select-container"
                   classNamePrefix="react-select"
@@ -373,19 +388,6 @@ export default function AdicionarProduto() {
                 <select
                   id="destaque"
                   name="destaque"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  defaultValue="false"
-                >
-                  <option value="false">Não</option>
-                  <option value="true">Sim</option>
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="onSale" className="block text-sm font-medium text-gray-700 mb-2">Promoção</label>
-                <select
-                  id="onSale"
-                  name="onSale"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   defaultValue="false"
                 >
