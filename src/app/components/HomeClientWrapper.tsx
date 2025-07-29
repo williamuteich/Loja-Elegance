@@ -1,5 +1,4 @@
 "use client";
-import AcceptTermsAndSubscribe from "./AcceptTermsAndSubscribe";
 import { useEffect } from "react";
 
 export default function HomeClientWrapper() {
@@ -15,5 +14,5 @@ export default function HomeClientWrapper() {
       });
     }
   }, []);
-  return <AcceptTermsAndSubscribe />;
+  return null;
 }
