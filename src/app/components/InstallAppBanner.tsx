@@ -40,8 +40,8 @@ export default function InstallAppBanner() {
   return (
     <div className="fixed top-0 inset-x-0 z-50 bg-pink-600 text-white backdrop-blur-sm shadow-md flex items-center justify-between px-4 py-2 text-sm lg:hidden animate-fade-in rounded-b-xl">
       <div className="flex items-center gap-2 flex-1">
-        <span className="font-semibold">Instale o app Loja Elegance</span>
-        <span className="hidden xs:inline">para uma experiência melhor!</span>
+        <span className="font-semibold">¡Instalá la app de Loja Elegance!</span>
+        <span className="hidden xs:inline">para una mejor experiencia</span>
       </div>
       <button
         className="bg-white text-pink-600 font-bold px-3 py-1 rounded-md ml-2 shadow hover:bg-pink-100 transition-colors"
@@ -52,7 +52,7 @@ export default function InstallAppBanner() {
       <button
         className="ml-2 text-white hover:text-gray-200 text-xl font-bold"
         onClick={handleClose}
-        aria-label="Fechar"
+        aria-label="Cerrar"
       >
         ×
       </button>
