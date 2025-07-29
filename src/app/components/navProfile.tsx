@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { FaUserAlt, FaListAlt, FaKey, FaTachometerAlt } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 import { useSession } from "next-auth/react";
-import { useEffect } from 'react';
 
 export default function NavProfile() {
     const { data: session, status } = useSession();

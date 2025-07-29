@@ -106,7 +106,7 @@ export default async function ListAllProdutos() {
                                     </h3>*/}
 
                                     <h3 className="font-bold text-sm sm:text-base line-clamp-2 text-gray-800 relative overflow-hidden">
-                                        <span className="relative z-10 group-hover:text-white transition-colors duration-300">
+                                        <span className="relative z-[10] group-hover:text-white transition-colors duration-300">
                                             {produto.name}
                                         </span>
                                         <span className="absolute inset-0 bg-gradient-to-r from-pink-600 to-rose-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-0"></span>
