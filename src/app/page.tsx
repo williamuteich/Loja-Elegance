@@ -1,6 +1,7 @@
 export const revalidate = 4200;
 
 import { Container } from "./components/container";
+import HomeClientWrapper from "./components/HomeClientWrapper";
 import Produtos from "./(pages)/produtos/components/produtos";
 import { Promocao } from "./(pages)/produtos/components/promocao";
 import ListAllProdutos from "./(pages)/produtos/components/listAllProdutos";
@@ -18,11 +19,11 @@ export default async function Home() {
 
   return (
     <div className="text-red-800">
+      <HomeClientWrapper />
       <Banners/>
       <CategoriesCarousel />
       <ProductsStoreInit produtos={res.produtos} />
       <Promocao produtos={res.produtos} /> 
- 
       <Container >
         <Produtos produtos={res.produtos} titulo="Productos Destacados" isDestaque={true}/>
         <BannerHome />
