@@ -2,6 +2,7 @@
 "use client";
 import Image from "next/image";
 import InstallAppButton from "./InstallAppButton";
+import InstallAppPopup from "./InstallAppPopup";
 
 export default function BaixarAppPage() {
   return (

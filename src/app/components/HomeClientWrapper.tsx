@@ -1,5 +1,6 @@
 "use client";
 import { useEffect } from "react";
+import InstallAppPopup from "../baixar-app/InstallAppPopup";
 
 export default function HomeClientWrapper() {
   useEffect(() => {
@@ -14,5 +15,5 @@ export default function HomeClientWrapper() {
       });
     }
   }, []);
-  return null;
+  return <InstallAppPopup />;
 }
