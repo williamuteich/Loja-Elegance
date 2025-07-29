@@ -1,12 +1,13 @@
 "use client";
 import { LogoutButton } from '@/app/components/logoutAccount';
 import Link from 'next/link';
-import { FaUserAlt, FaListAlt, FaKey } from 'react-icons/fa';
+import { FaUserAlt, FaListAlt, FaKey, FaTachometerAlt } from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
 import { useSession } from "next-auth/react";
+import { useEffect } from 'react';
 
 export default function NavProfile() {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
     const pathname = usePathname();
     const isActive = (path: string) => pathname === path;
 
@@ -37,6 +38,16 @@ export default function NavProfile() {
 
             <div className="py-4 px-8">
                 <nav className="space-y-1">
+                    {session?.user.role === 'admin' && (
+                        <Link
+                            href="/dashboard"
+                            className={`flex items-center gap-3 text-sm text-pink-700 ${isActive('/dashboard') ? 'bg-gray-100 ' : 'hover:bg-gray-100 '} cursor-pointer px-2 py-1 rounded-md`}
+                        >
+                            <FaTachometerAlt size={20} className="text-pink-700" />
+                            <span>Dashboard</span>
+                        </Link>
+                    )}
+
                     <Link
                         href="/profile"
                         className={`flex items-center gap-3 text-sm text-pink-700 ${isActive('/profile') ? 'bg-gray-100 ' : 'hover:bg-gray-100 '} cursor-pointer px-2 py-1 rounded-md`}
