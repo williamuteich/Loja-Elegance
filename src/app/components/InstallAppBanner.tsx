@@ -12,11 +12,8 @@ export default function InstallAppBanner() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
     // Não mostrar se já instalou
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
-    // Controle de exibição 1x ao dia
-    const last = localStorage.getItem('elegance_pwa_popup');
-    const now = Date.now();
-    const umDia = 24 * 60 * 60 * 1000;
-    if (!isMobile || isStandalone || (last && now - Number(last) < umDia)) return;
+    // Mostrar sempre para mobile que não tem o app instalado
+    if (!isMobile || isStandalone) return;
     function handler(e: any) {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -30,7 +27,6 @@ export default function InstallAppBanner() {
 
   function handleClose() {
     setShow(false);
-    localStorage.setItem('elegance_pwa_popup', String(Date.now()));
   }
 
   async function handleInstall() {
@@ -38,7 +34,6 @@ export default function InstallAppBanner() {
       deferredPrompt.prompt();
       await deferredPrompt.userChoice;
       setShow(false);
-      localStorage.setItem('elegance_pwa_popup', String(Date.now()));
     }
   }
 
