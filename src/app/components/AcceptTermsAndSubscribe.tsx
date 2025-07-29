@@ -3,24 +3,18 @@ import { useState, useEffect } from "react";
 
 export default function AcceptTermsAndSubscribe() {
   const [accepted, setAccepted] = useState<boolean | null>(null);
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Detecta se é mobile
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const aceitou = localStorage.getItem('elegance_terms_accepted');
       setAccepted(aceitou === 'true');
-      // Detecção simples de mobile
-      const ua = navigator.userAgent;
-      const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-      setIsMobile(mobile);
     }
   }, []);
 
-  if (accepted === null || isMobile === null) return null; // Evita flicker
-  if (accepted || !isMobile) return null;
+  if (accepted === null) return null; // Evita flicker
+  if (accepted) return null;
 
   async function handleAccept() {
     setLoading(true);
@@ -112,7 +106,7 @@ export default function AcceptTermsAndSubscribe() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 lg:hidden"
       style={{ pointerEvents: loading ? 'none' : 'auto' }}
     >
       <div className="max-w-md w-full bg-white border border-gray-300 shadow-2xl rounded-xl p-6 flex flex-col items-center animate-fade-in">
