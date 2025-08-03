@@ -4,23 +4,35 @@ import { useEffect, useState } from "react";
 export default function InstallAppBanner() {
   const [show, setShow] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    // Só mobile
+    if (typeof window === 'undefined') return;
+    // Detectar mobile e iOS
     const ua = navigator.userAgent;
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+    const isIOSDevice = /iPad|iPhone|iPod/.test(ua);
+    const isAndroid = /Android/.test(ua);
     // Não mostrar se já instalou
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
-    // Mostrar sempre para mobile que não tem o app instalado
+    
     if (!isMobile || isStandalone) return;
-    function handler(e: any) {
-      e.preventDefault();
-      setDeferredPrompt(e);
+
+    setIsIOS(isIOSDevice);
+
+    if (isIOSDevice) {
+      // Para iOS, mostrar sempre (sem evento beforeinstallprompt)
       setShow(true);
+    } else if (isAndroid) {
+      // Para Android, aguardar o evento beforeinstallprompt
+      function handler(e: any) {
+        e.preventDefault();
+        setDeferredPrompt(e);
+        setShow(true);
+      }
+      window.addEventListener('beforeinstallprompt', handler, { once: true });
+      return () => window.removeEventListener('beforeinstallprompt', handler);
     }
-    window.addEventListener('beforeinstallprompt', handler, { once: true });
-    return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
   if (!show) return null;
@@ -30,7 +42,11 @@ export default function InstallAppBanner() {
   }
 
   async function handleInstall() {
-    if (deferredPrompt) {
+    if (isIOS) {
+      // Para iOS, mostrar instruções
+      alert('Para instalar: toque no botão de compartilhar (⬆️) no Safari e escolha "Adicionar à Tela de Início"');
+    } else if (deferredPrompt) {
+      // Para Android, usar o prompt nativo
       deferredPrompt.prompt();
       await deferredPrompt.userChoice;
       setShow(false);
@@ -47,7 +63,7 @@ export default function InstallAppBanner() {
         className="bg-white text-pink-600 font-bold px-3 py-1 rounded-md ml-2 shadow hover:bg-pink-100 transition-colors"
         onClick={handleInstall}
       >
-        Instalar
+        {isIOS ? 'Cómo instalar' : 'Instalar'}
       </button>
       <button
         className="ml-2 text-white hover:text-gray-200 text-xl font-bold"
