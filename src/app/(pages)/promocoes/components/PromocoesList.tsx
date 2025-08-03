@@ -197,8 +197,8 @@ export default function PromocoesList(props: PromocoesListProps) {
                 className="group relative flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
               >
                 {desconto > 0 && (
-                  <div className="absolute top-3 left-3 z-20">
-                    <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold py-1 px-3 rounded-full shadow-md">
+                  <div className="absolute top-3 left-3 z-[5]">
+                    <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold py-1 px-2 text-sm rounded-full shadow-md">
                       -{desconto}% OFF
                     </div>
                   </div>
@@ -230,7 +230,7 @@ export default function PromocoesList(props: PromocoesListProps) {
                     className="flex flex-col gap-2 flex-grow"
                   >
                     <h3 className="font-bold text-sm sm:text-base line-clamp-2 text-gray-800 relative overflow-hidden">
-                      <span className="relative z-10 group-hover:text-white transition-colors duration-300">
+                      <span className="relative z-[5] group-hover:text-white transition-colors duration-300">
                         {produto.name}
                       </span>
                       <span className="absolute inset-0 bg-gradient-to-r from-pink-600 to-rose-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-0"></span>

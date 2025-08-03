@@ -99,7 +99,7 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
             </div>
 
             <div className={`${isFixed ? "fixed z-10 top-0 left-0 w-full" : "relative"} transition-all bg-white text-gray-900 font-bold shadow-md shadow-pink-100 md:hidden`}>
-                <div className="flex justify-between md:hidden max-w-[1400px] mx-auto w-full px-4 py-4 bg-white text-gray-900 font-bold shadow-md">
+                <div className="flex justify-between md:hidden max-w-[1400px] mx-auto w-full px-4 py-4 bg-white text-gray-900 font-bold shadow-md z-[99]">
                     <div className="flex justify-between items-center gap-4">
                         <Sheet open={open} onOpenChange={setOpen}>
                             <SheetTrigger asChild>

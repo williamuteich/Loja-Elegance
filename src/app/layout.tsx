@@ -10,7 +10,6 @@ import VisitTracker from "./components/visitTracker";
 
 import CookieBanner from "./components/cookieBanner";
 import PushSubscribe from "./components/PushSubscribe";
-import InstallAppBanner from "./components/InstallAppBanner";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
@@ -151,7 +150,6 @@ export default async function RootLayout({
               <Header />
               <div>{children}</div>
               <Footer />
-              <InstallAppBanner />
               <PushSubscribe />
               <CookieBanner />
             </CartProvider>
