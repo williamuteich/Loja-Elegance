@@ -84,7 +84,7 @@ export default function SearchHeaderItems({ initialProducts = [] }: SearchHeader
       </DialogTrigger>
 
       <DialogContent
-        className="sm:w-[700px] sm:max-w-[700px] w-[330px] top-24 bg-white [&>button]:hidden p-0"
+        className="sm:w-[700px] sm:max-w-[700px] w-[330px] top-24 bg-white [&>button]:hidden p-0 z-[99]"
         style={{ borderRadius: "8px" }}
       >
         <DialogHeader className="sr-only">
@@ -129,14 +129,14 @@ export default function SearchHeaderItems({ initialProducts = [] }: SearchHeader
               )}
             </div>
 
-            {filteredProducts.length > 0 && !loading ? (
-              <div className="absolute px-2 top-14 -left-[1px] sm:w-[700px] sm:max-w-[700px] w-[330px] rounded-sm z-10 bg-white shadow-lg">
-                <CommandList>
-                  <CommandGroup>
-                    {filteredProducts.map((item) => (
+            <div className="absolute px-2 top-14 -left-[1px] sm:w-[700px] sm:max-w-[700px] w-[330px] rounded-sm z-10 bg-white shadow-lg">
+              <CommandList>
+                <CommandGroup>
+                  {filteredProducts.length > 0 && !loading ? (
+                    filteredProducts.map((item) => (
                       <Link
                         href={`/produtos/${item.id}`}
-                        key={item.id} 
+                        key={item.id}
                         onClick={() => setOpen(false)}
                         className="flex gap-4 items-start border-t-[1px] border-gray-300 pt-3"
                       >
@@ -147,11 +147,10 @@ export default function SearchHeaderItems({ initialProducts = [] }: SearchHeader
                             Sem imagem
                           </div>
                         )}
-
                         <div className="flex flex-col gap-0 w-full px-4">
                           <h2 className="text-base uppercase font-bold">{item.name}</h2>
                           <span className="text-base font-medium uppercase flex items-end gap-2 mb-2 w-full">
-                             {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(item.price)}
+                            {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(item.price)}
                             <div
                               className={`mt-2 text-xs font-semibold text-white ${item.variants.some((variant: any) => variant.stock && variant.stock.quantity > 0)
                                 ? item.variants.reduce((total: number, variant: any) => total + (variant.stock?.quantity || 0), 0) > 1
@@ -169,11 +168,17 @@ export default function SearchHeaderItems({ initialProducts = [] }: SearchHeader
                           </span>
                         </div>
                       </Link>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </div>
-            ) : null}
+                    ))
+                  ) : (
+                    !loading && searchParams.get("search") && (
+                      <div className="flex items-center justify-center py-8 w-full text-gray-500 text-base font-medium">
+                        Ningún producto encontrado
+                      </div>
+                    )
+                  )}
+                </CommandGroup>
+              </CommandList>
+            </div>
           </Command>
         </div>
       </DialogContent>
