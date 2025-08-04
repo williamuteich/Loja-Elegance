@@ -1,4 +1,4 @@
-export const revalidate = 4200;
+"use cache";
 
 import { Container } from "./components/container";
 import HomeClientWrapper from "./components/HomeClientWrapper";

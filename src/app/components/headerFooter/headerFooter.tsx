@@ -10,8 +10,10 @@ export default function HeaderFooter() {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href;
 
+  if (pathname.startsWith('/dashboard')) return null;
+
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-pink-50 to-rose-100 border-t border-rose-200 shadow-2xl flex justify-between items-center px-2 py-1 md:hidden">
+    <footer className="fixed bottom-0 left-0 right-0 z-[99] bg-gradient-to-r from-pink-50 to-rose-100 border-t border-rose-200 shadow-2xl flex justify-between items-center px-2 py-1 md:hidden">
       <Link href="/" className="flex flex-col items-center flex-1 py-2">
         <div className={`flex flex-col items-center w-full rounded-md p-1 ${isActive('/') ? 'bg-pink-100' : 'hover:bg-pink-50'}`}>
           <FaHome size={24} className={`${isActive('/') ? 'text-pink-600' : 'text-gray-700 group-hover:text-pink-600'}`} />

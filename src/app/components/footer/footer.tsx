@@ -66,7 +66,7 @@ export default function Footer() {
   const whatsapp = socialMedia.find(({ name }) => name === "whatsapp");
 
   return (
-    <footer className="bg-black text-white py-10 relative">
+    <footer className="bg-black text-white py-10 relative mb-20 md:mb-0">
       {whatsapp && (
         <div className="fixed bottom-6 right-6 xl:right-12 z-50">
           <Link
