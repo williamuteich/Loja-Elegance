@@ -10,19 +10,20 @@ export default function BaixarAppPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [canInstall, setCanInstall] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    
     const ua = navigator.userAgent;
     const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
     const ios = /iPad|iPhone|iPod/.test(ua);
     const android = /Android/.test(ua);
-    
     setIsMobile(mobile);
     setIsIOS(ios);
     setIsAndroid(android);
-
+    // Detecta se está rodando como PWA (standalone)
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+    setIsStandalone(standalone);
     // Para Android, escutar o evento de instalação
     if (android) {
       function handler(e: any) {
@@ -165,20 +166,26 @@ export default function BaixarAppPage() {
                 <FaApple className="text-4xl text-gray-700 mr-3" />
                 <h2 className="text-2xl font-bold text-gray-800">iPhone/iPad</h2>
               </div>
-              <div className="text-center mb-6">
-                <button
-                  onClick={() => {
-                    alert('Para instalar no iOS:\n\n1. Abra o Safari\n2. Toque no botão de compartilhar (ícone de seta para cima)\n3. Selecione "Adicionar à Tela de Início"\n4. Confirme em "Adicionar"');
-                  }}
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-8 rounded-xl shadow-lg text-lg transition-all mb-4 inline-flex items-center"
-                >
-                  <FaApple className="mr-2 text-xl" />
-                  Baixar App PWA para iOS
-                </button>
-                <p className="text-sm text-gray-500 mb-6">
-                  Clique para ver as instruções rápidas ou siga o tutorial abaixo:
-                </p>
-              </div>
+              {/* Se for PWA (standalone), mostra botão de ativar notificações */}
+              {isStandalone && (
+                <div className="text-center mb-6">
+                  <button
+                    onClick={() => {
+                      if ('Notification' in window) {
+                        Notification.requestPermission();
+                      }
+                    }}
+                    className="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg text-lg transition-all mb-4 inline-flex items-center"
+                  >
+                    <FaApple className="mr-2 text-xl" />
+                    Ativar Notificações no iOS
+                  </button>
+                  <p className="text-sm text-gray-500 mb-6">
+                    Permita notificações para receber novidades e promoções.
+                  </p>
+                </div>
+              )}
+              {/* Sempre mostra o tutorial de adicionar à tela inicial */}
               <div className="bg-white rounded-xl shadow p-4 mb-4">
                 <h3 className="font-semibold text-gray-800 mb-2 text-center">Como instalar no iOS (Safari):</h3>
                 <div className="space-y-3">

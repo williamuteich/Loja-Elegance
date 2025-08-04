@@ -184,7 +184,7 @@ export function Promocao({ produtos }: ProdutoProps) {
                 </CarouselContent>
 
                 {/* Controles do carrossel */}
-                <div className="absolute right-0 top-0 z-10 flex gap-2 -translate-y-14">
+               <div className="absolute top-0 right-0 z-10 sm:flex gap-1 -translate-y-10 hidden">
                   <CarouselPrevious className="static translate-y-0 rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
                   <CarouselNext className="static translate-y-0 rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
                 </div>
