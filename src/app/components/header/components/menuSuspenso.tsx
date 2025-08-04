@@ -98,8 +98,8 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                 </div>
             </div>
 
-            <div className={`${isFixed ? "fixed z-10 top-0 left-0 w-full" : "relative"} transition-all bg-white text-gray-900 font-bold shadow-md shadow-pink-100 md:hidden`}>
-                <div className="flex justify-between md:hidden max-w-[1400px] mx-auto w-full px-4 py-4 bg-white text-gray-900 font-bold shadow-md z-[99]">
+            <div className={`${isFixed ? "fixed z-50 top-0 left-0 w-full" : "relative"} transition-all bg-white text-gray-900 font-bold shadow-md shadow-pink-100 md:hidden`}>
+                <div className="flex justify-between md:hidden max-w-[1400px] mx-auto w-full px-4 py-2 bg-white text-gray-900 font-bold shadow-md z-[99]">
                     <div className="flex justify-between items-center gap-4">
                         <Sheet open={open} onOpenChange={setOpen}>
                             <SheetTrigger asChild>
@@ -143,10 +143,6 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                                 </div>
                             </SheetContent>
                         </Sheet>
-
-                        <Suspense>
-                            <SearchHeaderItems initialProducts={initialProducts} />
-                        </Suspense>
                     </div>
 
                     <div className="flex-shrink-0">
@@ -156,10 +152,13 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                     </div>
 
                     <div className="flex items-center justify-center gap-4 text-gray-600">
-                        <Link href="/login" className="hover:text-pink-600 transition-colors duration-300" aria-label="Iniciar sesión">
+                        {/*<Link href="/login" className="hover:text-pink-600 transition-colors duration-300" aria-label="Iniciar sesión">
                             <User className="w-6 h-6" />
                         </Link>
-                        <CheckoutHeader />
+                        <CheckoutHeader />*/}
+                        <Suspense>
+                            <SearchHeaderItems initialProducts={initialProducts} />
+                        </Suspense>
                     </div>
                 </div>
             </div>
