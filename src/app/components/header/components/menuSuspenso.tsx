@@ -14,6 +14,7 @@ import { Home, Package, Tag, Phone, HelpCircle, User, AlignJustify } from "lucid
 import SearchHeaderItems from "./searchHeaderItems";
 import CheckoutHeader from "./checkoutHeader";
 import Image from 'next/image'
+import { dancingScript } from '@/app/fonts';
 import { useSession } from "next-auth/react";
 
 interface MenuSuspensoProps {
@@ -61,8 +62,8 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                     <div className="flex items-center justify-between w-full h-20 pb-2">
                         <div className="flex-shrink-0 relative">
                             <Link href="/" className="flex flex-col items-start relative z-10">
-                                <h1 className="text-5xl font-dancing text-pink-700 leading-none font-bold z-50">Elegance</h1>
-                                <span className="text-xs tracking-wide text-gray-800 font-medium ml-1 text-end w-full hidden md:block">Accesorios</span>
+                                <h1 className={`text-5xl text-pink-700 leading-none font-bold z-50 ${dancingScript.className}`}>Elegance</h1>
+                                <span className={`text-xs tracking-wide text-gray-800 font-medium ml-1 text-end w-full hidden md:block ${dancingScript.className}`}>Accesorios</span>
                                 <Image
                                     className="absolute -left-5 top-4 -rotate-45 z-0"
                                     src="/fundoLogo.png"
@@ -111,7 +112,7 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                             <SheetContent aria-describedby={undefined} side="left" className="bg-white p-6">
                                 <SheetHeader>
                                     <SheetTitle className="text-center">
-                                        <span className="text-5xl font-dancing font-bold text-pink-600 hover:text-pink-800 transition-all z-50">
+                                        <span className={`text-5xl font-bold text-pink-600 hover:text-pink-800 transition-all z-50 ${dancingScript.className}`}>
                                             Elegance
                                         </span>
                                     </SheetTitle>

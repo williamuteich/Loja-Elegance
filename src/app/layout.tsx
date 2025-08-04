@@ -11,6 +11,7 @@ import VisitTracker from "./components/visitTracker";
 
 import CookieBanner from "./components/cookieBanner";
 import PushSubscribe from "./components/PushSubscribe";
+import { dancingScript } from "./fonts";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
@@ -136,28 +137,30 @@ export const metadata: Metadata = {
   }
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en">
-      <body>
-        <VisitTracker />
+    <html lang="es">
+      <body className="min-h-screen flex flex-col bg-neutral-50">
         <ReduxProvider>
           <AuthProvider>
             <CartProvider>
+              <VisitTracker />
               <Header />
-              <div>{children}</div>
-              <Footer />
               <HeaderFooter />
-              <PushSubscribe />
+              <main className="flex-1 flex flex-col">
+                {children}
+              </main>
+              <Footer />
               <CookieBanner />
+              <PushSubscribe />
             </CartProvider>
           </AuthProvider>
         </ReduxProvider>
       </body>
     </html>
-  );
+  )
 }

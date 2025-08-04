@@ -40,6 +40,7 @@ export function ClientCategoriesCarousel({ categories, delay = 4000 }: { categor
                     width={96}
                     height={96}
                     quality={95}
+                    loading="lazy"
                   />
                 ) : (
                   <div className="flex items-center justify-center w-full h-full bg-gray-50 rounded-full">

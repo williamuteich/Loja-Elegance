@@ -84,10 +84,10 @@ export default async function ListAllProdutos() {
                                         alt={produto.name}
                                         src={produto.imagePrimary}
                                         fill
-                                        priority
                                         quality={100}
                                         className="object-contain transition-transform duration-300 group-hover:scale-105"
                                         sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                                        loading="lazy"
                                     />
                                 ) : (
                                     <div className="flex items-center justify-center bg-gray-100 rounded-lg w-full h-full">

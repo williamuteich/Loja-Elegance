@@ -24,6 +24,12 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: '/:all*.(png|jpg|jpeg|gif|svg|webp|ico|woff2|woff|ttf|eot|css|js)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      {
         source: '/sw.js',
         headers: [
           { key: 'Content-Type', value: 'application/javascript; charset=utf-8' },
