@@ -38,10 +38,21 @@ export default function ShowInstaEmbeds({ posts, instagramUrl }: ShowInstaEmbeds
     const hasProcessed = useRef(false);
 
     useEffect(() => {
-        if (window.instgrm && !hasProcessed.current) {
-            window.instgrm.Embeds.process();
-            hasProcessed.current = true;
-        }
+        const processAndLazyLoad = () => {
+            if (window.instgrm && !hasProcessed.current) {
+                window.instgrm.Embeds.process();
+                hasProcessed.current = true;
+
+                setTimeout(() => {
+                    const iframes = document.querySelectorAll('iframe.instagram-media');
+                    iframes.forEach((iframe) => {
+                        iframe.setAttribute('loading', 'lazy');
+                    });
+                }, 1000); // tempo para o Instagram injetar os iframes
+            }
+        };
+
+        processAndLazyLoad();
     }, [posts]);
 
     return (
@@ -52,6 +63,12 @@ export default function ShowInstaEmbeds({ posts, instagramUrl }: ShowInstaEmbeds
                 onLoad={() => {
                     if (window.instgrm) {
                         window.instgrm.Embeds.process();
+                        setTimeout(() => {
+                            const iframes = document.querySelectorAll('iframe.instagram-media');
+                            iframes.forEach((iframe) => {
+                                iframe.setAttribute('loading', 'lazy');
+                            });
+                        }, 1000);
                     }
                 }}
             />

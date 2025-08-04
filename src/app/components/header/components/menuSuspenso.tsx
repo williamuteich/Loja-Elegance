@@ -10,12 +10,12 @@ import {
 } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
 
-import { Home, Package, Tag, Phone, HelpCircle, User, AlignJustify } from "lucide-react";
+import { Home, Package, Tag, Phone, HelpCircle, User, AlignJustify, LogOut } from "lucide-react";
 import SearchHeaderItems from "./searchHeaderItems";
 import CheckoutHeader from "./checkoutHeader";
 import Image from 'next/image'
 import { dancingScript } from '@/app/fonts';
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 interface MenuSuspensoProps {
     initialProducts: any[];
@@ -109,7 +109,7 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                                 </button>
                             </SheetTrigger>
 
-                            <SheetContent aria-describedby={undefined} side="left" className="bg-white p-6">
+                            <SheetContent aria-describedby={undefined} side="left" className="bg-white p-6 z-[99]">
                                 <SheetHeader>
                                     <SheetTitle className="text-center">
                                         <span className={`text-5xl font-bold text-pink-600 hover:text-pink-800 transition-all z-50 ${dancingScript.className}`}>
@@ -117,30 +117,76 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                                         </span>
                                     </SheetTitle>
                                 </SheetHeader>
-                                <div className="grid gap-6 py-4 border-t-[1px] border-gray-300 mt-6">
-                                    <nav className="flex flex-col gap-6">
-                                        <span className="font-medium text-xl">Explorar</span>
-                                        <Link href="/" title="Inicio" aria-label="Inicio" onClick={() => setOpen(false)} className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal">
-                                            <Home className="w-6 h-6" aria-hidden="true" />
-                                            <span>Inicio</span>
+                                
+                                <div className="grid gap-6 py-4 mt-6">
+                                    <nav className="flex flex-col gap-4">
+                                        <span className="font-medium text-xl text-gray-700 pb-2 border-b border-gray-200">Menú</span>
+                                        
+                                        <Link href="/" title="Inicio" aria-label="Inicio" onClick={() => setOpen(false)} className="flex items-center gap-4 p-3 rounded-lg hover:bg-pink-50 transition-colors duration-300">
+                                            <div className="bg-pink-100 p-2 rounded-full">
+                                                <Home className="w-5 h-5 text-pink-600" />
+                                            </div>
+                                            <span className="font-medium">Inicio</span>
                                         </Link>
-                                        <Link href="/produtos" title="Productos" aria-label="Productos" onClick={() => setOpen(false)} className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal">
-                                            <Package className="w-6 h-6" aria-hidden="true" />
-                                            <span>Productos</span>
+                                        
+                                        <Link href="/produtos" title="Productos" aria-label="Productos" onClick={() => setOpen(false)} className="flex items-center gap-4 p-3 rounded-lg hover:bg-pink-50 transition-colors duration-300">
+                                            <div className="bg-pink-100 p-2 rounded-full">
+                                                <Package className="w-5 h-5 text-pink-600" />
+                                            </div>
+                                            <span className="font-medium">Productos</span>
                                         </Link>
-                                        <Link href="/promocoes" title="Promociones" aria-label="Promociones" onClick={() => setOpen(false)} className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal">
-                                            <Tag className="w-6 h-6" aria-hidden="true" />
-                                            <span>Promociones</span>
+                                        
+                                        <Link href="/promocoes" title="Promociones" aria-label="Promociones" onClick={() => setOpen(false)} className="flex items-center gap-4 p-3 rounded-lg hover:bg-pink-50 transition-colors duration-300">
+                                            <div className="bg-pink-100 p-2 rounded-full">
+                                                <Tag className="w-5 h-5 text-pink-600" />
+                                            </div>
+                                            <span className="font-medium">Promociones</span>
                                         </Link>
-                                        <Link href="/contato" title="Contacto" aria-label="Contacto" onClick={() => setOpen(false)} className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal">
-                                            <Phone className="w-6 h-6" aria-hidden="true" />
-                                            <span>Contacto</span>
+                                        
+                                        <Link href="/contato" title="Contacto" aria-label="Contacto" onClick={() => setOpen(false)} className="flex items-center gap-4 p-3 rounded-lg hover:bg-pink-50 transition-colors duration-300">
+                                            <div className="bg-pink-100 p-2 rounded-full">
+                                                <Phone className="w-5 h-5 text-pink-600" />
+                                            </div>
+                                            <span className="font-medium">Contacto</span>
                                         </Link>
-                                        <Link href="/faq" title="FAQ" aria-label="FAQ" onClick={() => setOpen(false)} className="flex items-center gap-3 text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal">
-                                            <HelpCircle className="w-6 h-6" aria-hidden="true" />
-                                            <span>FAQ</span>
+                                        
+                                        <Link href="/faq" title="FAQ" aria-label="FAQ" onClick={() => setOpen(false)} className="flex items-center gap-4 p-3 rounded-lg hover:bg-pink-50 transition-colors duration-300">
+                                            <div className="bg-pink-100 p-2 rounded-full">
+                                                <HelpCircle className="w-5 h-5 text-pink-600" />
+                                            </div>
+                                            <span className="font-medium">FAQ</span>
                                         </Link>
                                     </nav>
+                                    
+                                    {session?.user && (
+                                        <div className="mt-8 pt-6 border-t border-gray-200">
+                                            <div className="flex items-center gap-4 mb-6 p-3 bg-gray-50 rounded-lg">
+                                                <div className="bg-pink-100 p-2 rounded-full">
+                                                    <User className="w-5 h-5 text-pink-600" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium text-gray-900">{session.user.name || "Mi cuenta"}</p>
+                                                    <p className="text-sm text-gray-500">{session.user.email || "Usuario registrado"}</p>
+                                                </div>
+                                            </div>
+                                            
+                                            <button
+                                                type="button"
+                                                onClick={() => { setOpen(false); signOut(); }}
+                                                className="flex items-center gap-4 p-3 rounded-lg w-full text-red-600 hover:bg-red-50 transition-colors duration-300 group"
+                                            >
+                                                <div className="bg-red-100 p-2 rounded-full group-hover:bg-red-200 transition-colors">
+                                                    <LogOut className="w-5 h-5" />
+                                                </div>
+                                                <span className="font-medium">Cerrar sesión</span>
+                                                <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </SheetContent>
                         </Sheet>
@@ -153,10 +199,6 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                     </div>
 
                     <div className="flex items-center justify-center gap-4 text-gray-600">
-                        {/*<Link href="/login" className="hover:text-pink-600 transition-colors duration-300" aria-label="Iniciar sesión">
-                            <User className="w-6 h-6" />
-                        </Link>
-                        <CheckoutHeader />*/}
                         <Suspense>
                             <SearchHeaderItems initialProducts={initialProducts} />
                         </Suspense>

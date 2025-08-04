@@ -5,6 +5,7 @@ import { ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useCart } from "@/context/cartContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import GoogleLoginButtonSmall from "@/components/auth/GoogleLoginButtonSmall";
 import { useState } from "react";
@@ -13,6 +14,7 @@ import { Produto } from "@/utils/types/produto";
 
 export default function CheckoutHeader() {
   const { cart, removeFromCart, addToCart, cartOpen, setCartOpen } = useCart();
+  const router = useRouter();
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
   const { data: session } = useSession();
@@ -36,7 +38,7 @@ export default function CheckoutHeader() {
         </button>
       </SheetTrigger>
 
-      <SheetContent side="right" className="bg-white p-6 w-96">
+      <SheetContent side="right" className="bg-white p-6 w-full h-full max-w-full rounded-none md:w-96 md:max-w-[24rem] md:rounded-lg z-[99]">
         <SheetTitle className="text-center">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-xl font-bold text-pink-800">MI CARRITO</h1>
@@ -45,10 +47,18 @@ export default function CheckoutHeader() {
         <div className="border-b mb-4" />
 
         {cart.length === 0 ? (
-          <p className="flex items-center justify-center gap-2 text-pink-800 font-bold text-lg">
-            <ShoppingCart size={24} className="mb-2 text-pink-800" />
-            Tu carrito está vacío.
-          </p>
+          <div className="flex flex-col items-center justify-center gap-2">
+            <p className="flex items-center justify-center gap-2 text-pink-800 font-bold text-lg">
+              <ShoppingCart size={24} className="mb-2 text-pink-800" />
+              Tu carrito está vacío.
+            </p>
+            <Button
+              className="mt-2 px-4 py-2 bg-pink-600 border border-pink-700 text-white font-semibold text-base rounded-md transition-colors hover:bg-pink-700 hover:text-white focus:bg-pink-700 focus:text-white"
+              onClick={() => setCartOpen(false)}
+            >
+              Cerrar Carrito
+            </Button>
+          </div>
         ) : (
           <div className="space-y-6">
             <div className="overflow-y-auto max-h-[60vh]">
