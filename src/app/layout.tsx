@@ -3,6 +3,7 @@ import ReduxProvider from "../store/redux-provider";
 import type { Metadata } from 'next'
 import "./globals.css";
 import Footer from "./components/footer/footer";
+import HeaderFooter from "@/app/components/headerFooter/headerFooter";
 import AuthProvider from "./components/providers/auth-provider";
 import { CartProvider } from "@/context/cartContext";
 import VisitTracker from "./components/visitTracker";
@@ -150,6 +151,7 @@ export default async function RootLayout({
               <Header />
               <div>{children}</div>
               <Footer />
+              <HeaderFooter />
               <PushSubscribe />
               <CookieBanner />
             </CartProvider>
