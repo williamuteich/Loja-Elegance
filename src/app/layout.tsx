@@ -9,12 +9,11 @@ import { CartProvider } from "@/context/cartContext";
 import VisitTracker from "./components/visitTracker";
 
 
-import CookieBanner from "./components/cookieBanner";
+// import CookieBanner from "./components/cookieBanner";
 import PushSubscribe from "./components/PushSubscribe";
-import { dancingScript } from "./fonts";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000'),
   title: 'Elegance Ecommerce - Eletrônicos, Celulares e Acessórios | Loja Virtual',
   description: 'Compre celulares, eletrônicos, joias, maquiagem e brinquedos com os melhores preços. Frete rápido, parcelamento e garantia!',
   icons: {
@@ -155,7 +154,7 @@ export default function RootLayout({
                 {children}
               </main>
               <Footer />
-              <CookieBanner />
+              {/* <CookieBanner /> */}
               <PushSubscribe />
             </CartProvider>
           </AuthProvider>
