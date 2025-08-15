@@ -13,7 +13,7 @@ async function obtenerFaq({ searchParams }: { searchParams: Promise<{ search: st
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/faq?${search ? `search=${search}&` : ''}${page ? `page=${page}&` : ''}${status ? `status=${status}` : ''}`, { cache: 'force-cache' });
 
     if (!response.ok) {
-        throw new Error("Error al buscar las preguntas frecuentes");
+        throw new Error("Error ao buscar as perguntas frequentes");
     }
 
     const { faq, totalRecords } = await response.json();
@@ -45,9 +45,9 @@ export default async function PaginaFaq({ searchParams }: { searchParams: Promis
         <div className="py-10">
             <div className="mx-auto min-h-screen">
                 <h2 className="text-2xl uppercase font-extrabold text-pink-700 mb-6 text-start">
-                    Preguntas Frecuentes
+                    Perguntas Frequentes
                 </h2>
-                <Suspense fallback={<div>Cargando...</div>}>
+                <Suspense fallback={<div>Carregando...</div>}>
                     {await obtenerFaq({ searchParams: Promise.resolve(defaultSearchParams) })}
                 </Suspense>
             </div>

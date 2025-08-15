@@ -24,56 +24,57 @@ export default async function ResetPassword() {
         })
 
         if (!response.ok) {
-            return { error: "Error al restablecer la contraseña" };
+            return { error: "Erro ao redefinir a senha" };
         }
 
         const result = await response.json();
-        return { success: "Contraseña actualizada con éxito" };
+        return { success: "Senha atualizada com sucesso" };
     }
+
     return (
         <div className="w-full mx-auto py-12 flex gap-4 flex-col lg:flex-row">
             <NavProfile />
             <div className="flex w-full flex-col bg-white p-8 rounded-lg shadow-lg">
                 <h2 className="text-2xl font-semibold mb-6 text-pink-700 flex gap-3 items-center">
                     <FaKey size={28} />
-                    Restablecer Contraseña
+                    Redefinir Senha
                 </h2>
                 <Form action={handlePassword} className="space-y-6">
                     <div className="flex flex-col">
-                        <label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">Contraseña Actual</label>
+                        <label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">Senha Atual</label>
                         <input
                             type="password"
                             id="currentPassword"
                             name="currentPassword"
                             required
                             className="mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
-                            placeholder="Ingrese su contraseña actual"
+                            placeholder="Digite sua senha atual"
                         />
                     </div>
                     <div className="flex flex-col">
-                        <label htmlFor="newPassword" className="text-sm font-medium text-gray-700">Nueva Contraseña</label>
+                        <label htmlFor="newPassword" className="text-sm font-medium text-gray-700">Nova Senha</label>
                         <input
                             type="password"
                             id="newPassword"
                             name="newPassword"
                             required
                             className="mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
-                            placeholder="Ingrese su nueva contraseña"
+                            placeholder="Digite sua nova senha"
                         />
                     </div>
                     <div className="flex flex-col">
-                        <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Repetir Nueva Contraseña</label>
+                        <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Repetir Nova Senha</label>
                         <input
                             type="password"
                             id="confirmPassword"
                             name="confirmPassword"
                             required
                             className="mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
-                            placeholder="Repita su nueva contraseña"
+                            placeholder="Repita sua nova senha"
                         />
                     </div>
                     <div className="flex items-center justify-between">
-                        <Submit className="bg-pink-700 w-full hover:bg-pink-600 text-white" type="submit">Guardar</Submit>
+                        <Submit className="bg-pink-700 w-full hover:bg-pink-600 text-white" type="submit">Salvar</Submit>
                     </div>
                 </Form>
             </div>

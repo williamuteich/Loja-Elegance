@@ -48,7 +48,7 @@ export default function ShowInstaEmbeds({ posts, instagramUrl }: ShowInstaEmbeds
                     iframes.forEach((iframe) => {
                         iframe.setAttribute('loading', 'lazy');
                     });
-                }, 1000); // tempo para o Instagram injetar os iframes
+                }, 1000);
             }
         };
 
@@ -126,7 +126,7 @@ export default function ShowInstaEmbeds({ posts, instagramUrl }: ShowInstaEmbeds
                         rel="noopener noreferrer"
                         className="inline-block bg-pink-700 hover:bg-pink-600 text-white font-semibold uppercase text-sm px-6 py-3 rounded-md transition-all"
                     >
-                        Ver más en Instagram
+                        Ver mais no Instagram
                     </Link>
                 </div>
             )}

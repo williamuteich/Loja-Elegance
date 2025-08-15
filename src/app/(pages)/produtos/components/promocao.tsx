@@ -36,30 +36,30 @@ export function Promocao({ produtos }: ProdutoProps) {
               <div className="flex justify-center lg:justify-start">
                 <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2">
                   <FaFire className="text-yellow-200" />
-                  <span>OFERTAS ESPECIALES</span>
+                  <span className="uppercase">Ofertas Especiais</span>
                 </div>
               </div>
 
               <h2 className="text-3xl lg:text-4xl font-extrabold text-pink-700 leading-tight">
-                ¡Promociones <span className="text-rose-600">Imperdibles</span>!
+                Promoções <span className="text-rose-600">Imperdíveis</span>!
               </h2>
 
               <div className="space-y-3">
                 <p className="text-gray-600 text-base leading-relaxed flex items-start gap-2">
                   <FaTag className="text-pink-500 mt-1 flex-shrink-0" />
-                  <span>Descuentos exclusivos en productos seleccionados</span>
+                  <span>Descontos exclusivos em produtos selecionados</span>
                 </p>
 
                 <p className="text-gray-600 text-base leading-relaxed flex items-start gap-2">
                   <FaClock className="text-pink-500 mt-1 flex-shrink-0" />
-                  <span>Ofertas válidas por tiempo limitado</span>
+                  <span>Ofertas válidas por tempo limitado</span>
                 </p>
               </div>
 
               <Link href="/promocoes" className="mt-auto">
                 <Button className="w-full py-5 text-sm font-bold bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white shadow-lg transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2">
                   <FaShoppingBag className="text-lg" />
-                  ¡Aprovechá Ahora!
+                  Aproveite Agora!
                 </Button>
               </Link>
             </div>
@@ -69,7 +69,7 @@ export function Promocao({ produtos }: ProdutoProps) {
           <div className="w-full lg:w-[68%] relative">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-gray-800">
-                Productos en Oferta
+                Produtos em Promoção
                 <span className="text-pink-600 ml-2">({produtosEmPromocao.length})</span>
               </h3>
             </div>
@@ -82,8 +82,10 @@ export function Promocao({ produtos }: ProdutoProps) {
                       ? Math.round(((produto.priceOld - produto.price) / produto.priceOld) * 100)
                       : 0;
 
-                    const totalEstoque = produto.variants.reduce((acc: number, variant: { availableStock?: number }) =>
-                      acc + (variant.availableStock || 0), 0);
+                    const totalEstoque = produto.variants.reduce(
+                      (acc: number, variant: { availableStock?: number }) =>
+                        acc + (variant.availableStock || 0), 0
+                    );
 
                     return (
                       <CarouselItem
@@ -130,16 +132,16 @@ export function Promocao({ produtos }: ProdutoProps) {
                               <div className="flex flex-col gap-1">
                                 <div className="flex items-center gap-2">
                                   <span className="text-lg font-bold text-rose-700">
-                                    {new Intl.NumberFormat("es-UY", {
+                                    {new Intl.NumberFormat("pt-BR", {
                                       style: "currency",
-                                      currency: "UYU"
+                                      currency: "BRL"
                                     }).format(produto.price)}
                                   </span>
                                   {produto.priceOld && (
                                     <span className="text-xs text-gray-500 line-through">
-                                      {new Intl.NumberFormat("es-UY", {
+                                      {new Intl.NumberFormat("pt-BR", {
                                         style: "currency",
-                                        currency: "UYU"
+                                        currency: "BRL"
                                       }).format(produto.priceOld)}
                                     </span>
                                   )}
@@ -161,10 +163,10 @@ export function Promocao({ produtos }: ProdutoProps) {
                                     : "bg-red-100 text-red-800"
                                   }`}>
                                   {totalEstoque > 1
-                                    ? `${totalEstoque} Disponibles`
+                                    ? `${totalEstoque} Disponíveis`
                                     : totalEstoque === 1
-                                      ? "Última Unidad"
-                                      : "Agotado"}
+                                      ? "Última unidade"
+                                      : "Indisponível"}
                                 </div>
                               </div>
                             </Link>
@@ -172,7 +174,7 @@ export function Promocao({ produtos }: ProdutoProps) {
                             <div className="mt-4">
                               <Link href={`/produtos/${produto.id}`}>
                                 <button className="w-full py-2.5 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white text-sm font-semibold rounded-lg transition-all shadow-md hover:shadow-lg">
-                                  Ver detalles
+                                  Ver Detalhes
                                 </button>
                               </Link>
                             </div>
@@ -184,7 +186,7 @@ export function Promocao({ produtos }: ProdutoProps) {
                 </CarouselContent>
 
                 {/* Controles do carrossel */}
-               <div className="absolute top-0 right-0 z-10 sm:flex gap-1 -translate-y-10 hidden">
+                <div className="absolute top-0 right-0 z-10 sm:flex gap-1 -translate-y-10 hidden">
                   <CarouselPrevious className="static translate-y-0 rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
                   <CarouselNext className="static translate-y-0 rounded-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 w-10 h-10" />
                 </div>

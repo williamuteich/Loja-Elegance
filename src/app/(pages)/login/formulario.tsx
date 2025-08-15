@@ -60,7 +60,6 @@ export default function Formulario() {
         }
 
         try {
-            
             const sessionResponse = await fetch(`/api/login`, {
                 method: "POST",
                 headers: {
@@ -84,7 +83,6 @@ export default function Formulario() {
             setUserActive(session.user?.active);
 
             if (session.user?.active) {
-                // Agora sim, cria a sessão NextAuth
                 const result = await signIn("credentials", {
                     ...data,
                     recaptchaToken,
@@ -102,7 +100,6 @@ export default function Formulario() {
                     ? "/dashboard"
                     : "/profile";
                 router.push(redirectPath);
-                // Não chama setLoading(false) aqui! O loading continua até o redirect.
             }
         } catch (error) {
             console.error('[LOGIN] Erro inesperado:', error);
@@ -118,16 +115,16 @@ export default function Formulario() {
         return (
             <div className="flex flex-col items-center justify-center p-8 bg-white border border-pink-900 rounded-lg shadow-lg mt-6">
                 <h2 className="text-2xl font-semibold text-pink-900 mb-4 text-center">
-                    ¡Verifica tu correo electrónico para acceder a tu cuenta!
+                    Verifique seu e-mail para ativar a conta!
                 </h2>
                 <p className="text-lg text-gray-700 mb-4 text-center">
-                    Para completar el proceso de creación de cuenta, por favor, verifica tu correo electrónico y confirma tu identidad.
+                    Para concluir o cadastro, por favor, confirme seu endereço de e-mail.
                 </p>
                 <p className="font-semibold text-pink-900 text-lg text-center">
-                    Hemos enviado un correo electrónico de confirmación. No olvides verificar tu bandeja de entrada.
+                    Enviamos um e-mail de confirmação. Não esqueça de verificar sua caixa de entrada.
                 </p>
                 <div className="mt-6 text-center">
-                    <p className="text-sm text-gray-500">Si no has recibido el correo electrónico, revisa tu carpeta de spam.</p>
+                    <p className="text-sm text-gray-500">Se não recebeu o e-mail, verifique sua pasta de spam.</p>
                 </div>
             </div>
         );
@@ -136,7 +133,7 @@ export default function Formulario() {
     return (
         <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
             <h1 className="text-2xl font-bold text-center text-pink-700 mb-6 uppercase">
-                ¡Bienvenido de nuevo!
+                Bem-vindo de volta!
             </h1>
 
             <ToastContainer />
@@ -147,7 +144,7 @@ export default function Formulario() {
 
             <div className="flex items-center mb-6">
                 <div className="flex-grow border-t border-gray-300"></div>
-                <span className="mx-4 text-gray-500">o</span>
+                <span className="mx-4 text-gray-500">ou</span>
                 <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
@@ -156,7 +153,7 @@ export default function Formulario() {
                     <input
                         type="email"
                         name="email"
-                        placeholder="Correo electrónico"
+                        placeholder="E-mail"
                         required
                         className={`w-full px-4 py-3 border ${errors.email ? "border-red-500" : "border-gray-300"
                             } rounded-md placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500`}
@@ -171,7 +168,7 @@ export default function Formulario() {
                     <input
                         type="password"
                         name="password"
-                        placeholder="Contraseña"
+                        placeholder="Senha"
                         required
                         className={`w-full px-4 py-3 border ${errors.password ? "border-red-500" : "border-gray-300"
                             } rounded-md placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500`}
@@ -213,26 +210,18 @@ export default function Formulario() {
                             Carregando...
                         </div>
                     ) : (
-                        "Iniciar sesión"
+                        "Entrar"
                     )}
                 </button>
-                <div>
-                    <>
-                        <ReCAPTCHA
-                            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
-                            onChange={token => {
-                                setRecaptchaToken(token);
-                            }}
-                            className="mb-4"
-                            onErrored={() => {
-                                console.error('[reCAPTCHA] Houve um erro ao renderizar o widget!');
-                            }}
-                            onExpired={() => {
-                                console.warn('[reCAPTCHA] Token expirado!');
-                            }}
-                        />
 
-                    </>
+                <div>
+                    <ReCAPTCHA
+                        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                        onChange={token => setRecaptchaToken(token)}
+                        className="mb-4"
+                        onErrored={() => console.error('[reCAPTCHA] Erro ao renderizar o widget!')}
+                        onExpired={() => console.warn('[reCAPTCHA] Token expirado!')}
+                    />
                 </div>
             </form>
 
@@ -241,18 +230,18 @@ export default function Formulario() {
                     href="/resetPwd"
                     className="text-sm text-pink-700 hover:text-pink-900 font-medium transition-colors"
                 >
-                    Olvidé mi contraseña
+                    Esqueci minha senha
                 </Link>
             </div>
 
             <div className="mt-6 border-t border-gray-200 pt-6 text-center">
                 <p className="text-sm text-gray-600">
-                    ¿No tienes una cuenta?{' '}
+                    Não tem uma conta?{' '}
                     <Link
                         href="/cadastro"
                         className="font-semibold text-pink-700 hover:text-pink-900 transition-colors"
                     >
-                        Crea una ahora
+                        Crie uma agora
                     </Link>
                 </p>
             </div>

@@ -19,7 +19,7 @@ export default async function Profile() {
     );
 
     if (!response.ok) {
-        return <div>Error al cargar la información del usuario</div>;
+        return <div>Error ao carregar as informações do usuário</div>;
     }
     
     const data = await response.json();
@@ -29,7 +29,7 @@ export default async function Profile() {
     return (
         <div className="w-full mx-auto py-12 flex gap-4 flex-col lg:flex-row">
             <NavProfile />
-            <DataProfile data={data} endereco={endereco} userID={session?.user.userID || ''}/>
+            <DataProfile data={data} userID={session?.user.userID || ''}/>
         </div>
     );
 }

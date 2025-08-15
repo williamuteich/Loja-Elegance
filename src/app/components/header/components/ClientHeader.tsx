@@ -7,7 +7,7 @@ interface ClientHeaderProps {
 
 export default function ClientHeader({ initialProducts }: ClientHeaderProps) {
   return (
-    <header className="w-full z-[99]">
+    <header className="w-full z-50 bg-black">
       <MenuSuspenso initialProducts={initialProducts} />
     </header>
   );

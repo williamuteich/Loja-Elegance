@@ -52,7 +52,7 @@ export default async function Reels() {
             <Container>
                 <div className="w-full relative">
                     <h2 className="text-2xl relative uppercase font-extrabold text-pink-700 mb-16 text-start md:mb-6">
-                        Nuestros Reels
+                        Nosso Reels
                     </h2>
 
                     <ShowInstaEmbeds

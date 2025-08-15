@@ -50,7 +50,7 @@ export default function GoogleLoginButton({ callbackUrl = "/profile", className 
       ) : (
         <>
           <FaGoogle className="w-5 h-5" />
-          Iniciar sesión con Google
+          Entrar com Google
         </>
       )}
     </button>

@@ -6,25 +6,25 @@ import validator from 'validator';
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 
 export default function Registro() {
-    async function nuevoUsuario(prevState: any, formData: FormData): Promise<{ success?: string; error?: string; confirm?: string}> {
+    async function novoUsuario(prevState: any, formData: FormData): Promise<{ success?: string; error?: string; confirm?: string}> {
         "use server";
 
         const data = Object.fromEntries(formData.entries());
 
         if (!data.name) {
-            return { error: "El campo Nombre no puede estar vacío." };
+            return { error: "O campo Nome não pode estar vazio." };
         }
 
         if (!data.email) {
-            return { error: "El campo Correo Electrónico no puede estar vacío." };
+            return { error: "O campo E-mail não pode estar vazio." };
         }
 
         if (typeof data.email === 'string' && !validator.isEmail(data.email)) {
-            return { error: "Correo Electrónico inválido. Por favor, ingresa un correo electrónico válido." };
+            return { error: "E-mail inválido. Por favor, insira um e-mail válido." };
         }
 
         if (!data.password) {
-            return { error: "El campo Contraseña no puede estar vacío." };
+            return { error: "O campo Senha não pode estar vazio." };
         }
 
         const response = await fetch(`${process.env.NEXTAUTH_URL}/api/publica/user`, {
@@ -38,32 +38,32 @@ export default function Registro() {
         const result = await response.json();
 
         if (!response.ok) {
-            return { error: result.message || "Error al intentar crear cuenta." };
+            return { error: result.message || "Erro ao tentar criar a conta." };
         }
 
-        return { confirm: "Cuenta creada con éxito. Verifica tu correo." };
+        return { confirm: "Conta criada com sucesso. Verifique seu e-mail." };
     }
 
     return (
         <Container>
             <div className="flex items-center justify-center">
                 <div className="w-full max-w-xl p-6 min-h-screen">
-                    <h1 className="text-2xl font-bold text-center text-pink-700 mb-6 uppercase">Crea tu Cuenta</h1>
+                    <h1 className="text-2xl font-bold text-center text-pink-700 mb-6 uppercase">Crie sua Conta</h1>
                     <div className="mb-6">
                         <GoogleLoginButton className="w-full" />
                     </div>
                     <div className="flex items-center mb-6">
                         <div className="flex-grow border-t border-gray-300"></div>
-                        <span className="mx-4 text-gray-500">o</span>
+                        <span className="mx-4 text-gray-500">ou</span>
                         <div className="flex-grow border-t border-gray-300"></div>
                     </div>
-                    <Form action={nuevoUsuario}>
+                    <Form action={novoUsuario}>
                         <div className="mb-4">
                             <input
                                 type="text"
                                 id="name"
                                 name="name"
-                                placeholder="Nombre Completo"
+                                placeholder="Nome Completo"
                                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                             />
                         </div>
@@ -73,7 +73,7 @@ export default function Registro() {
                                 type="email"
                                 id="email"
                                 name="email"
-                                placeholder="Correo Electrónico válido"
+                                placeholder="E-mail válido"
                                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                             />
                         </div>
@@ -83,7 +83,7 @@ export default function Registro() {
                                     id="password"
                                     type="password"
                                     name="password"
-                                    placeholder="Ingresa una contraseña"
+                                    placeholder="Digite uma senha"
                                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                                 />
                             </div>
@@ -92,7 +92,7 @@ export default function Registro() {
                             type="submit"
                             className="w-full py-3 bg-pink-700 text-white font-semibold uppercase rounded-md hover:bg-pink-600"
                         >
-                            Crear cuenta
+                            Criar conta
                         </Submit>
                     </Form>
                     <div className="mt-6 text-center">
@@ -111,9 +111,9 @@ export default function Registro() {
                                     d="M15.75 9V5.25a2.25 2.25 0 00-2.25-2.25h-3a2.25 2.25 0 00-2.25 2.25V9m-3.75 0h13.5m-13.5 0a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25h13.5a2.25 2.25 0 002.25-2.25V11.25a2.25 2.25 0 00-2.25-2.25m-13.5 0V5.25"
                                 />
                             </svg>
-                            ¿Ya tienes una cuenta?{' '}
+                            Já tem uma conta?{' '}
                             <Link href="/login" className="text-black font-medium hover:underline ml-1">
-                                Ingresa a la tienda
+                                Acesse a loja
                             </Link>
                         </p>
                     </div>

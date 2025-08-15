@@ -31,7 +31,7 @@ export default function EstoqueProdutos({
   return (
     <div>
       <div className="space-y-0">
-        <h3 className="text-sm text-gray-700 font-bold my-2">Stock disponible</h3>
+        <h3 className="text-sm text-gray-700 font-bold my-2">Estoque Disponível</h3>
         <div className="flex items-center gap-2 bg-gray-100 p-3 rounded shadow-sm">
           <FaBox size={20} className="text-pink-700" />
           <p className="text-md font-bold text-pink-700">
@@ -43,13 +43,13 @@ export default function EstoqueProdutos({
       </div>
 
       <div>
-      {selectedVariant && (
-        <div className="my-2">
-          <h3 className="text-md font-bold">
-            Color Seleccionado: <span className="underline text-gray-600">{selectedVariant.color.name}</span>
-          </h3>
-        </div>
-      )}
+        {selectedVariant && (
+          <div className="my-2">
+            <h3 className="text-md font-bold">
+              Cor Selecionada: <span className="underline text-gray-600">{selectedVariant.color.name}</span>
+            </h3>
+          </div>
+        )}
         <div className="flex gap-2 mt-2">
           {produtos.variants.map((variant: VariantProps, index: number) => (
             <button

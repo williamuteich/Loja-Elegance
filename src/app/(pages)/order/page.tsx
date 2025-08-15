@@ -13,7 +13,7 @@ export default async function OrdersPage() {
   if (!session?.user?.userID) {
     return (
       <div className="w-full text-center py-16 text-gray-600">
-        Necesitas iniciar sesión para ver tus pedidos.
+        Você precisa estar logado para ver seus pedidos.
       </div>
     );
   }
@@ -46,52 +46,22 @@ export default async function OrdersPage() {
   const getStatus = (s: string) => {
     switch (s) {
       case "pending":
-        return {
-          icon: FaHourglassHalf,
-          text: "Pendiente",
-          color: "text-yellow-700",
-          bgColor: "bg-yellow-100",
-        };
+        return { icon: FaHourglassHalf, text: "Pendente", color: "text-yellow-700", bgColor: "bg-yellow-100" };
       case "confirmed":
-        return {
-          icon: FaCheckCircle,
-          text: "Confirmado",
-          color: "text-green-700",
-          bgColor: "bg-green-100",
-        };
+        return { icon: FaCheckCircle, text: "Confirmado", color: "text-green-700", bgColor: "bg-green-100" };
       case "shipped":
-        return {
-          icon: FaTruck,
-          text: "Enviado",
-          color: "text-blue-700",
-          bgColor: "bg-blue-100",
-        };
+        return { icon: FaTruck, text: "Enviado", color: "text-blue-700", bgColor: "bg-blue-100" };
       case "delivered":
-        return {
-          icon: FaBoxOpen,
-          text: "Entregado",
-          color: "text-purple-700",
-          bgColor: "bg-purple-100",
-        };
+        return { icon: FaBoxOpen, text: "Entregue", color: "text-purple-700", bgColor: "bg-purple-100" };
       case "cancelled":
-        return {
-          icon: FaBan,
-          text: "Cancelado",
-          color: "text-red-700",
-          bgColor: "bg-red-100",
-        };
+        return { icon: FaBan, text: "Cancelado", color: "text-red-700", bgColor: "bg-red-100" };
       default:
-        return {
-          icon: FaHourglassHalf,
-          text: "Procesando",
-          color: "text-gray-600",
-          bgColor: "bg-gray-100",
-        };
+        return { icon: FaHourglassHalf, text: "Processando", color: "text-gray-600", bgColor: "bg-gray-100" };
     }
   };
-  
+
   const formatDate = (d: Date) =>
-    d.toLocaleDateString("es-ES", {
+    d.toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -105,20 +75,15 @@ export default async function OrdersPage() {
         <NavProfile />
         <div className="flex-1">
           <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <FaListAlt className="text-pink-600" /> Mis Pedidos
+            <FaListAlt className="text-pink-600" /> Meus Pedidos
           </h1>
 
           {orders.length === 0 ? (
-            <p className="text-center text-gray-500">No se encontraron pedidos.</p>
+            <p className="text-center text-gray-500">Nenhum pedido encontrado.</p>
           ) : (
             <div className="lg:max-h-[600px] lg:overflow-y-auto space-y-6 pr-2">
               {orders.map((order) => {
-                const {
-                  icon: StatusIcon,
-                  text: statusText,
-                  color: statusColor,
-                  bgColor: statusBgColor
-                } = getStatus(order.status);
+                const { icon: StatusIcon, text: statusText, color: statusColor } = getStatus(order.status);
 
                 const grouped = order.items.reduce<{
                   [pid: string]: {
@@ -127,30 +92,17 @@ export default async function OrdersPage() {
                   };
                 }>((acc, item) => {
                   const pid = item.productId;
-                  if (!acc[pid]) {
-                    acc[pid] = { product: item.product, variants: [] };
-                  }
-                  acc[pid].variants.push({
-                    colorName: item.variant.color.name,
-                    hex: item.variant.color.hexCode,
-                    qty: item.quantity,
-                  });
+                  if (!acc[pid]) acc[pid] = { product: item.product, variants: [] };
+                  acc[pid].variants.push({ colorName: item.variant.color.name, hex: item.variant.color.hexCode, qty: item.quantity });
                   return acc;
                 }, {});
 
                 return (
-                  <div
-                    key={order.id}
-                    className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
-                  >
+                  <div key={order.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
                     <div className="flex justify-between items-center mb-4">
                       <div>
-                        <h2 className="text-lg font-semibold text-pink-700">
-                          Pedido #{order.id.slice(-6).toUpperCase()}
-                        </h2>
-                        <p className="text-sm text-gray-500">
-                          {formatDate(order.createdAt)}
-                        </p>
+                        <h2 className="text-lg font-semibold text-pink-700">Pedido #{order.id.slice(-6).toUpperCase()}</h2>
+                        <p className="text-sm text-gray-500">{formatDate(order.createdAt)}</p>
                       </div>
                       <div className={`flex items-center gap-1 ${statusColor}`}>
                         <StatusIcon /> <span className="font-medium">{statusText}</span>
@@ -160,23 +112,13 @@ export default async function OrdersPage() {
                     <div className="space-y-4">
                       {Object.values(grouped).map(({ product, variants }) => (
                         <div key={product.id} className="flex items-center gap-4">
-                          <img
-                            src={product.imagePrimary || "/placeholder.png"}
-                            alt={product.name}
-                            className="w-16 h-16 rounded-lg object-cover"
-                          />
+                          <img src={product.imagePrimary || "/placeholder.png"} alt={product.name} className="w-16 h-16 rounded-lg object-cover" />
                           <div className="flex-1">
                             <p className="font-medium text-pink-700">{product.name}</p>
                             <div className="flex flex-wrap gap-2 mt-1 text-sm">
                               {variants.map((v, i) => (
-                                <span
-                                  key={i}
-                                  className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded"
-                                >
-                                  <span
-                                    className="w-3 h-3 rounded-full"
-                                    style={{ backgroundColor: v.hex }}
-                                  />
+                                <span key={i} className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded">
+                                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: v.hex }} />
                                   {v.qty}× {v.colorName}
                                 </span>
                               ))}
@@ -195,11 +137,9 @@ export default async function OrdersPage() {
                     <div className="mt-6 border-t pt-4 flex justify-between items-center">
                       <div className="flex items-center gap-2 text-gray-700">
                         <FaMoneyBill className="text-green-500" />
-                        <span className="capitalize">{order.paymentMethod && order.paymentMethod !== "outros" && order.paymentMethod || order.paymentDetail}</span>
+                        <span className="capitalize">{order.paymentMethod && order.paymentMethod !== "outros" ? order.paymentMethod : order.paymentDetail}</span>
                       </div>
-                      <p className="font-semibold text-pink-700">
-                        Total: $ {order.total.toFixed(2).replace(".", ",")}
-                      </p>
+                      <p className="font-semibold text-pink-700">Total: R$ {order.total.toFixed(2).replace(".", ",")}</p>
                     </div>
                   </div>
                 );

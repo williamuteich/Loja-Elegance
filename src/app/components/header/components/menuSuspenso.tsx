@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
     Sheet,
@@ -10,12 +10,11 @@ import {
 } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
 
-import { Home, Package, Tag, Phone, HelpCircle, User, AlignJustify, LogOut } from "lucide-react";
+import { Home, Package, Gift, Layers, User, AlignJustify, Bell } from "lucide-react";
 import SearchHeaderItems from "./searchHeaderItems";
 import CheckoutHeader from "./checkoutHeader";
-import Image from 'next/image'
-import { dancingScript } from '@/app/fonts';
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { LogoutMenu } from "../../logoutAccount";
 
 interface MenuSuspensoProps {
     initialProducts: any[];
@@ -24,6 +23,7 @@ interface MenuSuspensoProps {
 export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
     const { data: session } = useSession();
     const [open, setOpen] = useState(false);
+    const [openDesktopMenu, setOpenDesktopMenu] = useState(false);
     const pathname = usePathname();
 
     const [isFixed, setIsFixed] = useState(false);
@@ -51,158 +51,222 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
 
     return (
         <>
-            <div className="bg-pink-700 frete-gratuito">
-                <div className="max-w-[1400px] py-1 mx-auto px-4 font-medium text-center text-sm sm:text-base sm:px-6 lg:px-8 text-white">
-                    ¡Ofertas imperdibles, aproveche!
+            <div className="bg-pink-600 frete-gratuito">
+                <div className="max-w-[1400px] py-1 mx-auto px-4 font-medium text-center text-xs sm:text-sm sm:px-6 lg:px-8 text-white">
+                    🎁📬Ofertas imperdíveis, aproveite!
                 </div>
             </div>
 
-            <div className={`hidden md:block z-50 ${isFixed ? "fixed z-10 top-0 left-0 w-full" : "relative"} transition-all bg-white text-gray-900 font-bold shadow-md shadow-pink-100`}>
+            {/* DESKTOP HEADER */}
+            <div className={`hidden md:block z-[90] ${isFixed ? "fixed z-10 top-0 left-0 w-full" : "relative"} transition-all bg-white text-black font-bold shadow-md shadow-gray-900/20`}>
                 <div className="max-w-[1400px] mx-auto w-full sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between w-full h-20 pb-2">
-                        <div className="flex-shrink-0 relative">
-                            <Link href="/" className="flex flex-col items-start relative z-10">
-                                <h1 className={`text-5xl text-pink-700 leading-none font-bold z-50 ${dancingScript.className}`}>Elegance</h1>
-                                <span className={`text-xs tracking-wide text-gray-800 font-medium ml-1 text-end w-full hidden md:block ${dancingScript.className}`}>Accesorios</span>
-                                <Image
-                                    className="absolute -left-5 top-4 -rotate-45 z-0"
-                                    src="/fundoLogo.png"
-                                    alt="Fundo logo"
-                                    width={50}
-                                    height={50}
-                                    quality={100}
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                />
+                    <div className={`flex items-center justify-between w-full ${isFixed ? "h-16 py-1" : "h-16 py-1"}`}>
+                        {/* Menu Hambúrguer (só aparece quando fixo) */}
+                        {isFixed && (
+                            <Sheet open={openDesktopMenu} onOpenChange={setOpenDesktopMenu}>
+                                <SheetTrigger asChild>
+                                    <button
+                                        className="mr-2 text-neutral-600 hover:text-pink-700 transition-colors"
+                                        aria-label="Menu desktop"
+                                    >
+                                        <AlignJustify className="w-6 h-6" />
+                                    </button>
+                                </SheetTrigger>
+
+                                <SheetContent side="left" className="bg-white text-white p-0">
+                                    <SheetHeader className="bg-white p-4">
+                                        <SheetTitle className="text-center">
+                                            <span className="text-3xl font-bold text-pink-700 font-dancing">
+                                                Elegance
+                                            </span>
+                                        </SheetTitle>
+                                    </SheetHeader>
+                                    <div className="grid gap-4 p-6">
+                                        <nav className="flex flex-col gap-4">
+                                            <Link
+                                                href="/"
+                                                onClick={() => setOpenDesktopMenu(false)}
+                                                className="text-neutral-600 hover:text-pink-700 transition-colors flex items-center text-lg"
+                                            >
+                                                <Home className="w-5 h-5 mr-2" />
+                                                Início
+                                            </Link>
+                                            <Link
+                                                href="/produtos"
+                                                onClick={() => setOpenDesktopMenu(false)}
+                                                className="text-neutral-600 hover:text-pink-700 transition-colors flex items-center text-lg"
+                                            >
+                                                <Package className="w-5 h-5 mr-2" />
+                                                Produtos
+                                            </Link>
+                                            <Link
+                                                href="/promocoes"
+                                                onClick={() => setOpenDesktopMenu(false)}
+                                                className="text-neutral-600 hover:text-pink-700 transition-colors flex items-center text-lg"
+                                            >
+                                                <Gift className="w-5 h-5 mr-2" />
+                                                Promoções
+                                            </Link>
+                                            <Link
+                                                href="/colecoes"
+                                                onClick={() => setOpenDesktopMenu(false)}
+                                                className="text-neutral-600 hover:text-pink-700 transition-colors flex items-center text-lg"
+                                            >
+                                                <Layers className="w-5 h-5 mr-2" />
+                                                Coleções
+                                            </Link>
+                                            {/*{session ? (
+                                                <div className="mt-0 border-t-[1px] pt-4 border-gray-900">
+                                                    <LogoutButton />
+                                                </div>
+                                            ) : null}*/}
+                                            <div className="mt-0 border-t-[1px] pt-4 border-gray-900">
+                                                <LogoutMenu />
+                                            </div>
+                                        </nav>
+                                    </div>
+                                </SheetContent>
+
+                            </Sheet>
+                        )}
+
+                        {/* Logo */}
+                        <div className="flex-shrink-0">
+                            <Link href="/" className="flex items-center">
+                                <h1 className={`font-bold font-dancing ${isFixed ? "text-2xl" : "text-3xl"} text-pink-700`}>
+                                    Elegance
+                                </h1>
                             </Link>
                         </div>
 
-                        <nav className="flex gap-8">
-                            <Link href="/" title="Inicio" className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal">Inicio</Link>
-                            <Link href="/produtos" title="Productos" className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal">Productos</Link>
-                            <Link href="/promocoes" title="Promociones" className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal">Promociones</Link>
-                            <Link href="/contato" title="Contacto" className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal">Contacto</Link>
-                            <Link href="/faq" title="FAQ" className="text-black-900 hover:text-pink-600 transition-colors duration-300 font-normal">FAQ</Link>
-                        </nav>
+                        <div className={`${isFixed ? "flex-grow mx-4" : "w-1/2 mx-8"}`}>
+                            <SearchHeaderItems initialProducts={initialProducts} />
+                        </div>
 
-                        <div className="flex gap-4 text-gray-600">
-                            <Suspense>
-                                <SearchHeaderItems initialProducts={initialProducts} />
-                            </Suspense>
-
-                            <Link href={session?.user ? '/profile' : '/login'} className="hover:text-pink-600 transition-colors duration-300" aria-label={session?.user ? "Perfil" : "Iniciar sesión"}>
-                                <User className="w-6 h-6" />
-                            </Link>
-
+                        <div className="flex items-center gap-4 text-black">
+                            <div className="gap-1 flex items-center sm:flex">
+                                {!session ? (
+                                    <>
+                                        <Link
+                                            href="/cadastro"
+                                            className="text-neutral-600 hover:text-pink-700 transition-colors flex items-center text-sm"
+                                        >
+                                            <User className="w-6 h-6 mr-1" />
+                                            Fazer cadastro
+                                        </Link>
+                                        <span className="text-neutral-400">|</span>
+                                        <Link
+                                            href="/login"
+                                            className="text-neutral-600 hover:text-pink-700 transition-colors flex items-center text-sm"
+                                        >
+                                            Fazer login
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <Link
+                                        href="/profile"
+                                        className="text-neutral-600 hover:text-pink-700 transition-colors flex items-center text-sm"
+                                    >
+                                        <User className="w-6 h-6 mr-1" />
+                                        Minha Conta
+                                    </Link>
+                                )}
+                            </div>
                             <CheckoutHeader />
                         </div>
                     </div>
+
+                    {/* Menu Principal (oculto durante scroll) */}
+                    {!isFixed && (
+                    <div className="flex justify-center py-2 border-t border-gray-200 bg-white">
+                        <nav className="flex gap-6">
+                            <Link href="/" className="flex items-center gap-1 text-neutral-600 hover:text-pink-700 transition-colors text-md font-medium">
+                                <Home className="w-5 h-5 text-neutral-600 group-hover:text-pink-700 transition-colors" />
+                                Inicio
+                            </Link>
+                            <Link href="/produtos" className="flex items-center gap-1 text-neutral-600 hover:text-pink-700 transition-colors text-md font-medium">
+                                <Package className="w-5 h-5 text-neutral-600 group-hover:text-pink-700 transition-colors" />
+                                Produtos
+                            </Link>
+                            <Link href="/promocoes" className="flex items-center gap-1 text-neutral-600 hover:text-pink-700 transition-colors text-md font-medium">
+                                <Gift className="w-5 h-5 text-neutral-600 group-hover:text-pink-700 transition-colors" />
+                                Promoções
+                            </Link>
+                            <Link href="/colecoes" className="flex items-center gap-1 text-neutral-600 hover:text-pink-700 transition-colors text-md font-medium">
+                                <Layers className="w-5 h-5 text-neutral-600 group-hover:text-pink-700 transition-colors" />
+                                Coleções
+                            </Link>
+                        </nav>
+                    </div>
+                    )}
                 </div>
             </div>
 
-            <div className={`${isFixed ? "fixed z-50 top-0 left-0 w-full" : "relative"} transition-all bg-white text-gray-900 font-bold shadow-md shadow-pink-100 md:hidden`}>
-                <div className="flex justify-between md:hidden max-w-[1400px] mx-auto w-full px-4 py-2 bg-white text-gray-900 font-bold shadow-md z-[99]">
-                    <div className="flex justify-between items-center gap-4">
-                        <Sheet open={open} onOpenChange={setOpen}>
-                            <SheetTrigger asChild>
-                                <button type="button" aria-label="Menú móvil" className="cursor-pointer hover:text-pink-600 transition-colors">
-                                    <AlignJustify className="w-6 h-6 text-gray-700" />
-                                </button>
-                            </SheetTrigger>
+            {/* MOBILE HEADER */}
+            <div className={`${isFixed ? "fixed z-10 top-0 left-0 w-full" : "relative"} transition-all bg-white text-neutral-600 font-bold shadow-md shadow-gray-900/20 md:hidden`}>
+                {/* Linha 1: Hamburger, Logo, Ícones */}
+                <div className="flex justify-between items-center w-full px-4 py-3">
+                    <Sheet open={open} onOpenChange={setOpen}>
+                        <SheetTrigger asChild>
+                            <button
+                                className="cursor-pointer text-neutral-600 hover:text-pink-700 transition-colors bg-white"
+                                aria-label="Menu mobile"
+                            >
+                                <AlignJustify className="w-6 h-6" />
+                            </button>
+                        </SheetTrigger>
 
-                            <SheetContent aria-describedby={undefined} side="left" className="bg-white p-6 z-[99]">
-                                <SheetHeader>
-                                    <SheetTitle className="text-center">
-                                        <span className={`text-5xl font-bold text-pink-600 hover:text-pink-800 transition-all z-50 ${dancingScript.className}`}>
-                                            Elegance
-                                        </span>
-                                    </SheetTitle>
-                                </SheetHeader>
-                                
-                                <div className="grid gap-6 py-4 mt-6">
-                                    <nav className="flex flex-col gap-4">
-                                        <span className="font-medium text-xl text-gray-700 pb-2 border-b border-gray-200">Menú</span>
-                                        
-                                        <Link href="/" title="Inicio" aria-label="Inicio" onClick={() => setOpen(false)} className="flex items-center gap-4 p-3 rounded-lg hover:bg-pink-50 transition-colors duration-300">
-                                            <div className="bg-pink-100 p-2 rounded-full">
-                                                <Home className="w-5 h-5 text-pink-600" />
-                                            </div>
-                                            <span className="font-medium">Inicio</span>
-                                        </Link>
-                                        
-                                        <Link href="/produtos" title="Productos" aria-label="Productos" onClick={() => setOpen(false)} className="flex items-center gap-4 p-3 rounded-lg hover:bg-pink-50 transition-colors duration-300">
-                                            <div className="bg-pink-100 p-2 rounded-full">
-                                                <Package className="w-5 h-5 text-pink-600" />
-                                            </div>
-                                            <span className="font-medium">Productos</span>
-                                        </Link>
-                                        
-                                        <Link href="/promocoes" title="Promociones" aria-label="Promociones" onClick={() => setOpen(false)} className="flex items-center gap-4 p-3 rounded-lg hover:bg-pink-50 transition-colors duration-300">
-                                            <div className="bg-pink-100 p-2 rounded-full">
-                                                <Tag className="w-5 h-5 text-pink-600" />
-                                            </div>
-                                            <span className="font-medium">Promociones</span>
-                                        </Link>
-                                        
-                                        <Link href="/contato" title="Contacto" aria-label="Contacto" onClick={() => setOpen(false)} className="flex items-center gap-4 p-3 rounded-lg hover:bg-pink-50 transition-colors duration-300">
-                                            <div className="bg-pink-100 p-2 rounded-full">
-                                                <Phone className="w-5 h-5 text-pink-600" />
-                                            </div>
-                                            <span className="font-medium">Contacto</span>
-                                        </Link>
-                                        
-                                        <Link href="/faq" title="FAQ" aria-label="FAQ" onClick={() => setOpen(false)} className="flex items-center gap-4 p-3 rounded-lg hover:bg-pink-50 transition-colors duration-300">
-                                            <div className="bg-pink-100 p-2 rounded-full">
-                                                <HelpCircle className="w-5 h-5 text-pink-600" />
-                                            </div>
-                                            <span className="font-medium">FAQ</span>
-                                        </Link>
-                                    </nav>
-                                    
-                                    {session?.user && (
-                                        <div className="mt-8 pt-6 border-t border-gray-200">
-                                            <div className="flex items-center gap-4 mb-6 p-3 bg-gray-50 rounded-lg">
-                                                <div className="bg-pink-100 p-2 rounded-full">
-                                                    <User className="w-5 h-5 text-pink-600" />
-                                                </div>
-                                                <div>
-                                                    <p className="font-medium text-gray-900">{session.user.name || "Mi cuenta"}</p>
-                                                    <p className="text-sm text-gray-500">{session.user.email || "Usuario registrado"}</p>
-                                                </div>
-                                            </div>
-                                            
-                                            <button
-                                                type="button"
-                                                onClick={() => { setOpen(false); signOut(); }}
-                                                className="flex items-center gap-4 p-3 rounded-lg w-full text-red-600 hover:bg-red-50 transition-colors duration-300 group"
-                                            >
-                                                <div className="bg-red-100 p-2 rounded-full group-hover:bg-red-200 transition-colors">
-                                                    <LogOut className="w-5 h-5" />
-                                                </div>
-                                                <span className="font-medium">Cerrar sesión</span>
-                                                <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                                                    </svg>
-                                                </div>
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            </SheetContent>
-                        </Sheet>
-                    </div>
+                        {/* Menu mobile com fundo branco e cabeçalho preto */}
+                        <SheetContent side="left" className="p-0 text-white">
+                        <SheetHeader className="bg-white p-4">
+                            <SheetTitle className="text-center">
+                                <span className="text-3xl font-bold text-pink-700 font-dancing">
+                                    Elegance
+                                </span>
+                            </SheetTitle>
+                        </SheetHeader>
+                        <div className="bg-white p-4 h-full">
+                            <nav className="flex flex-col gap-6">
+                                <span className="font-medium text-lg text-neutral-900">Menu</span>
+                                <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-3 text-neutral-600 hover:text-pink-700 transition-colors font-normal">
+                                    <Home className="w-5 h-5 text-neutral-600 group-hover:text-pink-700 transition-colors" />
+                                    <span>Início</span>
+                                </Link>
+                                <Link href="/produtos" onClick={() => setOpen(false)} className="flex items-center gap-3 text-neutral-600 hover:text-pink-700 transition-colors font-normal">
+                                    <Package className="w-5 h-5 text-neutral-600 group-hover:text-pink-700 transition-colors" />
+                                    <span>Produtos</span>
+                                </Link>
+                                <Link href="/promocoes" onClick={() => setOpen(false)} className="flex items-center gap-3 text-neutral-600 hover:text-pink-700 transition-colors font-normal">
+                                    <Gift className="w-5 h-5 text-neutral-600 group-hover:text-pink-700 transition-colors" />
+                                    <span>Promoções</span>
+                                </Link>
+                                <Link href="/colecoes" onClick={() => setOpen(false)} className="flex items-center gap-3 text-neutral-600 hover:text-pink-700 transition-colors font-normal">
+                                    <Layers className="w-5 h-5 text-neutral-600 group-hover:text-pink-700 transition-colors" />
+                                    <span>Coleções</span>
+                                </Link>
+                                {session ? (
+                                    <div className="mt-0 border-t-[1px] pt-4 border-gray-900">
+                                        <LogoutMenu />
+                                    </div>
+                                ) : null}
+                            </nav>
+                        </div>
+                        </SheetContent>
+                    </Sheet>
 
-                    <div className="flex-shrink-0">
-                        <Link href="/" className="text-4xl font-dancing text-pink-600 font-bold leading-none">
-                            Elegance
+                    <Link href="/" className="text-2xl font-bold text-pink-700 font-dancing">
+                        Elegance
+                    </Link>
+
+                    <div className="flex items-center gap-4 text-neutral-600">
+                        <Link href="/faq" className="text-neutral-600 hover:text-pink-700 transition-colors" aria-label="Notificações">
+                            <Bell className="w-5 h-5" />
                         </Link>
                     </div>
+                </div>
 
-                    <div className="flex items-center justify-center gap-4 text-gray-600">
-                        <Suspense>
-                            <SearchHeaderItems initialProducts={initialProducts} />
-                        </Suspense>
-                    </div>
+                <div className="px-4 pb-3">
+                    <SearchHeaderItems initialProducts={initialProducts} />
                 </div>
             </div>
         </>

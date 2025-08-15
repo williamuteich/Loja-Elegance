@@ -6,32 +6,31 @@ import { usePathname } from 'next/navigation';
 import { useSession } from "next-auth/react";
 
 export default function NavProfile() {
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const pathname = usePathname();
+
     const isActive = (path: string) => pathname === path;
 
-    const fullName = session?.user.name;
+    const fullName = session?.user.name || "";
 
     const getInitials = (name: string) => {
         if (!name) return '';
-        const nameParts = name.split(' ');
-        const firstName = nameParts[0];
-        const lastName = nameParts[nameParts.length - 1];
-
-        return `${firstName[0]}${lastName[0]}`.toUpperCase();
+        const parts = name.trim().split(' ');
+        if (parts.length === 1) return parts[0][0].toUpperCase();
+        return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
     };
 
-    const initials = getInitials(fullName || '');
+    const initials = getInitials(fullName);
 
     return (
-        <div className="lg:w-1/3 bg-white border border-gray-300 rounded-xl shadow-lg h-fit w-full">
+        <div className="lg:w-1/3 w-full bg-white border border-gray-300 rounded-xl shadow-lg h-fit">
             <div className="flex gap-4 items-center p-6 border-b border-gray-300">
-                <div className="flex items-center gap-3">
-                    <h1 className="text-xl font-semibold bg-pink-700 p-3 px-3 text-white rounded-2xl uppercase">{initials}</h1>
-                    <div className="flex flex-col">
-                        <p className="text-pink-700 font-bold text-lg">{session?.user.name}</p>
-                        <p className="text-sm text-gray-500">{session?.user.email}</p>
-                    </div>
+                <h1 className="text-xl font-semibold bg-pink-700 p-3 text-white rounded-2xl uppercase">
+                    {initials}
+                </h1>
+                <div className="flex flex-col">
+                    <p className="text-pink-700 font-bold text-lg">{fullName}</p>
+                    <p className="text-sm text-gray-500">{session?.user.email}</p>
                 </div>
             </div>
 
@@ -40,33 +39,43 @@ export default function NavProfile() {
                     {session?.user.role === 'admin' && (
                         <Link
                             href="/dashboard"
-                            className={`flex items-center gap-3 text-sm text-pink-700 ${isActive('/dashboard') ? 'bg-gray-100 ' : 'hover:bg-gray-100 '} cursor-pointer px-2 py-1 rounded-md`}
+                            className={`flex items-center gap-3 text-sm text-pink-700 px-2 py-1 rounded-md ${
+                                isActive('/dashboard') ? 'bg-gray-100' : 'hover:bg-gray-100'
+                            }`}
                         >
-                            <FaTachometerAlt size={20} className="text-pink-700" />
-                            <span>Dashboard</span>
+                            <FaTachometerAlt size={20} />
+                            <span>Painel</span>
                         </Link>
                     )}
 
                     <Link
                         href="/profile"
-                        className={`flex items-center gap-3 text-sm text-pink-700 ${isActive('/profile') ? 'bg-gray-100 ' : 'hover:bg-gray-100 '} cursor-pointer px-2 py-1 rounded-md`}
+                        className={`flex items-center gap-3 text-sm text-pink-700 px-2 py-1 rounded-md ${
+                            isActive('/profile') ? 'bg-gray-100' : 'hover:bg-gray-100'
+                        }`}
                     >
-                        <FaUserAlt size={20} className="text-pink-700" />
+                        <FaUserAlt size={20} />
                         <span>Perfil</span>
                     </Link>
+
                     <Link
                         href="/order"
-                        className={`flex items-center gap-3 text-sm text-pink-700 ${isActive('/order') ? 'bg-gray-100 ' : 'hover:bg-gray-100 '} cursor-pointer px-2 py-1 rounded-md`}
+                        className={`flex items-center gap-3 text-sm text-pink-700 px-2 py-1 rounded-md ${
+                            isActive('/order') ? 'bg-gray-100' : 'hover:bg-gray-100'
+                        }`}
                     >
-                        <FaListAlt size={20} className="text-pink-700" />
-                        <span>Mis Pedidos</span>
+                        <FaListAlt size={20} />
+                        <span>Meus Pedidos</span>
                     </Link>
+
                     <Link
                         href="/reset-password"
-                        className={`flex items-center gap-3 text-sm text-pink-700 ${isActive('/reset-password') ? 'bg-gray-100 ' : 'hover:bg-gray-100 '} cursor-pointer px-2 py-1 rounded-md`}
+                        className={`flex items-center gap-3 text-sm text-pink-700 px-2 py-1 rounded-md ${
+                            isActive('/reset-password') ? 'bg-gray-100' : 'hover:bg-gray-100'
+                        }`}
                     >
-                        <FaKey size={20} className="text-pink-700" />
-                        <span>Mi Contraseña</span>
+                        <FaKey size={20} />
+                        <span>Minha Senha</span>
                     </Link>
 
                     <LogoutButton />

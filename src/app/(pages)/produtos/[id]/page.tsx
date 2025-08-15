@@ -51,26 +51,26 @@ export async function generateMetadata({
     title: `${produtos.name} | Bazar Elegance - Barra do Quaraí`,
     description:
       produtos.description?.substring(0, 160) ||
-      "Producto de calidad a excelente precio en la frontera Uruguay–Brasil",
+      "Produto de qualidade a excelente preço na fronteira Uruguai–Brasil",
     keywords: [
       ...categories.map((c: any) => c.name),
       produtos.name,
-      "bazar Elegance",
+      "Bazar Elegance",
       "Barra do Quaraí",
-      "compras en la frontera",
-      "productos económicos",
-      "e‑commerce transfronterizo",
-      "frontera Uruguay Brasil",
-      "ofertas frontera",
-      "envío sin fronteras",
-      "comprar barato Uruguay",
-      "shop frontera",
+      "compras na fronteira",
+      "produtos econômicos",
+      "e-commerce transfronteiriço",
+      "fronteira Uruguai Brasil",
+      "ofertas na fronteira",
+      "envio sem fronteiras",
+      "comprar barato Uruguai",
+      "loja fronteira",
     ],
     openGraph: {
       title: `${produtos.name} | Bazar Elegance`,
       description:
         produtos.description?.substring(0, 160) ||
-        "Mejores precios en la región de frontera",
+        "Melhores preços na região da fronteira",
       url: `${process.env.NEXTAUTH_URL}/produtos/${(await params).id}`,
       siteName: "Bazar Elegance",
       images: images.map((img: any) => ({
@@ -113,7 +113,6 @@ export default async function ProdutoSlug({
     );
   }
 
-  // Buscar TODOS os produtos para os relacionados
   const responseAll = await fetch(
     `${process.env.NEXTAUTH_URL}/api/publica/product?fetchAll=true`,
     { next: { tags: ["loadProduct"], revalidate: 14400 } }
@@ -228,14 +227,12 @@ export default async function ProdutoSlug({
       <div className="py-4 md:py-8">
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="flex flex-col lg:flex-row gap-4 md:gap-6">
-            {/* Imagens do produto */}
             <div className="lg:w-1/2 p-4">
               <div className="overflow-visible">
                 <ViewImages produtos={produtos} />
               </div>
             </div>
 
-            {/* Detalhes do produto */}
             <div className="lg:w-1/2 p-4 md:p-6">
               <div className="space-y-4 md:space-y-5">
                 <div>
@@ -246,17 +243,17 @@ export default async function ProdutoSlug({
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     <div className="flex items-center gap-2">
                       <span className="text-2xl md:text-3xl font-bold text-pink-600">
-                        {new Intl.NumberFormat("es-UY", {
+                        {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
-                          currency: "UYU",
+                          currency: "BRL",
                         }).format(produtos.price)}
                       </span>
 
                       {produtos.priceOld && (
                         <span className="text-lg md:text-xl text-gray-500 line-through">
-                          {new Intl.NumberFormat("es-UY", {
+                          {new Intl.NumberFormat("pt-BR", {
                             style: "currency",
-                            currency: "UYU",
+                            currency: "BRL",
                           }).format(produtos.priceOld)}
                         </span>
                       )}
@@ -283,12 +280,10 @@ export default async function ProdutoSlug({
                     produtos={produtos}
                   />
 
-                  {/* Botões de ação - versão desktop */}
                   <div className="hidden md:block">
                     <VendaWhatsapp produto={produtos} />
                   </div>
 
-                  {/* Botão WhatsApp no mobile, logo abaixo do botão adicionar ao carrinho */}
                   <div className="md:hidden mt-4">
                     <VendaWhatsapp produto={produtos} />
                   </div>
@@ -301,9 +296,9 @@ export default async function ProdutoSlug({
                         <FaTruck className="text-pink-600" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-gray-900 text-sm md:text-base">Envío Gratis</h3>
+                        <h3 className="font-bold text-gray-900 text-sm md:text-base">Frete Grátis</h3>
                         <p className="text-xs md:text-sm text-gray-700 mt-1">
-                          Para Barra do Quaraí o compras desde $2500 pesos
+                          Para Barra do Quaraí ou compras acima de R$ 2500
                         </p>
                       </div>
                     </div>
@@ -315,9 +310,9 @@ export default async function ProdutoSlug({
                         <FaShieldAlt className="text-pink-600" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-gray-900 text-sm md:text-base">Calidad Garantizada</h3>
+                        <h3 className="font-bold text-gray-900 text-sm md:text-base">Qualidade Garantida</h3>
                         <p className="text-xs md:text-sm text-gray-700 mt-1">
-                          Productos seleccionados con alto estándar
+                          Produtos selecionados com alto padrão de qualidade
                         </p>
                       </div>
                     </div>
@@ -330,7 +325,7 @@ export default async function ProdutoSlug({
                       <AccordionTrigger className="px-3 py-2 md:px-4 md:py-3 hover:no-underline">
                         <div className="flex items-center gap-2 md:gap-3 font-medium text-gray-900 text-sm md:text-base">
                           <FaFileAlt className="text-pink-600" />
-                          Descripción del producto
+                          Descrição do produto
                         </div>
                       </AccordionTrigger>
                       <AccordionContent className="px-3 md:px-4 pb-3 md:pb-4">

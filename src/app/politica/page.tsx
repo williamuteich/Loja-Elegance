@@ -1,73 +1,84 @@
-import Link from "next/link";
 import { FaLock, FaFileContract, FaCookieBite } from "react-icons/fa";
 
 export default function PoliticaPage() {
   return (
     <main className="min-h-screen bg-gray-50 text-gray-800">
-      {/* Cabeçalho da página */}
       <header className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-10">
           <h1 className="text-3xl md:text-4xl font-bold text-center">
-            Política de Privacidad, Términos de Uso y Cookies
+            Política de Privacidade, Termos de Uso e Cookies
           </h1>
         </div>
       </header>
 
-      {/* Conteúdo principal */}
       <section className="container mx-auto px-4 py-12 space-y-16 max-w-4xl">
-        {/* Seção 1 – Política de Privacidade */}
+        
+        {/* Política de Privacidade */}
         <div className="space-y-6">
           <div className="flex items-center gap-3">
             <FaLock className="text-blue-500 w-6 h-6" />
-            <h2 className="text-2xl font-semibold">Política de Privacidad</h2>
+            <h2 className="text-2xl font-semibold">Política de Privacidade</h2>
           </div>
           <div className="space-y-4 text-sm leading-6">
             <p>
-              Recopilamos los siguientes datos cuando creas una cuenta:
-              <strong> nombre completo, correo electrónico, contraseña, teléfono</strong> y
-              <em> dirección (opcional)</em>.
+              Coletamos os seguintes dados quando você cria uma conta:
+              <strong> nome completo, e-mail, senha, telefone</strong> e
+              <em> endereço (opcional)</em>.
             </p>
             <p>
-              Utilizamos esta información exclusivamente para el inicio de sesión,
-              la personalización de tu experiencia y la comunicación contigo.
+              Utilizamos essas informações exclusivamente para login,
+              personalização da sua experiência e comunicação com você.
             </p>
             <p>
-              Nuestro sitio <strong>no procesa pagos</strong>; al finalizar la
-              compra, serás redirigido a un canal externo (por ejemplo,
-              WhatsApp) para completar el pago.
+              Nosso site aceita pagamentos via <strong>PIX, cartão de crédito e cartão de débito</strong>,
+              processados com segurança por parceiros de pagamento certificados.
             </p>
             <p>
-              Nunca vendemos ni compartimos tus datos con terceros y
-              almacenamos todo con <strong>seguridad y cifrado</strong>.
+              Não armazenamos os dados do seu cartão de crédito ou débito. Essas
+              informações são enviadas de forma criptografada diretamente para o
+              processador de pagamentos.
+            </p>
+            <p>
+              Também aceitamos pedidos realizados via <strong>WhatsApp</strong>,
+              onde o atendimento e as instruções de pagamento serão fornecidos
+              diretamente por nossa equipe.
+            </p>
+            <p>
+              Nunca vendemos nem compartilhamos seus dados com terceiros e
+              armazenamos tudo com <strong>segurança e criptografia</strong>.
             </p>
           </div>
         </div>
 
-        {/* Seção 2 – Termos de Uso */}
+        {/* Termos de Uso */}
         <div className="space-y-6">
           <div className="flex items-center gap-3">
             <FaFileContract className="text-green-500 w-6 h-6" />
-            <h2 className="text-2xl font-semibold">Términos de Uso</h2>
+            <h2 className="text-2xl font-semibold">Termos de Uso</h2>
           </div>
           <ul className="list-disc list-inside space-y-2 text-sm leading-6">
-            <li>Debes proporcionar información veraz al registrarte.</li>
-            <li>La contraseña es personal e intransferible; mantenla en secreto.</li>
+            <li>Você deve fornecer informações verdadeiras ao se cadastrar.</li>
+            <li>A senha é pessoal e intransferível; mantenha-a em sigilo.</li>
             <li>
-              Está prohibido cualquier uso indebido del sitio que pueda perjudicar a
-              la tienda o a otros usuarios.
+              É proibido qualquer uso indevido do site que possa prejudicar a
+              loja ou outros usuários.
             </li>
             <li>
-              Todo el contenido (imágenes, textos) pertenece a Elegance y no puede
-              ser copiado sin autorización.
+              Todo o conteúdo (imagens, textos) pertence à Elegance e não pode
+              ser copiado sem autorização.
             </li>
             <li>
-              Los pagos se completan fuera de este sitio (por ejemplo, vía
-              WhatsApp).
+              Os pagamentos são processados por intermediadores confiáveis, e
+              seus dados financeiros não são armazenados por nós.
+            </li>
+            <li>
+              Aceitamos PIX, cartão de crédito, cartão de débito e pedidos via
+              WhatsApp.
             </li>
           </ul>
         </div>
 
-        {/* Seção 3 – Política de Cookies */}
+        {/* Política de Cookies */}
         <div className="space-y-6">
           <div className="flex items-center gap-3">
             <FaCookieBite className="text-orange-500 w-6 h-6" />
@@ -75,16 +86,16 @@ export default function PoliticaPage() {
           </div>
           <div className="space-y-4 text-sm leading-6">
             <p>
-              Las cookies son pequeños archivos guardados en tu dispositivo que nos
-              ayudan a recordarte y mejorar tu experiencia.
+              Cookies são pequenos arquivos salvos no seu dispositivo que nos
+              ajudam a lembrar de você e melhorar sua experiência.
             </p>
             <p>
-              Utilizamos <strong>cookies esenciales</strong> (login, carrito) y
-              <strong> cookies opcionales</strong> (analytics).
+              Utilizamos <strong>cookies essenciais</strong> (login, carrinho) e
+              <strong> cookies opcionais</strong> (análises/estatísticas).
             </p>
             <p>
-              Al navegar por el sitio aceptas el uso de cookies. Puedes
-              cambiar tus preferencias en cualquier momento.
+              Ao navegar pelo site, você aceita o uso de cookies. É possível
+              alterar suas preferências a qualquer momento.
             </p>
           </div>
         </div>

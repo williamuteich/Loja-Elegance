@@ -36,24 +36,24 @@ export default function ProdutosList(props: ProdutosListProps) {
             <FaSlidersH size={16} /> Filtros
           </h3>
           <div>
-            <label className="text-sm font-medium text-neutral-700 block mb-2">Categoría</label>
+            <label className="text-sm font-medium text-neutral-700 block mb-2">Categoria</label>
             <select name="categoria" defaultValue={categoria} className="w-full p-2 border rounded-md bg-neutral-200">
-              <option value="">Todas las categorías</option>
+              <option value="">Todas as categorias</option>
               {categorias.map((cat) => (
                 <option key={cat.id} value={cat.name}>{cat.name}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="text-sm font-medium text-neutral-700 block mb-2">Precio mínimo</label>
+            <label className="text-sm font-medium text-neutral-700 block mb-2">Preço mínimo</label>
             <input type="number" name="precoMin" defaultValue={precoMin ?? ""} className="w-full p-2 border rounded-md bg-neutral-200" />
           </div>
           <div>
-            <label className="text-sm font-medium text-neutral-700 block mb-2">Precio máximo</label>
+            <label className="text-sm font-medium text-neutral-700 block mb-2">Preço máximo</label>
             <input type="number" name="precoMax" defaultValue={precoMax ?? ""} className="w-full p-2 border rounded-md bg-neutral-200" />
           </div>
           <div>
-            <label className="text-sm font-medium text-neutral-700 block mb-2">Buscar producto</label>
+            <label className="text-sm font-medium text-neutral-700 block mb-2">Buscar produto</label>
             <input type="text" name="search" defaultValue={search} className="w-full p-2 border rounded-md bg-neutral-200" />
           </div>
           <button type="submit" className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg text-lg shadow mt-4 transition-all">
@@ -68,24 +68,24 @@ export default function ProdutosList(props: ProdutosListProps) {
             <FaSlidersH size={16} /> Filtros
           </h3>
           <div>
-            <label className="text-sm font-medium text-neutral-700 block mb-2">Categoría</label>
+            <label className="text-sm font-medium text-neutral-700 block mb-2">Categoria</label>
             <select name="categoria" defaultValue={categoria} className="w-full p-2 border rounded-md bg-neutral-200">
-              <option value="">Todas las categorías</option>
+              <option value="">Todas as categorias</option>
               {categorias.map((cat) => (
                 <option key={cat.id} value={cat.name}>{cat.name}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="text-sm font-medium text-neutral-700 block mb-2">Precio mínimo</label>
+            <label className="text-sm font-medium text-neutral-700 block mb-2">Preço mínimo</label>
             <input type="number" name="precoMin" defaultValue={precoMin ?? ""} className="w-full p-2 border rounded-md bg-neutral-200" />
           </div>
           <div>
-            <label className="text-sm font-medium text-neutral-700 block mb-2">Precio máximo</label>
+            <label className="text-sm font-medium text-neutral-700 block mb-2">Preço máximo</label>
             <input type="number" name="precoMax" defaultValue={precoMax ?? ""} className="w-full p-2 border rounded-md bg-neutral-200" />
           </div>
           <div>
-            <label className="text-sm font-medium text-neutral-700 block mb-2">Buscar producto</label>
+            <label className="text-sm font-medium text-neutral-700 block mb-2">Buscar produto</label>
             <input type="text" name="search" defaultValue={search} className="w-full p-2 border rounded-md bg-neutral-200" />
           </div>
           <button type="submit" className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg text-lg shadow mt-4 transition-all">
@@ -96,14 +96,14 @@ export default function ProdutosList(props: ProdutosListProps) {
             className="w-full block mt-2 text-center bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg text-lg shadow transition-all"
             style={{ textDecoration: 'none' }}
           >
-            Limpiar Filtros
+            Limpar filtros
           </a>
         </form>
       </div>
 
       <div className="w-full md:w-3/4 md:pl-6">
         <h2 className="text-xl sm:text-2xl uppercase font-extrabold text-pink-700 mb-4 sm:mb-6 text-center md:text-left">
-          Catálogo de Productos ({totalRecords})
+          Catálogo de Produtos ({totalRecords})
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
           {produtos.map((produto, index) => {
@@ -158,16 +158,16 @@ export default function ProdutosList(props: ProdutosListProps) {
 
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-lg font-bold text-rose-700">
-                        {new Intl.NumberFormat("es-UY", {
+                        {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
-                          currency: "UYU"
+                          currency: "BRL"
                         }).format(produto.price)}
                       </span>
                       {produto.priceOld && (
                         <span className="text-xs text-gray-500 line-through">
-                          {new Intl.NumberFormat("es-UY", {
+                          {new Intl.NumberFormat("pt-BR", {
                             style: "currency",
-                            currency: "UYU"
+                            currency: "BRL"
                           }).format(produto.priceOld)}
                         </span>
                       )}
@@ -189,10 +189,10 @@ export default function ProdutosList(props: ProdutosListProps) {
                             : "bg-red-100 text-red-800"
                         }`}>
                         {totalEstoque > 1
-                          ? `${totalEstoque} Disponibles`
+                          ? `${totalEstoque} Disponíveis`
                           : totalEstoque === 1
-                            ? "Última Unidad"
-                            : "Agotado"}
+                            ? "Última unidade"
+                            : "Esgotado"}
                       </div>
                     </div>
                   </Link>
@@ -200,7 +200,7 @@ export default function ProdutosList(props: ProdutosListProps) {
                   <div className="mt-4">
                     <Link href={`/produtos/${produto.id}`}>
                       <button className="w-full py-2.5 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white text-sm font-semibold rounded-lg transition-all shadow-md hover:shadow-lg">
-                        Ver detalles
+                        Ver Detalhes
                       </button>
                     </Link>
                   </div>
@@ -221,7 +221,7 @@ export default function ProdutosList(props: ProdutosListProps) {
           </span>
           <Link href={buildUrl({ search, categoria, precoMin, precoMax, page: paginaAtual + 1 })}>
             <button disabled={paginaAtual === totalPaginas} className="px-4 py-2 bg-pink-600 text-white rounded-md disabled:opacity-50">
-              Siguiente
+              Próxima
             </button>
           </Link>
         </div>

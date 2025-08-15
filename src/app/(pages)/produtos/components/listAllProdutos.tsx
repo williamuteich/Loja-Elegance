@@ -22,7 +22,7 @@ export default async function ListAllProdutos() {
 
     const { produtos }: { produtos: Produto[] } = await response.json();
 
-    const produtosAleatorios = produtos.filter((produto) =>
+    const produtosDisponiveis = produtos.filter((produto) =>
         Array.isArray(produto.variants) &&
         produto.variants.some(
             (variant: any) =>
@@ -30,10 +30,10 @@ export default async function ListAllProdutos() {
         )
     );
 
-    if (produtosAleatorios.length === 0) {
+    if (produtosDisponiveis.length === 0) {
         return (
             <div className="py-10 px-4 max-w-7xl mx-auto text-center text-gray-500">
-                No se encontró ningún producto
+                Nenhum produto encontrado
             </div>
         );
     }
@@ -42,12 +42,12 @@ export default async function ListAllProdutos() {
         <div className="mx-auto py-10 px-4 max-w-7xl">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl md:text-2xl relative uppercase font-extrabold text-pink-700">
-                    Nuestros Productos
+                    Nossos Produtos
                 </h2>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {produtosAleatorios.map((produto: Produto) => {
+                {produtosDisponiveis.map((produto: Produto) => {
                     const totalEstoque = produto.variants.reduce(
                         (total: number, variant: VariantProps) =>
                             total +
@@ -69,7 +69,7 @@ export default async function ListAllProdutos() {
                         >
                             {produto.onSale && percentualDesconto > 0 && (
                                 <div className="absolute top-3 left-3 z-[5]">
-                                    <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold py-1 px-2 text-sm rounded-full shadow-md ">
+                                    <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold py-1 px-2 text-sm rounded-full shadow-md">
                                         -{percentualDesconto}% OFF
                                     </div>
                                 </div>
@@ -101,10 +101,6 @@ export default async function ListAllProdutos() {
                                     href={`/produtos/${produto.id}`}
                                     className="flex flex-col gap-2 flex-grow"
                                 >
-                                    {/*<h3 className="font-bold text-gray-800 line-clamp-2 text-sm sm:text-base group-hover:text-rose-600 transition-colors">
-                                        {produto.name}
-                                    </h3>*/}
-
                                     <h3 className="font-bold text-sm sm:text-base line-clamp-2 text-gray-800 relative overflow-hidden">
                                         <span className="relative z-[5] group-hover:text-white transition-colors duration-300">
                                             {produto.name}
@@ -115,16 +111,16 @@ export default async function ListAllProdutos() {
                                     <div className="flex flex-col gap-1">
                                         <div className="flex items-center gap-2">
                                             <span className="text-lg font-bold text-rose-700">
-                                                {new Intl.NumberFormat("es-UY", {
+                                                {new Intl.NumberFormat("pt-BR", {
                                                     style: "currency",
-                                                    currency: "UYU",
+                                                    currency: "BRL",
                                                 }).format(produto.price)}
                                             </span>
                                             {produto.priceOld && (
                                                 <span className="text-xs text-gray-500 line-through">
-                                                    {new Intl.NumberFormat("es-UY", {
+                                                    {new Intl.NumberFormat("pt-BR", {
                                                         style: "currency",
-                                                        currency: "UYU",
+                                                        currency: "BRL",
                                                     }).format(produto.priceOld)}
                                                 </span>
                                             )}
@@ -150,10 +146,10 @@ export default async function ListAllProdutos() {
                                                 }`}
                                         >
                                             {totalEstoque > 1
-                                                ? `${totalEstoque} Disponibles`
+                                                ? `${totalEstoque} Disponíveis`
                                                 : totalEstoque === 1
-                                                    ? "Última Unidad"
-                                                    : "Agotado"}
+                                                    ? "Última Unidade"
+                                                    : "Esgotado"}
                                         </div>
                                     </div>
                                 </Link>
@@ -161,7 +157,7 @@ export default async function ListAllProdutos() {
                                 <div className="mt-4">
                                     <Link href={`/produtos/${produto.id}`}>
                                         <button className="w-full py-2.5 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white text-sm font-semibold rounded-lg transition-all shadow-md hover:shadow-lg">
-                                            Ver detalles
+                                            Ver Detalhes
                                         </button>
                                     </Link>
                                 </div>
@@ -174,7 +170,7 @@ export default async function ListAllProdutos() {
             <div className="mt-12 text-end">
                 <Link href="/produtos">
                     <button className="inline-flex items-center px-6 py-3 bg-gray-800 text-white font-medium rounded-lg hover:bg-pink-700 transition-colors shadow-md">
-                        Ver todos los productos
+                        Ver Todos os Produtos
                     </button>
                 </Link>
             </div>

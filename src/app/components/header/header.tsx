@@ -10,7 +10,6 @@ async function getProducts() {
     });
 
     if (!res.ok) {
-
       let errorBody = '';
       try {
         errorBody = await res.text();
@@ -22,7 +21,6 @@ async function getProducts() {
     return res.json();
 
   } catch (error) {
-
     console.error('Network or fetch error in getProducts:', error);
     return { produtos: [] };
   }

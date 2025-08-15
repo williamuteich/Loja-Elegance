@@ -10,10 +10,8 @@ import {
   FaYoutube,
   FaLinkedinIn,
   FaTelegramPlane,
-  FaBarcode,
   FaQrcode,
   FaCreditCard,
-  FaMoneyBillWave,
 } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import { LogoutMenu } from "../logoutAccount";
@@ -76,7 +74,7 @@ export default function Footer() {
             className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl transition-all border border-green-500"
           >
             <FaWhatsapp className="w-6 h-6 text-green-600" />
-            <span className="text-sm text-green-700 font-medium">¿Necesitás ayuda?</span>
+            <span className="text-sm text-green-700 font-medium">Precisa de ajuda?</span>
           </Link>
         </div>
       )}
@@ -107,36 +105,36 @@ export default function Footer() {
 
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-10 max-[400px]:flex max-[400px]:flex-col max-[400px]:items-center max-[400px]:text-center">
             <div>
-              <h3 className="font-semibold mb-4">Explorar la tienda</h3>
+              <h3 className="font-semibold mb-4">Explorar a loja</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/" className="hover:underline">Inicio</Link></li>
-                <li><Link href="/produtos" className="hover:underline">Productos</Link></li>
-                <li><Link href="/promocoes" className="hover:underline">Promociones</Link></li>
-                <li><Link href="/sobre" className="hover:underline">Sobre nosotros</Link></li>
-                <li><Link href="/contato" className="hover:underline">Contáctanos</Link></li>
-                <li><Link href="/faq" className="hover:underline">Preguntas frecuentes</Link></li>
-                <li><Link href="/politica" className="hover:underline">Política &amp; Términos</Link></li>
+                <li><Link href="/" className="hover:underline">Início</Link></li>
+                <li><Link href="/produtos" className="hover:underline">Produtos</Link></li>
+                <li><Link href="/promocoes" className="hover:underline">Promoções</Link></li>
+                <li><Link href="/sobre" className="hover:underline">Sobre nós</Link></li>
+                <li><Link href="/contato" className="hover:underline">Contato</Link></li>
+                <li><Link href="/faq" className="hover:underline">Perguntas frequentes</Link></li>
+                <li><Link href="/politica" className="hover:underline">Política &amp; Termos</Link></li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Nuestra calidad</h3>
+              <h3 className="font-semibold mb-4">Nossa qualidade</h3>
               <p className="text-sm">
-                Trabajamos con los mejores proveedores para garantizar productos
-                de alta calidad y durabilidad, siempre enfocados en la satisfacción
-                del cliente.
+                Trabalhamos com os melhores fornecedores para garantir produtos
+                de alta qualidade e durabilidade, sempre focados na satisfação
+                do cliente.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Mi cuenta</h3>
+              <h3 className="font-semibold mb-4">Minha conta</h3>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link
                     href={session?.user ? "/profile" : "/login"}
                     className="hover:underline"
                   >
-                    {session?.user ? "Mi perfil" : "Ingresar"}
+                    {session?.user ? "Meu perfil" : "Entrar"}
                   </Link>
                 </li>
                 {session?.user ? (
@@ -147,43 +145,39 @@ export default function Footer() {
                   </li>
                 ) : (
                   <>
-                    <li><Link href="/cadastro" className="hover:underline">Crear cuenta</Link></li>
-                    <li><Link href="/resetPwd" className="hover:underline">Olvidé mi contraseña</Link></li>
+                    <li><Link href="/cadastro" className="hover:underline">Criar conta</Link></li>
+                    <li><Link href="/resetPwd" className="hover:underline">Esqueci minha senha</Link></li>
                   </>
                 )}
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Contacto</h3>
+              <h3 className="font-semibold mb-4">Contato</h3>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link href="mailto:contato@elegance.com.br" className="hover:underline">
                     elegancers.barra@gmail.com
                   </Link>
                 </li>
-                <li>Atención de lunes a sábado, de 09:00 a 18:00 horas</li>
+                <li>Atendimento de segunda a sábado, das 09:00 às 18:00</li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4 text-white">Formas de pago</h3>
+              <h3 className="font-semibold mb-4 text-white">Formas de pagamento</h3>
               <div className="flex flex-wrap gap-4 text-white">
                 <div className="flex items-center gap-2">
-                  <FaMoneyBillWave className="w-6 h-6" />
-                  <span className="text-sm">Efectivo</span>
+                  <FaCreditCard className="w-6 h-6" />
+                  <span className="text-sm">Crédito</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FaCreditCard className="w-6 h-6" />
-                  <span className="text-sm">Tarjeta</span>
+                  <span className="text-sm">Débito</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FaQrcode className="w-6 h-6" />
                   <span className="text-sm">Pix</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <FaBarcode className="w-6 h-6" />
-                  <span className="text-sm">Transferencia bancaria</span>
                 </div>
               </div>
             </div>
@@ -191,7 +185,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 border-t border-gray-700 pt-6 flex flex-col sm:flex-row justify-between items-center text-center">
-          <p className="text-sm">© 2024 | Elegance | Todos los derechos reservados.</p>
+          <p className="text-sm">© 2024 | Elegance | Todos os direitos reservados.</p>
           <Link
             href="https://wa.me/5196615024"
             target="_blank"

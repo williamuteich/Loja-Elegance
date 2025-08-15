@@ -31,7 +31,6 @@ export default function Form(props: FormProps) {
                 autoClose: 5000,
             })
         };
-
     }, [state.success, state.error, state.confirm]);
 
     return (
@@ -40,13 +39,13 @@ export default function Form(props: FormProps) {
             {state.confirm && (
                 <div className="flex flex-col items-center justify-center p-8 bg-white border border-pink-900 rounded-lg shadow-lg mt-6">
                     <p className="text-lg text-gray-700 mb-4 text-center">
-                        Ahora, para completar el proceso, por favor revisá tu correo electrónico y confirmá tu identidad.
+                        Agora, para completar o processo, por favor, verifique seu e-mail e confirme sua identidade.
                     </p>
                     <p className="font-semibold text-pink-900 text-lg text-center">
-                        Te enviamos un correo de confirmación. No te olvides de revisar tu bandeja de entrada.
+                        Enviamos um e-mail de confirmação. Não esqueça de conferir sua caixa de entrada.
                     </p>
                     <div className="mt-6 text-center">
-                        <p className="text-sm text-gray-500">Si no recibiste el correo, revisá tu carpeta de spam.</p>
+                        <p className="text-sm text-gray-500">Se não recebeu o e-mail, verifique sua caixa de spam.</p>
                     </div>
                 </div>
             )}

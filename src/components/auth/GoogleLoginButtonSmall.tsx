@@ -18,12 +18,12 @@ export default function GoogleLoginButtonSmall({ callbackUrl = "/profile", class
     try {
       const result = await signIn("google", { callbackUrl });
       if (result?.error) {
-        toast.error("Error al iniciar sesión con Google");
+        toast.error("Error ao iniciar sessão com Google");
       } else if (result?.ok) {
         window.location.href = callbackUrl;
       }
     } catch (error) {
-      toast.error("Error al iniciar sesión con Google");
+      toast.error("Error ao iniciar sessão com Google");
     } finally {
       setLoading(false);
     }
@@ -32,7 +32,7 @@ export default function GoogleLoginButtonSmall({ callbackUrl = "/profile", class
   return (
     <div>
       <p className="mb-2 text-sm font-semibold text-pink-700 text-center">
-        Puedes iniciar sesión o crear una cuenta haciendo clic en el botón de Google abajo
+        pode iniciar sessão ou criar uma conta clicando no botão <span className="font-bold text-pink-800">Google</span> abaixo
       </p>
       <button
         onClick={handleGoogleLogin}

@@ -9,12 +9,12 @@ export default function Produtos({
   titulo,
   isDestaque,
   categoriaProduct,
-  produtos, // Recebendo produtos como prop
+  produtos,
 }: {
   titulo: string;
   isDestaque: boolean;
   categoriaProduct?: Produto[];
-  produtos: Produto[]; // Adicionando a prop produtos
+  produtos: Produto[];
 }) {
 
   let produtosFiltrados: Produto[] = [];
@@ -49,15 +49,15 @@ export default function Produtos({
     }
   } else {
     produtosFiltrados = isDestaque
-      ? produtos.filter((produto: Produto) => 
-          produto.destaque === true && 
-          produto.variants.some((variant: any) => variant.availableStock > 0) && 
-          produto.active
-        )
-      : produtos.filter((produto: Produto) => 
-          produto.variants.some((variant: any) => variant.availableStock > 0) && 
-          produto.active
-        );
+      ? produtos.filter((produto: Produto) =>
+        produto.destaque === true &&
+        produto.variants.some((variant: any) => variant.availableStock > 0) &&
+        produto.active
+      )
+      : produtos.filter((produto: Produto) =>
+        produto.variants.some((variant: any) => variant.availableStock > 0) &&
+        produto.active
+      );
   }
 
   if (produtosFiltrados.length === 0) return null;
@@ -69,7 +69,7 @@ export default function Produtos({
 
         <div className="flex items-center gap-2">
           <Link href="/produtos" className="hidden sm:block text-pink-700 font-extrabold hover:underline mr-24">
-            Ver Todos
+            Ver todos
           </Link>
         </div>
       </div>
@@ -101,7 +101,7 @@ export default function Produtos({
                     {produto.onSale && percentualDesconto > 0 && (
                       <div className="absolute top-3 left-3 z-[5]">
                         <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold py-1 px-2 text-sm rounded-full shadow-md">
-                          -{percentualDesconto}% OFF
+                          -{percentualDesconto}% DESCONTO
                         </div>
                       </div>
                     )}
@@ -138,17 +138,16 @@ export default function Produtos({
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-2">
                             <span className="text-lg font-bold text-rose-700">
-                              {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(produto.price)}
+                              {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.price)}
                             </span>
                             {produto.priceOld && (
                               <span className="text-xs text-gray-500 line-through">
-                                {new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" }).format(produto.priceOld)}
+                                {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(produto.priceOld)}
                               </span>
                             )}
                           </div>
                         </div>
 
-                        {/* Descrição simplificada */}
                         {produto.description && (
                           <p className="text-gray-600 text-xs line-clamp-2">
                             {produto.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()}
@@ -157,19 +156,18 @@ export default function Produtos({
 
                         <div className="mt-auto">
                           <div
-                            className={`text-xs font-semibold px-2.5 rounded-full w-max ${
-                              totalEstoque > 0
+                            className={`text-xs font-semibold px-2.5 rounded-full w-max ${totalEstoque > 0
                                 ? totalEstoque > 1
                                   ? "bg-green-100 text-green-800"
                                   : "bg-red-100 text-red-800"
                                 : "bg-red-100 text-red-800"
-                            }`}
+                              }`}
                           >
                             {totalEstoque > 0
                               ? totalEstoque > 1
-                                ? `${totalEstoque} Disponibles`
-                                : `Última Unidad`
-                              : "No Disponible"}
+                                ? `${totalEstoque} disponíveis`
+                                : `Última unidade`
+                              : "Indisponível"}
                           </div>
                         </div>
                       </Link>
@@ -177,7 +175,7 @@ export default function Produtos({
                       <div className="mt-4">
                         <Link href={`/produtos/${produto.id}`}>
                           <button className="w-full py-2.5 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white text-sm font-semibold rounded-lg transition-all shadow-md hover:shadow-lg">
-                            Ver detalles
+                            Ver Detalhes
                           </button>
                         </Link>
                       </div>
@@ -190,5 +188,5 @@ export default function Produtos({
         </Carousel>
       </div>
     </div>
-  );
+  )
 }
