@@ -2,17 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { updateAddress } from "@/app/actions/updateAddresses";
-
-type Endereco = {
-  id: string;
-  cep: string;
-  logradouro: string;
-  numero: string;
-  bairro: string;
-  cidade: string;
-  estado: string;
-  complemento?: string;
-};
+import { Endereco } from "@/utils/types/endereco";
 
 type UpdateAddressesProps = {
   enderecos: Endereco[];
@@ -25,7 +15,7 @@ export default function UpdateAddresses({ enderecos, userID }: UpdateAddressesPr
       ...e,
       loading: false,
       error: "",
-      cepValido: true, // para checar se o CEP é válido
+      cepValido: true, 
     }))
   );
   const [globalLoading, setGlobalLoading] = useState(false);
@@ -113,13 +103,6 @@ export default function UpdateAddresses({ enderecos, userID }: UpdateAddressesPr
     );
   };
 
-  useEffect(() => {
-    // Verifica se todos os endereços possuem IDs válidos
-    const invalidAddresses = formStates.filter((address) => !address.id);
-    if (invalidAddresses.length > 0) {
-      console.error("Alguns endereços estão sem ID válido:", invalidAddresses);
-    }
-  }, [formStates]);
 
   const handleSubmit = async (id: string) => {
     const address = formStates.find((f) => f.id === id);

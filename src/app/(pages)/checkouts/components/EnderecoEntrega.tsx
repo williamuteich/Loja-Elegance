@@ -1,13 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { MapPin, User, Check, Truck, Store, Clock } from "lucide-react";
 import Link from "next/link";
+import { useAddress } from '@/context/addressContext';
 
-export function FormaEntrega({ endereco }: { endereco: any }) {
-  console.log("Endereço recebido:", JSON.stringify(endereco, null, 2));
+export function EnderecoEntrega() {
   const [selected, setSelected] = useState<"endereco" | "retirada">("endereco");
+  const { address, setAddress } = useAddress();
+
+  const formatEndereco = (end: any) => {
+    if (!end) return "";
+    return `${end.logradouro}, ${end.numero}${end.complemento ? ` - ${end.complemento}` : ""}, ${end.bairro}, ${end.cidade} - ${end.estado}, ${end.cep}`;
+  };
 
   return (
     <form className="space-y-5 w-full mx-auto">
@@ -43,7 +48,7 @@ export function FormaEntrega({ endereco }: { endereco: any }) {
                     <User className="w-4 h-4 text-gray-500 mt-0.5" />
                     <div>
                       <p className="text-gray-600">Endereço:</p>
-                      <p className="text-gray-800 font-medium">Av. Paulista, 1578 - Bela Vista, São Paulo - SP, 01310-200</p>
+                      <p className="text-gray-800 font-medium">{formatEndereco(address)}</p>
                     </div>
                   </div>
                 </div>
@@ -53,7 +58,7 @@ export function FormaEntrega({ endereco }: { endereco: any }) {
             <div className="border-t border-gray-200 px-5 py-3 bg-gray-50">
               <Link href="/checkouts/endereco" className="text-sm font-bold text-blue-500 hover:text-blue-700 flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-neutral-700" />
-                  Alterar ou escolher outro Endereço
+                Alterar ou escolher outro Endereço
               </Link>
             </div>
           </div>
@@ -108,7 +113,11 @@ export function FormaEntrega({ endereco }: { endereco: any }) {
       </div>
 
       <div className="pt-2 text-end">
-        <Button className="bg-gray-700 hover:bg-gray-800 text-white py-6 text-base font-medium rounded-xl">Continuar</Button>
+        {selected === "retirada" ? (
+          <Link href="/checkouts/confirmacao" className="bg-gray-700 hover:bg-gray-800 text-white py-4 px-5 text-base font-medium rounded-xl">Continuar</Link>
+        ) : (
+          <Link href="/checkouts/confirmacao" className="bg-gray-700 hover:bg-gray-800 text-white py-4 px-5 text-base font-medium rounded-xl">Continuar</Link>
+        )}
       </div>
     </form>
   );

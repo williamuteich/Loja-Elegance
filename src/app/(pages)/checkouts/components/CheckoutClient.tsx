@@ -1,13 +1,15 @@
 "use client";
 
-import { FormaEntrega } from "./FormaEntrega";
 import { ResumoCompra } from "./ResumoCompra";
 import { useCart } from "@/context/cartContext";
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { EnderecoEntrega } from "./EnderecoEntrega";
+import { useAddress } from '@/context/addressContext';
 
-export function CheckoutClient({ endereco } : { endereco: any }) {
+export function CheckoutClient({ userID }: { userID: string }) {
     const { cart, isHydrated } = useCart();
+    const { address, setAddress, fetchAddress } = useAddress();
     const router = useRouter();
 
     useEffect(() => {
@@ -17,13 +19,19 @@ export function CheckoutClient({ endereco } : { endereco: any }) {
         }
     }, [cart.length, isHydrated, router]);
 
+    useEffect(() => {
+        if (userID && !address) {
+            fetchAddress(userID);
+        }
+    }, [userID, address, fetchAddress]);
+
     if (!isHydrated) return null;
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row gap-8">
                 <div className="flex-1">
-                    <FormaEntrega endereco={endereco} />
+                    <EnderecoEntrega />
                 </div>
                 <div className="lg:w-80 lg:flex-shrink-0">
                     <ResumoCompra />
