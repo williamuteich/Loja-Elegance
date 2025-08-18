@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { updateAddress } from "@/app/actions/updateAddresses";
 import { Endereco } from "@/utils/types/endereco";
+import { MapPin, Home, Hash, Building2, Landmark, Navigation2, FileText, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 
 type UpdateAddressesProps = {
   enderecos: Endereco[];
@@ -15,7 +16,7 @@ export default function UpdateAddresses({ enderecos, userID }: UpdateAddressesPr
       ...e,
       loading: false,
       error: "",
-      cepValido: true, 
+      cepValido: true,
     }))
   );
   const [globalLoading, setGlobalLoading] = useState(false);
@@ -36,7 +37,6 @@ export default function UpdateAddresses({ enderecos, userID }: UpdateAddressesPr
     );
     handleChange(id, "cep", masked);
 
-    // se o CEP tiver 8 dígitos, tenta buscar
     if (cepValue.length === 8) {
       handleCepBlur(id);
     } else {
@@ -103,13 +103,9 @@ export default function UpdateAddresses({ enderecos, userID }: UpdateAddressesPr
     );
   };
 
-
   const handleSubmit = async (id: string) => {
     const address = formStates.find((f) => f.id === id);
-    if (!address) {
-      console.error("Endereço não encontrado para o ID:", id);
-      return;
-    }
+    if (!address) return;
 
     if (!isValid(address)) {
       setFormStates((prev) =>
@@ -117,15 +113,6 @@ export default function UpdateAddresses({ enderecos, userID }: UpdateAddressesPr
           f.id === id
             ? { ...f, error: "Por favor, preencha todos os campos corretamente." }
             : f
-        )
-      );
-      return;
-    }
-
-    if (!address.id) {
-      setFormStates((prev) =>
-        prev.map((f) =>
-          f.id === id ? { ...f, error: "Endereço inválido. ID ausente." } : f
         )
       );
       return;
@@ -155,7 +142,7 @@ export default function UpdateAddresses({ enderecos, userID }: UpdateAddressesPr
               : f
           )
         );
-        window.location.href = "/checkout"; // Redireciona para /checkouts após sucesso
+        window.location.href = "/checkout";
       } else {
         setFormStates((prev) =>
           prev.map((f) =>
@@ -165,8 +152,7 @@ export default function UpdateAddresses({ enderecos, userID }: UpdateAddressesPr
           )
         );
       }
-    } catch (error) {
-      console.error("Erro ao atualizar o endereço:", error);
+    } catch {
       setFormStates((prev) =>
         prev.map((f) =>
           f.id === id
@@ -180,106 +166,95 @@ export default function UpdateAddresses({ enderecos, userID }: UpdateAddressesPr
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {globalLoading && <p className="text-center text-blue-600">Carregando...</p>}
-      {formStates.map((address, index) => (
+      {formStates.map((address) => (
         <div
-          key={`${address.id}-${index}`}
-          className="p-4 border rounded-xl bg-white shadow-sm flex flex-col gap-2"
+          key={address.id}
+          className="p-6 border rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all space-y-4"
         >
           {address.error && (
-            <p
-              className={`text-sm ${
-                address.error.includes("sucesso") ? "text-green-600" : "text-red-600"
-              } font-medium`}
+            <div
+              className={`flex items-center gap-2 text-sm px-3 py-2 rounded-lg ${
+                address.error.includes("sucesso")
+                  ? "bg-green-50 text-green-600 border border-green-200"
+                  : "bg-red-50 text-red-600 border border-red-200"
+              }`}
             >
+              {address.error.includes("sucesso") ? (
+                <CheckCircle2 className="w-4 h-4" />
+              ) : (
+                <AlertCircle className="w-4 h-4" />
+              )}
               {address.error}
-            </p>
+            </div>
           )}
 
-          <div className="flex flex-col">
-            <p className="font-semibold">
-              {address.logradouro}, {address.numero}
+          <div className="text-gray-700">
+            <p className="font-bold text-lg flex items-center gap-2">
+              <Home className="w-5 h-5" /> {address.logradouro}, {address.numero}
             </p>
-            <p className="text-sm text-gray-500">
-              {address.bairro}, {address.cidade}, {address.estado}, CEP{" "}
-              {address.cep.replace(/\D/g, "")}
+            <p className="text-sm text-gray-500 flex items-center gap-1">
+              <MapPin className="w-4 h-4" /> {address.bairro}, {address.cidade} - {address.estado},{" "}
+              CEP {address.cep}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input
-              name="cep"
-              value={address.cep}
-              onChange={(e) => handleCepChange(address.id, e.target.value)}
-              onBlur={() => handleCepBlur(address.id)}
-              className="border px-2 py-1 rounded"
-              placeholder="CEP"
-              required
-            />
-            <input
-              name="logradouro"
-              value={address.logradouro}
-              onChange={(e) => handleChange(address.id, "logradouro", e.target.value)}
-              className="border px-2 py-1 rounded"
-              placeholder="Logradouro"
-              required
-            />
-            <input
-              name="numero"
-              value={address.numero}
-              onChange={(e) => handleChange(address.id, "numero", e.target.value)}
-              className="border px-2 py-1 rounded"
-              placeholder="Número"
-              required
-            />
-            <input
-              name="bairro"
-              value={address.bairro}
-              onChange={(e) => handleChange(address.id, "bairro", e.target.value)}
-              className="border px-2 py-1 rounded"
-              placeholder="Bairro"
-              required
-            />
-            <input
-              name="cidade"
-              value={address.cidade}
-              onChange={(e) => handleChange(address.id, "cidade", e.target.value)}
-              className="border px-2 py-1 rounded"
-              placeholder="Cidade"
-              required
-            />
-            <input
-              name="estado"
-              value={address.estado}
-              onChange={(e) => handleChange(address.id, "estado", e.target.value)}
-              className="border px-2 py-1 rounded"
-              placeholder="Estado"
-              required
-            />
-            <input
-              name="complemento"
-              value={address.complemento || ""}
-              onChange={(e) => handleChange(address.id, "complemento", e.target.value)}
-              className="border px-2 py-1 rounded"
-              placeholder="Complemento (opcional)"
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input label="CEP" icon={<Navigation2 />} value={address.cep} onChange={(e) => handleCepChange(address.id, e.target.value)} onBlur={() => handleCepBlur(address.id)} />
+            <Input label="Logradouro" icon={<Landmark />} value={address.logradouro} onChange={(e) => handleChange(address.id, "logradouro", e.target.value)} />
+            <Input label="Número" icon={<Hash />} value={address.numero} onChange={(e) => handleChange(address.id, "numero", e.target.value)} />
+            <Input label="Bairro" icon={<Building2 />} value={address.bairro} onChange={(e) => handleChange(address.id, "bairro", e.target.value)} />
+            <Input label="Cidade" icon={<Building2 />} value={address.cidade} onChange={(e) => handleChange(address.id, "cidade", e.target.value)} />
+            <Input label="Estado" icon={<Building2 />} value={address.estado} onChange={(e) => handleChange(address.id, "estado", e.target.value)} />
+            <Input label="Complemento" icon={<FileText />} value={address.complemento || ""} onChange={(e) => handleChange(address.id, "complemento", e.target.value)} />
           </div>
 
           <button
             type="button"
             disabled={!isValid(address) || address.loading}
             onClick={() => handleSubmit(address.id)}
-            className={`mt-2 rounded-lg px-4 py-1 text-white ${
+            className={`w-full flex justify-center items-center gap-2 mt-2 rounded-lg px-4 py-2 font-medium text-white transition ${
               isValid(address)
-                ? "bg-gray-700 hover:bg-gray-800"
+                ? "bg-gray-800 hover:bg-gray-900"
                 : "bg-gray-400 cursor-not-allowed"
             }`}
           >
-            {address.loading ? "Atualizando..." : "Atualizar"}
+            {address.loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" /> Atualizando...
+              </>
+            ) : (
+              "Atualizar Endereço"
+            )}
           </button>
         </div>
       ))}
+    </div>
+  );
+}
+
+type InputProps = {
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: () => void;
+  icon?: React.ReactNode;
+};
+
+function Input({ label, value, onChange, onBlur, icon }: InputProps) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-sm font-medium text-gray-600">{label}</label>
+      <div className="flex items-center border rounded-lg px-2 bg-gray-50 focus-within:ring-2 focus-within:ring-gray-400">
+        {icon && <span className="text-gray-400 mr-2">{icon}</span>}
+        <input
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
+          className="w-full bg-transparent outline-none py-2"
+        />
+      </div>
     </div>
   );
 }

@@ -48,7 +48,7 @@ export default async function EnderecosPage() {
   })) || [];
 
   return (
-    <div className="=w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="=w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-4xl">
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Meus Endereços</h1>

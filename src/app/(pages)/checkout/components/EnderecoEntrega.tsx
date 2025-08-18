@@ -15,7 +15,7 @@ export function EnderecoEntrega() {
   };
 
   return (
-    <form className="space-y-5 w-full mx-auto">
+    <form className="space-y-5 w-full mx-auto ">
       <div className="text-start">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Forma de Entrega</h1>
         <p className="text-gray-600 text-base">Escolha como prefere receber seu pedido</p>
@@ -114,9 +114,9 @@ export function EnderecoEntrega() {
 
       <div className="pt-2 text-end">
         {selected === "retirada" ? (
-          <Link href="/checkout/confirmacao" className="bg-gray-700 hover:bg-gray-800 text-white py-4 px-5 text-base font-medium rounded-xl">Continuar</Link>
+          <Link href="/checkout/pagamento?tipo=retirada" className="bg-gray-700 hover:bg-gray-800 text-white py-4 px-5 text-base font-medium rounded-xl">Continuar</Link>
         ) : (
-          <Link href="/checkout/confirmacao" className="bg-gray-700 hover:bg-gray-800 text-white py-4 px-5 text-base font-medium rounded-xl">Continuar</Link>
+          <Link href="/checkout/frete" className="bg-gray-700 hover:bg-gray-800 text-white py-4 px-5 text-base font-medium rounded-xl">Continuar</Link>
         )}
       </div>
     </form>
