@@ -174,7 +174,7 @@ export default function CheckoutHeader() {
             </div>
 
             {session ? (
-              <Link href={`/checkouts`}>
+              <Link href={`/checkout`}>
                 <Button
                   className="w-full mt-4 py-2 bg-red-700 text-white font-semibold text-sm text-center rounded-md hover:bg-red-600"
                   onClick={() => setCartOpen(false)}
@@ -186,7 +186,7 @@ export default function CheckoutHeader() {
               <div>
                 <div className="mb-2">
                   <GoogleLoginButtonSmall
-                    callbackUrl="/checkouts"
+                    callbackUrl="/checkout"
                     className="w-full"
                   />
                 </div>

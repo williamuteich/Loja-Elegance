@@ -155,7 +155,7 @@ export default function UpdateAddresses({ enderecos, userID }: UpdateAddressesPr
               : f
           )
         );
-        window.location.href = "/checkouts"; // Redireciona para /checkouts após sucesso
+        window.location.href = "/checkout"; // Redireciona para /checkouts após sucesso
       } else {
         setFormStates((prev) =>
           prev.map((f) =>

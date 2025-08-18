@@ -27,5 +27,5 @@ export const saveAddress = async (userId: string, formData: FormData) => {
         }
     });
 
-    redirect("/checkouts");
+    redirect("/checkout");
 };
