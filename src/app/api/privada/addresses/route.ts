@@ -20,6 +20,7 @@ export const GET = withApiAuth(async (request, session) => {
           telefone: true,
           enderecos: {
             select: {
+              id: true,
               cep: true,
               logradouro: true,
               numero: true,
@@ -66,6 +67,7 @@ export const GET = withApiAuth(async (request, session) => {
         telefone: true,
         enderecos: {
           select: {
+            id: true, // Adicionando o campo `id`
             cep: true,
             logradouro: true,
             numero: true,

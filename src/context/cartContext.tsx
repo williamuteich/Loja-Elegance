@@ -26,6 +26,7 @@ interface CartContextType {
   clearCart: () => void;
   cartOpen: boolean;
   setCartOpen: (open: boolean) => void;
+  isHydrated: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -33,12 +34,14 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) {
       setCart(JSON.parse(storedCart));
     }
+    setIsHydrated(true);
   }, []);
 
   const updateLocalStorage = (newCart: CartItem[]) => {
@@ -136,7 +139,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, clearCart, cartOpen, setCartOpen }}
+  value={{ cart, addToCart, removeFromCart, clearCart, cartOpen, setCartOpen, isHydrated }}
     >
       <ToastContainer />
       {children}
