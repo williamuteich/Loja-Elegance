@@ -1,7 +1,7 @@
 "use client";
 import {
   FaHome, FaUserCircle, FaQuestionCircle, FaBoxOpen, FaCog,
-  FaTag, FaIndustry, FaFileAlt, FaImages, FaRegImage,
+  FaTag, FaIndustry, FaImages, FaRegImage,
   FaGift, FaShippingFast, FaClipboardList, FaInstagram,
   FaShieldAlt, FaRocket
 } from 'react-icons/fa';
@@ -31,7 +31,6 @@ export default function Sidebar() {
     { href: "/dashboard/faq", label: "FAQ", icon: <FaQuestionCircle className="w-6 h-6" /> },
     { href: "/dashboard/marca", label: "Marca", icon: <FaIndustry className="w-6 h-6" /> },
     { href: "/dashboard/categoria", label: "Categoria", icon: <FaTag className="w-6 h-6" /> },
-    { href: "/dashboard/formulario", label: "Formulário", icon: <FaFileAlt className="w-6 h-6" /> },
     { href: "/dashboard/galeria", label: "Galeria", icon: <FaImages className="w-6 h-6" /> },
     { href: "/dashboard/banners", label: "Banners", icon: <FaRegImage className="w-6 h-6" /> },
     { href: "/dashboard/envio", label: "Endereços", icon: <FaShippingFast className="w-6 h-6" /> },
