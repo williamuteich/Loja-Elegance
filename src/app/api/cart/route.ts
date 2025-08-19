@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { CartService } from '@/services/cartService';
 import { getServerSession } from 'next-auth';
 import { auth } from '@/lib/auth-config';
+import { RateLimit, getClientIP } from '@/lib/rateLimit';
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,8 +35,30 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(auth);
+    
+    // ✅ SEGURANÇA: Rate limiting por usuário/IP
+    const clientIP = getClientIP(request);
+    const rateLimitIdentifier = session?.user?.id || clientIP;
+    
+    const rateLimitResult = await RateLimit.check(
+      rateLimitIdentifier,
+      RateLimit.configs.cart
+    );
+    
+    if (!rateLimitResult.allowed) {
+      console.warn(`🚨 RATE LIMIT: Cart API blocked for ${rateLimitIdentifier}`);
+      return NextResponse.json(
+        { 
+          error: 'Muitas requisições. Tente novamente em alguns instantes.',
+          remainingRequests: rateLimitResult.remainingRequests,
+          resetTime: rateLimitResult.resetTime
+        },
+        { status: 429 }
+      );
+    }
+    
     const body = await request.json();
-    const { action, cartId, sessionId, ...data } = body;
+    const { action, sessionId, ...data } = body;
 
     if (!session?.user?.id && !sessionId) {
       return NextResponse.json(
@@ -44,18 +67,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // ✅ SEGURO: Buscar ou criar carrinho via userId/sessionId (não via cartId)
+    const cart = await CartService.getOrCreateCart(
+      session?.user?.id,
+      sessionId || undefined
+    );
+
     let result;
 
     switch (action) {
       case 'add':
-        if (!cartId || !data.productId || !data.quantity) {
+        if (!data.productId || !data.quantity) {
           return NextResponse.json(
-            { error: 'Campos obrigatórios: cartId, productId, quantity' },
+            { error: 'Campos obrigatórios: productId, quantity' },
             { status: 400 }
           );
         }
         result = await CartService.addItem(
-          cartId,
+          cart.id, // ✅ SEGURO: cartId obtido do backend
           {
             productId: data.productId,
             productVariantId: data.productVariantId,
@@ -67,14 +96,14 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'remove':
-        if (!cartId || !data.productId) {
+        if (!data.productId) {
           return NextResponse.json(
-            { error: 'Campos obrigatórios: cartId, productId' },
+            { error: 'Campo obrigatório: productId' },
             { status: 400 }
           );
         }
         result = await CartService.removeItem(
-          cartId,
+          cart.id, // ✅ SEGURO: cartId obtido do backend
           data.productId,
           data.productVariantId,
           session?.user?.id,
@@ -83,14 +112,14 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'update':
-        if (!cartId || !data.productId || data.quantity === undefined) {
+        if (!data.productId || data.quantity === undefined) {
           return NextResponse.json(
-            { error: 'Campos obrigatórios: cartId, productId, quantity' },
+            { error: 'Campos obrigatórios: productId, quantity' },
             { status: 400 }
           );
         }
         result = await CartService.updateItemQuantity(
-          cartId,
+          cart.id, // ✅ SEGURO: cartId obtido do backend
           data.productId,
           data.quantity,
           data.productVariantId,
@@ -100,13 +129,7 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'clear':
-        if (!cartId) {
-          return NextResponse.json(
-            { error: 'Campo obrigatório: cartId' },
-            { status: 400 }
-          );
-        }
-        await CartService.clearCart(cartId);
+        await CartService.clearCart(cart.id); // ✅ SEGURO: cartId obtido do backend
         result = { success: true };
         break;
 

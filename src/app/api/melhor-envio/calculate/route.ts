@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { products, to_postal_code } = body;
+  const { products, to_postal_code, cartId } = body;
 
     const MELHOR_ENVIO_URL = process.env.MELHOR_ENVIO_URL || 'https://melhorenvio.com.br/api/v2/me/shipment/calculate';
     const MELHOR_ENVIO_TOKEN = process.env.MELHOR_ENVIO_TOKEN;
@@ -36,7 +36,31 @@ export async function POST(req: Request) {
     });
 
     const data = await res.json();
-    return NextResponse.json(data, { status: res.status });
+
+    // Calculate subtotal on backend if cartId provided
+    let subtotal = 0;
+    try {
+      if (cartId) {
+        // Lazy require prisma to avoid top-level dependency in edge/runtime mismatches
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const { prisma } = require('@/lib/prisma');
+        const cart = await prisma.cart.findUnique({
+          where: { id: cartId },
+          include: {
+            items: {
+              include: { product: { select: { price: true } } },
+            },
+          },
+        });
+        if (cart && Array.isArray(cart.items)) {
+          subtotal = cart.items.reduce((acc: number, it: any) => acc + (it.product?.price || 0) * (it.quantity || 0), 0);
+        }
+      }
+    } catch (e) {
+      console.warn('Could not calculate subtotal on server', e);
+    }
+
+    return NextResponse.json({ shippingOptions: data, subtotal }, { status: res.status });
   } catch (err: any) {
     console.error('Error calling Melhor Envio', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });

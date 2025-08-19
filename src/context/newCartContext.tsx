@@ -72,7 +72,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [isHydrated, setIsHydrated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string>('');
-  const [cartId, setCartId] = useState<string>('');
+  // ❌ REMOVIDO: cartId não deve ficar no frontend por segurança
   
   const { data: session } = useSession();
 
@@ -100,7 +100,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         const data: DatabaseCart = await response.json();
 
         if (response.ok && data) {
-          setCartId(data.id);
+          // ✅ SEGURO: Não armazenar cartId no frontend
           
           const convertedCart: CartItem[] = data.items.map(item => ({
             id: item.productId,
@@ -131,7 +131,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, [sessionId, session?.user?.id]);
 
   useEffect(() => {
-    if (session?.user?.id && sessionId && cartId) {
+    if (session?.user?.id && sessionId) {
       const migrateCart = async () => {
         try {
           const response = await fetch('/api/cart', {
@@ -154,14 +154,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
       migrateCart();
     }
-  }, [session?.user?.id, sessionId, cartId]);
+  }, [session?.user?.id, sessionId]); // ✅ SEGURO: Removido cartId da dependência
 
   const addToCart = async (produto: Produto & { selectedVariantId: string }) => {
-    if (!cartId) {
-      toast.error('Carrinho não está carregado');
-      return;
-    }
-
+    // ✅ SEGURO: Backend resolve o cartId internamente
+    
     let selectedVariant = produto.variants?.find(
       (v: Produto["variants"][number]) => v.id === produto.selectedVariantId
     );
@@ -208,7 +205,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'add',
-          cartId,
+          // ✅ SEGURO: API resolve cartId internamente via sessionId/userId
           sessionId: !session?.user?.id ? sessionId : undefined,
           productId: produto.id,
           productVariantId: produto.selectedVariantId,
@@ -251,7 +248,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const removeFromCart = async (productId: string, variantId: string) => {
-    if (!cartId) return;
+    // ✅ SEGURO: API resolve cartId via sessionId/userId
 
     try {
       setIsLoading(true);
@@ -261,7 +258,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'remove',
-          cartId,
+          // ✅ SEGURO: Sem cartId exposto
           sessionId: !session?.user?.id ? sessionId : undefined,
           productId,
           productVariantId: variantId,
@@ -298,7 +295,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const decreaseQuantity = async (productId: string, variantId: string) => {
-    if (!cartId) return;
+    // ✅ SEGURO: API resolve cartId via sessionId/userId
 
     const currentItem = cart.find(item => 
       item.id === productId && item.selectedVariantId === variantId
@@ -317,7 +314,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             action: 'update',
-            cartId,
+            // ✅ SEGURO: Sem cartId exposto
             sessionId: !session?.user?.id ? sessionId : undefined,
             productId,
             productVariantId: variantId,
@@ -356,7 +353,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const clearCart = async () => {
-    if (!cartId) return;
+    // ✅ SEGURO: API resolve cartId via sessionId/userId
 
     try {
       setIsLoading(true);
@@ -366,13 +363,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'clear',
-          cartId,
+          // ✅ SEGURO: API resolve cartId internamente
+          sessionId: !session?.user?.id ? sessionId : undefined,
         }),
       });
 
       if (response.ok) {
         setCart([]);
-        setCartId('');
+        // ✅ SEGURO: Não precisa limpar cartId (não existe mais)
       } else {
         toast.error('Erro ao limpar carrinho');
       }

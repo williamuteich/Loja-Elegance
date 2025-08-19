@@ -1,17 +1,62 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/context/newCartContext";
 import Image from "next/image";
 
-export function ResumoCompra() {
+export function ResumoCompra({ 
+  subtotalProp, 
+  freteProp, 
+  backendTotal 
+}: { 
+  subtotalProp?: number; 
+  freteProp?: number | null;
+  backendTotal?: {
+    subtotal: number;
+    freight: number;
+    total: number;
+    itemCount: number;
+  } | null;
+} = {}) {
   const { cart } = useCart();
+  const [subtotal, setSubtotal] = useState<number>(() => subtotalProp ?? cart.reduce((acc, item) => acc + item.price * item.quantity, 0));
+  const [freteValue, setFreteValue] = useState<number | null>(() => freteProp ?? null);
+  const [total, setTotal] = useState<number>(0);
 
-  const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const frete = 0;
-  const total = subtotal + frete;
+  useEffect(() => {
+    console.log('🎯 ResumoCompra - backendTotal:', backendTotal);
+    
+    // Se temos dados do backend, usar eles (PRIORIDADE MÁXIMA)
+    if (backendTotal) {
+      console.log('✅ Usando dados do backend:', backendTotal);
+      setSubtotal(backendTotal.subtotal);
+      setFreteValue(backendTotal.freight);
+      setTotal(backendTotal.total);
+      return;
+    }
+
+    console.log('⚠️ Sem dados do backend, usando props ou contexto');
+    
+    // Se tem props, usar elas
+    if (subtotalProp !== undefined) {
+      setSubtotal(subtotalProp);
+    }
+    
+    if (freteProp !== undefined) {
+      setFreteValue(freteProp);
+    } else {
+      // IMPORTANTE: Quando não tem prop de frete, não usar sessionStorage
+      // Isso evita que frete anterior apareça
+      setFreteValue(0);
+    }
+
+    // Calcular total manualmente apenas se não temos dados do backend
+    const calculatedTotal = subtotal + (freteValue || 0);
+    console.log('🧮 Total calculado manualmente:', calculatedTotal, '(subtotal:', subtotal, '+ frete:', freteValue, ')');
+    setTotal(calculatedTotal);
+  }, [subtotalProp, freteProp, backendTotal]);
 
   return (
     <Card className="sticky top-6 border-0 shadow-xl rounded-2xl overflow-hidden">
@@ -66,7 +111,7 @@ export function ResumoCompra() {
 
         <div className="space-y-3">
           <div className="flex justify-between">
-            <span className="text-gray-600">Subtotal ({cart.length} {cart.length === 1 ? 'item' : 'itens'})</span>
+            <span className="text-gray-600">Subtotal ({backendTotal?.itemCount ?? cart.length} {(backendTotal?.itemCount ?? cart.length) === 1 ? 'item' : 'itens'})</span>
             <span className="font-medium text-gray-800">
               {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(subtotal)}
             </span>
@@ -75,10 +120,10 @@ export function ResumoCompra() {
           <div className="flex justify-between">
             <span className="text-green-600">Frete</span>
             <span className="font-medium text-green-600">
-              {frete === 0 ? (
-                <span className="text-green-600">A calcular</span>
+              {(freteValue === null || freteValue === 0) ? (
+                <span className="text-gray-500">A calcular</span>
               ) : (
-                new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(frete)
+                new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(freteValue)
               )}
             </span>
           </div>

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import NewAddresses from "./components/addNewAddresses";
 import UpdateAddresses from "./components/updateAddresses";
 import { PrismaClient } from "@prisma/client";
+import CartProtection from "../components/CartProtection";
 
 const prisma = new PrismaClient();
 
@@ -48,23 +49,28 @@ export default async function EnderecosPage() {
   })) || [];
 
   return (
-    <div className="=w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-4xl">
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Meus Endereços</h1>
-          <p className="text-gray-600">Gerencie seus endereços para entrega</p>
+    <CartProtection 
+      redirectTo="/produtos" 
+      message="Adicione produtos ao carrinho antes de configurar endereços."
+    >
+      <div className="=w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-4xl">
+        <div className="mb-6 flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Meus Endereços</h1>
+            <p className="text-gray-600">Gerencie seus endereços para entrega</p>
+          </div>
         </div>
-      </div>
 
-      {!enderecos || enderecos.length === 0 ? (
-        <div className="w-full mt-6">
-          <NewAddresses userId={userID} />
-        </div>
-      ) : (
-        <div className="w-full mt-6">
-          <UpdateAddresses enderecos={enderecos} userID={userID} />
-        </div>
-      )}
-    </div>
+        {!enderecos || enderecos.length === 0 ? (
+          <div className="w-full mt-6">
+            <NewAddresses userId={userID} />
+          </div>
+        ) : (
+          <div className="w-full mt-6">
+            <UpdateAddresses enderecos={enderecos} userID={userID} />
+          </div>
+        )}
+      </div>
+    </CartProtection>
   );
 }

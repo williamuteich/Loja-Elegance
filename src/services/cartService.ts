@@ -1,4 +1,6 @@
+import { PrismaClient } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+import { logger } from '@/lib/logger';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface CartItemData {
@@ -35,10 +37,11 @@ export interface CartData {
 
 export class CartService {
 
-  private static TTL_SECONDS = 1 * 60;
+  private static TTL_SECONDS = 10 * 60; // 10 minutos
 
   static async getOrCreateCart(userId?: string, sessionId?: string): Promise<CartData> {
     if (!userId && !sessionId) {
+      logger.error('Cart creation failed: No userId or sessionId provided', null, 'CartService');
       throw new Error('É necessário fornecer userId ou sessionId');
     }
 
@@ -112,7 +115,6 @@ export class CartService {
     return cart as CartData;
   }
 
- 
   static async addItem(
     cartId: string,
     item: CartItemData,
@@ -183,6 +185,16 @@ export class CartService {
       });
     }
 
+    // Verify cart exists before updating
+    const cartExists = await prisma.cart.findUnique({
+      where: { id: cartId },
+      select: { id: true }
+    });
+
+    if (!cartExists) {
+      throw new Error('Carrinho não encontrado ou expirado');
+    }
+
     await prisma.cart.update({
       where: { id: cartId },
       data: { expireAt: newExpireAt },
@@ -209,10 +221,18 @@ export class CartService {
     const newExpireAt = new Date();
     newExpireAt.setSeconds(newExpireAt.getSeconds() + this.TTL_SECONDS);
 
-    await prisma.cart.update({
+    // Verify cart exists before updating
+    const cartExists = await prisma.cart.findUnique({
       where: { id: cartId },
-      data: { expireAt: newExpireAt },
+      select: { id: true }
     });
+
+    if (cartExists) {
+      await prisma.cart.update({
+        where: { id: cartId },
+        data: { expireAt: newExpireAt },
+      });
+    }
 
     return this.getOrCreateCart(userId, sessionId);
   }
@@ -252,14 +272,21 @@ export class CartService {
     const newExpireAt = new Date();
     newExpireAt.setSeconds(newExpireAt.getSeconds() + this.TTL_SECONDS);
 
-    await prisma.cart.update({
+    // Verify cart exists before updating
+    const cartExists = await prisma.cart.findUnique({
       where: { id: cartId },
-      data: { expireAt: newExpireAt },
+      select: { id: true }
     });
+
+    if (cartExists) {
+      await prisma.cart.update({
+        where: { id: cartId },
+        data: { expireAt: newExpireAt },
+      });
+    }
 
     return this.getOrCreateCart(userId, sessionId);
   }
-
 
   static async clearCart(cartId: string): Promise<void> {
     await prisma.cart.delete({
@@ -267,7 +294,6 @@ export class CartService {
     });
   }
 
-  
   static async getCartById(cartId: string): Promise<CartData | null> {
     const cart = await prisma.cart.findUnique({
       where: { id: cartId },
@@ -300,7 +326,6 @@ export class CartService {
     return cart as CartData | null;
   }
 
- 
   static async migrateSessionCartToUser(sessionId: string, userId: string): Promise<CartData | null> {
     const sessionCart = await prisma.cart.findFirst({
       where: { sessionId },
