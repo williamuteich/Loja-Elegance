@@ -5,7 +5,7 @@ import "./globals.css";
 import Footer from "./components/footer/footer";
 import HeaderFooter from "@/app/components/headerFooter/headerFooter";
 import AuthProvider from "./components/providers/auth-provider";
-import { CartProvider } from "@/context/cartContext";
+import { CartProvider } from "@/context/newCartContext"; 
 import VisitTracker from "./components/visitTracker";
 
 export const metadata: Metadata = {

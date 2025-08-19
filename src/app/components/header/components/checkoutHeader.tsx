@@ -3,7 +3,7 @@
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { useCart } from "@/context/cartContext";
+import { useCart } from "@/context/newCartContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import GoogleLoginButtonSmall from "@/components/auth/GoogleLoginButtonSmall";
@@ -12,7 +12,7 @@ import { useSession } from "next-auth/react";
 import { Produto } from "@/utils/types/produto";
 
 export default function CheckoutHeader() {
-  const { cart, removeFromCart, addToCart, cartOpen, setCartOpen } = useCart();
+  const { cart, removeFromCart, decreaseQuantity, addToCart, cartOpen, setCartOpen } = useCart();
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
   const { data: session } = useSession();
@@ -77,6 +77,14 @@ export default function CheckoutHeader() {
                       </div>
 
                       <p className="text-xs text-gray-700">Quantidade: {item.quantity}</p>
+                      {item.variantDetails.availableStock > 0 && (
+                        <p className="text-xs text-gray-500">
+                          Disponível: {item.variantDetails.availableStock}
+                          {item.quantity >= item.variantDetails.availableStock && (
+                            <span className="text-orange-600 font-medium"> (Máximo atingido)</span>
+                          )}
+                        </p>
+                      )}
                       <p className="font-semibold text-sm mt-2">
                         {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
@@ -92,7 +100,7 @@ export default function CheckoutHeader() {
                         onClick={async () => {
                           setRemovingId(item.id);
                           try {
-                            await removeFromCart(item.id, item.selectedVariantId);
+                            await decreaseQuantity(item.id, item.selectedVariantId); // ✅ Usa decreaseQuantity ao invés de removeFromCart
                           } finally {
                             setRemovingId(null);
                           }
@@ -109,7 +117,9 @@ export default function CheckoutHeader() {
                       <span className="text-sm font-medium">{item.quantity}</span>
 
                       <button
-                        className="w-6 h-6 flex justify-center items-center bg-gray-200 rounded-full disabled:opacity-50"
+                        className={`w-6 h-6 flex justify-center items-center bg-gray-200 rounded-full disabled:opacity-50 ${
+                          item.quantity >= item.variantDetails.availableStock ? 'cursor-not-allowed' : ''
+                        }`}
                         onClick={async () => {
                           setLoadingId(item.id);
                           try {
@@ -134,7 +144,8 @@ export default function CheckoutHeader() {
                             setLoadingId(null);
                           }
                         }}
-                        disabled={loadingId === item.id}
+                        disabled={loadingId === item.id || item.quantity >= item.variantDetails.availableStock}
+                        title={item.quantity >= item.variantDetails.availableStock ? 'Estoque máximo atingido' : 'Adicionar mais'}
                       >
                         {loadingId === item.id ? (
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>

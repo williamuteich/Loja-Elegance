@@ -3,7 +3,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useCart } from "@/context/cartContext";
+import { useCart } from "@/context/newCartContext";
 import Image from "next/image";
 
 export function ResumoCompra() {

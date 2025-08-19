@@ -1,7 +1,7 @@
 "use client";
 
 import { ResumoCompra } from "./ResumoCompra";
-import { useCart } from "@/context/cartContext";
+import { useCart } from "@/context/newCartContext";
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { EnderecoEntrega } from "./EnderecoEntrega";
