@@ -11,19 +11,6 @@ interface CartProtectionProps {
   message?: string;
 }
 
-/**
- * Componente de proteção que impede acesso a páginas quando o carrinho está vazio
- * 
- * PROPÓSITO:
- * - Proteger rotas de checkout contra acesso sem produtos
- * - Redirecionar usuário para página apropriada
- * - Exibir mensagem explicativa
- * 
- * USO:
- * <CartProtection>
- *   <CheckoutPage />
- * </CartProtection>
- */
 export default function CartProtection({
   children,
   redirectTo = "/produtos",
@@ -34,23 +21,19 @@ export default function CartProtection({
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    // Aguardar hidratação do carrinho
     if (!isHydrated || isLoading) {
       return;
     }
 
-    // Verificar se carrinho tem produtos
     if (cart.length === 0) {
       toast.warning(message);
       router.push(redirectTo);
       return;
     }
 
-    // ✅ Carrinho tem produtos, permitir acesso
     setIsChecking(false);
   }, [cart, isHydrated, isLoading, router, redirectTo, message]);
 
-  // Mostrar loading enquanto verifica o carrinho
   if (isChecking || !isHydrated || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -62,6 +45,5 @@ export default function CartProtection({
     );
   }
 
-  // ✅ Carrinho válido, renderizar página
   return <>{children}</>;
 }

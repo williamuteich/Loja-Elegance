@@ -26,20 +26,13 @@ export function ResumoCompra({
   const [total, setTotal] = useState<number>(0);
 
   useEffect(() => {
-    console.log('🎯 ResumoCompra - backendTotal:', backendTotal);
-    
-    // Se temos dados do backend, usar eles (PRIORIDADE MÁXIMA)
     if (backendTotal) {
-      console.log('✅ Usando dados do backend:', backendTotal);
       setSubtotal(backendTotal.subtotal);
       setFreteValue(backendTotal.freight);
       setTotal(backendTotal.total);
       return;
     }
 
-    console.log('⚠️ Sem dados do backend, usando props ou contexto');
-    
-    // Se tem props, usar elas
     if (subtotalProp !== undefined) {
       setSubtotal(subtotalProp);
     }
@@ -47,12 +40,9 @@ export function ResumoCompra({
     if (freteProp !== undefined) {
       setFreteValue(freteProp);
     } else {
-      // IMPORTANTE: Quando não tem prop de frete, não usar sessionStorage
-      // Isso evita que frete anterior apareça
       setFreteValue(0);
     }
 
-    // Calcular total manualmente apenas se não temos dados do backend
     const calculatedTotal = subtotal + (freteValue || 0);
     console.log('🧮 Total calculado manualmente:', calculatedTotal, '(subtotal:', subtotal, '+ frete:', freteValue, ')');
     setTotal(calculatedTotal);
