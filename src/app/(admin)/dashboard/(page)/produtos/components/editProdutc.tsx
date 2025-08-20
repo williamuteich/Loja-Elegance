@@ -165,6 +165,12 @@ export default function EditarProduto({ id }: { id: string }) {
 
             const onSale = priceOld && priceOld > price ? true : false;
 
+            // Capturar dimensões e peso com tratamento adequado
+            const width = event.target.width?.value ? parseFloat(event.target.width.value) : (produto.width || 11);
+            const height = event.target.height?.value ? parseFloat(event.target.height.value) : (produto.height || 11);
+            const length = event.target.length?.value ? parseFloat(event.target.length.value) : (produto.length || 17);
+            const weight = event.target.weight?.value ? parseFloat(event.target.weight.value) : (produto.weight || 3);
+
             const data = {
                 id: produto.id,
                 name: event.target.name.value,
@@ -179,6 +185,11 @@ export default function EditarProduto({ id }: { id: string }) {
                 active: event.target.status.value === "true",
                 destaque: event.target.destaque.value === "true",
                 onSale,
+                // Dimensões e peso
+                width,
+                height,
+                length,
+                weight,
                 variants: variants.map(variant => ({
                     name: variant.name,
                     hexCode: variant.hexCode,
@@ -432,6 +443,67 @@ export default function EditarProduto({ id }: { id: string }) {
                                     decimalSeparator=","
                                     prefix="$ "
                                     decimalScale={2}
+                                />
+                            </div>
+
+                            {/* Dimensões e Peso */}
+                            <div className="md:col-span-2">
+                                <h4 className="text-lg font-medium text-gray-800 mb-4 border-b pb-2">Dimensões e Peso (para cálculo de frete)</h4>
+                            </div>
+
+                            <div>
+                                <label htmlFor="width" className="block text-sm font-medium text-gray-700 mb-2">Largura (cm)</label>
+                                <input
+                                    id="width"
+                                    name="width"
+                                    type="number"
+                                    step="0.1"
+                                    min="0"
+                                    defaultValue={produto.width || 11}
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    placeholder="11"
+                                />
+                            </div>
+
+                            <div>
+                                <label htmlFor="height" className="block text-sm font-medium text-gray-700 mb-2">Altura (cm)</label>
+                                <input
+                                    id="height"
+                                    name="height"
+                                    type="number"
+                                    step="0.1"
+                                    min="0"
+                                    defaultValue={produto.height || 11}
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    placeholder="11"
+                                />
+                            </div>
+
+                            <div>
+                                <label htmlFor="length" className="block text-sm font-medium text-gray-700 mb-2">Comprimento (cm)</label>
+                                <input
+                                    id="length"
+                                    name="length"
+                                    type="number"
+                                    step="0.1"
+                                    min="0"
+                                    defaultValue={produto.length || 17}
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    placeholder="17"
+                                />
+                            </div>
+
+                            <div>
+                                <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-2">Peso (kg)</label>
+                                <input
+                                    id="weight"
+                                    name="weight"
+                                    type="number"
+                                    step="0.1"
+                                    min="0"
+                                    defaultValue={produto.weight || 3}
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    placeholder="3"
                                 />
                             </div>
 

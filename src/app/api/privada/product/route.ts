@@ -220,6 +220,10 @@ export async function POST(request: Request) {
           destaque: body.destaque ?? false,
           imagePrimary: body.imagePrimary,
           imagesSecondary: body.imagesSecondary || [],
+          width: body.width || 11,
+          height: body.height || 11,
+          length: body.length || 17,
+          weight: body.weight || 3,
           brandId: body.brandId,
           variants: {
             create: body.variants.map((variant: any, index: number) => ({
@@ -408,6 +412,7 @@ export async function PUT(request: Request) {
 
   try {
     const body = await request.json();
+
     const requiredFields = ['id', 'name', 'description', 'price', 'brandId', 'categoryIds', 'features'];
     if (requiredFields.some(field => !body[field])) {
       return NextResponse.json(
@@ -503,6 +508,10 @@ export async function PUT(request: Request) {
           imagesSecondary: Array.isArray(body.imagesSecondary) 
             ? body.imagesSecondary 
             : [],
+          width: body.width || 11,
+          height: body.height || 11,
+          length: body.length || 17,
+          weight: body.weight || 3,
           brand: { connect: { id: body.brandId } },
         },
         include: { 

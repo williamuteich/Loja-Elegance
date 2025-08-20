@@ -31,7 +31,7 @@ model User {
   passwordReset            PasswordReset?
   totpSecret               String?
   provider                 String?
-  carts                    Cart[]         // Relação com carrinho
+  carts                    Cart[]        
 }
 
 model Product {
@@ -54,7 +54,13 @@ model Product {
   orderItems        OrderItem[]
   variants          ProductVariant[]
   promotionDeadline DateTime?
-  cartItems         CartItem[]        // Relação com itens do carrinho
+  cartItems         CartItem[]        
+  
+  // Dimensões e peso para cálculo de frete
+  width             Float?            @default(11) 
+  height            Float?            @default(11) 
+  length            Float?            @default(17) 
+  weight            Float?            @default(3)  
 }
 
 model Brand {
@@ -110,7 +116,7 @@ model ProductVariant {
   color     Color   @relation(fields: [colorId], references: [id])
 
   OrderItem OrderItem[]
-  cartItems CartItem[]  // Relação com itens do carrinho
+  cartItems CartItem[]  
 }
 
 model config {
@@ -252,8 +258,8 @@ model ProductView {
 
 model Cart {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  sessionId   String?   // Para usuários não logados
-  userId      String?   @db.ObjectId // Para usuários logados
+  sessionId   String?   
+  userId      String?   @db.ObjectId 
   user        User?     @relation(fields: [userId], references: [id])
   items       CartItem[]
   createdAt   DateTime  @default(now())
