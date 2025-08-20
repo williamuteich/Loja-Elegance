@@ -23,6 +23,10 @@ export interface CartData {
       name: string;
       price: number;
       imagePrimary?: string;
+      width?: number;
+      height?: number;
+      length?: number;
+      weight?: number;
     };
     productVariant?: {
       id: string;
@@ -56,6 +60,10 @@ export class CartService {
                 name: true,
                 price: true,
                 imagePrimary: true,
+                width: true,
+                height: true,
+                length: true,
+                weight: true,
               },
             },
             productVariant: {
@@ -93,6 +101,10 @@ export class CartService {
                   name: true,
                   price: true,
                   imagePrimary: true,
+                  width: true,
+                  height: true,
+                  length: true,
+                  weight: true,
                 },
               },
               productVariant: {
@@ -306,6 +318,10 @@ export class CartService {
                 name: true,
                 price: true,
                 imagePrimary: true,
+                width: true,
+                height: true,
+                length: true,
+                weight: true,
               },
             },
             productVariant: {

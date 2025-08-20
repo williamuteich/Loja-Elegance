@@ -36,7 +36,6 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(auth);
     
-    // ✅ SEGURANÇA: Rate limiting por usuário/IP
     const clientIP = getClientIP(request);
     const rateLimitIdentifier = session?.user?.id || clientIP;
     
@@ -67,7 +66,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ✅ SEGURO: Buscar ou criar carrinho via userId/sessionId (não via cartId)
     const cart = await CartService.getOrCreateCart(
       session?.user?.id,
       sessionId || undefined
@@ -84,7 +82,7 @@ export async function POST(request: NextRequest) {
           );
         }
         result = await CartService.addItem(
-          cart.id, // ✅ SEGURO: cartId obtido do backend
+          cart.id, 
           {
             productId: data.productId,
             productVariantId: data.productVariantId,
@@ -103,7 +101,7 @@ export async function POST(request: NextRequest) {
           );
         }
         result = await CartService.removeItem(
-          cart.id, // ✅ SEGURO: cartId obtido do backend
+          cart.id, 
           data.productId,
           data.productVariantId,
           session?.user?.id,
@@ -119,7 +117,7 @@ export async function POST(request: NextRequest) {
           );
         }
         result = await CartService.updateItemQuantity(
-          cart.id, // ✅ SEGURO: cartId obtido do backend
+          cart.id, 
           data.productId,
           data.quantity,
           data.productVariantId,
@@ -129,7 +127,7 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'clear':
-        await CartService.clearCart(cart.id); // ✅ SEGURO: cartId obtido do backend
+        await CartService.clearCart(cart.id); 
         result = { success: true };
         break;
 
@@ -154,7 +152,6 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Erro na API do carrinho:', error);
     
-    // Erros de negócio (validação, estoque, etc.) retornam 400
     if (error.message?.includes('Estoque insuficiente') || 
         error.message?.includes('não encontrado') ||
         error.message?.includes('não encontrada')) {
@@ -164,7 +161,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Outros erros retornam 500
     return NextResponse.json(
       { error: error.message || 'Erro interno do servidor' },
       { status: 500 }

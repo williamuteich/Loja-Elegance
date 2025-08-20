@@ -15,7 +15,6 @@ export async function calculateShippingAndCreatePayment(
       throw new Error('Usuário não autenticado');
     }
 
-    // SEGURO: Buscar carrinho via userId (não cartId do frontend)
     const cart = await prisma.cart.findFirst({
       where: { userId: session.user.id },
       include: {
@@ -27,6 +26,10 @@ export async function calculateShippingAndCreatePayment(
                 name: true,
                 price: true,
                 imagePrimary: true,
+                width: true,
+                height: true,
+                length: true,
+                weight: true,
               },
             },
             productVariant: {
@@ -48,19 +51,16 @@ export async function calculateShippingAndCreatePayment(
       throw new Error('Carrinho vazio ou não encontrado');
     }
 
-    // Calcular subtotal
     const subtotal = cart.items.reduce((acc, item) => {
       return acc + (item.product.price * item.quantity);
     }, 0);
 
-    // Calcular frete usando Melhor Envio (no servidor)
     const shippingPrice = await calculateShippingWithMelhorEnvio(
       cart.items,
       toPostalCode,
       shippingServiceId
     );
 
-    // Criar preferência de pagamento no Mercado Pago
     const preference = await createMercadoPagoPreference(
       cart,
       subtotal,
@@ -94,7 +94,6 @@ async function calculateShippingWithMelhorEnvio(
     throw new Error('Token do Melhor Envio não configurado');
   }
 
-  // ✅ Validar e sanitizar CEP
   if (!toPostalCode || typeof toPostalCode !== 'string') {
     throw new Error('CEP de destino inválido');
   }
@@ -106,19 +105,20 @@ async function calculateShippingWithMelhorEnvio(
 
   const products = items.map(item => ({
     id: item.product.id,
-    width: 11,  // Largura fixa em cm
-    height: 11, // Altura fixa em cm  
-    length: 17, // Comprimento fixo em cm
-    weight: 3,  // Peso fixo em kg
-    insurance_value: 5, // Valor fixo mínimo (sem seguro)
+    width: item.product.width || 11,     
+    height: item.product.height || 11,   
+    length: item.product.length || 17,   
+    weight: item.product.weight || 3,    
+    insurance_value: 0, 
     quantity: item.quantity,
   }));
 
+
   const payload = {
-    from: { postal_code: '97538000' }, // CEP de origem fixo
+    from: { postal_code: '97538000' }, 
     to: { postal_code: cleanPostalCode },
     products,
-    services: serviceId // Especificar o serviço selecionado
+    services: serviceId 
   };
 
   const res = await fetch(MELHOR_ENVIO_URL, {
@@ -138,7 +138,6 @@ async function calculateShippingWithMelhorEnvio(
 
   const data = await res.json();
   
-  // Encontrar o serviço selecionado
   const selectedService = Array.isArray(data) ? 
     data.find(service => service.id === serviceId) : data;
   
@@ -167,7 +166,6 @@ async function createMercadoPagoPreference(
   
   const preferenceClient = new Preference(client);
 
-  // Preparar itens para o Mercado Pago
   const items = cart.items.map((item: any) => {
     const productName = item.product.name;
     const variantInfo = item.productVariant?.color?.name ? 
@@ -175,11 +173,9 @@ async function createMercadoPagoPreference(
     
     return {
       id: item.product.id,
-      title: `${productName}${variantInfo}`.substring(0, 127), // Limite de caracteres
+      title: `${productName}${variantInfo}`.substring(0, 127), 
       description: `Produto: ${productName}${variantInfo} | Preço unitário: R$ ${Number(item.product.price).toFixed(2)}`,
-      picture_url: item.product.imagePrimary ? 
-        `${process.env.NEXTAUTH_URL}${item.product.imagePrimary}` : undefined,
-      category_id: 'fashion',
+      picture_url: item.product.imagePrimary ? `${item.product.imagePrimary}` : undefined,
       quantity: Number(item.quantity),
       unit_price: Number(item.product.price),
       currency_id: 'BRL'
@@ -203,10 +199,11 @@ async function createMercadoPagoPreference(
     items,
     back_urls: {
       success: `${process.env.NEXTAUTH_URL}/checkout/sucesso`,
-      failure: `${process.env.NEXTAUTH_URL}/checkout/falha`,
+      failure: `${process.env.NEXTAUTH_URL}/checkout/falha`, 
       pending: `${process.env.NEXTAUTH_URL}/checkout/pending`,
     },
     auto_return: 'approved' as const,
+    notification_url: `${process.env.NEXTAUTH_URL}/api/webhooks/mercadopago`,
     payment_methods: {
       excluded_payment_methods: [],
       excluded_payment_types: [],
@@ -219,6 +216,13 @@ async function createMercadoPagoPreference(
     expiration_date_from: new Date().toISOString(),
     expiration_date_to: new Date(Date.now() + 30 * 60 * 1000).toISOString()
   };
+
+  console.log('🔗 URLs configuradas:', {
+    success: `${process.env.NEXTAUTH_URL}/checkout/sucesso`,
+    failure: `${process.env.NEXTAUTH_URL}/checkout/falha`,
+    pending: `${process.env.NEXTAUTH_URL}/checkout/pending`,
+    nextauth_url: process.env.NEXTAUTH_URL
+  });
 
   return await preferenceClient.create({ body: preferenceData });
 }

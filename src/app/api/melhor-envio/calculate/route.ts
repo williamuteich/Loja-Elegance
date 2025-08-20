@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         height: p.height || 11,
         length: p.length || 17,
         weight: p.weight || 3,
-        insurance_value: p.insurance_value || 5,
+        insurance_value: p.insurance_value || 0,
         quantity: p.quantity || 1,
       })),
     };
