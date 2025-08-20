@@ -16,7 +16,12 @@ export async function calculateShippingAndCreatePayment(
     }
 
     const cart = await prisma.cart.findFirst({
-      where: { userId: session.user.id },
+      where: { 
+        OR: [
+          { userId: session.user.id },
+          { sessionId: { not: null } } 
+        ]
+      },
       include: {
         items: {
           include: {
@@ -67,6 +72,8 @@ export async function calculateShippingAndCreatePayment(
       shippingPrice,
       session.user.id
     );
+
+    console.log('✅ Pagamento criado:', preference.id);
 
     return {
       success: true,
@@ -196,33 +203,11 @@ async function createMercadoPagoPreference(
   }
 
   const preferenceData = {
-    items,
-    back_urls: {
-      success: `${process.env.NEXTAUTH_URL}/checkout/sucesso`,
-      failure: `${process.env.NEXTAUTH_URL}/checkout/falha`, 
-      pending: `${process.env.NEXTAUTH_URL}/checkout/pending`,
-    },
-    auto_return: 'approved' as const,
-    notification_url: `${process.env.NEXTAUTH_URL}/api/webhooks/mercadopago`,
-    payment_methods: {
-      excluded_payment_methods: [],
-      excluded_payment_types: [],
-      installments: 12,
-      default_installments: 1
-    },
-    statement_descriptor: "BAZAR ELEGANCE",
-    external_reference: cart.id,
-    expires: true,
-    expiration_date_from: new Date().toISOString(),
-    expiration_date_to: new Date(Date.now() + 30 * 60 * 1000).toISOString()
+    items
   };
 
-  console.log('🔗 URLs configuradas:', {
-    success: `${process.env.NEXTAUTH_URL}/checkout/sucesso`,
-    failure: `${process.env.NEXTAUTH_URL}/checkout/falha`,
-    pending: `${process.env.NEXTAUTH_URL}/checkout/pending`,
-    nextauth_url: process.env.NEXTAUTH_URL
-  });
+  const preference = await preferenceClient.create({ body: preferenceData });
+  console.log('✅ MercadoPago OK:', preference.id);
 
-  return await preferenceClient.create({ body: preferenceData });
+  return preference;
 }
