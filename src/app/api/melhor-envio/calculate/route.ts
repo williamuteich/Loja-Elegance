@@ -37,12 +37,9 @@ export async function POST(req: Request) {
 
     const data = await res.json();
 
-    // Calculate subtotal on backend if cartId provided
     let subtotal = 0;
     try {
       if (cartId) {
-        // Lazy require prisma to avoid top-level dependency in edge/runtime mismatches
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const { prisma } = require('@/lib/prisma');
         const cart = await prisma.cart.findUnique({
           where: { id: cartId },

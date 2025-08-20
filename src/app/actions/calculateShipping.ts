@@ -15,7 +15,7 @@ export async function calculateShippingAndCreatePayment(
       throw new Error('Usuário não autenticado');
     }
 
-    // ✅ SEGURO: Buscar carrinho via userId (não cartId do frontend)
+    // SEGURO: Buscar carrinho via userId (não cartId do frontend)
     const cart = await prisma.cart.findFirst({
       where: { userId: session.user.id },
       include: {
@@ -110,7 +110,7 @@ async function calculateShippingWithMelhorEnvio(
     height: 11, // Altura fixa em cm  
     length: 17, // Comprimento fixo em cm
     weight: 3,  // Peso fixo em kg
-    insurance_value: item.product.price * item.quantity,
+    insurance_value: 5, // Valor fixo mínimo (sem seguro)
     quantity: item.quantity,
   }));
 

@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useAddress } from "@/context/addressContext";
 import { useCart } from "@/context/newCartContext";
-import { useRouter } from "next/navigation";
 import { Loader2, Truck } from "lucide-react";
 import { ResumoCompra } from "@/app/(pages)/checkout/components/ResumoCompra";
 import { calculateShippingAndCreatePayment } from "@/app/actions/calculateShipping";
@@ -11,7 +10,6 @@ import { calculateShippingAndCreatePayment } from "@/app/actions/calculateShippi
 export function FreteClient({ userID }: { userID?: string }) {
   const { address, fetchAddress } = useAddress();
   const { cart } = useCart();
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [calculating, setCalculating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,7 +72,7 @@ export function FreteClient({ userID }: { userID?: string }) {
           height: it.product?.height || 11,
           length: it.product?.length || 17,
           weight: it.product?.weight || 3,
-          insurance_value: it.product?.price * it.quantity || 5,
+          insurance_value: 5, // Valor fixo mínimo (sem seguro)
           quantity: it.quantity || 1,
         }));
 
@@ -179,7 +177,7 @@ export function FreteClient({ userID }: { userID?: string }) {
     setError(null);
     
     try {
-      // ✅ SEGURO: Server action busca carrinho via userId automaticamente
+      //  SEGURO: Server action busca carrinho via userId automaticamente
       const result = await calculateShippingAndCreatePayment(
         selected.id,
         address.cep
