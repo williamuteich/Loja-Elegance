@@ -32,6 +32,7 @@ export function EnderecoEntrega() {
             onChange={() => setSelected("endereco")}
           />
           <div className={`rounded-xl bg-white transition-all ${selected === "endereco" ? "border border-gray-600 shadow-sm" : "border border-gray-300"}`}>
+            { selected === "endereco" && !address && (
             <div className="flex items-start p-5">
               <div className={`flex-shrink-0 mt-1 w-6 h-6 rounded-full border flex items-center justify-center mr-4 ${selected === "endereco" ? "bg-gray-700 border-gray-700" : "border-gray-400 bg-white"}`}>
                 {selected === "endereco" && <Check className="w-3.5 h-3.5 text-white" />}
@@ -54,7 +55,7 @@ export function EnderecoEntrega() {
                 </div>
               </div>
             </div>
-
+            )}
             <div className="border-t border-gray-200 px-5 py-3 bg-gray-50">
               <Link href="/checkout/endereco" className="text-sm font-bold text-blue-500 hover:text-blue-700 flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-neutral-700" />
