@@ -172,6 +172,14 @@ export function FreteClient({ userID }: { userID?: string }) {
 
   const handleContinue = async () => {
     if (!selected || !address?.cep) return;
+    // Exigir login antes de criar pagamento/pedido
+    if (!userID) {
+      try {
+        sessionStorage.setItem('post_login_redirect', '/checkout/frete');
+      } catch {}
+      window.location.href = `/login?callbackUrl=${encodeURIComponent('/checkout/frete')}`;
+      return;
+    }
     
     setCalculating(true);
     setError(null);

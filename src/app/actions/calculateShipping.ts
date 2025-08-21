@@ -4,6 +4,7 @@ import { MercadoPagoConfig, Preference } from 'mercadopago';
 import { getServerSession } from 'next-auth';
 import { auth } from '@/lib/auth-config';
 import { prisma } from '@/lib/prisma';
+import { RateLimit } from '@/lib/rateLimit';
 import { createHmac, createHash } from 'crypto';
 
 type ShippingSelection = {
@@ -39,8 +40,14 @@ function verifyQuoteSignature(sel: ShippingSelection): boolean {
 export async function calculateShippingAndCreatePayment(selection: ShippingSelection) {
   try {
     const session = await getServerSession(auth);
-    if (!session?.user) {
+    const userId = (session?.user as any)?.id || (session?.user as any)?.userID;
+    if (!userId) {
       throw new Error('Usuário não autenticado');
+    }
+
+    const rl = await RateLimit.check(userId, { windowMs: 60_000, maxRequests: 5, keyPrefix: 'mp:pref' });
+    if (!rl.allowed) {
+      throw new Error('Muitas tentativas. Tente novamente em instantes.');
     }
 
     if (!selection.cartId) {
@@ -82,19 +89,19 @@ export async function calculateShippingAndCreatePayment(selection: ShippingSelec
     if (!cart || cart.items.length === 0) {
       throw new Error('Carrinho vazio ou não encontrado');
     }
-    // Valida se o carrinho pertence ao usuário logado quando aplicável
-    if (cart.userId && cart.userId !== session.user.id) {
+
+    if (cart.userId && cart.userId !== userId) {
       throw new Error('Carrinho não pertence ao usuário');
     }
 
     const subtotal = cart.items.reduce((acc, item) => {
       return acc + (item.product.price * item.quantity);
     }, 0);
-    // Verify the signed quote instead of calling Melhor Envio novamente
+
     if (!selection?.sig || !selection?.serviceId || selection.price == null || !selection.toPostalCode) {
       throw new Error('Seleção de frete inválida');
     }
-    // Recalcular hash do carrinho no servidor
+
     const parts = cart.items
       .map((it: any) => [
         String(it.product.id),
@@ -127,15 +134,42 @@ export async function calculateShippingAndCreatePayment(selection: ShippingSelec
       cart,
       subtotal,
       shippingPrice,
-      session.user.id
+      userId
     );
 
-    console.log('✅ Pagamento criado:', preference.id);
+    let order = await prisma.order.findFirst({ where: { preferenceId: String(preference.id) } });
+    if (!order) {
+      order = await prisma.order.create({
+        data: {
+          user: { connect: { id: userId } },
+          cartId: cart.id,
+          subtotal,
+          shippingPrice,
+          total: subtotal + shippingPrice,
+          status: 'pending',
+          preferenceId: String(preference.id),
+          shippingServiceId: String(selection.serviceId),
+          shippingPostalCode: String(selection.toPostalCode).replace(/\D/g, ''),
+          shippingSig: String(selection.sig),
+          items: {
+            create: cart.items.map((item: any) => ({
+              productId: item.product.id,
+              productVariantId: item.productVariant?.id || undefined,
+              name: `${item.product.name}${item.productVariant?.color?.name ? ` - ${item.productVariant.color.name}` : ''}`.substring(0, 255),
+              unitPrice: Number(item.product.price),
+              quantity: Number(item.quantity),
+              imageUrl: item.product.imagePrimary || undefined,
+            })),
+          },
+        },
+      });
+    }
 
     return {
       success: true,
       init_point: preference.init_point,
       preference_id: preference.id,
+      order_id: order?.id,
       subtotal,
       shippingPrice,
       total: subtotal + shippingPrice
@@ -157,21 +191,21 @@ async function createMercadoPagoPreference(
     throw new Error('Token do Mercado Pago não configurado');
   }
 
-  const client = new MercadoPagoConfig({ 
+  const client = new MercadoPagoConfig({
     accessToken: MERCADOPAGO_ACCESS_TOKEN,
     options: { timeout: 5000 }
   });
-  
+
   const preferenceClient = new Preference(client);
 
   const items = cart.items.map((item: any) => {
     const productName = item.product.name;
-    const variantInfo = item.productVariant?.color?.name ? 
+    const variantInfo = item.productVariant?.color?.name ?
       ` - ${item.productVariant.color.name}` : '';
-    
+
     return {
       id: item.product.id,
-      title: `${productName}${variantInfo}`.substring(0, 127), 
+      title: `${productName}${variantInfo}`.substring(0, 127),
       description: `Produto: ${productName}${variantInfo} | Preço unitário: R$ ${Number(item.product.price).toFixed(2)}`,
       picture_url: item.product.imagePrimary ? `${item.product.imagePrimary}` : undefined,
       quantity: Number(item.quantity),
@@ -180,9 +214,8 @@ async function createMercadoPagoPreference(
     };
   });
 
-  // Adicionar frete como item separado
   if (shippingPrice > 0) {
-    items.push({ 
+    items.push({
       id: 'frete',
       title: 'Frete',
       description: `Entrega - Valor: R$ ${Number(shippingPrice).toFixed(2)}`,
@@ -193,12 +226,25 @@ async function createMercadoPagoPreference(
     });
   }
 
+  const baseUrl = process.env.MP_BASE_URL || 'https://ed6e9e508bad.ngrok-free.app';
+  const whSecret = process.env.MP_WEBHOOK_SECRET;
+  const hookUrl = whSecret
+    ? `${baseUrl}/api/mercadopago/webhook?t=${encodeURIComponent(whSecret)}`
+    : `${baseUrl}/api/mercadopago/webhook`;
+
   const preferenceData = {
-    items
-  };
+    items,
+    notification_url: hookUrl,
+    external_reference: userId, 
+    back_urls: {
+      success: `${baseUrl}/checkout/retorno?status=success`,
+      pending: `${baseUrl}/checkout/retorno?status=pending`,
+      failure: `${baseUrl}/checkout/retorno?status=failure`,
+    },
+    auto_return: 'approved',
+  } as any;
 
   const preference = await preferenceClient.create({ body: preferenceData });
-  console.log('✅ MercadoPago OK:', preference.id);
 
   return preference;
 }

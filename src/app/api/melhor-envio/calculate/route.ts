@@ -48,7 +48,7 @@ function computeCartHash(cart: any): string {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-  const { to_postal_code, cartId } = body;
+    const { to_postal_code, cartId } = body;
 
     if (!cartId) {
       return NextResponse.json({ error: 'cartId é obrigatório' }, { status: 400 });
@@ -104,17 +104,17 @@ export async function POST(req: Request) {
 
     const data = await res.json();
 
-  const ts = Date.now();
-  const toCep = payload.to.postal_code;
-  const cartHash = computeCartHash(cart);
+    const ts = Date.now();
+    const toCep = payload.to.postal_code;
+    const cartHash = computeCartHash(cart);
 
     const shippingOptions = Array.isArray(data)
       ? data.map((opt: any) => {
-          const price = Number(opt?.price ?? 0);
-          const serviceId = opt?.id ?? opt?.service_id ?? '';
-          const sig = signQuote({ serviceId, price, toPostalCode: toCep, timestamp: ts, cartId, cartHash });
-          return { ...opt, meta: { sig, ts, cartId, cartHash } };
-        })
+        const price = Number(opt?.price ?? 0);
+        const serviceId = opt?.id ?? opt?.service_id ?? '';
+        const sig = signQuote({ serviceId, price, toPostalCode: toCep, timestamp: ts, cartId, cartHash });
+        return { ...opt, meta: { sig, ts, cartId, cartHash } };
+      })
       : data;
 
     let subtotal = 0;
@@ -126,7 +126,7 @@ export async function POST(req: Request) {
       console.warn('Could not calculate subtotal on server', e);
     }
 
-  return NextResponse.json({ shippingOptions, subtotal }, { status: res.status });
+    return NextResponse.json({ shippingOptions, subtotal }, { status: res.status });
   } catch (err: any) {
     console.error('Error calling Melhor Envio', err);
     return NextResponse.json({ error: 'Internal error' }, { status: 500 });

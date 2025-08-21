@@ -31,6 +31,7 @@ model User {
   totpSecret               String?
   provider                 String?
   carts                    Cart[]        
+  orders                   Order[]
 }
 
 model Product {
@@ -227,4 +228,55 @@ model CartItem {
   updatedAt         DateTime        @updatedAt
 
   @@unique([cartId, productId, productVariantId])
+}
+
+// Pedidos
+model Order {
+  id                String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String       @db.ObjectId
+  user              User         @relation(fields: [userId], references: [id])
+  cartId            String       @db.ObjectId
+  items             OrderItem[]
+  subtotal          Float
+  shippingPrice     Float        @default(0)
+  total             Float
+  status            String       @default("pending") // pending, paid, cancelled, failed, refunded
+  preferenceId      String?      // Mercado Pago preference id
+  shippingServiceId String?
+  shippingPostalCode String?
+  shippingSig       String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId          String   @db.ObjectId
+  order            Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId        String   @db.ObjectId
+  productVariantId String?  @db.ObjectId
+  name             String
+  unitPrice        Float
+  quantity         Int
+  imageUrl         String?
+}
+
+// Eventos de Webhook para idempotência e auditoria
+model WebhookEvent {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  provider      String
+  topic         String
+  externalId    String
+  requestId     String?
+  signature     String?
+  payload       Json?
+  orderId       String?  @db.ObjectId
+  statusApplied String?
+  createdAt     DateTime @default(now())
+  processedAt   DateTime?
+
+  @@unique([provider, topic, externalId])
 }
