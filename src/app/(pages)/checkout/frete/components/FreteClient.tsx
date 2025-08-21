@@ -177,11 +177,16 @@ export function FreteClient({ userID }: { userID?: string }) {
     setError(null);
     
     try {
-      //  SEGURO: Server action busca carrinho via userId automaticamente
-      const result = await calculateShippingAndCreatePayment(
-        selected.id,
-        address.cep
-      );
+      // Passa a seleção assinada para o server action (sem nova chamada ao Melhor Envio)
+      const result = await calculateShippingAndCreatePayment({
+        serviceId: String(selected.id || selected.service_id || ''),
+        price: Number(selected.price || selected.price_in_cents || 0),
+        sig: String(selected.meta?.sig || ''),
+        ts: Number(selected.meta?.ts || 0),
+        toPostalCode: String(address.cep),
+        cartId: String(selected.meta?.cartId || ''),
+        cartHash: String(selected.meta?.cartHash || ''),
+      });
 
       if (result.success && result.init_point) {
         // Redirecionar para o Mercado Pago
@@ -201,10 +206,8 @@ export function FreteClient({ userID }: { userID?: string }) {
   useEffect(() => {
     try {
       if (selected) {
-        sessionStorage.setItem('selected_shipping_price', 
-          String(selected.price || selected.price_in_cents || 0));
-        sessionStorage.setItem('selected_shipping_id', 
-          String(selected.id || selected.service_id || ''));
+        sessionStorage.setItem('selected_shipping_price', String(selected.price || selected.price_in_cents || 0));
+        sessionStorage.setItem('selected_shipping_id', String(selected.id || selected.service_id || ''));
       }
     } catch (e) {}
   }, [selected]);

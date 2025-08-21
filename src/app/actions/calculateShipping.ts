@@ -4,24 +4,51 @@ import { MercadoPagoConfig, Preference } from 'mercadopago';
 import { getServerSession } from 'next-auth';
 import { auth } from '@/lib/auth-config';
 import { prisma } from '@/lib/prisma';
+import { createHmac, createHash } from 'crypto';
 
-export async function calculateShippingAndCreatePayment(
-  shippingServiceId: string,
-  toPostalCode: string
-) {
+type ShippingSelection = {
+  serviceId: string;
+  price: number;
+  sig: string;
+  ts: number;
+  toPostalCode: string;
+  cartId: string;
+  cartHash: string;
+};
+
+function verifyQuoteSignature(sel: ShippingSelection): boolean {
+  const secret = process.env.SHIPPING_SIGNING_SECRET || process.env.MELHOR_ENVIO_TOKEN || '';
+  if (!secret) return false;
+  const cleanCep = String(sel.toPostalCode).replace(/\D/g, '');
+  const data = {
+    serviceId: String(sel.serviceId),
+    price: Number(sel.price),
+    toPostalCode: String(cleanCep),
+    timestamp: Number(sel.ts),
+    cartId: String(sel.cartId),
+    cartHash: String(sel.cartHash),
+  };
+  const h = createHmac('sha256', secret);
+  h.update(JSON.stringify(data));
+  const expected = h.digest('hex');
+  const maxAgeMs = 15 * 60 * 1000;
+  const fresh = Date.now() - Number(sel.ts) <= maxAgeMs;
+  return expected === sel.sig && fresh;
+}
+
+export async function calculateShippingAndCreatePayment(selection: ShippingSelection) {
   try {
     const session = await getServerSession(auth);
     if (!session?.user) {
       throw new Error('Usuário não autenticado');
     }
 
-    const cart = await prisma.cart.findFirst({
-      where: { 
-        OR: [
-          { userId: session.user.id },
-          { sessionId: { not: null } } 
-        ]
-      },
+    if (!selection.cartId) {
+      throw new Error('Carrinho não informado na cotação');
+    }
+
+    const cart = await prisma.cart.findUnique({
+      where: { id: selection.cartId },
       include: {
         items: {
           include: {
@@ -55,16 +82,46 @@ export async function calculateShippingAndCreatePayment(
     if (!cart || cart.items.length === 0) {
       throw new Error('Carrinho vazio ou não encontrado');
     }
+    // Valida se o carrinho pertence ao usuário logado quando aplicável
+    if (cart.userId && cart.userId !== session.user.id) {
+      throw new Error('Carrinho não pertence ao usuário');
+    }
 
     const subtotal = cart.items.reduce((acc, item) => {
       return acc + (item.product.price * item.quantity);
     }, 0);
+    // Verify the signed quote instead of calling Melhor Envio novamente
+    if (!selection?.sig || !selection?.serviceId || selection.price == null || !selection.toPostalCode) {
+      throw new Error('Seleção de frete inválida');
+    }
+    // Recalcular hash do carrinho no servidor
+    const parts = cart.items
+      .map((it: any) => [
+        String(it.product.id),
+        Number(it.quantity || 0),
+        Number(it.product.width || 0),
+        Number(it.product.height || 0),
+        Number(it.product.length || 0),
+        Number(it.product.weight || 0),
+      ].join(':'))
+      .sort()
+      .join('|');
+    const ch = createHash('sha256');
+    ch.update(parts);
+    const serverCartHash = ch.digest('hex');
 
-    const shippingPrice = await calculateShippingWithMelhorEnvio(
-      cart.items,
-      toPostalCode,
-      shippingServiceId
-    );
+    if (!selection.cartId || !selection.cartHash || selection.cartId !== cart.id) {
+      throw new Error('Carrinho da cotação não corresponde');
+    }
+    if (selection.cartHash !== serverCartHash) {
+      throw new Error('O carrinho foi alterado. Recalcule o frete.');
+    }
+
+    const isValid = verifyQuoteSignature(selection);
+    if (!isValid) {
+      throw new Error('Cotação de frete expirada ou inválida');
+    }
+    const shippingPrice = Number(selection.price);
 
     const preference = await createMercadoPagoPreference(
       cart,
@@ -87,72 +144,6 @@ export async function calculateShippingAndCreatePayment(
     console.error('Erro no cálculo de frete:', error);
     throw new Error(error instanceof Error ? error.message : 'Erro interno');
   }
-}
-
-async function calculateShippingWithMelhorEnvio(
-  items: any[],
-  toPostalCode: string,
-  serviceId: string
-): Promise<number> {
-  const MELHOR_ENVIO_URL = process.env.MELHOR_ENVIO_URL || 'https://melhorenvio.com.br/api/v2/me/shipment/calculate';
-  const MELHOR_ENVIO_TOKEN = process.env.MELHOR_ENVIO_TOKEN;
-  
-  if (!MELHOR_ENVIO_TOKEN) {
-    throw new Error('Token do Melhor Envio não configurado');
-  }
-
-  if (!toPostalCode || typeof toPostalCode !== 'string') {
-    throw new Error('CEP de destino inválido');
-  }
-
-  const cleanPostalCode = String(toPostalCode).replace(/\D/g, '');
-  if (cleanPostalCode.length !== 8) {
-    throw new Error('CEP deve ter 8 dígitos');
-  }
-
-  const products = items.map(item => ({
-    id: item.product.id,
-    width: item.product.width || 11,     
-    height: item.product.height || 11,   
-    length: item.product.length || 17,   
-    weight: item.product.weight || 3,    
-    insurance_value: 0, 
-    quantity: item.quantity,
-  }));
-
-
-  const payload = {
-    from: { postal_code: '97538000' }, 
-    to: { postal_code: cleanPostalCode },
-    products,
-    services: serviceId 
-  };
-
-  const res = await fetch(MELHOR_ENVIO_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${MELHOR_ENVIO_TOKEN}`,
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || 'Erro ao calcular frete');
-  }
-
-  const data = await res.json();
-  
-  const selectedService = Array.isArray(data) ? 
-    data.find(service => service.id === serviceId) : data;
-  
-  if (!selectedService || !selectedService.price) {
-    throw new Error('Serviço de frete não disponível');
-  }
-
-  return Number(selectedService.price);
 }
 
 async function createMercadoPagoPreference(
