@@ -67,13 +67,19 @@ export function ResumoCompra({
               className="flex gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors bg-white border border-gray-200"
             >
               <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
-                <Image
-                  src={item.imagePrimary}
-                  alt={item.name}
-                  fill
-                  className="object-cover"
-                  sizes="64px"
-                />
+                {item.imagePrimary ? (
+                  <Image
+                    src={item.imagePrimary}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                    sizes="64px"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-[10px] text-gray-500">
+                    <span className="text-xs text-center">Sem imagem</span>
+                  </div>
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="font-medium text-gray-800 line-clamp-2">{item.name}</h4>

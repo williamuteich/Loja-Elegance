@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { Order } from "@/utils/types/order";
 import {
   AreaChart,
   Area,
@@ -21,15 +20,12 @@ const dayOfWeekMap = [
   "Sábado",
 ];
 
-interface Props {
-  pedidos: Order[];
-}
+type DashboardOrder = { createdAt: string | Date; status: string; total: number };
+interface Props { pedidos: DashboardOrder[] }
 
 export default function OrderDashboard({ pedidos }: Props) {
   const processData = () => {
-    const validOrders = pedidos.filter(
-      (order) => !["cancelled", "pending"].includes(order.status)
-    );
+  const validOrders = pedidos.filter((order) => !["cancelled", "pending"].includes(order.status));
 
     const dailyData = validOrders.reduce((acc, order) => {
       const dayIndex = new Date(order.createdAt).getDay();
@@ -39,7 +35,7 @@ export default function OrderDashboard({ pedidos }: Props) {
         acc[day] = { total: 0, count: 0 };
       }
 
-      acc[day].total += order.total;
+  acc[day].total += Number(order.total || 0);
       acc[day].count += 1;
 
       return acc;

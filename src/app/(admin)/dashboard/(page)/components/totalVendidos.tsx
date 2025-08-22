@@ -1,26 +1,26 @@
-import { Order, OrderItem } from "@/utils/types/order";
 import { FaDollarSign } from "react-icons/fa";
 
-export default async function TotalVendidos({pedidos}: {pedidos: Order[]}) {
+type DashboardOrder = {
+  status: string;
+  items: { unitPrice: number; quantity: number }[];
+};
+
+export default async function TotalVendidos({ pedidos }: { pedidos: DashboardOrder[] }) {
 
 
-      const totalVendidos = pedidos
-      .filter((pedido: Order) => pedido.status !== "cancelled" && pedido.status !== "pending")
-      .flatMap((pedido: Order) => pedido.items)
-      .reduce(
-        (acc: number, item: OrderItem) =>
-          acc + item.price * item.quantity,
-        0
-      );
+  const totalVendidos = pedidos
+    .filter((pedido) => pedido.status !== "cancelled" && pedido.status !== "pending")
+    .flatMap((pedido) => pedido.items)
+    .reduce((acc: number, item) => acc + item.unitPrice * item.quantity, 0);
     
     return (
         <div className="bg-white p-4 md:p-6 shadow-lg rounded-2xl border border-gray-200 hover:shadow-xl transition-shadow duration-300">
             <p className="text-md text-gray-700 font-bold">Vendas</p>
             <div className="flex items-center justify-between">
                 <span className="text-2xl text-blue-600 font-extrabold">
-                    {Number(totalVendidos).toLocaleString("es-UY", {
+                  {Number(totalVendidos).toLocaleString("pt-BR", {
                     style: "currency",
-                    currency: "UYU",
+                    currency: "BRL",
                   })}
                 </span>
                 <div className="bg-blue-50 p-4 rounded-full">

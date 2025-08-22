@@ -93,7 +93,7 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
             {pedidos.map((pedido: any) => (
               <tr key={pedido.id} className="hover:bg-gray-50 transition-colors">
                 <td className="py-3 px-4 font-medium text-sm text-blue-600">
-                  <Link href={`/admin/pedidos/${pedido.id}`} className="hover:underline">
+                  <Link href={`/dashboard/pedidos/${pedido.id}`} className="hover:underline">
                     #{pedido.id.slice(-6).toUpperCase()}
                   </Link>
                 </td>
@@ -121,18 +121,14 @@ export default async function Pedidos({ searchParams }: { searchParams: Promise<
                       {pedido.items.map((item: any, index: number) => (
                         <li key={index}>
                           <div className="flex items-center gap-2">
-                            <span className="text-gray-800">
-                               x{item.quantity || 0}
-                            </span>
-                            {item.productVariant?.color && (
+                            <span className="text-gray-800">x{item.quantity || 0}</span>
+                            {item.name && (
+                              <span className="text-gray-700 text-sm truncate max-w-[200px]">{item.name}</span>
+                            )}
+                            {item.color && (
                               <div className="flex items-center gap-1 text-sm">
-                                <span
-                                  className="w-3 h-3 rounded-full border"
-                                  style={{ backgroundColor: item.productVariant.color?.hexCode || '#ccc' }}
-                                />
-                                <span className="text-gray-600">
-                                  {item.productVariant.color?.name || 'Cor não especificada'}
-                                </span>
+                                <span className="w-3 h-3 rounded-full border" style={{ backgroundColor: item.color?.hexCode || '#ccc' }} />
+                                <span className="text-gray-600">{item.color?.name || 'Cor'}</span>
                               </div>
                             )}
                           </div>

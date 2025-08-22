@@ -168,7 +168,6 @@ export default function MenuSuspenso({ initialProducts }: MenuSuspensoProps) {
                                         className="text-neutral-600 hover:text-pink-700 transition-colors flex items-center text-sm"
                                     >
                                         <User className="w-6 h-6 mr-1" />
-                                        Minha Conta
                                     </Link>
                                 )}
                             </div>

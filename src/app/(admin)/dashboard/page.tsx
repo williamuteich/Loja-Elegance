@@ -1,35 +1,34 @@
 import TotalVendidos from "./(page)/components/totalVendidos";
-import SendPushNotification from "./components/SendPushNotification";
 import TotalUsuarios from "./(page)/components/totalUsuarios";
 import TotalProdutos from "./(page)/components/totalProdutos";
 import OrderDashboard from "./(page)/components/order";
 import GraficoDashboard from "./(page)/components/grafico";
 import TopProducts from "./(page)/components/topProducts";
 import DailyVisits from "./(page)/components/dailyVisits";
-import { cookies } from "next/headers";
 import { JSX } from "react";
+import { prisma } from "@/lib/prisma";
 export default async function Dashboard(): Promise<JSX.Element> {
-  const cookieStore = await cookies();
-  const cookieHeader = cookieStore.toString();
-  const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/privada/order`,
-    {
-      headers: {
-        Cookie: cookieHeader,
+  // Busca direta no banco: pedidos recentes com campos mínimos para os cards/gráficos
+  const pedidos = await prisma.order.findMany({
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      createdAt: true,
+      updatedAt: true,
+      status: true,
+      total: true,
+      items: {
+        select: {
+          name: true,
+          unitPrice: true,
+          quantity: true,
+        },
       },
-      cache: "no-store",
-    }
-  );
-
-  const result = await response.json();
-  const pedidos = result.orders;
+    },
+  });
 
   return (
     <div className="p-8 px-10 bg-gray-50">
-      <div className="mb-8">
-        {/* Envio de notificação push para todos os inscritos */}
-        <SendPushNotification />
-      </div>
       <div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <TotalVendidos pedidos={pedidos} />
