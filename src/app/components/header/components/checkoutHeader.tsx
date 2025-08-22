@@ -55,13 +55,18 @@ export default function CheckoutHeader() {
               {cart.map((item) => (
                 <div key={`${item.id}-${item.selectedVariantId}`} className="flex gap-4 border-b pb-4">
                   <Link href={`/produtos/${item.id}`} className="cursor-pointer">
-                    <Image
-                      src={item.imagePrimary}
-                      alt={item.name}
-                      width={80}
-                      height={80}
-                      className="object-cover rounded-md w-auto h-auto"
-                    />
+                    {
+                      item.imagePrimary ? (
+                        <Image
+                          src={item.imagePrimary}
+                          alt={item.name}
+                          width={80}
+                          height={80}
+                        />
+                      ) : (
+                        <div className="w-20 h-20 bg-gray-200 rounded-md" />
+                      )
+                    }
                   </Link>
 
                   <div className="flex-1">

@@ -60,18 +60,17 @@ function getParam(searchParams: { [key: string]: string | string[] | undefined }
   return v ?? null;
 }
 
-export default async function RetornoPage({
+export default function RetornoPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const awaitedSearchParams = await searchParams;
-  const statusParam = getParam(awaitedSearchParams, "status") || getParam(awaitedSearchParams, "collection_status") || getParam(awaitedSearchParams, "status_detail");
+  const statusParam = getParam(searchParams, "status") || getParam(searchParams, "collection_status") || getParam(searchParams, "status_detail");
   const info = mapStatus(statusParam);
 
-  const preferenceId = getParam(awaitedSearchParams, "preference_id") || undefined;
-  const paymentId = getParam(awaitedSearchParams, "payment_id") || getParam(awaitedSearchParams, "collection_id") || undefined;
-  const merchantOrderId = getParam(awaitedSearchParams, "merchant_order_id") || undefined;
+  const preferenceId = getParam(searchParams, "preference_id") || undefined;
+  const paymentId = getParam(searchParams, "payment_id") || getParam(searchParams, "collection_id") || undefined;
+  const merchantOrderId = getParam(searchParams, "merchant_order_id") || undefined;
 
   const badge = getBadge(info.kind);
 

@@ -1,9 +1,9 @@
 import NavProfile from "@/app/components/navProfile";
-import { FaCheckCircle, FaHourglassHalf, FaBan, FaListAlt, FaMoneyBill, FaTruck, FaBoxOpen } from "react-icons/fa";
+import { FaCheckCircle, FaListAlt } from "react-icons/fa";
 import { getServerSession } from "next-auth";
 import { auth as authOptions } from "@/lib/auth-config";
 import { PrismaClient } from "@prisma/client";
-import { Order } from "@/utils/types/order";
+import { redirect } from "next/navigation";
 
 const prisma = new PrismaClient();
 
@@ -11,139 +11,149 @@ export default async function OrdersPage() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.userID) {
-    return (
-      <div className="w-full text-center py-16 text-gray-600">
-        Você precisa estar logado para ver seus pedidos.
-      </div>
-    );
+    redirect("/login");
   }
 
-  const orders = (await prisma.order.findMany({
-    where: { userId: session.user.userID },
-    include: {
+  const pedidos = await prisma.order.findMany({
+    where: { userId: session.user.userID, status: "paid" },
+    orderBy: { updatedAt: "desc" },
+    select: {
+      id: true,
+      status: true,
+      subtotal: true,
+      shippingPrice: true,
+      total: true,
+      updatedAt: true,
+      createdAt: true,
       items: {
-        include: {
-          product: true,
-          productVariant: { include: { color: true } }
+        select: {
+          productId: true,
+          productVariantId: true,
+          name: true,
+          imageUrl: true,
+          unitPrice: true,
+          quantity: true,
         },
       },
-      pickupLocation: true,
     },
-    orderBy: { createdAt: "desc" },
-  })).map(order => ({
-    ...order,
-    items: order.items.map(item => ({
-      ...item,
-      variant: {
-        color: {
-          name: item.productVariant?.color?.name || "",
-          hexCode: item.productVariant?.color?.hexCode || "",
-        },
-      },
+  })
+
+  // Buscar detalhes de produtos e variantes para enriquecer os itens
+  const productIds = Array.from(new Set(pedidos.flatMap(o => o.items.map(i => i.productId)))).filter(Boolean) as string[];
+  const variantIds = Array.from(new Set(pedidos.flatMap(o => o.items.map(i => i.productVariantId).filter(Boolean))));
+
+  const [products, variants] = await Promise.all([
+    productIds.length
+      ? prisma.product.findMany({
+        where: { id: { in: productIds } },
+        select: { id: true, name: true, imagePrimary: true },
+      })
+      : Promise.resolve([] as any[]),
+    (variantIds as string[]).length
+      ? prisma.productVariant.findMany({
+        where: { id: { in: variantIds as string[] } },
+        select: { id: true, color: { select: { name: true, hexCode: true } } },
+      })
+      : Promise.resolve([] as any[]),
+  ]);
+
+  const productMap = new Map(products.map(p => [p.id, p] as const));
+  const variantMap = new Map(variants.map(v => [v.id, v] as const));
+
+  const orders = pedidos.map(o => ({
+    ...o,
+    items: o.items.map(i => ({
+      ...i,
+      product: productMap.get(i.productId) || null,
+      variant: i.productVariantId ? variantMap.get(i.productVariantId) || null : null,
     })),
-  })) as Order[];
-
-  const getStatus = (s: string) => {
-    switch (s) {
-      case "pending":
-        return { icon: FaHourglassHalf, text: "Pendente", color: "text-yellow-700", bgColor: "bg-yellow-100" };
-      case "confirmed":
-        return { icon: FaCheckCircle, text: "Confirmado", color: "text-green-700", bgColor: "bg-green-100" };
-      case "shipped":
-        return { icon: FaTruck, text: "Enviado", color: "text-blue-700", bgColor: "bg-blue-100" };
-      case "delivered":
-        return { icon: FaBoxOpen, text: "Entregue", color: "text-purple-700", bgColor: "bg-purple-100" };
-      case "cancelled":
-        return { icon: FaBan, text: "Cancelado", color: "text-red-700", bgColor: "bg-red-100" };
-      default:
-        return { icon: FaHourglassHalf, text: "Processando", color: "text-gray-600", bgColor: "bg-gray-100" };
-    }
-  };
-
-  const formatDate = (d: Date) =>
-    d.toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  }));
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4">
+    <div className="max-w-4xl mx-auto py-8 px-4">
       <div className="flex flex-col lg:flex-row gap-8">
         <NavProfile />
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <FaListAlt className="text-pink-600" /> Meus Pedidos
-          </h1>
+        <div className="space-y-12 w-full mt-6 lg:mt-0 bg-white p-6 border rounded-lg shadow-md">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="rounded-full">
+              <FaListAlt className="text-pink-700 w-8 h-8" />
+            </div>
+            <h1 className="text-2xl font-bold text-pink-700">Meus Pedidos</h1>
+          </div>
 
           {orders.length === 0 ? (
-            <p className="text-center text-gray-500">Nenhum pedido encontrado.</p>
+            <div className="text-center py-14 border border-gray-200 rounded-xl bg-white">
+              <p className="text-gray-500 mb-4">Nenhum pedido encontrado.</p>
+              <a href="/" className="inline-flex items-center justify-center rounded-md bg-pink-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-pink-800 transition-colors">
+                Voltar à loja
+              </a>
+            </div>
           ) : (
-            <div className="lg:max-h-[600px] lg:overflow-y-auto space-y-6 pr-2">
-              {orders.map((order) => {
-                const { icon: StatusIcon, text: statusText, color: statusColor } = getStatus(order.status);
-
-                const grouped = order.items.reduce<{
-                  [pid: string]: {
-                    product: typeof order.items[0]["product"];
-                    variants: Array<{ colorName: string; hex: string; qty: number }>;
-                  };
-                }>((acc, item) => {
-                  const pid = item.productId;
-                  if (!acc[pid]) acc[pid] = { product: item.product, variants: [] };
-                  acc[pid].variants.push({ colorName: item.variant.color.name, hex: item.variant.color.hexCode, qty: item.quantity });
-                  return acc;
-                }, {});
-
-                return (
-                  <div key={order.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                    <div className="flex justify-between items-center mb-4">
-                      <div>
-                        <h2 className="text-lg font-semibold text-pink-700">Pedido #{order.id.slice(-6).toUpperCase()}</h2>
-                        <p className="text-sm text-gray-500">{formatDate(order.createdAt)}</p>
-                      </div>
-                      <div className={`flex items-center gap-1 ${statusColor}`}>
-                        <StatusIcon /> <span className="font-medium">{statusText}</span>
-                      </div>
+            <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+              {orders.map((order) => (
+                <div key={order.id} className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <div className="bg-gray-50 px-4 py-3 flex flex-wrap gap-3 justify-between items-center border-b border-gray-200">
+                    <div>
+                      <h2 className="font-semibold text-pink-700">Pedido #{order.id.slice(-6).toUpperCase()}</h2>
+                      <p className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleString("pt-BR")}</p>
                     </div>
-
-                    <div className="space-y-4">
-                      {Object.values(grouped).map(({ product, variants }) => (
-                        <div key={product.id} className="flex items-center gap-4">
-                          <img src={product.imagePrimary || "/placeholder.png"} alt={product.name} className="w-16 h-16 rounded-lg object-cover" />
-                          <div className="flex-1">
-                            <p className="font-medium text-pink-700">{product.name}</p>
-                            <div className="flex flex-wrap gap-2 mt-1 text-sm">
-                              {variants.map((v, i) => (
-                                <span key={i} className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded">
-                                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: v.hex }} />
-                                  {v.qty}× {v.colorName}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="mt-4 p-4 bg-gray-50 rounded text-sm text-gray-700">
-                      <p className="font-bold text-pink-700">{order.pickupLocation.category}</p>
-                      <p className="font-bold">{order.pickupLocation.title}</p>
-                      <span className="text-xs">{order.pickupLocation.description}</span>
-                    </div>
-
-                    <div className="mt-6 border-t pt-4 flex justify-between items-center">
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <FaMoneyBill className="text-green-500" />
-                        <span className="capitalize">{order.paymentMethod && order.paymentMethod !== "outros" ? order.paymentMethod : order.paymentDetail}</span>
-                      </div>
-                      <p className="font-semibold text-pink-700">Total: R$ {order.total.toFixed(2).replace(".", ",")}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1 bg-emerald-100 text-green-500 px-3 py-1 rounded-full text-xs font-semibold">
+                        <FaCheckCircle className="text-green-600" /> Pago
+                      </span>
+                      <span className="inline-flex items-center gap-1 bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">
+                        {order.items.reduce((s, it) => s + it.quantity, 0)} itens
+                      </span>
                     </div>
                   </div>
-                );
-              })}
+
+                  <div className="p-4 divide-y divide-gray-100">
+                    {order.items.map((item, idx) => {
+                      const img = item.imageUrl || item.product?.imagePrimary || "/placeholder.png";
+                      const title = item.product?.name ?? item.name;
+                      const colorName = item.variant?.color?.name;
+                      const colorHex = item.variant?.color?.hexCode;
+                      const lineTotal = (item.unitPrice * item.quantity).toFixed(2).replace(".", ",");
+                      const unit = item.unitPrice.toFixed(2).replace(".", ",");
+                      return (
+                        <div key={idx} className="flex flex-wrap items-start sm:items-center gap-4 py-3">
+                          <img src={img} alt={title} className="w-16 h-16 rounded-lg object-cover ring-1 ring-gray-200" />
+                          <div className="flex-1 min-w-0 order-2 sm:order-none">
+                            <p className="font-medium text-gray-900 truncate">{title}</p>
+                            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600 mt-1">
+                              {colorName && (
+                                <span className="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-md">
+                                  <span className="w-3 h-3 rounded-full border border-gray-300" style={{ backgroundColor: colorHex || "#eee" }} />
+                                  {colorName}
+                                </span>
+                              )}
+                              <span className="bg-gray-100 px-2 py-1 rounded-md">Qtd: {item.quantity}</span>
+                            </div>
+                          </div>
+                        
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="px-4 py-4 bg-gray-50 border-t border-gray-200">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                      <div className="flex items-center justify-between sm:justify-start sm:gap-2">
+                        <span className="text-pink-600 font-semibold">Subtotal</span>
+                        <span className="font-medium text-gray-900">R$ {order.subtotal.toFixed(2).replace(".", ",")}</span>
+                      </div>
+                      <div className="flex items-center justify-between sm:justify-start sm:gap-2">
+                        <span className="text-pink-600 font-semibold">Frete</span>
+                        <span className="font-medium text-gray-900">R$ {order.shippingPrice.toFixed(2).replace(".", ",")}</span>
+                      </div>
+                      <div className="flex items-center justify-between sm:justify-end gap-1">
+                        <span className="text-pink-600 font-semibold">Total:</span>
+                        <span className="text-base font-semibold text-neutral-700">R$ {order.total.toFixed(2).replace(".", ",")}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
