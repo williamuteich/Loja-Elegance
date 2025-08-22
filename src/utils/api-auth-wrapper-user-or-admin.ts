@@ -8,7 +8,7 @@ export function withUserOrAdminApiAuth(handler: (request: Request, token: any) =
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
-    if (token.role !== "admin" && token.role !== "user") {
+    if (token.role !== "admin" && token.role !== "user" && !token.active) {
       return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
     }
     return handler(request, token);

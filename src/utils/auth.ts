@@ -9,7 +9,7 @@ export async function requireAdmin(request: Request) {
   const url = request.url;
   const userAgent = request.headers.get('user-agent') || null;
   if (!session) {
-    logger.warn({
+    console.log({
       acao: 'acesso negado',
       motivo: 'nao autenticado',
       metodo: method,
@@ -21,7 +21,7 @@ export async function requireAdmin(request: Request) {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
   if (session.user.role !== "admin") {
-    logger.warn({
+    console.log({
       acao: 'acesso negado',
       motivo: 'sem permissao',
       usuario: {

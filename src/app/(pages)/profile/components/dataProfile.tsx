@@ -30,6 +30,7 @@ export default function DataProfile({
   const [userInfo, setUserInfo] = useState({
     name: data.name,
     email: data.email,
+    cpf: data.cpf ? data.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : "",
   });
 
   useEffect(() => {
@@ -52,13 +53,30 @@ export default function DataProfile({
 
   const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUserInfo((prev) => ({ ...prev, [name]: value }));
+    
+    if (name === 'cpf') {
+      // Formatar CPF: 000.000.000-00
+      const cleanValue = value.replace(/\D/g, '');
+      let formattedValue = cleanValue;
+      
+      if (cleanValue.length <= 11) {
+        formattedValue = cleanValue
+          .replace(/(\d{3})(\d)/, '$1.$2')
+          .replace(/(\d{3})(\d)/, '$1.$2')
+          .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      }
+      
+      setUserInfo((prev) => ({ ...prev, [name]: formattedValue }));
+    } else {
+      setUserInfo((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleCancel = () => {
     setUserInfo({
       name: originalUserData.name,
       email: originalUserData.email,
+      cpf: originalUserData.cpf ? originalUserData.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : ""
     });
     setPhone(originalUserData.telefone ?
       originalUserData.telefone.replace(/^\+\d+/, '') : '');
@@ -72,6 +90,9 @@ export default function DataProfile({
     const dial = COUNTRIES.find((c) => c.code === countryCode)!.dial.replace(/\s/g, '');
     const cleanPhone = phone.replace(/\D/g, '');
     const fullTelefone = `${dial}${cleanPhone}`;
+    
+    // Limpar CPF para salvar apenas números
+    const cleanCpf = userInfo.cpf.replace(/\D/g, '');
 
     const response = await fetch(`/api/privada/addresses`, {
       method: "PUT",
@@ -81,6 +102,7 @@ export default function DataProfile({
         name: userInfo.name,
         email: userInfo.email,
         telefone: fullTelefone,
+        cpf: cleanCpf,
       }),
     });
 
@@ -129,6 +151,20 @@ export default function DataProfile({
               value={userInfo.email || ""}
               disabled={!editInfo}
               onChange={handleUserChange}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">CPF *</label>
+            <input
+              type="text"
+              name="cpf"
+              value={userInfo.cpf || ""}
+              disabled={!editInfo}
+              onChange={handleUserChange}
+              placeholder="000.000.000-00"
+              maxLength={14}
+              required
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
           </div>

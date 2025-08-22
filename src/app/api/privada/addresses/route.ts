@@ -18,6 +18,7 @@ export const GET = withApiAuth(async (request, session) => {
           name: true,
           email: true,
           telefone: true,
+          cpf: true,
           enderecos: {
             select: {
               id: true,
@@ -65,6 +66,7 @@ export const GET = withApiAuth(async (request, session) => {
         name: true,
         email: true,
         telefone: true,
+        cpf: true,
         enderecos: {
           select: {
             id: true, // Adicionando o campo `id`
@@ -120,6 +122,9 @@ export async function PUT(request: Request) {
   };
   if (body.telefone !== undefined) {
     userUpdateData.telefone = body.telefone;
+  }
+  if (body.cpf !== undefined) {
+    userUpdateData.cpf = body.cpf;
   }
 
   await prisma.user.update({

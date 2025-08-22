@@ -1,6 +1,7 @@
 export interface UserProps {
     name: string;
     email: string;
+    cpf?: string;  // CPF para emissão de NFe
     telefone: string;
     user: {
         userID: string;
