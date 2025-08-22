@@ -11,7 +11,7 @@ export interface CartItem {
   id: string;
   name: string;
   price: number;
-  imagePrimary: string;
+  imagePrimary: string | null;
   quantity: number;
   selectedVariantId: string;
   variantDetails: {
@@ -106,7 +106,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             id: item.productId,
             name: item.product.name,
             price: item.product.price,
-            imagePrimary: item.product.imagePrimary || '',
+            imagePrimary: item.product.imagePrimary || null,
             quantity: item.quantity,
             selectedVariantId: item.productVariantId || '',
             variantDetails: {
@@ -220,7 +220,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           id: item.productId,
           name: item.product.name,
           price: item.product.price,
-          imagePrimary: item.product.imagePrimary || '',
+          imagePrimary: item.product.imagePrimary || null,
           quantity: item.quantity,
           selectedVariantId: item.productVariantId || '',
           variantDetails: {
@@ -272,7 +272,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           id: item.productId,
           name: item.product.name,
           price: item.product.price,
-          imagePrimary: item.product.imagePrimary || '',
+          imagePrimary: item.product.imagePrimary || null,
           quantity: item.quantity,
           selectedVariantId: item.productVariantId || '',
           variantDetails: {
@@ -329,7 +329,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             id: item.productId,
             name: item.product.name,
             price: item.product.price,
-            imagePrimary: item.product.imagePrimary || '',
+            imagePrimary: item.product.imagePrimary || null,
             quantity: item.quantity,
             selectedVariantId: item.productVariantId || '',
             variantDetails: {

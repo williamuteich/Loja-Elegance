@@ -15,7 +15,8 @@ export default async function OrdersPage() {
   }
 
   const pedidos = await prisma.order.findMany({
-    where: { userId: session.user.userID, status: "paid" },
+    // incluir pedidos pagos e pendentes para que compras ainda não pagas apareçam no perfil
+    where: { userId: session.user.userID, status: { in: ["paid", "pending"] } },
     orderBy: { updatedAt: "desc" },
     select: {
       id: true,
@@ -98,9 +99,15 @@ export default async function OrdersPage() {
                       <p className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleString("pt-BR")}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1 bg-emerald-100 text-green-500 px-3 py-1 rounded-full text-xs font-semibold">
-                        <FaCheckCircle className="text-green-600" /> Pago
-                      </span>
+                      {order.status === "paid" ? (
+                        <span className="inline-flex items-center gap-1 bg-emerald-100 text-green-500 px-3 py-1 rounded-full text-xs font-semibold">
+                          <FaCheckCircle className="text-green-600" /> Pago
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">
+                          Pendente
+                        </span>
+                      )}
                       <span className="inline-flex items-center gap-1 bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">
                         {order.items.reduce((s, it) => s + it.quantity, 0)} itens
                       </span>
@@ -108,8 +115,9 @@ export default async function OrdersPage() {
                   </div>
 
                   <div className="p-4 divide-y divide-gray-100">
-                    {order.items.map((item, idx) => {
-                      const img = item.imageUrl || item.product?.imagePrimary || "/placeholder.png";
+                      {order.items.map((item, idx) => {
+                      // se não houver imagem, manter null para renderizar o placeholder visual
+                      const img = item.imageUrl || item.product?.imagePrimary || null;
                       const title = item.product?.name ?? item.name;
                       const colorName = item.variant?.color?.name;
                       const colorHex = item.variant?.color?.hexCode;
@@ -117,7 +125,12 @@ export default async function OrdersPage() {
                       const unit = item.unitPrice.toFixed(2).replace(".", ",");
                       return (
                         <div key={idx} className="flex flex-wrap items-start sm:items-center gap-4 py-3">
-                          <img src={img} alt={title} className="w-16 h-16 rounded-lg object-cover ring-1 ring-gray-200" />
+                          {img ? (
+                            <img src={img} alt={title} className="w-16 h-16 rounded-lg object-cover ring-1 ring-gray-200" />
+                          ) : (
+                            <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center ring-1 ring-gray-200">
+                            </div>
+                          )}
                           <div className="flex-1 min-w-0 order-2 sm:order-none">
                             <p className="font-medium text-gray-900 truncate">{title}</p>
                             <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600 mt-1">
@@ -127,7 +140,10 @@ export default async function OrdersPage() {
                                   {colorName}
                                 </span>
                               )}
-                              <span className="bg-gray-100 px-2 py-1 rounded-md">Qtd: {item.quantity}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="bg-gray-100 px-2 py-1 rounded-md">Qtd: {item.quantity}</span>
+                                <span className="text-xs text-gray-600">R$ {unit}</span>
+                              </div>
                             </div>
                           </div>
                         

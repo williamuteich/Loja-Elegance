@@ -226,7 +226,7 @@ async function createMercadoPagoPreference(
     });
   }
 
-  const baseUrl = process.env.MP_BASE_URL || 'https://ed6e9e508bad.ngrok-free.app';
+  const baseUrl = process.env.MP_BASE_URL || 'https://77a30cef26fd.ngrok-free.app/';
   const whSecret = process.env.MP_WEBHOOK_SECRET;
   const hookUrl = whSecret
     ? `${baseUrl}/api/mercadopago/webhook?t=${encodeURIComponent(whSecret)}`
