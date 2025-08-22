@@ -245,6 +245,7 @@ model Order {
   shippingServiceId String?
   shippingPostalCode String?
   shippingSig       String?
+  returnViewed      Boolean      @default(false) // Controla se a página de retorno foi visualizada
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
 
